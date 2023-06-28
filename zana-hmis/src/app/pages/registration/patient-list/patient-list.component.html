@@ -1,0 +1,103 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="header-title">
+        <h1>Patient List</h1>
+    </div>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <!-- Form controls -->
+        <div class="col-sm-12">
+            <div class="panel panel-bd lobidrag">
+                <div class="panel-heading">
+                    <div class="btn"> 
+                        <a class="btn btn-primary" routerLink="/patient-register">Add Patient</a>  
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="panel-header">
+                            <div class="col-sm-4">
+                                <div class="dataTables_length" id="example_length">
+                                    <label>Display <select name="example_length">
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select> records per page</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="dataTables_length">
+                                    <a class="btn btn-default buttons-copy btn-sm" tabindex="0"><span>Copy</span></a>
+                                    <a class="btn btn-default buttons-csv buttons-html5 btn-sm" tabindex="0"><span>CSV</span></a>
+                                    <a class="btn btn-default buttons-excel buttons-html5 btn-sm" tabindex="0"><span>Excel</span></a>
+                                    <a class="btn btn-default buttons-pdf buttons-html5 btn-sm" tabindex="0"><span>PDF</span></a>
+                                    <a class="btn btn-default buttons-print btn-sm" tabindex="0"><span>Print</span></a>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="dataTables_length">
+                                    <div class="input-group custom-search-form">
+                                        <input type="search" class="form-control" placeholder="search..">
+                                        <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="button">
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </button>
+                                    </span>
+                                </div><!-- /input-group -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="success">
+                            <tr>
+                                <th>File No</th>
+                                <th>ID No</th>
+                                <th>Name</th>
+                                <th>Sex</th>
+                                <th>Address</th>
+                                <th>Mobile No</th>
+                                <th>Select</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr >
+                                    <td>MRN0001</td>
+                                    <td>xya45</td>
+                                    <td>Alen Moshi</td>
+                                    <td>Male</td>
+                                    <td>Dar Es Salaam</td>
+                                    <td>019833333222</td>
+                                    <td>Select</td>
+                                </tr>
+                                <tr >
+                                    <td>MRN0001</td>
+                                    <td>xya45</td>
+                                    <td>Alen Moshi</td>
+                                    <td>Male</td>
+                                    <td>Dar Es Salaam</td>
+                                    <td>019833333222</td>
+                                    <td>Select</td>
+                                </tr>
+                                <tr >
+                                    <td>MRN0001</td>
+                                    <td>xya45</td>
+                                    <td>Alen Moshi</td>
+                                    <td>Male</td>
+                                    <td>Dar Es Salaam</td>
+                                    <td>019833333222</td>
+                                    <td>Select</td>
+                                </tr>
+                            </tbody>
+                        </table>    
+                    </div>
+                </div>  
+            </div>
+        </div>
+    </div>
+</section> <!-- /.content -->

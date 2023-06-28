@@ -1,0 +1,232 @@
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="header-title">
+            <h1>Patient Register</h1>
+        </div>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <!-- Form controls -->
+            <div class="col-sm-12">
+                <div class="panel panel-bd lobidrag">
+                    <div class="panel-heading">
+                        <div class="btn"> 
+                            <a class="btn btn-primary" (click)="newPatientPrompt()">New</a>  
+                        </div>
+                        <div class="btn"> 
+                            <a class="btn btn-primary" (click)="existingPatientPrompt()">Existing</a>  
+                        </div>
+                        <div class="btn-group"> 
+                            <a class="btn btn-primary" routerLink="/patient-list"> <i class="fa fa-list"></i>List</a>  
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div *ngIf="patientRecordMode === 'new'">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label>Patient's Credentials</label>
+                                    <div class="row">
+                                        <div class="col-sm-4 form-group">
+                                            <label>First Name*</label>
+                                            <input type="text" class="form-control" placeholder="Enter First Name" required>
+                                        </div>
+                                        <div class="col-sm-4 form-group">
+                                            <label>Second Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter Second Name">
+                                        </div>
+                                        <div class="col-sm-4 form-group">
+                                            <label>Last Name*</label>
+                                            <input type="text" class="form-control" placeholder="Enter Last Name" required>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+                                
+                                <div class="col-sm-4">
+                                    <div class="row">
+                                        <div class="col-sm-12 form-group">
+                                            <label>Gender*</label>
+                                            <select class="form-control">
+                                                <option></option>
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 form-group">
+                                            <label>Date of Birth*</label>
+                                            <input type="date" class="form-control" required>
+                                        </div>
+                                        <div class="col-sm-12 form-group">
+                                            <label>Phone No</label>
+                                            <input type="tel" class="form-control" placeholder="Phone Number" required>
+                                        </div>
+                                        <div class="col-sm-12 form-group">
+                                            <label>Email</label>
+                                            <input type="email" class="form-control" placeholder="Email" required>
+                                        </div>
+                                        <div class="col-sm-12 form-group">
+                                            <label>Address</label>
+                                            <textarea class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="row">
+                                        <div class="col-sm-12 form-group">
+                                            <label>Nationality</label>
+                                            <select class="form-control">
+                                                <option></option>
+                                                <option>Tanzania</option>
+                                                <option>Kenya</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 form-group">
+                                            <label>ID No</label>
+                                            <input type="text" class="form-control" placeholder="ID No" required>
+                                        </div>
+                                        <div class="col-sm-12 form-group">
+                                            <label>Passport No</label>
+                                            <input type="text" class="form-control" placeholder="Passport No" required>
+                                        </div>
+                                    </div>
+                                
+                                </div>
+    
+                                
+                                <div class="col-sm-12">
+                                    <hr>
+                                    <label>Relative Information</label>
+                                    <div class="row">
+                                        <div class="col-sm-4 form-group">
+                                            <label>Full Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter Full Name" required>
+                                        </div>
+                                        <div class="col-sm-4 form-group">
+                                            <label>Relationship</label>
+                                            <input type="text" class="form-control" placeholder="Enter Relationship with patient">
+                                        </div>
+                                        <div class="col-sm-4 form-group">
+                                            <label>Phone No</label>
+                                            <input type="tel" class="form-control" placeholder="Enter Phone No" required>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    
+                                </div>
+                                <div class="col-sm-12">
+                                    <button class="btn btn-primary pull-right" (click)="registerPatient()">Register</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="patientRecordMode === ''">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <label>File No</label>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="row">
+                                                <div class="col-xs-8">
+                                                    <input type="text" class="form-control" [(ngModel)]="no" placeholder="Search by File No">
+                                                </div>
+                                                <div class="col-xs-4">
+                                                    <button class="btn btn-success btn-outline" (click)="searchPatient(no)">Search</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div *ngIf="id != null">
+                            <div class="row">
+                                <div class="col-sm-4" style="background-color: rgb(194, 195, 197); border-radius: 2mm;">
+                                    <div class="panel-body">
+                                        <h4>Patient Inf</h4>
+                                        <p>File No: MRNO001</p>
+                                        <p>Full Name: John Mapunda</p>
+                                        <p>Phone No: 255 8467583</p>
+                                        <p>Address: Dar es Salaam</p>
+                                        <h4>Last Visiting</h4>
+                                        <p>Time&Date: 01-02-2023 06:30:45</p>
+                                        <p>Clinic: Dental</p>
+                                        <p>Doctor: Dr. Elias</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="id != null">
+                            <div class="row">
+                                <div class="col-sm-4 form-group">
+                                    <label>Payment Type</label>
+                                    <select class="form-control" [(ngModel)]="paymentMode" (ngModelChange)="changePaymentMode(paymentMode)">
+                                        <option></option>
+                                        <option>Cash</option>
+                                        <option>Debit Card</option>
+                                        <option>Credit Card</option>
+                                        <option>Insurance</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4 form-group" *ngIf="paymentMode === 'Insurance'">
+                                    <label>Insurance</label>
+                                    <select class="form-control">
+                                        <option></option>
+                                        <option>NHIF</option>
+                                        <option>JUBILEE</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4 form-group" *ngIf="paymentMode === 'Cash'">
+                                    <label>Cash Amount</label>
+                                    <input type="number" class="form-control">
+                                </div>
+                                <div class="col-sm-4 form-group" *ngIf="paymentMode === 'Debit Card'">
+                                    <label>Debit Card No</label>
+                                    <input type="text" class="form-control" placeholder="Debit Card No">
+                                </div>
+                                <div class="col-sm-4 form-group" *ngIf="paymentMode === 'Credit Card'">
+                                    <label>Credit Card No</label>
+                                    <input type="text" class="form-control" placeholder="Credit Card No">
+                                </div>
+                                <div class="col-sm-4 form-group" *ngIf="paymentMode === 'Insurance'">
+                                    <label>Membership No</label>
+                                    <input type="text" class="form-control" placeholder="Insurance Membership No">
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="id != null">
+                            <label>Send to Doctor</label>
+                            <div class="row">
+                                <div class="col-sm-4 form-group">
+                                    <label>Select Clinic</label>
+                                    <select class="form-control">
+                                        <option></option>
+                                        <option>General</option>
+                                        <option>Eye</option>
+                                        <option>Dental</option>
+                                        <option>Gnycology</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4 form-group">
+                                    <label>Select Doctor</label>
+                                    <select class="form-control">
+                                        <option></option>
+                                        <option>Ali</option>
+                                        <option>Juma</option>
+                                        <option>Ester</option>
+                                    </select>
+                                    <br>
+                                    <button class="btn btn-primary pull-right">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                 </div>
+             </div>
+         </div>
+         
+     </section> <!-- /.content -->
