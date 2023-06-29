@@ -5,15 +5,18 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.Patient;
-import com.orbix.api.domain.Product;
 
 /**
  * @author Godfrey
  *
  */
 public interface PatientService {
-	Patient register(Patient patient);
-	Patient update(Patient patient);
+	Patient doRegister(Patient patient, HttpServletRequest request);
+	Patient doConsultation(Patient patient, Consultation consultation, HttpServletRequest request);
+	Patient update(Patient patient, HttpServletRequest request);
 	List<Patient>getBySearchKey(String searchKey);
 }

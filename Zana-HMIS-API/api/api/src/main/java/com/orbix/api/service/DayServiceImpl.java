@@ -28,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 public class DayServiceImpl implements DayService{
 	
 	private final DayRepository dayRepository;
-	private final ProductService productService;
 	
 	@Override
 	public String getBussinessDate() {		

@@ -36,17 +36,17 @@ public class Radiology {
 	private String result = "";
 	private String status = "";
 	
-	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)
+	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "consultation_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Consultation consultation;
 	
-	@ManyToOne(targetEntity = RadiologyType.class, fetch = FetchType.EAGER,  optional = true)
+	@ManyToOne(targetEntity = RadiologyType.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "radiology_type_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private RadiologyType radiologyType;
 	
-	@OneToOne(targetEntity = Bill.class, fetch = FetchType.EAGER,  optional = true)
+	@OneToOne(targetEntity = Bill.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "bill_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Bill bill;

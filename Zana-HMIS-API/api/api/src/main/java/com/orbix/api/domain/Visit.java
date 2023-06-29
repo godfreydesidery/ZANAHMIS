@@ -41,7 +41,7 @@ public class Visit {
 	private Long visitedOn;
 	private LocalDateTime visitedAt = LocalDateTime.now();
 	
-	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = true)
+	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "patient_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;

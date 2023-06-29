@@ -36,12 +36,15 @@ public class Registration {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@OneToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = true)
+	private String paymentType = "";//CASH,DEBIT CARD, CREDIT CARD, MOBILE, INSURANCE
+	private String membershipNo = "";
+	
+	@OneToOne(targetEntity = Patient.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "patient_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
 	
-	@OneToOne(targetEntity = Bill.class, fetch = FetchType.EAGER,  optional = true)
+	@OneToOne(targetEntity = Bill.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "bill_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Bill bill;

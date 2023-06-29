@@ -37,6 +37,9 @@ public class Consultation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	private String paymentType = "";//CASH,DEBIT CARD, CREDIT CARD, MOBILE, INSURANCE
+	private String membershipNo = "";
+	
 	private Long createdBy;
 	private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
@@ -44,7 +47,7 @@ public class Consultation {
 	/**
 	 * A patient can have one or more consultations
 	 */
-	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = true)
+	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "patient_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
@@ -52,21 +55,21 @@ public class Consultation {
 	 * One can only have one bill, i.e. A single consultation can only be
 	 * billed once
 	 */
-	@OneToOne(targetEntity = Bill.class, fetch = FetchType.EAGER,  optional = true)
+	@OneToOne(targetEntity = Bill.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "bill_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Bill bill;
 	/**
 	 * One patient visit can have one or more consultation i.e. 
 	 */
-	@ManyToOne(targetEntity = Visit.class, fetch = FetchType.EAGER,  optional = true)
+	@ManyToOne(targetEntity = Visit.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "visit_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Visit visit;
 	/**
 	 * One consultation has one clinic, i.e. a patient is sent to one clinic in a single consultation
 	 */
-	@OneToOne(targetEntity = Clinic.class, fetch = FetchType.EAGER,  optional = true)
+	@OneToOne(targetEntity = Clinic.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "clinic_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Clinic clinic;	
@@ -74,7 +77,7 @@ public class Consultation {
 	 * One consultation has one clinician, i.e. a patient is sent to one clinician in a single consultation
 	 * However, a patient can be reasigned to another clinician
 	 */
-	@OneToOne(targetEntity = Clinician.class, fetch = FetchType.EAGER,  optional = true)
+	@OneToOne(targetEntity = Clinician.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "clinician_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Clinician clinician;

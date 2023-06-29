@@ -35,12 +35,12 @@ public class MedicalPrescription {
 	
 	private double qty = 0;
 	
-	@ManyToOne(targetEntity = Medication.class, fetch = FetchType.EAGER,  optional = true)
+	@ManyToOne(targetEntity = Medication.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "medication_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Medication medication;
 	
-	@ManyToOne(targetEntity = Medicine.class, fetch = FetchType.EAGER,  optional = true)
+	@ManyToOne(targetEntity = Medicine.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "medicine_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Medicine medicine;

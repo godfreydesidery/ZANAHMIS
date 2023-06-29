@@ -30,6 +30,7 @@ public class Bill {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String description = "";
+	private double qty = 1;
 	private double amount = 0;
 	private double paid = 0;
 	private double balance = 0;
