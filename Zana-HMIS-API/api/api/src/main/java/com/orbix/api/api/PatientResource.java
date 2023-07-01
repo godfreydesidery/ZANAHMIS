@@ -47,7 +47,7 @@ public class PatientResource {
 		if(patient.getNo().equals("") || patient.getNo().equals("NA")) {
 			patient.setNo("NA");
 		}
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/patients/register").toUriString());
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/register").toUriString());
 		return ResponseEntity.created(uri).body(patientService.doRegister(patient, request));
 	}
 }

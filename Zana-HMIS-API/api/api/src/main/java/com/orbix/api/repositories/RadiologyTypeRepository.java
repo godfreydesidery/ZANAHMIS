@@ -14,4 +14,10 @@ import com.orbix.api.domain.RadiologyType;
  */
 public interface RadiologyTypeRepository extends JpaRepository<RadiologyType, Long> {
 
+	/**
+	 * @param name
+	 * @return
+	 */
+	RadiologyType findByName(String name);
+
 }

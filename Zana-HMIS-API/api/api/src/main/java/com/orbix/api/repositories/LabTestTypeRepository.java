@@ -14,4 +14,10 @@ import com.orbix.api.domain.Patient;
  */
 public interface LabTestTypeRepository extends JpaRepository<LabTestType, Long> {
 
+	/**
+	 * @param name
+	 * @return
+	 */
+	LabTestType findByName(String name);
+
 }

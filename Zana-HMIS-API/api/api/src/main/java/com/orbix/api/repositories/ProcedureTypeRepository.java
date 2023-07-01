@@ -14,4 +14,10 @@ import com.orbix.api.domain.ProcedureType;
  */
 public interface ProcedureTypeRepository extends JpaRepository<ProcedureType, Long> {
 
+	/**
+	 * @param name
+	 * @return
+	 */
+	ProcedureType findByName(String name);
+
 }

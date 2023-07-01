@@ -58,7 +58,7 @@ public class CompanyProfileResource {
 			@RequestParam("logo") MultipartFile logo) throws IOException{
 		CompanyProfile profile = companyProfileService.getCompanyProfile();
 		profile.setLogo(compressBytes(logo.getBytes()));		
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/company_profile/save_logo").toUriString());
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/company_profile/save_logo").toUriString());
 		return ResponseEntity.created(uri).body(companyProfileService.saveCompanyProfile(profile));
 	}
 	
@@ -66,7 +66,7 @@ public class CompanyProfileResource {
 	public ResponseEntity<CompanyProfile> getLogo() {
 		CompanyProfile profile = companyProfileService.getCompanyProfile();
 		profile.setLogo(decompressBytes(profile.getLogo()));
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/company_profile/get_logo").toUriString());
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/company_profile/get_logo").toUriString());
 		return ResponseEntity.created(uri).body(profile);
 	}
 	

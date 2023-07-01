@@ -14,4 +14,10 @@ import com.orbix.api.domain.Patient;
  */
 public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 
+	/**
+	 * @param name
+	 * @return
+	 */
+	Medicine findByName(String name);
+
 }

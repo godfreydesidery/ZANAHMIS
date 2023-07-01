@@ -14,4 +14,10 @@ import com.orbix.api.domain.Patient;
  */
 public interface ClinicianRepository extends JpaRepository<Clinician, Long> {
 
+	/**
+	 * @param name
+	 * @return
+	 */
+	Clinician findByName(String name);
+
 }

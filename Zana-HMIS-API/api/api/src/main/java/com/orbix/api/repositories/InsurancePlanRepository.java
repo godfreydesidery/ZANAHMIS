@@ -14,4 +14,10 @@ import com.orbix.api.domain.Patient;
  */
 public interface InsurancePlanRepository extends JpaRepository<InsurancePlan, Long> {
 
+	/**
+	 * @param name
+	 * @return
+	 */
+	InsurancePlan findByName(String name);
+
 }
