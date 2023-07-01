@@ -14,4 +14,10 @@ import com.orbix.api.domain.Patient;
  */
 public interface BillRepository extends JpaRepository<Bill, Long> {
 
+	/**
+	 * @param p
+	 * @return
+	 */
+	Bill findByPatient(Patient p);
+
 }

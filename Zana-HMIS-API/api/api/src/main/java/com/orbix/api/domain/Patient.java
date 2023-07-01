@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
@@ -62,7 +63,7 @@ public class Patient {
 	private String address;
 	private String email;
 	private String nationality;
-	private String nationalID;	
+	private String nationalId;	
 	private String passportNo;
 	/**
 	 * Next of kin details
@@ -81,6 +82,12 @@ public class Patient {
 	private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
 	
+	private Long registrationBillId;
+	private double registrationFee;
+	private String registrationFeeStatus = "";
+	
+	private String cardNo = "";
+	private String cardValidationStatus = "";
 	
 	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)

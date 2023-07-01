@@ -18,7 +18,6 @@ import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.Invoice;
 import com.orbix.api.domain.InvoiceDetail;
 import com.orbix.api.domain.Patient;
-import com.orbix.api.domain.Registration;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.BillRepository;
@@ -28,8 +27,6 @@ import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.InvoiceDetailRepository;
 import com.orbix.api.repositories.InvoiceRepository;
 import com.orbix.api.repositories.PatientRepository;
-import com.orbix.api.repositories.RegistrationRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,7 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PatientServiceImpl implements PatientService {
 	
 	private final PatientRepository patientRepository;
-	private final RegistrationRepository registrationRepository;
 	private final BillRepository billRepository;
 	private final ConsultationRepository consultationRepository;
 	private final InvoiceRepository invoiceRepository;
@@ -55,6 +51,11 @@ public class PatientServiceImpl implements PatientService {
 	private final ClinicPlanPriceRepository clinicPlanPriceRepository;
 	
 	@Override
+	public List<Patient> getAll() {
+		return patientRepository.findAll();
+	}
+	
+	@Override
 	public Patient doRegister(Patient p, HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		//save patient, after validating credentials
@@ -62,6 +63,8 @@ public class PatientServiceImpl implements PatientService {
 		
 		//generate patient unique file no
 		patient.setNo(patient.getId().toString());//change this to conventional no, this is only for starting
+		patient.setCreatedBy(userService.getUserId(request));
+		patient.setCreatedOn(dayService.getDayId());
 		patient = patientRepository.saveAndFlush(patient);
 		//create registration bill
 		Bill regBill = new Bill();
@@ -73,15 +76,16 @@ public class PatientServiceImpl implements PatientService {
 		regBill.setBalance(am);
 		regBill.setDescription("Registration Fee");
 		regBill.setStatus("UNPAID");
+		regBill.setPatient(patient);
 		regBill = billRepository.saveAndFlush(regBill);
-		
+		patient.setRegistrationBillId(regBill.getId());
+		patient = patientRepository.saveAndFlush(patient);
 		//create registration and assign a bill to it
-		Registration r = new Registration();
-		r.setBill(regBill);
-		r.setPatient(patient);
-		r.setPaymentType(patient.getPaymentType());
-		if(patient.getPaymentType().equalsIgnoreCase("INSURANCE")) {
-			r.setMembershipNo(patient.getMemberShipNo());
+
+		if(patient.getPaymentType().equalsIgnoreCase("Insurance")) {
+			//validate card, if card not valid, throw error
+			
+			patient.setCardValidationStatus("VALID");
 			//Create invoice to claim fee if not exist
 			Optional<Invoice> inv = invoiceRepository.findByPatientAndStatus(patient, "PENDING");
 			if(!inv.isPresent()) {
@@ -110,8 +114,10 @@ public class PatientServiceImpl implements PatientService {
 			}
 			regBill.setStatus("COVERED");
 			regBill = billRepository.saveAndFlush(regBill);
+			patient.setRegistrationFeeStatus("PAID");
+			patient = patientRepository.saveAndFlush(patient);
+			
 		}
-		registrationRepository.saveAndFlush(r);
 		
 		return patient;
 	}
@@ -120,11 +126,8 @@ public class PatientServiceImpl implements PatientService {
 	public Patient doConsultation(Patient p, Consultation con, HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		//first check whether the patient has cleared registration fee
-		Optional<Registration> r = registrationRepository.findById(p.getId());
-		if(!r.isPresent()) {
-			throw new NotFoundException("Patient Regeistration not found");
-		}
-		Bill regBill = billRepository.findById(r.get().getBill().getId()).get();
+		
+		Bill regBill = billRepository.findByPatient(p);
 		if(regBill.getBalance() > 0) {
 			throw new InvalidOperationException("Process failed, registration fee not cleared");
 		}

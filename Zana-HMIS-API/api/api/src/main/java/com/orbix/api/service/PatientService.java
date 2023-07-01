@@ -19,4 +19,5 @@ public interface PatientService {
 	Patient doConsultation(Patient patient, Consultation consultation, HttpServletRequest request);
 	Patient update(Patient patient, HttpServletRequest request);
 	List<Patient>getBySearchKey(String searchKey);
+	List<Patient>getAll();	
 }

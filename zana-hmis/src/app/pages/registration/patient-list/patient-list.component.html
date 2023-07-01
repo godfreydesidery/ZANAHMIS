@@ -57,41 +57,17 @@
                         <thead class="success">
                             <tr>
                                 <th>File No</th>
-                                <th>ID No</th>
                                 <th>Name</th>
                                 <th>Sex</th>
-                                <th>Address</th>
-                                <th>Mobile No</th>
-                                <th>Select</th>
+                                <th>Date of Birth</th>
                             </tr>
                             </thead>
                             <tbody>
-                                <tr >
-                                    <td>MRN0001</td>
-                                    <td>xya45</td>
-                                    <td>Alen Moshi</td>
-                                    <td>Male</td>
-                                    <td>Dar Es Salaam</td>
-                                    <td>019833333222</td>
-                                    <td>Select</td>
-                                </tr>
-                                <tr >
-                                    <td>MRN0001</td>
-                                    <td>xya45</td>
-                                    <td>Alen Moshi</td>
-                                    <td>Male</td>
-                                    <td>Dar Es Salaam</td>
-                                    <td>019833333222</td>
-                                    <td>Select</td>
-                                </tr>
-                                <tr >
-                                    <td>MRN0001</td>
-                                    <td>xya45</td>
-                                    <td>Alen Moshi</td>
-                                    <td>Male</td>
-                                    <td>Dar Es Salaam</td>
-                                    <td>019833333222</td>
-                                    <td>Select</td>
+                                <tr *ngFor="let p of patients">
+                                    <td>{{p.no}}</td>
+                                    <td>{{p.firstName+' '+p.middleName+' '+p.lastName}}</td>
+                                    <td>{{p.gender}}</td>
+                                    <td>{{p.dateOfBirth}}</td>
                                 </tr>
                             </tbody>
                         </table>    

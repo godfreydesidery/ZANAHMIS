@@ -12,6 +12,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { PatientRegisterComponent } from './pages/registration/patient-register/patient-register.component';
 import { RouterModule } from '@angular/router';
 import { PatientListComponent } from './pages/registration/patient-list/patient-list.component';
+import { PatientPaymentComponent } from './pages/payments/patient-payment/patient-payment.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { PatientListComponent } from './pages/registration/patient-list/patient-
     DashboardComponent,
     LoginComponent,
     PatientRegisterComponent,
-    PatientListComponent
+    PatientListComponent,
+    PatientPaymentComponent
   ],
   imports: [
     HttpClientModule,
@@ -29,6 +31,7 @@ import { PatientListComponent } from './pages/registration/patient-list/patient-
       RouterModule.forRoot([
     {path : 'patient-register', component : PatientRegisterComponent},
     {path : 'patient-list', component : PatientListComponent},
+    {path : 'patient-payment', component : PatientPaymentComponent},
     ])
   ],
   providers: [
