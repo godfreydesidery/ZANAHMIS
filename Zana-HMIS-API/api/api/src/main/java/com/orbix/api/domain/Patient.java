@@ -41,6 +41,9 @@ public class Patient {
 	@NotBlank
 	@Column(unique = true)
 	private String no;
+	@NotBlank
+	@Column(unique = true)
+	private String searchKey;
 	/**
 	 * Patients basic details
 	 */

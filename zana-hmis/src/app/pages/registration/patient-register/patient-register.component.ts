@@ -17,6 +17,7 @@ export class PatientRegisterComponent implements OnInit {
 
   id : any
   no : string
+  searchKey : string
   firstName : string
   middleName : string
   lastName : string
@@ -51,6 +52,7 @@ export class PatientRegisterComponent implements OnInit {
   ) {
     this.id = null
     this.no = ''
+    this.searchKey = ''
     this.firstName = ''
     this.middleName = ''
     this.lastName = ''
@@ -121,6 +123,7 @@ export class PatientRegisterComponent implements OnInit {
     var patient = {
       id                  : this.id,
       no                  : this.no,
+      searchKey           : "NA",
       firstName           : this.firstName,
       middleName          : this.middleName,
       lastName            : this.lastName,

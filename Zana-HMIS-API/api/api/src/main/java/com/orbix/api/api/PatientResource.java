@@ -4,6 +4,7 @@
 package com.orbix.api.api;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -37,6 +39,19 @@ public class PatientResource {
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(){
 		return ResponseEntity.ok().body(patientService.getAll());
+	}
+	
+	@GetMapping("/patients/get_by_search_key")
+	public ResponseEntity<Patient> getProductBySearchKey(
+			@RequestParam(name = "search_key") String searchKey){
+		return ResponseEntity.ok().body(patientService.findBySearchKey(searchKey));
+	}
+	
+	@GetMapping("/patients/get_all_search_keys")
+	public ResponseEntity<List<String>> getSearchKeys(){
+		List<String> keys = new ArrayList<String>();
+		keys = patientService.getSearchKeys();
+		return ResponseEntity.ok().body(keys);
 	}
 	
 	@PostMapping("/patients/register")

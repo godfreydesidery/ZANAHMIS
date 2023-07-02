@@ -56,16 +56,31 @@ public class PatientServiceImpl implements PatientService {
 	}
 	
 	@Override
+	public Patient findBySearchKey(String key) {
+		Optional<Patient> p = patientRepository.findBySearchKey(key);
+		if(!p.isPresent()) {
+			throw new NotFoundException("Patient not found");
+		}
+		return p.get();
+	}
+	
+	@Override
 	public Patient doRegister(Patient p, HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		//save patient, after validating credentials
 		Patient patient = patientRepository.saveAndFlush(p);
 		
 		//generate patient unique file no
+		
 		patient.setNo(patient.getId().toString());//change this to conventional no, this is only for starting
+		patient.setSearchKey("NA");
 		patient.setCreatedBy(userService.getUserId(request));
 		patient.setCreatedOn(dayService.getDayId());
 		patient = patientRepository.saveAndFlush(patient);
+		//generate search key, to sanitize searchkey later
+		patient.setSearchKey(patient.getNo() +" "+patient.getFirstName()+" "+patient.getMiddleName()+" "+patient.getLastName()+" "+patient.getPhoneNo());
+		patient = patientRepository.saveAndFlush(patient);
+		
 		//create registration bill
 		Bill regBill = new Bill();
 		double am = 2000;//fetch this value from database, later
@@ -79,6 +94,7 @@ public class PatientServiceImpl implements PatientService {
 		regBill.setPatient(patient);
 		regBill = billRepository.saveAndFlush(regBill);
 		patient.setRegistrationBillId(regBill.getId());
+		patient.setRegistrationFeeStatus("UNPAID");
 		patient = patientRepository.saveAndFlush(patient);
 		//create registration and assign a bill to it
 
@@ -211,6 +227,10 @@ public class PatientServiceImpl implements PatientService {
 	public List<Patient> getBySearchKey(String searchKey) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	@Override
+	public List<String> getSearchKeys() {
+		return patientRepository.getSearchKeys();	
 	}
 
 }

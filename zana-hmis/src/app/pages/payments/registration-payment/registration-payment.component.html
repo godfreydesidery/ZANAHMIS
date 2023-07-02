@@ -1,0 +1,131 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="header-title">
+        <h1>Payments from Reception</h1>
+    </div>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <!-- Form controls -->
+        <div class="col-sm-12">
+            <div class="panel panel-bd lobidrag">
+                <div class="panel-heading">
+                    
+                </div>
+                <div class="panel-body">
+                    
+                    <div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label>Search Patient</label>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="row">
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control" [(ngModel)]="searchKey" list="search_keys" placeholder="Search by File#, Names or Phone No">
+                                                <datalist id="search_keys" style="padding: 0px;">
+                                                    <option *ngFor="let s of searchKeys" [ngValue]="s">{{s}}</option>
+                                                </datalist> 
+                                            </div>
+                                            <div class="col-xs-2">
+                                                <button class="btn btn-success btn-outline" (click)="searchBySearchKey()">Search</button>
+                                            </div>
+                                            <div class="col-xs-2">
+                                                <button class="btn btn-deafult btn-outline" (click)="reset()">Reset</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6" *ngIf="id != null" >
+                                <br>
+                                <div class="col-sm-12" style="background-color: rgb(247, 248, 250); border-radius: 2mm;">
+                                    <div class="panel-body">
+                                        <div class="table-responsive">
+                                            <h4>Patient Inf</h4>
+                                            <table class="table table-bordered table-small">
+                                                <tbody>
+                                                    <tr><td>Full Name</td><td>{{firstName+' '+middleName+' '+lastName}}</td></tr>  
+                                                    <tr><td>Phone No</td><td>{{phoneNo}}</td></tr>  
+                                                    <tr><td>Address</td><td>{{address}}</td></tr> 
+                                                    <tr><td>File No</td><td>{{no}}</td></tr>
+                                                    <tr><td>Date of Birth</td><td>{{dateOfBirth | date}}</td></tr> 
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" *ngIf="id != null" >
+                                <div *ngIf="registrationFeeStatus === 'UNPAID'">
+                                    <span>Registration</span>
+                                    <table class="table table-bordered table-small">
+                                        <tbody>
+                                            <tr>
+                                                <td>Registration Fee</td>
+                                                <td style="text-align: right;">5,000.00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <span>Consultation</span>
+                                <table class="table table-bordered table-small">
+                                    <thead>
+                                        <tr>
+                                            <td>ID</td>
+                                            <td>Clinic</td>
+                                            <td>Dr. Name</td>
+                                            <td>Price</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Eye Clinic</td>
+                                            <td>Benjamin S. Carson</td>
+                                            <td style="text-align: right;">30,000.00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="table table-bordered table-small">
+                                    <tbody>
+                                        <tr>
+                                            <td><b>Total</b></td>
+                                            <td style="text-align: right;"><b>5,000.00</b></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <span>Select Method</span>
+                                        <select class="form-control">
+                                            <option>Cash</option>
+                                            <option>M-Pesa</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-4" style="text-align: center;">
+                                        <br>
+                                        <button class="btn btn-success">Confirm</button>
+                                    </div>
+                                    <div class="col-xs-4" style="text-align: center;">
+                                        <br>
+                                        <button class="btn btn-danger">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>                            
+                        </div>
+                        <br>
+                    </div>
+                </div>
+             </div>
+         </div>
+     </div>
+     
+ </section> <!-- /.content -->

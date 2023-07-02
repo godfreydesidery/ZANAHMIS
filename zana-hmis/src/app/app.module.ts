@@ -13,6 +13,7 @@ import { PatientRegisterComponent } from './pages/registration/patient-register/
 import { RouterModule } from '@angular/router';
 import { PatientListComponent } from './pages/registration/patient-list/patient-list.component';
 import { PatientPaymentComponent } from './pages/payments/patient-payment/patient-payment.component';
+import { RegistrationPaymentComponent } from './pages/payments/registration-payment/registration-payment.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { PatientPaymentComponent } from './pages/payments/patient-payment/patien
     LoginComponent,
     PatientRegisterComponent,
     PatientListComponent,
-    PatientPaymentComponent
+    PatientPaymentComponent,
+    RegistrationPaymentComponent
   ],
   imports: [
     HttpClientModule,
@@ -32,6 +34,7 @@ import { PatientPaymentComponent } from './pages/payments/patient-payment/patien
     {path : 'patient-register', component : PatientRegisterComponent},
     {path : 'patient-list', component : PatientListComponent},
     {path : 'patient-payment', component : PatientPaymentComponent},
+    {path : 'registration-payment', component : RegistrationPaymentComponent},
     ])
   ],
   providers: [
