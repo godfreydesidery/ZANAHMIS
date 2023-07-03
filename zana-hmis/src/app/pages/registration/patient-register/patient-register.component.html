@@ -167,16 +167,13 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="row">
-                                                <div class="col-xs-8">
-                                                    <input type="text" class="form-control" [(ngModel)]="searchKey" list="search_keys" placeholder="Search by File#, name or phone">
-                                                    <datalist id="search_keys" style="padding: 0px;">
+                                                <div class="col-xs-9">
+                                                    <input type="text" class="form-control" [(ngModel)]="searchKey" (input)="searchBySearchKey(searchKey)"  list="search_keys" placeholder="Search by File#, name or phone">
+                                                    <datalist id="search_keys" style="padding: 0px;" >
                                                         <option *ngFor="let s of searchKeys" [ngValue]="s">{{s}}</option>
                                                     </datalist> 
                                                 </div>
-                                                <div class="col-xs-2">
-                                                    <button class="btn btn-success btn-outline" (click)="searchBySearchKey(searchKey)">Search</button>
-                                                </div>
-                                                <div class="col-xs-2">
+                                                <div class="col-xs-3">
                                                     <button class="btn btn-deafult btn-outline" (click)="existingPatientPrompt()">Reset</button>
                                                 </div>
                                             </div>
@@ -188,8 +185,8 @@
                             <br>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4" *ngIf="id != null" style="background-color: rgb(194, 195, 197); border-radius: 2mm;">
-                                <div class="panel-body">
+                            <div class="col-sm-4" *ngIf="id != null">
+                                <div class="panel-body jumbotron" style="border-radius: 2mm;">
                                     <div class="table-responsive">
                                         <h4>Patient Inf   <button class="btn btn-success btn-outline  pull-right" data-toggle="modal" data-target="#edit-modal">Edit Patient</button></h4>
                                         <table class="table table-bordered table-small">
@@ -215,8 +212,8 @@
                             </div>
 
                             <div class="col-sm-4">
-                                <div *ngIf="registrationFeeStatus === 'PAID'">
-                                    <div *ngIf="patientType != 'OUTSIDER'">
+                                <div>
+                                    <div *ngIf="patientType != 'OUTSIDER' && id != null">
                                         <label>Send to Doctor</label>
                                         <div class="row">
                                             <div class="col-sm-12 form-group" >
@@ -243,9 +240,6 @@
                                         for outsider patients
                                     </div>
                                     
-                                </div>
-                                <div class="alert alert-danger"  *ngIf="registrationFeeStatus === 'UNPAID'" role="alert" style="text-align: center;">
-                                    Registration Fee not cleared!
                                 </div>
                             </div>
                         </div>

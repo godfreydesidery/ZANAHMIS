@@ -45,6 +45,9 @@ export class RegistrationPaymentComponent implements OnInit {
   registrationFeeStatus = ''
   cardValidationStatus = ''
 
+  registrationBill! : IBill
+  consultationBills : IBill[] = []
+
   constructor(
               private auth : AuthService,
               private http : HttpClient,
@@ -81,15 +84,24 @@ export class RegistrationPaymentComponent implements OnInit {
 
 
   async searchBySearchKey(key : string): Promise<void> {
-    if(this.searchKey == ''){
-      alert('Please enter key to search')
+    
+    var searchElement = ''
+    //var val = key
+    for (var i = 0; i < this.searchKeys.length; i++) {
+      if (this.searchKeys[i] === key) {
+        // An item was selected from the list!
+        searchElement = key
+        break
+      }
+    }
+    if(searchElement.length === 0){
       return
     }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IPatient>(API_URL+'/patients/get_by_search_key?search_key=' + key, options)
+    await this.http.get<IPatient>(API_URL+'/patients/get_by_search_key?search_key=' + searchElement, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -103,6 +115,9 @@ export class RegistrationPaymentComponent implements OnInit {
         this.phoneNo = data!['phoneNo']
         this.address = data!['address']
         this.registrationFeeStatus = data!['registrationFeeStatus']
+
+        this.loadRegistrationBill()
+        this.loadConsultationBills()
       }
     )
     .catch(
@@ -110,8 +125,11 @@ export class RegistrationPaymentComponent implements OnInit {
         console.log(error)
         this.clear()
         alert('Could not find patient')
+        return
       }
     )
+    
+
   }
 
   clear(){
@@ -137,6 +155,52 @@ export class RegistrationPaymentComponent implements OnInit {
   reset(){
     this.searchKey = ''
     this.clear()
+  }
+
+  async loadRegistrationBill(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    this.spinner.show()
+    await this.http.get<IBill>(API_URL+'/bills/get_registration_bill?patient_id='+this.id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.registrationBill = data!        
+      }
+    )
+    .catch(
+      error => {
+        console.log(error)
+        alert('Could not load registration bill')
+      }
+    )
+  }
+
+  async loadConsultationBills(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    this.spinner.show()
+    await this.http.get<IBill[]>(API_URL+'/bills/get_consultation_bills?patient_id='+this.id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.consultationBills = data!        
+      }
+    )
+    .catch(
+      error => {
+        console.log(error)
+        alert('Could not load consultation bill')
+      }
+    )
   }
 
 }
@@ -168,5 +232,11 @@ export interface IPatient {
   registrationFee : number
   registrationFeeStatus : string
   cardValidationStatus : string
+}
+
+export interface IBill{
+  id : any
+  amount : number
+  description : string
 }
 

@@ -3,6 +3,8 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.orbix.api.domain.Bill;
@@ -19,5 +21,11 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
 	 * @return
 	 */
 	Bill findByPatient(Patient p);
+
+	/**
+	 * @param patient
+	 * @return
+	 */
+	List<Bill> findAllByPatient(Patient patient);
 
 }

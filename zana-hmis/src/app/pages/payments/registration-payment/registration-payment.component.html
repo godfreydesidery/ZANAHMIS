@@ -24,16 +24,13 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="row">
-                                            <div class="col-xs-8">
-                                                <input type="text" class="form-control" [(ngModel)]="searchKey" list="search_keys" placeholder="Search by File#, Names or Phone No">
+                                            <div class="col-xs-9">
+                                                <input type="text" class="form-control" [(ngModel)]="searchKey" list="search_keys" (input)="searchBySearchKey(searchKey)" placeholder="Search by File#, Names or Phone No">
                                                 <datalist id="search_keys" style="padding: 0px;">
                                                     <option *ngFor="let s of searchKeys" [ngValue]="s">{{s}}</option>
                                                 </datalist> 
                                             </div>
-                                            <div class="col-xs-2">
-                                                <button class="btn btn-success btn-outline" (click)="searchBySearchKey(searchKey)">Search</button>
-                                            </div>
-                                            <div class="col-xs-2">
+                                            <div class="col-xs-3">
                                                 <button class="btn btn-deafult btn-outline" (click)="reset()">Reset</button>
                                             </div>
                                         </div>
@@ -69,7 +66,7 @@
                                         <tbody>
                                             <tr>
                                                 <td>Registration Fee</td>
-                                                <td style="text-align: right;">5,000.00</td>
+                                                <td style="text-align: right;">{{registrationBill.amount | currency:'':''}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -80,17 +77,15 @@
                                     <thead>
                                         <tr>
                                             <td>ID</td>
-                                            <td>Clinic</td>
-                                            <td>Dr. Name</td>
+                                            <td>Description</td>
                                             <td>Price</td>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Eye Clinic</td>
-                                            <td>Benjamin S. Carson</td>
-                                            <td style="text-align: right;">30,000.00</td>
+                                        <tr *ngFor="let bill of consultationBills">
+                                            <td>{{bill.id}}</td>
+                                            <td>{{bill.description}}</td>
+                                            <td>{{bill.amount | currency:'':''}}</td>
                                         </tr>
                                     </tbody>
                                 </table>

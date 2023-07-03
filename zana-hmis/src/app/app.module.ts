@@ -16,6 +16,8 @@ import { PatientPaymentComponent } from './pages/payments/patient-payment/patien
 import { RegistrationPaymentComponent } from './pages/payments/registration-payment/registration-payment.component';
 import { ClinicComponent } from './pages/admin/medical-units/clinic/clinic.component';
 import { ClinicianComponent } from './pages/admin/personnel/clinician/clinician.component';
+import { MyConsultationComponent } from './pages/doctor/my-consultation/my-consultation.component';
+import { DoctorCrackingComponent } from './pages/doctor/doctor-cracking/doctor-cracking.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { ClinicianComponent } from './pages/admin/personnel/clinician/clinician.
     PatientPaymentComponent,
     RegistrationPaymentComponent,
     ClinicComponent,
-    ClinicianComponent
+    ClinicianComponent,
+    MyConsultationComponent,
+    DoctorCrackingComponent
   ],
   imports: [
     HttpClientModule,
@@ -41,6 +45,8 @@ import { ClinicianComponent } from './pages/admin/personnel/clinician/clinician.
     {path : 'registration-payment', component : RegistrationPaymentComponent},
     {path : 'clinic', component : ClinicComponent},
     {path : 'clinician', component : ClinicianComponent},
+    {path : 'my-consultation', component : MyConsultationComponent},
+    {path : 'doctor-cracking', component : DoctorCrackingComponent},
     ])
   ],
   providers: [

@@ -296,17 +296,42 @@ export class PatientRegisterComponent implements OnInit {
     )
   }
 
+  search(){
+    alert('Success')
+  }
+
+  onInput() {
+    var val = this.searchKey
+    var opts = this.searchKeys
+    for (var i = 0; i < opts.length; i++) {
+      if (opts[i] === val) {
+        // An item was selected from the list!
+        // yourCallbackHere()
+        alert(opts[i]);
+        break;
+      }
+    }
+  }
+
 
   async searchBySearchKey(key : string): Promise<void> {
-    if(this.searchKey == ''){
-      alert('Please enter key to search')
+    var searchElement = ''
+    //var val = key
+    for (var i = 0; i < this.searchKeys.length; i++) {
+      if (this.searchKeys[i] === key) {
+        // An item was selected from the list!
+        searchElement = key
+        break
+      }
+    }
+    if(searchElement.length === 0){
       return
     }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IPatient>(API_URL+'/patients/get_by_search_key?search_key=' + key, options)
+    await this.http.get<IPatient>(API_URL+'/patients/get_by_search_key?search_key=' + searchElement, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -343,6 +368,7 @@ export class PatientRegisterComponent implements OnInit {
       }
     )
   }
+  
 
   async loadClinicNames(){//for unpaid registration
     let options = {
