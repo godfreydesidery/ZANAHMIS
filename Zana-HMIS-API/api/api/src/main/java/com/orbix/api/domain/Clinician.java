@@ -35,6 +35,9 @@ public class Clinician {
 	private Long id;
 	@NotBlank
 	@Column(unique = true)
+	private String no;
+	@NotBlank
+	@Column(unique = true)
 	private String name;
 	private String type;
 	private boolean active = true;

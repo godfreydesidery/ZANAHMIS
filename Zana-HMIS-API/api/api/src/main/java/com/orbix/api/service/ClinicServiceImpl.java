@@ -75,4 +75,9 @@ public class ClinicServiceImpl implements ClinicService{
 		 */
 		return false;
 	}
+	
+	@Override
+	public List<String> getNames() {
+		return clinicRepository.getNames();	
+	}
 }

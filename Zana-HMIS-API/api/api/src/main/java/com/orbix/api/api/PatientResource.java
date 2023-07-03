@@ -65,4 +65,13 @@ public class PatientResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/register").toUriString());
 		return ResponseEntity.created(uri).body(patientService.doRegister(patient, request));
 	}
+	
+	@PostMapping("/patients/update")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<Patient>updatePatient(
+			@RequestBody Patient patient,
+			HttpServletRequest request){		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/update").toUriString());
+		return ResponseEntity.created(uri).body(patientService.update(patient, request));
+	}
 }

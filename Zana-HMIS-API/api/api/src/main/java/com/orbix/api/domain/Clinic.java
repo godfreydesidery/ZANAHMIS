@@ -34,7 +34,11 @@ public class Clinic {
 	private Long id;
 	@NotBlank
 	@Column(unique = true)
+	private String no;
+	@NotBlank
+	@Column(unique = true)
 	private String name;
+	private String description = "";
 	private double consultationFee = 0;
 	
 	@ManyToMany(mappedBy = "clinics")

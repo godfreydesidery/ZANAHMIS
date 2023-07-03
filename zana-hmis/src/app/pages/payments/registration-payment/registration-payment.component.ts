@@ -22,6 +22,7 @@ export class RegistrationPaymentComponent implements OnInit {
   firstName : string = ''
   middleName : string = ''
   lastName : string = ''
+  patientType : string = ''
   dateOfBirth! :Date
   gender : string = ''
   paymentType : string = ''
@@ -79,7 +80,7 @@ export class RegistrationPaymentComponent implements OnInit {
   }
 
 
-  async searchBySearchKey(): Promise<void> {
+  async searchBySearchKey(key : string): Promise<void> {
     if(this.searchKey == ''){
       alert('Please enter key to search')
       return
@@ -88,7 +89,7 @@ export class RegistrationPaymentComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IPatient>(API_URL+'/patients/get_by_search_key?search_key='+this.searchKey, options)
+    await this.http.get<IPatient>(API_URL+'/patients/get_by_search_key?search_key=' + key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -148,6 +149,7 @@ export interface IPatient {
   lastName : string
   dateOfBirth :Date
   gender : string
+  patientType : string
   paymentType : string
   memberShipNo : string
   phoneNo : string		

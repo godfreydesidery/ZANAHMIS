@@ -4,12 +4,16 @@
 package com.orbix.api.api;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,6 +36,24 @@ public class ClinicResource {
 	
 	private final ClinicRepository clinicRepository;
 	private final ClinicService clinicService;
+	
+	@GetMapping("/clinics")
+	public ResponseEntity<List<Clinic>>getClinics(){
+		return ResponseEntity.ok().body(clinicService.getClinics());
+	}
+	
+	@GetMapping("/clinics/get")
+	public ResponseEntity<Clinic> getClinic(
+			@RequestParam(name = "id") Long id){
+		return ResponseEntity.ok().body(clinicService.getClinicById(id));
+	}
+	
+	@GetMapping("/clinics/get_names")
+	public ResponseEntity<List<String>> getClinicNames(){
+		List<String> names = new ArrayList<String>();
+		names = clinicService.getNames();
+		return ResponseEntity.ok().body(names);
+	}
 	
 	@PostMapping("/clinics/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")

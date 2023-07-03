@@ -54,6 +54,7 @@ public class Patient {
 	private String lastName;
 	private LocalDate dateOfBirth;
 	private String gender;
+	private String patientType;
 	/**
 	 * Initial payment method
 	 */

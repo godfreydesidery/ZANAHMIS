@@ -31,7 +31,7 @@
                                                 </datalist> 
                                             </div>
                                             <div class="col-xs-2">
-                                                <button class="btn btn-success btn-outline" (click)="searchBySearchKey()">Search</button>
+                                                <button class="btn btn-success btn-outline" (click)="searchBySearchKey(searchKey)">Search</button>
                                             </div>
                                             <div class="col-xs-2">
                                                 <button class="btn btn-deafult btn-outline" (click)="reset()">Reset</button>
@@ -45,7 +45,7 @@
                         <div class="row">
                             <div class="col-sm-6" *ngIf="id != null" >
                                 <br>
-                                <div class="col-sm-12" style="background-color: rgb(247, 248, 250); border-radius: 2mm;">
+                                <div class="col-sm-12 jumbotron" style="border-radius: 2mm;">
                                     <div class="panel-body">
                                         <div class="table-responsive">
                                             <h4>Patient Inf</h4>

@@ -17,4 +17,5 @@ public interface ClinicService {
 	Clinic getClinicByName(String name);
 	Clinic getClinicById(Long id);
 	boolean deleteClinic(Clinic clinic);
+	List<String> getNames();
 }

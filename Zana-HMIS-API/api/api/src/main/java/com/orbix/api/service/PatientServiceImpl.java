@@ -78,7 +78,7 @@ public class PatientServiceImpl implements PatientService {
 		patient.setCreatedOn(dayService.getDayId());
 		patient = patientRepository.saveAndFlush(patient);
 		//generate search key, to sanitize searchkey later
-		patient.setSearchKey(patient.getNo() +" "+patient.getFirstName()+" "+patient.getMiddleName()+" "+patient.getLastName()+" "+patient.getPhoneNo());
+		patient.setSearchKey(createSearchKey(patient.getNo(), patient.getFirstName(), patient.getMiddleName(), patient.getLastName(), patient.getPhoneNo()));
 		patient = patientRepository.saveAndFlush(patient);
 		
 		//create registration bill
@@ -219,8 +219,35 @@ public class PatientServiceImpl implements PatientService {
 
 	@Override
 	public Patient update(Patient patient, HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<Patient> pt = patientRepository.findById(patient.getId());
+		if(!pt.isPresent()) {
+			throw new NotFoundException("Patient not found in database");
+		}
+		Patient p = pt.get();
+		p.setFirstName(patient.getFirstName());
+		p.setMiddleName(patient.getMiddleName());
+		p.setLastName(patient.getLastName());
+		p.setDateOfBirth(patient.getDateOfBirth());
+		p.setGender(patient.getGender());
+		p.setPatientType(patient.getPatientType());
+		p.setNationality(patient.getNationality());
+		p.setNationalId(patient.getNationalId());
+		p.setPassportNo(patient.getPassportNo());
+		p.setPhoneNo(p.getPhoneNo());
+		p.setEmail(patient.getEmail());
+		p.setAddress(patient.getAddress());
+		p.setKinFullName(patient.getKinFullName());
+		p.setKinRelationship(patient.getKinRelationship());
+		p.setKinPhoneNo(patient.getKinPhoneNo());
+		p.setCardNo(patient.getCardNo());
+		
+		//add additional items here latter during refinement
+		//to include update of insurance plan
+		p.setSearchKey(createSearchKey(p.getNo(), p.getFirstName(), p.getMiddleName(), p.getLastName(), p.getPhoneNo()));
+		//recreate search key
+		
+		return patientRepository.saveAndFlush(p);
+		
 	}
 
 	@Override
@@ -231,6 +258,13 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public List<String> getSearchKeys() {
 		return patientRepository.getSearchKeys();	
+	}
+	
+	private String createSearchKey(String no, String firstName, String middleName, String lastName, String phoneNo) {
+		String key = no +" "+ firstName +" "+ middleName +" "+ lastName +" "+ phoneNo;
+		key = key.trim().replaceAll("\\s+", " ");
+		key = key.replaceAll("[+^]*#$%&", ""); 
+		return  key;
 	}
 
 }
