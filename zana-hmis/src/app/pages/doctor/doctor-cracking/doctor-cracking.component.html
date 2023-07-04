@@ -12,37 +12,325 @@
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
                     <div class="btn-group"> 
-                        <a class="btn btn-primary" routerLink="/my-consultation"> <i class="fa fa-list"></i>My Consultations</a>  
+                        <a class="btn btn-primary" routerLink="/list-from-reception" style="margin: 1px;"> <i class="fa fa-list"></i>List From Reception</a>  
+                        <a class="btn btn-primary" routerLink="/my-consultation" style="margin: 1px;"> <i class="fa fa-list"></i>My Consultations</a>  
                     </div>
                 </div>
                 <div class="panel-body">
                     <div class="row">
+                        <div class="col-sm-12 alert alert-primary" role="alert">
+                            <h3>Name: Godfrey Desodery Shirima, File No: MNRNO 0001, Age: 34, 3 Months 10 Days, Male, Cash ENT</h3>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Clinical Notes</label>
+                            <div class="jumbotron jumbotron-fluid">                               
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <textarea class="form-control" placeholder="Main Complain"></textarea>
+                                            <textarea class="form-control" placeholder="History of Present Illness"></textarea>
+                                            <textarea class="form-control" placeholder="Past Medical History"></textarea>
+                                            <textarea class="form-control" placeholder="Family and Social History"></textarea>
+                                            <textarea class="form-control" placeholder="Drugs and Allergy History"></textarea>
+                                            <textarea class="form-control" placeholder="Review of Other Systems"></textarea>
+                                            <textarea class="form-control" placeholder="Physical Examination"></textarea>
+                                            <textarea class="form-control" placeholder="Management Plan"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>General Examination</label>
+                            <div class="jumbotron jumbotron-fluid">                               
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Pressure(mmHg)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Temparature(c)"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Pulse Rate(b/Min)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Weight(kg)"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Height(cm)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Body Mass Index(kg/m)"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Body Surface Area(cmkg)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Body Mass Index Comment"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Saturation Oxygen(%)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Respiratory Rate(cycles/Min)"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12" style="margin-bottom: 3mm;"><textarea class="form-control" placeholder="Description"></textarea></div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" style="text-align: center;">
+                            <button class="btn btn-primary">Save</button>
+                            <hr>
+                        </div>
+
+                        <div class="col-sm-12" style="text-align: center;">
+                            <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#assign-diagnosis-modal">Assign Diagnosis</button>
+                        </div>
+                        
+                        <div class="col-sm-6">
+                            <label>Working Diagnosis</label>
+                            <div class="jumbotron jumbotron-fluid">                               
+                                <div class="container">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover  table-striped">
+                                            <thead class="success">
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Diagnosis Code</th>
+                                                <th>Description</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Hypertension</td>
+                                                    <td>Hypertension</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Hypertension</td>
+                                                    <td>Hypertension</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Hypertension</td>
+                                                    <td>Hypertension</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Final Diagnosis</label>
+                            <div class="jumbotron jumbotron-fluid">                               
+                                <div class="container">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover  table-striped">
+                                            <thead class="success">
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Diagnosis Code</th>
+                                                <th>Description</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Hypertension</td>
+                                                    <td>Hypertension</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Hypertension</td>
+                                                    <td>Hypertension</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Hypertension</td>
+                                                    <td>Hypertension</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="col-sm-6">
+                            
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label>Laboratory</label>
+                                    <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#assign-lab-test-modal" style="margin-right: 2mm;">Assign Lab Test</button>
+                                    <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#lab-test-result-modal" style="margin-right: 2mm;">View Result</button>
+                                </div>
+                            </div>
+                            <div class="jumbotron jumbotron-fluid">                               
+                                <div class="container">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover  table-striped">
+                                            <thead class="success">
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Lab Test</th>
+                                                <th>Price</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>FBP</td>
+                                                    <td style="text-align: right;">20,000.00</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>FBP</td>
+                                                    <td style="text-align: right;">20,000.00</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>FBP</td>
+                                                    <td style="text-align: right;">20,000.00</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label>Radiology</label>
+                                    <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#assign-radiology-modal" style="margin-right: 2mm;">Assign Radiology</button>
+                                    <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#radiology-result-modal" style="margin-right: 2mm;">View Result</button>
+                                </div>
+                            </div>
+                            <div class="jumbotron jumbotron-fluid">                               
+                                <div class="container">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover  table-striped">
+                                            <thead class="success">
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Radiology</th>
+                                                <th>Price</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>X-Ray</td>
+                                                    <td style="text-align: right;">20,000.00</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>MRI</td>
+                                                    <td style="text-align: right;">20,000.00</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>CT Scan</td>
+                                                    <td style="text-align: right;">20,000.00</td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="col-sm-12">
-                            patient details
-                        </div>
-                        <div class="col-sm-6">
-                            clinical notes
-                        </div>
-                        <div class="col-sm-6">
-                            general examination
-                        </div>
-                        <div class="col-sm-6">
-                            working diagnosis
-                        </div>
-                        <div class="col-sm-6">
-                            final diagnosis
-                        </div>
-                        <div class="col-sm-6">
-                            laboratory
-                        </div>
-                        <div class="col-sm-6">
-                            radiology
+                            <hr>
+                            <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#assign-drugs-modal">Assign Drugs</button>
+                            <br>
                         </div>
                         <div class="col-sm-12">
-                            medications
+                            <label>Medications</label>
+                            <div class="jumbotron jumbotron-fluid">                               
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover  table-striped">
+                                            <thead class="success">
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Unit</th>
+                                                <th>Dosage</th>
+                                                <th>Frequency</th>
+                                                <th>Route</th>
+                                                <th>Day</th>
+                                                <th>Qty</th>
+                                                <th>Price</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>    
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-sm-12">
-                            procedure
+                            <hr>
+                            <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#assign-procedure-modal">Assign Procedure</button>
+                            <br>
+                        </div>
+                        <div class="col-sm-12">
+                            <label>Procedure</label>
+                            <div class="jumbotron jumbotron-fluid">                               
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover  table-striped">
+                                            <thead class="success">
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Procedure</th>
+                                                <th>Procedure Note</th>
+                                                <th>Price</th>
+                                                <th>Status</th>
+                                                <th>Doctor Name</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>    
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -53,3 +341,154 @@
     </div>
      
 </section> <!-- /.content -->
+
+
+<!-- Modal success -->
+<div class="modal fade modal-success" id="assign-diagnosis-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Assign Diagnosis</h3>
+            </div>
+            <div class="modal-body">
+                    
+                    
+                    
+                    
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">Working</button>
+                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Final</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+
+    <!-- Modal success -->
+<div class="modal fade modal-success" id="assign-lab-test-modal" tabindex="-2" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Assign Lab Test</h3>
+            </div>
+            <div class="modal-body">
+                    
+                    
+                    
+                    
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade modal-success" id="lab-test-result-modal" tabindex="-2" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Lab Test Results</h3>
+            </div>
+            <div class="modal-body">
+                    
+                    
+                    
+                    
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+    <!-- Modal success -->
+<div class="modal fade modal-success" id="assign-radiology-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Assign Radiology</h3>
+            </div>
+            <div class="modal-body">
+                    
+                    
+                    
+                    
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade modal-success" id="radiology-result-modal" tabindex="-2" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Radiology Results</h3>
+            </div>
+            <div class="modal-body">
+                    
+                    
+                    
+                    
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade modal-success" id="assign-procedure-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Assign Procedure</h3>
+            </div>
+            <div class="modal-body">
+                    
+                    
+                    
+                    
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+    <!-- Modal success -->
+<div class="modal fade modal-success" id="assign-drugs-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Assign Drugs</h3>
+            </div>
+            <div class="modal-body">
+                    
+                    
+                    
+                    
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Modal success -->
+
+    
+    

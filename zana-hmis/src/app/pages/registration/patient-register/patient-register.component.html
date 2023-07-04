@@ -213,6 +213,49 @@
 
                             <div class="col-sm-4">
                                 <div>
+
+                                    <div class="row" *ngIf="id != null">
+                                        <div class="col-sm-12 form-group">
+                                            <label>Select Payment Type</label>
+                                            <select class="form-control" [(ngModel)]="paymentType" (ngModelChange)="changePaymentType(paymentType)">
+                                                <option></option>
+                                                <option>Cash</option>
+                                                <option>Debit Card</option>
+                                                <option>Credit Card</option>
+                                                <option>Insurance</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 form-group" *ngIf="paymentType === 'Insurance'">
+                                            <label>Select Insurance Plan</label>
+                                            <select class="form-control" [(ngModel)]="insurancePlan">
+                                                <option></option>
+                                                <option>NHIF</option>
+                                                <option>JUBILEE</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 form-group" *ngIf="paymentType === 'Debit Card'">
+                                            <label>Debit Card No</label>
+                                            <input type="text" class="form-control" placeholder="Debit Card No">
+                                        </div>
+                                        <div class="col-sm-12 form-group" *ngIf="paymentType === 'Credit Card'">
+                                            <label>Credit Card No</label>
+                                            <input type="text" class="form-control" placeholder="Credit Card No">
+                                        </div>
+                                        <div class="col-sm-12 form-group" *ngIf="insurancePlan != '' && paymentType === 'Insurance'">
+                                            <label>Membership No</label>
+                                            <input type="text" class="form-control" placeholder="Insurance Membership No">
+                                        </div>
+                                        <div class="col-sm-12 form-group">
+                                            <button class="btn btn-primary pull-right">Save</button>
+                                        </div>                                                
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div>
+
                                     <div *ngIf="patientType != 'OUTSIDER' && id != null">
                                         <label>Send to Doctor</label>
                                         <div class="row">
