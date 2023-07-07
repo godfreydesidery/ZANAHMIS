@@ -15,6 +15,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,5 +44,6 @@ public class Clinic {
 	private double consultationFee = 0;
 	
 	@ManyToMany(mappedBy = "clinics")
+	@JsonIgnoreProperties("clinics")
 	Set<Clinician> clinicians;
 }

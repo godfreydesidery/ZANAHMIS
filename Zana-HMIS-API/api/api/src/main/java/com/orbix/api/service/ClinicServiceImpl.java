@@ -4,14 +4,17 @@
 package com.orbix.api.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.domain.Clinic;
+import com.orbix.api.domain.Clinician;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.ClinicRepository;
+import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.UserRepository;
 
@@ -33,6 +36,7 @@ public class ClinicServiceImpl implements ClinicService{
 	private final DayRepository dayRepository;
 	private final DayService dayService;
 	private final ClinicRepository clinicRepository;
+	private final ClinicianRepository clinicianRepository;
 	
 	@Override
 	public Clinic save(Clinic clinic) {
@@ -80,4 +84,18 @@ public class ClinicServiceImpl implements ClinicService{
 	public List<String> getNames() {
 		return clinicRepository.getNames();	
 	}
+
+	@Override
+	public Clinic getByName(String clinicName) {
+		// TODO Auto-generated method stub
+		return clinicRepository.findByName(clinicName);
+	}
+
+	@Override
+	public List<Clinician> getClinicians() {
+		// TODO Auto-generated method stub
+		return clinicianRepository.findAll();
+	}
+
+	
 }

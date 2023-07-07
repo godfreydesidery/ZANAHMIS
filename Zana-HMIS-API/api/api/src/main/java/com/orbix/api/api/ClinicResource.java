@@ -5,6 +5,7 @@ package com.orbix.api.api;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.Clinic;
+import com.orbix.api.domain.Clinician;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.service.ClinicService;
 import com.orbix.api.service.PatientService;
@@ -62,5 +64,15 @@ public class ClinicResource {
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/clinics/save").toUriString());
 		return ResponseEntity.created(uri).body(clinicService.save(clinic));
+	}
+	
+	@GetMapping("/clinics/get_consultation_fee")
+	public ResponseEntity<Double> getConsultationFee(
+			@RequestParam(name = "clinic_name") String clinicName){
+		Clinic d = clinicRepository.findByName(clinicName);
+		
+		
+		
+		return ResponseEntity.ok().body(d.getConsultationFee());
 	}
 }

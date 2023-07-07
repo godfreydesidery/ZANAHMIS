@@ -86,6 +86,19 @@
                             <input type="checkbox" [(ngModel)]="active" style="text-align: right;">
                         </div>
                     </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Check Clinics</label>                               
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-12" *ngFor="let clinic of clinics">
+                                    <input type="checkbox" id="clinic.name" name="clinic.name" [(ngModel)]="clinic.assigned"><label for="{{clinic.name}}">{{clinic.name}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>

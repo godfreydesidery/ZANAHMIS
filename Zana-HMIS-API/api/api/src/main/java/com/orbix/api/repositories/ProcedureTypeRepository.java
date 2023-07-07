@@ -3,7 +3,10 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.ProcedureType;
@@ -19,5 +22,8 @@ public interface ProcedureTypeRepository extends JpaRepository<ProcedureType, Lo
 	 * @return
 	 */
 	ProcedureType findByName(String name);
+	
+	@Query("SELECT p.name FROM ProcedureType p")
+	List<String> getNames();
 
 }

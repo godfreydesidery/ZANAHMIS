@@ -5,6 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { environment } from 'src/environments/environment';
+import { IClinician } from '../../admin/personnel/clinician/clinician.component';
 
 const API_URL = environment.apiUrl;
 
@@ -48,6 +49,12 @@ export class PatientRegisterComponent implements OnInit {
 
   searchKeys : string[] = []
   clinicNames : string[] = []
+  clinicianNames : string[] = []
+
+  clinicName : string = ''
+  clinicianName : string = ''
+
+  consultationFee : number = 0
 
   constructor(
     //private shortcut : ShortCutHandlerService,
@@ -389,6 +396,62 @@ export class PatientRegisterComponent implements OnInit {
       error => {
         console.log(error)
         alert('Could not load clinics')
+      }
+    )
+  }
+
+  async loadConsultationFee(){//for unpaid registration
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.consultationFee = 0
+    if(this.clinicName === ''){
+      this.consultationFee = 0
+      return
+    }
+    this.spinner.show()
+    await this.http.get<number>(API_URL+'/clinics/get_consultation_fee?clinic_name='+this.clinicName, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.consultationFee = data!
+      },
+      error => {
+        console.log(error)
+        alert('Could not get consultation fee')
+      }
+    )
+  }
+
+  async loadClinicianNames(clinicName : string){
+    /**
+     * Gets a list of class names
+     */
+    //this.clinicNames = []
+    this.clinicianNames = []   
+    this.clinicianName = ''
+    if(clinicName == ''){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IClinician[]>(API_URL+'/clinicians/get_by_clinic_name?clinic_name='+this.clinicName, options)
+    //await this.http.get<IClinician[]>(API_URL+'/clinicians', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        data?.forEach(element => {
+          this.clinicianNames.push(element.name)
+        })
+      }
+    )
+    .catch(
+      error => {
+        alert('Could not load doctors')
       }
     )
   }

@@ -60,7 +60,7 @@
                                         </div>
                                         <div class="col-sm-4 form-group">
                                             <label>Select Patient Type*</label>
-                                            <select class="form-control" [(ngModel)]="gender">
+                                            <select class="form-control" [(ngModel)]="patientType">
                                                 <option></option>
                                                 <option>OUTPATIENT</option>
                                                 <option>OUTSIDER</option>
@@ -188,23 +188,41 @@
                             <div class="col-sm-4" *ngIf="id != null">
                                 <div class="panel-body jumbotron" style="border-radius: 2mm;">
                                     <div class="table-responsive">
-                                        <h4>Patient Inf   <button class="btn btn-success btn-outline  pull-right" data-toggle="modal" data-target="#edit-modal">Edit Patient</button></h4>
-                                        <table class="table table-bordered table-small">
+                                        <h4 class="text-success">Patient Details   <button class="btn btn-success btn-outline  pull-right" data-toggle="modal" data-target="#edit-modal">Edit Patient</button></h4>
+                                        <table class="table table-bordered table-small table-striped" style="text-align: center;">
                                             <tbody>
+                                                <tr><td>First Name</td><td>{{firstName}}</td></tr>
+                                                <tr><td>Last Name</td><td>{{lastName}}</td></tr>
+                                                <tr><td>Other Names</td><td>{{middleName}}</td></tr>
                                                 <tr><td>File No</td><td>{{no}}</td></tr>
-                                                <tr><td>Full Name</td><td>{{firstName+' '+middleName+' '+lastName}}</td></tr>  
-                                                <tr><td>Phone No</td><td>{{phoneNo}}</td></tr>  
-                                                <tr><td>Address</td><td>{{address}}</td></tr>  
+                                                <tr><td>Phone No</td><td>{{phoneNo}}</td></tr>
+                                                <tr><td>Date of Birth</td><td>{{dateOfBirth}}</td></tr>  
+                                                <tr><td>Gender</td><td>{{gender}}</td></tr>  
+                                                <tr><td>Address</td><td>{{address}}</td></tr>
+                                                <tr><td>Country Name</td><td>{{nationality}}</td></tr> 
+                                                <tr><td>National ID</td><td>{{nationalId}}</td></tr> 
+                                                <tr><td>Passport ID</td><td>{{passportNo}}</td></tr>
+
                                             </tbody>
                                         </table>
                                     </div>
                                     <div class="table-responsive">
-                                        <h4>Last Visiting</h4>
-                                        <table class="table table-bordered table-small">
+                                        <h4 class="text-success">Next of Kin Details</h4>
+                                        <table class="table table-bordered table-small table-striped" style="text-align: center;">
                                             <tbody>
-                                                <tr><td>Date & Time</td><td></td></tr>
-                                                <tr><td>Clinic</td><td></td></tr>  
-                                                <tr><td>Doctor</td><td></td></tr>  
+                                                <tr><td>Name</td><td>{{kinFullName}}</td></tr>
+                                                <tr><td>Phone No</td><td>{{kinPhoneNo}}</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <h4 class="text-success">Last Patient Payment Details</h4>
+                                        <table class="table table-bordered table-small table-striped" style="text-align: center;">
+                                            <tbody>
+                                                <tr><td>Last Visit</td><td></td></tr>
+                                                <tr><td>Last Visit Clinic</td><td></td></tr>  
+                                                <tr><td>Last Visit Doctor</td><td></td></tr>  
+                                                <tr><td>Last Card/Payment Type used</td><td></td></tr>  
                                             </tbody>
                                         </table>
                                     </div>
@@ -213,7 +231,6 @@
 
                             <div class="col-sm-4">
                                 <div>
-
                                     <div class="row" *ngIf="id != null">
                                         <div class="col-sm-12 form-group">
                                             <label>Select Payment Type</label>
@@ -256,26 +273,27 @@
                             <div class="col-sm-4">
                                 <div>
 
-                                    <div *ngIf="patientType != 'OUTSIDER' && id != null">
+                                    <div *ngIf="patientType != 'OUTSIDER' && id != null && paymentType != ''">
                                         <label>Send to Doctor</label>
                                         <div class="row">
                                             <div class="col-sm-12 form-group" >
                                                 <label>Select Clinic</label>
-                                                <select class="form-control">
+                                                <select class="form-control" [(ngModel)]="clinicName" ngModel (ngModelChange)="loadClinicianNames(clinicName)" (ngModelChange)="loadConsultationFee()">
                                                     <option></option>
                                                     <option *ngFor="let name of clinicNames">{{name}}</option>
                                                 </select>
                                             </div>
+                                            <div class="col-sm-12 form-group" *ngIf="clinicName != ''">
+                                                <span class="form-control" style="text-align: center;">Consultation Fee  <b>{{consultationFee | currency:'':''}}</b></span>
+                                            </div>
                                             <div class="col-sm-12 form-group">
                                                 <label>Select Doctor</label>
-                                                <select class="form-control">
+                                                <select class="form-control" [(ngModel)]="clinicianName">
                                                     <option></option>
-                                                    <option>Ali</option>
-                                                    <option>Juma</option>
-                                                    <option>Ester</option>
+                                                    <option *ngFor="let name of clinicianNames">{{name}}</option>
                                                 </select>
                                                 <br>
-                                                <button class="btn btn-primary pull-right">Send</button>
+                                                <button class="btn btn-primary pull-right" *ngIf="clinicName != '' && clinicianName != ''">Send</button>
                                             </div>
                                         </div>
                                     </div>

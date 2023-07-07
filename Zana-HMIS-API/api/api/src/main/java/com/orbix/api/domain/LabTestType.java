@@ -32,7 +32,11 @@ public class LabTestType {
 	private Long id;
 	@NotBlank
 	@Column(unique = true)
+	private String code = "";
+	@NotBlank
+	@Column(unique = true)
 	private String name = "";
+	private String description = "";
 	private String uom = "";
 	private double price = 0;
 	private boolean active = true;
