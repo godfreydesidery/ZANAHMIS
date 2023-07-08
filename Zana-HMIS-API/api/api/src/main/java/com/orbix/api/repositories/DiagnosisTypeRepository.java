@@ -3,7 +3,10 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.Patient;
@@ -13,5 +16,14 @@ import com.orbix.api.domain.Patient;
  *
  */
 public interface DiagnosisTypeRepository extends JpaRepository<DiagnosisType, Long> {
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	DiagnosisType findByName(String name);
+	
+	@Query("SELECT d.name FROM DiagnosisType d")
+	List<String> getNames();
 
 }

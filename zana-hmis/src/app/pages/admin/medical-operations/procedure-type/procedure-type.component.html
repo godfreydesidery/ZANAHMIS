@@ -12,7 +12,7 @@
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
                     <div class="btn"> 
-                        <button type="button" class="btn btn-success m-r-2 m-b-5" data-toggle="modal" data-target="#add-edit-modal">New</button>
+                        <button type="button" class="btn btn-success m-r-2 m-b-5" (click)="clear()" data-toggle="modal" data-target="#add-edit-modal">New</button>
                     </div>
                 </div>
                 <div class="panel-body">
@@ -67,7 +67,7 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
-                            <label>Test Type Name*</label>
+                            <label>Procedure Type Name*</label>
                             <input type="text" class="form-control" [(ngModel)]="name">
                         </div>
                     </div>

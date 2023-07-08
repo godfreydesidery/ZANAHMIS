@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor 
 @AllArgsConstructor
 @Table(name = "diagnosis_types")
-public class DiagnosisType {
+public class DiagnosisType {	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -35,5 +35,9 @@ public class DiagnosisType {
 	private String code;
 	@NotBlank
 	@Column(unique = true)
-	private String description;
+	private String name = "";
+	private String description = "";
+	private String uom = "";
+	private double price = 0;
+	private boolean active = true;
 }

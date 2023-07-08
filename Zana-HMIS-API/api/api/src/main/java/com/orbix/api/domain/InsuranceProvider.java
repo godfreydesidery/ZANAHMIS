@@ -30,7 +30,11 @@ public class InsuranceProvider {
 	private Long id;
 	@NotBlank
 	@Column(unique = true)
+	private String code;
+	@NotBlank
+	@Column(unique = true)
 	private String name;
-	
+	private String address;	
+	private String phone;	
 	private boolean active = true;
 }

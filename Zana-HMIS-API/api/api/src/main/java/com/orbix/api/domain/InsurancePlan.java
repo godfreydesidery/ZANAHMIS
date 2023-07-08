@@ -36,10 +36,13 @@ public class InsurancePlan {
 	private Long id;
 	@NotBlank
 	@Column(unique = true)
+	private String code;
+	@NotBlank
+	@Column(unique = true)
 	private String name;
 	private String description;
 	
-	@ManyToOne(targetEntity = InsuranceProvider.class, fetch = FetchType.LAZY,  optional = true)
+	@ManyToOne(targetEntity = InsuranceProvider.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "insurance_provider_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private InsuranceProvider insuranceProvider;
