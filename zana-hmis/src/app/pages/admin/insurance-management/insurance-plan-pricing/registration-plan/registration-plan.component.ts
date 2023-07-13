@@ -110,68 +110,119 @@ export class RegistrationPlanComponent implements OnInit {
   }
 
 
-  /*public async saveRegistrationPlan(){
+  public async saveRegistrationPlan(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    var diagnosisType = {
+    var registrationPlan = {
       id          : this.id,
-      insurancePlan          : {name : this.insurancePlan.name},
+      insurancePlan          : {
+        name : this.insurancePlanName
+      },
       registrationFee        : this.registrationFee
     }
     if(this.id == null || this.id == ''){
       //save a new diagnosisType
       this.spinner.show()
-      await this.http.post<IRegistrationPlan>(API_URL+'/registration_plan_prices/save', diagnosisType, options)
+      await this.http.post<IRegistrationPlan>(API_URL+'/registration_plan_prices/save', registrationPlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
           this.id           = data?.id
-          this.registrationPlan       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
-          this.active       = data!.active
-          alert('Diagnosis Type created successifully')
-          this.loadDiagnosisTypes()
+          alert('Registration plan created successifully')
+          this.loadRegistrationPlans()
           
         }
       )
       .catch(
         error => {
-          alert('Could not create diagnosis type')
+          alert('Could not create registration plan')
         }
       )
 
     }else{
       //update an existing clinic
       this.spinner.show()
-      await this.http.post<IRegistrationPlan>(API_URL+'/registration_plan_prices/save', diagnosisType, options)
+      await this.http.post<IRegistrationPlan>(API_URL+'/registration_plan_prices/save', registrationPlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
-          this.active       = data!.active
-          alert('Diagnosis Type updated successifully')
-          this.loadDiagnosisTypes()
+          
+          alert('Registration plan updated successifully')
+          this.loadRegistrationPlans()
         }
       )
       .catch(
         error => {
-          alert('Could not update diagnosis type')
+          alert('Could not update registration plan')
         }
       )
     }
     this.clear()
-  }*/
+  }
+
+  clear(){
+    this.id = null
+    this.insuranceProviderName = ''
+    this.insurancePlanName = ''
+    this.registrationFee = 0
+  }
+
+  async getRegistrationPlan(key: string) {
+    if(key == ''){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IRegistrationPlan>(API_URL+'/registration_plan_prices/get?id='+key, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data=>{
+        console.log(data)
+        this.id                    = data?.id
+        this.insuranceProviderName = data!.insurancePlan.insuranceProvider.name
+        this.insurancePlanName     = data!.insurancePlan.name
+        this.registrationFee       = data!.registrationFee
+      }
+    )
+    .catch(
+      error=>{
+        console.log(error)        
+        alert('Could not find registration plan')
+      }
+    )
+  }
+
+  async deleteRegistrationPlan(key: string) {
+    if(key == ''){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.post<IRegistrationPlan>(API_URL+'/registration_plan_prices/delete?id='+key, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data=>{
+        console.log(data)
+        this.loadRegistrationPlans()
+      }
+    )
+    .catch(
+      error=>{
+        console.log(error)        
+        alert('Could not delete registration plan')
+      }
+    )
+  }
 
 }
 
@@ -179,6 +230,7 @@ export interface IRegistrationPlan{
   id : any
   insurancePlan : IInsurancePlan
   registrationFee : number 
+  insuranceProvider : IInsuranceProvider
 }
 
 export interface IInsurancePlan{

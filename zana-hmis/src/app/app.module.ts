@@ -34,6 +34,7 @@ import { MedicinePlanComponent } from './pages/admin/insurance-management/insura
 import { UserProfileComponent } from './pages/admin/user-and-access/user-profile/user-profile.component';
 import { RoleComponent } from './pages/admin/user-and-access/role/role.component';
 import { AccessManagementComponent } from './pages/admin/user-and-access/access-management/access-management.component';
+import { MedicineComponent } from './pages/admin/medical-operations/medicine/medicine.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { AccessManagementComponent } from './pages/admin/user-and-access/access-
     MedicinePlanComponent,
     UserProfileComponent,
     RoleComponent,
-    AccessManagementComponent
+    AccessManagementComponent,
+    MedicineComponent
   ],
   imports: [
     HttpClientModule,
@@ -95,6 +97,7 @@ import { AccessManagementComponent } from './pages/admin/user-and-access/access-
     {path : 'user-profile', component : UserProfileComponent},
     {path : 'role', component : RoleComponent},
     {path : 'access-management', component : AccessManagementComponent},
+    {path : 'medicine', component : MedicineComponent},
     ])
   ],
   providers: [

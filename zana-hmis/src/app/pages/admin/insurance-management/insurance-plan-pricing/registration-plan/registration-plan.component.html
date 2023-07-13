@@ -12,7 +12,7 @@
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
                     <div class="btn"> 
-                        <button type="button" class="btn btn-success m-r-2 m-b-5" data-toggle="modal" data-target="#add-edit-modal">New</button>
+                        <button type="button" class="btn btn-success m-r-2 m-b-5" (click)="clear()" data-toggle="modal" data-target="#add-edit-modal">New</button>
                     </div>
                 </div>
                 <div class="panel-body">
@@ -23,6 +23,7 @@
                                     <td>Provider</td>
                                     <td>Plan</td>
                                     <td>Registration Fee</td>
+                                    <td>Action</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -30,7 +31,9 @@
                                     <td>{{registrationPlan.insurancePlan.insuranceProvider.name}}</td>
                                     <td>{{registrationPlan.insurancePlan.name}}</td>
                                     <td style="text-align: right;">{{registrationPlan.registrationFee | currency:'':''}}</td>
-                                    <!--<td><button class="" (click)="getDiagnosisType(diagnosisType.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</button></td>-->
+                                    <td><button class="" (click)="getRegistrationPlan(registrationPlan.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</button>
+                                        <button class="" (click)="deleteRegistrationPlan(registrationPlan.id)">Delete</button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -47,13 +50,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h1 class="modal-title">Add Plan</h1>
+                <h1 class="modal-title" *ngIf="id === null">Add Plan</h1>
+                <h1 class="modal-title" *ngIf="id != null">Edit Plan</h1>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
                         <label>Select Insurance Provider*</label>
                         <select class="form-control" [(ngModel)]="insuranceProviderName" (ngModelChange)="loadInsurancePlanNamesByProviders(insuranceProviderName)">
+                            <option>{{insuranceProviderName}}</option>
                             <option></option>
                             <option *ngFor="let insuranceProviderName of insuranceProviderNames">{{insuranceProviderName}}</option>
                         </select>
@@ -63,6 +68,7 @@
                     <div class="col-sm-12">
                         <label>Select Insurance Plan*</label>
                         <select class="form-control" [(ngModel)]="insurancePlanName">
+                            <option>{{insurancePlanName}}</option>
                             <option></option>
                             <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
                         </select>
@@ -77,7 +83,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-success" (click)="saveRegistrationPlan()" data-dismiss="modal">Save</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

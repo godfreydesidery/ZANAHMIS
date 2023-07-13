@@ -30,8 +30,13 @@ public class Medicine {
 	private Long id;
 	@NotBlank
 	@Column(unique = true)
+	private String code = "";
+	@NotBlank
+	@Column(unique = true)
 	private String name = "";
+	private String description = "";
 	private String uom = "";
+	private String category = "";
 	private double price = 0;
 	private double stock = 0;
 	private boolean active = true;

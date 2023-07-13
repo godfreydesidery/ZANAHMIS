@@ -35,12 +35,12 @@ public class MedicinePlanPrice {
 	
 	private double price = 0;
 	
-	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.LAZY,  optional = true)
+	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private InsurancePlan insurancePlan;
 	
-	@ManyToOne(targetEntity = Medicine.class, fetch = FetchType.LAZY,  optional = true)
+	@ManyToOne(targetEntity = Medicine.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "medicine_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Medicine medicine;

@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.RegistrationPlanPrice;
+import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.InsuranceProvider;
 import com.orbix.api.repositories.RegistrationPlanPriceRepository;
@@ -57,15 +59,35 @@ public class RegistrationPlanResource {
 	@PostMapping("/registration_plan_prices/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<RegistrationPlanPrice>save(
-			@RequestBody RegistrationPlanPrice registrationPlanPrice, 
-			@RequestBody InsurancePlan insurancePlan, 
-			@RequestBody double registrationFee){
+			@RequestBody RegistrationPlanPrice registrationPlan){
+		RegistrationPlanPrice regPlan = new RegistrationPlanPrice();
+		regPlan.setId(registrationPlan.getId());
 		
-		InsurancePlan plan = insurancePlanRepository.findByName(insurancePlan.getName());
-		registrationPlanPrice.setInsurancePlan(plan);
-		registrationPlanPrice.setRegistrationFee(registrationFee);
+		InsurancePlan plan = insurancePlanRepository.findByName(registrationPlan.getInsurancePlan().getName());
+		regPlan.setInsurancePlan(plan);
+		regPlan.setRegistrationFee(registrationPlan.getRegistrationFee());
 		
+		if(registrationPlan.getId() == null) {
+			if(registrationPlanPriceRepository.findByInsurancePlan(plan).isPresent()) {
+				throw new InvalidOperationException("Could not create plan, a similar plan already exist. Please consider ediiting the existing plan");
+			}
+		}
+				
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/registration_plan_prices/save").toUriString());
-		return ResponseEntity.created(uri).body(registrationPlanPriceRepository.save(registrationPlanPrice));
+		return ResponseEntity.created(uri).body(registrationPlanPriceRepository.saveAndFlush(regPlan));
+	}
+	
+	@PostMapping("/registration_plan_prices/delete")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<Boolean>delete(
+			@RequestParam Long id){
+		
+		
+		RegistrationPlanPrice plan = registrationPlanPriceRepository.findById(id).get();
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/registration_plan_prices/delete").toUriString());
+		registrationPlanPriceRepository.delete(plan);
+		return ResponseEntity.created(uri).body(true);
+		
 	}
 }

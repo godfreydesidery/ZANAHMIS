@@ -12,34 +12,99 @@
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
                     <div class="btn"> 
-                        <button type="button" class="btn btn-success m-r-2 m-b-5" data-toggle="modal" data-target="#add-edit-modal">New</button>
+                        <button type="button" class="btn btn-success m-r-2 m-b-5" (click)="clear()" data-toggle="modal" data-target="#add-edit-modal">New</button>
                     </div>
                 </div>
                 <div class="panel-body">
                     <div class="col-sm-12">
-                        
+                        <table class="table table-bordered table-small">
+                            <thead>
+                                <tr>
+                                    <td>Provider</td>
+                                    <td>Plan</td>
+                                    <td>Clinic</td>
+                                    <td>General Consultation Fee</td>
+                                    <td>Specialist Consultation Fee</td>
+                                    <td>Action</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let consultationPlan of consultationPlans">
+                                    <td>{{consultationPlan.insurancePlan.insuranceProvider.name}}</td>
+                                    <td>{{consultationPlan.insurancePlan.name}}</td>
+                                    <td>{{consultationPlan.clinic.name}}</td>
+                                    <td style="text-align: right;">{{consultationPlan.generalConsultationFee | currency:'':''}}</td>
+                                    <td style="text-align: right;">{{consultationPlan.specialistConsultationFee | currency:'':''}}</td>
+                                    <td><button class="" (click)="getConsultationPlan(consultationPlan.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</button>
+                                        <button class="" (click)="deleteConsultationPlan(consultationPlan.id)">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-             </div>
-         </div>
-     </div>     
- </section> <!-- /.content -->
+            </div>
+        </div>
+    </div>     
+</section> <!-- /.content -->
 
  <!-- Modal success -->
- <div class="modal fade modal-success" id="add-edit-modal" tabindex="-1" role="dialog">
+<div class="modal fade modal-success" id="add-edit-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h1 class="modal-title">Add Plan</h1>
+                <h1 class="modal-title" *ngIf="id === null">Add Plan</h1>
+                <h1 class="modal-title" *ngIf="id != null">Edit Plan</h1>
             </div>
             <div class="modal-body">
-                    
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label>Select Insurance Provider*</label>
+                        <select class="form-control" [(ngModel)]="insuranceProviderName" (ngModelChange)="loadInsurancePlanNamesByProviders(insuranceProviderName)">
+                            <option>{{insuranceProviderName}}</option>
+                            <option></option>
+                            <option *ngFor="let insuranceProviderName of insuranceProviderNames">{{insuranceProviderName}}</option>
+                        </select>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label>Select Insurance Plan*</label>
+                        <select class="form-control" [(ngModel)]="insurancePlanName">
+                            <option>{{insurancePlanName}}</option>
+                            <option></option>
+                            <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
+                        </select>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label>Select Clinic*</label>
+                        <select class="form-control" [(ngModel)]="clinicName">
+                            <option>{{clinicName}}</option>
+                            <option></option>
+                            <option *ngFor="let clinicName of clinicNames">{{clinicName}}</option>
+                        </select>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label>General Consultation Fee*</label>
+                        <input type="number" class="form-control" [(ngModel)]="generalConsultationFee" style="text-align: center;">
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label>Specialist Consultation Fee*</label>
+                        <input type="number" class="form-control" [(ngModel)]="specialistConsultationFee" style="text-align: center;">
+                    </div>
+                </div> 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" (click)="saveConsultationPlan()" data-dismiss="modal">Save</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

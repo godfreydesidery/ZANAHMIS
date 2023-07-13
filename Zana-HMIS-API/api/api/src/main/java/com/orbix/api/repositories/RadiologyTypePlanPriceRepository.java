@@ -26,4 +26,6 @@ public interface RadiologyTypePlanPriceRepository extends JpaRepository<Radiolog
 	Optional<RadiologyTypePlanPrice> findByInsurancePlanAndRadiologyType(InsurancePlan insurancePlan,
 			RadiologyType radiologyType);
 
+	
+
 }
