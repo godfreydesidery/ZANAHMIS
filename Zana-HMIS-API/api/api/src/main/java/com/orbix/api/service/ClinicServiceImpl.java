@@ -52,7 +52,7 @@ public class ClinicServiceImpl implements ClinicService{
 
 	@Override
 	public Clinic getClinicByName(String name) {
-		return clinicRepository.findByName(name);
+		return clinicRepository.findByName(name).get();
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class ClinicServiceImpl implements ClinicService{
 	@Override
 	public Clinic getByName(String clinicName) {
 		// TODO Auto-generated method stub
-		return clinicRepository.findByName(clinicName);
+		return clinicRepository.findByName(clinicName).get();
 	}
 
 	@Override

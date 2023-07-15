@@ -4,6 +4,7 @@
 package com.orbix.api.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,7 +23,7 @@ public interface InsurancePlanRepository extends JpaRepository<InsurancePlan, Lo
 	 * @param name
 	 * @return
 	 */
-	InsurancePlan findByName(String name);
+	Optional<InsurancePlan> findByName(String name);
 	
 	@Query("SELECT i.name FROM InsurancePlan i")
 	List<String> getNames();

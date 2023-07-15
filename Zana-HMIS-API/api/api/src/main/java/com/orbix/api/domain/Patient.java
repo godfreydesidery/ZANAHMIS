@@ -6,6 +6,7 @@ package com.orbix.api.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -56,10 +57,10 @@ public class Patient {
 	private String gender;
 	private String patientType;
 	/**
-	 * Initial payment method
+	 * Payment method
 	 */
 	private String paymentType = "";
-	private String memberShipNo = "";
+	private String membershipNo = "";
 	/**
 	 * Contact details
 	 */
@@ -93,7 +94,7 @@ public class Patient {
 	private String cardNo = "";
 	private String cardValidationStatus = "";
 	
-	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.LAZY,  optional = true)
+	@OneToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private InsurancePlan insurancePlan;

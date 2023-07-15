@@ -69,7 +69,7 @@ public class ClinicResource {
 	@GetMapping("/clinics/get_consultation_fee")
 	public ResponseEntity<Double> getConsultationFee(
 			@RequestParam(name = "clinic_name") String clinicName){
-		Clinic d = clinicRepository.findByName(clinicName);
+		Clinic d = clinicRepository.findByName(clinicName).get();
 		
 		
 		

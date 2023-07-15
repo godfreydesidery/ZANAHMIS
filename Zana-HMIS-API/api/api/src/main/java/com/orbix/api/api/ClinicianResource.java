@@ -66,7 +66,7 @@ public class ClinicianResource {
 	@GetMapping("/clinicians/get_by_clinic_name")    // to do later
 	public ResponseEntity<List<Clinician>> getClinicianByClinicName(
 			@RequestParam(name = "clinic_name") String clinicName){
-		Clinic d = clinicRepository.findByName(clinicName);
+		Clinic d = clinicRepository.findByName(clinicName).get();
 		List<Clinician> cs = clinicianRepository.findAll();
 		List<Clinician> cst = new ArrayList<>();
 		for(Clinician c : cs) {

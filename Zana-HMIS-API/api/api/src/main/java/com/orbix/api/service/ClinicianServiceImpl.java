@@ -50,7 +50,7 @@ public class ClinicianServiceImpl implements ClinicianService{
 
 	@Override
 	public Clinician getClinicianByName(String name) {
-		return clinicianRepository.findByName(name);
+		return clinicianRepository.findByName(name).get();
 	}
 
 	@Override

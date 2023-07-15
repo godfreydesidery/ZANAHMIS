@@ -124,18 +124,17 @@
                                             <label>Select Payment Type</label>
                                             <select class="form-control" [(ngModel)]="paymentType" (ngModelChange)="changePaymentType(paymentType)">
                                                 <option></option>
-                                                <option>Cash</option>
-                                                <option>Debit Card</option>
-                                                <option>Credit Card</option>
-                                                <option>Insurance</option>
+                                                <option>CASH</option>
+                                                <option>DEBIT CARD</option>
+                                                <option>CREDIT CARD</option>
+                                                <option>INSURANCE</option>
                                             </select>
                                         </div>
-                                        <div class="col-sm-4 form-group" *ngIf="paymentType === 'Insurance'">
+                                        <div class="col-sm-4 form-group" *ngIf="paymentType === 'INSURANCE'">
                                             <label>Select Insurance Plan</label>
-                                            <select class="form-control" [(ngModel)]="insurancePlan">
+                                            <select class="form-control" [(ngModel)]="insurancePlanName">
                                                 <option></option>
-                                                <option>NHIF</option>
-                                                <option>JUBILEE</option>
+                                                <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
                                             </select>
                                         </div>
                                         <div class="col-sm-4 form-group" *ngIf="paymentType === 'Debit Card'">
@@ -146,9 +145,9 @@
                                             <label>Credit Card No</label>
                                             <input type="text" class="form-control" placeholder="Credit Card No">
                                         </div>
-                                        <div class="col-sm-4 form-group" *ngIf="insurancePlan != '' && paymentType === 'Insurance'">
+                                        <div class="col-sm-4 form-group" *ngIf="insurancePlanName != '' && paymentType === 'INSURANCE'">
                                             <label>Membership No</label>
-                                            <input type="text" class="form-control" placeholder="Insurance Membership No">
+                                            <input type="text" class="form-control" [(ngModel)]="membershipNo" placeholder="INSURANCE Membership No">
                                         </div>
                                     </div>
                                     
@@ -233,38 +232,42 @@
                                 <div>
                                     <div class="row" *ngIf="id != null">
                                         <div class="col-sm-12 form-group">
-                                            <label>Select Payment Type</label>
-                                            <select class="form-control" [(ngModel)]="paymentType" (ngModelChange)="changePaymentType(paymentType)">
+                                            <label>Payment Type</label>
+                                            <span class="form-control">{{paymentType}}</span>
+                                            <!--<select class="form-control"  (ngModelChange)="changePaymentType(paymentType)">
                                                 <option></option>
                                                 <option>Cash</option>
                                                 <option>Debit Card</option>
                                                 <option>Credit Card</option>
-                                                <option>Insurance</option>
-                                            </select>
+                                                <option>INSURANCE</option>
+                                            </select>-->
                                         </div>
-                                        <div class="col-sm-12 form-group" *ngIf="paymentType === 'Insurance'">
-                                            <label>Select Insurance Plan</label>
-                                            <select class="form-control" [(ngModel)]="insurancePlan">
+                                        <div class="col-sm-12 form-group" *ngIf="paymentType === 'INSURANCE'">
+                                            <label>Insurance Plan</label>
+                                            <span class="form-control">{{insurancePlanName}}</span>
+                                            <!--<select class="form-control" [(ngModel)]="insurancePlanName">
                                                 <option></option>
-                                                <option>NHIF</option>
-                                                <option>JUBILEE</option>
-                                            </select>
+                                                <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
+                                            </select>-->
                                         </div>
                                         <div class="col-sm-12 form-group" *ngIf="paymentType === 'Debit Card'">
                                             <label>Debit Card No</label>
-                                            <input type="text" class="form-control" placeholder="Debit Card No">
+                                            <span class="form-control"></span>
+                                            <!--<input type="text" class="form-control" placeholder="Debit Card No">-->
                                         </div>
                                         <div class="col-sm-12 form-group" *ngIf="paymentType === 'Credit Card'">
                                             <label>Credit Card No</label>
-                                            <input type="text" class="form-control" placeholder="Credit Card No">
+                                            <span class="form-control"></span>
+                                            <!--<input type="text" class="form-control" placeholder="Credit Card No">-->
                                         </div>
-                                        <div class="col-sm-12 form-group" *ngIf="insurancePlan != '' && paymentType === 'Insurance'">
+                                        <div class="col-sm-12 form-group" *ngIf="insurancePlanName != '' && paymentType === 'INSURANCE'">
                                             <label>Membership No</label>
-                                            <input type="text" class="form-control" placeholder="Insurance Membership No">
+                                            <span class="form-control">{{membershipNo}}</span>
+                                            <!--<input type="text" class="form-control" [(ngModel)]="membershipNo" placeholder="Insurance Membership No">-->
                                         </div>
-                                        <div class="col-sm-12 form-group">
+                                        <!--<div class="col-sm-12 form-group">
                                             <button class="btn btn-primary pull-right">Save</button>
-                                        </div>                                                
+                                        </div>       -->                                         
                                     </div>
 
                                 </div>
@@ -293,7 +296,7 @@
                                                     <option *ngFor="let name of clinicianNames">{{name}}</option>
                                                 </select>
                                                 <br>
-                                                <button class="btn btn-primary pull-right" *ngIf="clinicName != '' && clinicianName != ''">Send</button>
+                                                <button class="btn btn-primary pull-right" *ngIf="clinicName != '' && clinicianName != ''" (click)="doConsultation()">Send</button>
                                             </div>
                                         </div>
                                     </div>
@@ -420,18 +423,17 @@
                                 <label>Select Payment Type</label>
                                 <select class="form-control" [(ngModel)]="paymentType" (ngModelChange)="changePaymentType(paymentType)">
                                     <option></option>
-                                    <option>Cash</option>
-                                    <option>Debit Card</option>
-                                    <option>Credit Card</option>
-                                    <option>Insurance</option>
+                                    <option>CASH</option>
+                                    <option>DEBIT CARD</option>
+                                    <option>CREDIT CARD</option>
+                                    <option>INSURANCE</option>
                                 </select>
                             </div>
-                            <div class="col-sm-4 form-group" *ngIf="paymentType === 'Insurance'">
+                            <div class="col-sm-4 form-group" *ngIf="paymentType === 'INSURANCE'">
                                 <label>Select Insurance Plan</label>
-                                <select class="form-control" [(ngModel)]="insurancePlan">
+                                <select class="form-control" [(ngModel)]="insurancePlanName">
                                     <option></option>
-                                    <option>NHIF</option>
-                                    <option>JUBILEE</option>
+                                    <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
                                 </select>
                             </div>
                             <div class="col-sm-4 form-group" *ngIf="paymentType === 'Debit Card'">
@@ -442,17 +444,13 @@
                                 <label>Credit Card No</label>
                                 <input type="text" class="form-control" placeholder="Credit Card No">
                             </div>
-                            <div class="col-sm-4 form-group" *ngIf="insurancePlan != '' && paymentType === 'Insurance'">
+                            <div class="col-sm-4 form-group" *ngIf="insurancePlanName != '' && paymentType === 'INSURANCE'">
                                 <label>Membership No</label>
-                                <input type="text" class="form-control" placeholder="Insurance Membership No">
+                                <input type="text" class="form-control" [(ngModel)]="membershipNo" placeholder="Insurance Membership No">
                             </div>
                         </div>
                     </div>
                 </div>
-
-
-
-
 
 
                     

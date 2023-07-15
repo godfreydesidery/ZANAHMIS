@@ -24,4 +24,11 @@ public interface ConsultationPlanPriceRepository extends JpaRepository<Consultat
 	 */
 	Optional<ConsultationPlanPrice> findByInsurancePlanAndClinic(InsurancePlan plan, Clinic clinic);
 
+	/**
+	 * @param c
+	 * @param insurancePlan
+	 * @return
+	 */
+	Optional<ConsultationPlanPrice> findByClinicAndInsurancePlan(Clinic c, InsurancePlan insurancePlan);
+
 }

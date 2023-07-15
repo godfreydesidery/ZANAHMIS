@@ -63,7 +63,7 @@ public class RegistrationPlanResource {
 		RegistrationPlanPrice regPlan = new RegistrationPlanPrice();
 		regPlan.setId(registrationPlan.getId());
 		
-		InsurancePlan plan = insurancePlanRepository.findByName(registrationPlan.getInsurancePlan().getName());
+		InsurancePlan plan = insurancePlanRepository.findByName(registrationPlan.getInsurancePlan().getName()).get();
 		regPlan.setInsurancePlan(plan);
 		regPlan.setRegistrationFee(registrationPlan.getRegistrationFee());
 		

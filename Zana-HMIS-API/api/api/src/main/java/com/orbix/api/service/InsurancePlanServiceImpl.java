@@ -47,7 +47,7 @@ public class InsurancePlanServiceImpl implements InsurancePlanService{
 
 	@Override
 	public InsurancePlan getInsurancePlanByName(String name) {
-		return insurancePlanRepository.findByName(name);
+		return insurancePlanRepository.findByName(name).get();
 	}
 
 	@Override

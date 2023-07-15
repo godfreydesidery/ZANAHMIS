@@ -27,7 +27,7 @@ export class PatientRegisterComponent implements OnInit {
   dateOfBirth! :Date
   gender : string
   paymentType : string
-  memberShipNo : string
+  membershipNo : string
   phoneNo : string		
 	address : string
 	email : string
@@ -40,7 +40,9 @@ export class PatientRegisterComponent implements OnInit {
 
 
   patientRecordMode : string = ''
-  insurancePlan : string = ''
+  insurancePlan! : IInsurancePlan
+
+  insurancePlanName : string = ''
 
   registrationFee : number = 0
   registrationFeeStatus = ''
@@ -55,6 +57,8 @@ export class PatientRegisterComponent implements OnInit {
   clinicianName : string = ''
 
   consultationFee : number = 0
+
+  insurancePlanNames : string[] = []
 
   constructor(
     //private shortcut : ShortCutHandlerService,
@@ -72,7 +76,7 @@ export class PatientRegisterComponent implements OnInit {
     this.patientType = ''
     this.gender = ''
     this.paymentType = ''
-    this.memberShipNo = ''
+    this.membershipNo = ''
     this.phoneNo = ''
     this.address = ''
     this.email = ''
@@ -87,6 +91,7 @@ export class PatientRegisterComponent implements OnInit {
   ngOnInit(): void {
     this.loadSearchKeys()
     this.loadClinicNames()
+    this.loadInsurancePlanNames()
   }
 
   clear(){
@@ -99,7 +104,7 @@ export class PatientRegisterComponent implements OnInit {
     this.patientType = ''
     this.gender = ''
     this.paymentType = ''
-    this.memberShipNo = ''
+    this.membershipNo = ''
     this.phoneNo = ''
     this.address = ''
     this.email = ''
@@ -148,7 +153,7 @@ export class PatientRegisterComponent implements OnInit {
       patientType         : this.patientType,
       dateOfBirth         : this.dateOfBirth,
       paymentType         : this.paymentType,
-      memberShipNo        : this.memberShipNo,
+      membershipNo        : this.membershipNo,
       phoneNo             : this.phoneNo,
       address             : this.address,
       email               : this.email,
@@ -158,6 +163,10 @@ export class PatientRegisterComponent implements OnInit {
       kinFullName         : this.kinFullName,
       kinRelationship     : this.kinRelationship,
       kinPhoneNo          : this.kinPhoneNo,
+
+      insurancePlan   : {
+        name : this.insurancePlanName
+      }
     }
 
     if(this.id == null || this.id == ''){
@@ -183,7 +192,7 @@ export class PatientRegisterComponent implements OnInit {
           this.gender = data!['gender']
           this.paymentType = data!['paymentType']
           this.patientType = data!['patientType']
-          this.memberShipNo = data!['memberShipNo']
+          this.membershipNo = data!['membershipNo']
           this.phoneNo = data!['phoneNo']
           this.address = data!['address']
           this.email = data!['email']
@@ -197,14 +206,14 @@ export class PatientRegisterComponent implements OnInit {
           this.registrationFeeStatus = data!['registrationFeeStatus']
           this.cardValidationStatus = data!['cardValidationStatus']
           
+          this.insurancePlanName = data!['insurancePlan']?.name
 
           this.patientRecordMode = ''
         }
       )
       .catch(
         error => {
-          console.log(error)
-          alert('Could not register patient')
+          alert(error['error'])
         }
       )
 
@@ -217,6 +226,7 @@ export class PatientRegisterComponent implements OnInit {
     }
     var patient = {
       id                  : this.id,
+      no                  : this.no,
       firstName           : this.firstName,
       middleName          : this.middleName,
       lastName            : this.lastName,
@@ -224,7 +234,7 @@ export class PatientRegisterComponent implements OnInit {
       patientType         : this.patientType,
       dateOfBirth         : this.dateOfBirth,
       paymentType         : this.paymentType,
-      memberShipNo        : this.memberShipNo,
+      membershipNo        : this.membershipNo,
       phoneNo             : this.phoneNo,
       address             : this.address,
       email               : this.email,
@@ -234,6 +244,9 @@ export class PatientRegisterComponent implements OnInit {
       kinFullName         : this.kinFullName,
       kinRelationship     : this.kinRelationship,
       kinPhoneNo          : this.kinPhoneNo,
+      insurancePlan : {
+        name : this.insurancePlanName
+      }
     }
     /**
      * Update
@@ -254,7 +267,7 @@ export class PatientRegisterComponent implements OnInit {
         this.gender = data!['gender']
         this.paymentType = data!['paymentType']
         this.patientType = data!['patientType']
-        this.memberShipNo = data!['memberShipNo']
+        this.membershipNo = data!['membershipNo']
         this.phoneNo = data!['phoneNo']
         this.address = data!['address']
         this.email = data!['email']
@@ -267,6 +280,8 @@ export class PatientRegisterComponent implements OnInit {
 
         this.registrationFeeStatus = data!['registrationFeeStatus']
         this.cardValidationStatus = data!['cardValidationStatus']
+
+        this.insurancePlanName = data!['insurancePlan']?.name
         
 
         this.patientRecordMode = ''
@@ -275,7 +290,7 @@ export class PatientRegisterComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        alert('Could not update patient record')
+        alert(error['error'])
       }
     )
   }
@@ -352,7 +367,7 @@ export class PatientRegisterComponent implements OnInit {
           this.dateOfBirth =data!['dateOfBirth']
           this.paymentType = data!['paymentType']
           this.patientType = data!['patientType']
-          this.memberShipNo = data!['memberShipNo']
+          this.membershipNo = data!['membershipNo']
           this.phoneNo = data!['phoneNo']
           this.address = data!['address']
           this.email = data!['email']
@@ -365,13 +380,16 @@ export class PatientRegisterComponent implements OnInit {
 
           this.registrationFeeStatus = data!['registrationFeeStatus']
           this.cardValidationStatus = data!['cardValidationStatus']
+
+          
+          this.insurancePlanName = data!['insurancePlan']?.name
       }
     )
     .catch(
       error => {
         console.log(error)
         this.clear()
-        alert('Could not find patient')
+        alert(error['error'])
       }
     )
   }
@@ -456,6 +474,51 @@ export class PatientRegisterComponent implements OnInit {
     )
   }
 
+  async loadInsurancePlanNames(){
+    this.insurancePlanNames = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/insurance_plans/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        data?.forEach(element => {
+          this.insurancePlanNames.push(element)
+        })
+      }
+    )
+    .catch(
+      error => {
+        alert('Could not load insurance Plans')
+      }
+    )
+  }
+
+  async doConsultation(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    
+    this.spinner.show()
+    await this.http.post<IPatient>(API_URL+'/patients/do_consultation?patient_id='+this.id+'&clinic_name='+this.clinicName+'&clinician_name='+this.clinicianName, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        
+      }
+    )
+    .catch(
+      error => {
+        alert(error['error'])
+      }
+    )
+
+  }
+
 }
 
 export interface IPatient {
@@ -468,7 +531,7 @@ export interface IPatient {
   gender : string
   patientType : string
   paymentType : string
-  memberShipNo : string
+  membershipNo : string
   phoneNo : string		
 	address : string
 	email : string
@@ -480,9 +543,14 @@ export interface IPatient {
 	kinPhoneNo : string
   patientRecordMode : string
   paymentMode : string
-  insurancePlan : string 
+  insurancePlan : IInsurancePlan 
 
   registrationFee : number
   registrationFeeStatus : string
   cardValidationStatus : string
+}
+
+export interface IInsurancePlan{
+  code : string
+  name : string
 }

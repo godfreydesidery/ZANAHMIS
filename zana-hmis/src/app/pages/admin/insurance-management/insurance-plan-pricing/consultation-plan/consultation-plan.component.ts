@@ -16,8 +16,7 @@ export class ConsultationPlanComponent implements OnInit {
 
   id : any = null
   insurancePlan! : IInsurancePlan
-  generalConsultationFee : number = 0
-  specialistConsultationFee : number = 0
+  consultationFee : number = 0
 
   insuranceProviderName : string = ''
   insurancePlanName : string = ''
@@ -127,8 +126,7 @@ export class ConsultationPlanComponent implements OnInit {
       insurancePlan          : {
         name : this.insurancePlanName
       },
-      generalConsultationFee        : this.generalConsultationFee,
-      specialistConsultationFee     : this.specialistConsultationFee
+      consultationFee        : this.consultationFee,
     }
     if(this.id == null || this.id == ''){
       //save a new diagnosisType
@@ -178,8 +176,7 @@ export class ConsultationPlanComponent implements OnInit {
     this.clinicName = ''
     this.insuranceProviderName = ''
     this.insurancePlanName = ''
-    this.generalConsultationFee = 0
-    this.specialistConsultationFee = 0
+    this.consultationFee = 0
   }
 
   async getConsultationPlan(key: string) {
@@ -200,8 +197,7 @@ export class ConsultationPlanComponent implements OnInit {
         this.clinicName            = data!.clinic.name
         this.insuranceProviderName = data!.insurancePlan.insuranceProvider.name
         this.insurancePlanName     = data!.insurancePlan.name
-        this.generalConsultationFee       = data!.generalConsultationFee
-        this.specialistConsultationFee       = data!.specialistConsultationFee
+        this.consultationFee       = data!.consultationFee
       }
     )
     .catch(
@@ -266,8 +262,7 @@ export interface IConsultationPlan{
   id : any
   clinic : IClinic
   insurancePlan : IInsurancePlan
-  generalConsultationFee : number 
-  specialistConsultationFee : number 
+  consultationFee : number 
 }
 
 export interface IInsurancePlan{

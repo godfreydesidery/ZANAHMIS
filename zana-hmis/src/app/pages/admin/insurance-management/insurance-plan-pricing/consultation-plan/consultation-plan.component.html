@@ -23,8 +23,7 @@
                                     <td>Provider</td>
                                     <td>Plan</td>
                                     <td>Clinic</td>
-                                    <td>General Consultation Fee</td>
-                                    <td>Specialist Consultation Fee</td>
+                                    <td>Consultation Fee</td>
                                     <td>Action</td>
                                 </tr>
                             </thead>
@@ -33,8 +32,7 @@
                                     <td>{{consultationPlan.insurancePlan.insuranceProvider.name}}</td>
                                     <td>{{consultationPlan.insurancePlan.name}}</td>
                                     <td>{{consultationPlan.clinic.name}}</td>
-                                    <td style="text-align: right;">{{consultationPlan.generalConsultationFee | currency:'':''}}</td>
-                                    <td style="text-align: right;">{{consultationPlan.specialistConsultationFee | currency:'':''}}</td>
+                                    <td style="text-align: right;">{{consultationPlan.consultationFee | currency:'':''}}</td>
                                     <td><button class="" (click)="getConsultationPlan(consultationPlan.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</button>
                                         <button class="" (click)="deleteConsultationPlan(consultationPlan.id)">Delete</button>
                                     </td>
@@ -90,14 +88,8 @@
                 </div> 
                 <div class="row">
                     <div class="col-sm-12">
-                        <label>General Consultation Fee*</label>
-                        <input type="number" class="form-control" [(ngModel)]="generalConsultationFee" style="text-align: center;">
-                    </div>
-                </div> 
-                <div class="row">
-                    <div class="col-sm-12">
-                        <label>Specialist Consultation Fee*</label>
-                        <input type="number" class="form-control" [(ngModel)]="specialistConsultationFee" style="text-align: center;">
+                        <label>Consultation Fee*</label>
+                        <input type="number" class="form-control" [(ngModel)]="consultationFee" style="text-align: center;">
                     </div>
                 </div> 
             </div>

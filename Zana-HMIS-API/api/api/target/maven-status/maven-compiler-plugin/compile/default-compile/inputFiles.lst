@@ -1,11 +1,9 @@
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\ProcedureTypePlanService.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\ProcedureTypeService.java
-D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\ClinicPlanPriceRepository.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\api\DiagnosisTypeResource.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\accessories\Formater.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\ConsultationRepository.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\InsuranceProvider.java
-D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\ClinicPlanService.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\ClinicServiceImpl.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\MedicineServiceImpl.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\Prescription.java
@@ -40,7 +38,6 @@ D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\api\
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\LabTestTypePlanService.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\InsurancePlan.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\ProcedureTypeRepository.java
-D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\ClinicPlanServiceImpl.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\CashReceiptRepository.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\reports\SlowMovingItems.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\GeneralExamination.java
@@ -62,7 +59,6 @@ D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\doma
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\PatientService.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\api\DayResource.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\MedicinePlanPrice.java
-D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\api\ClinicPlanResource.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\api\InsurancePlanResource.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\FinalDiagnosis.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\InsuranceProviderRepository.java
@@ -99,7 +95,6 @@ D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repo
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\RadiologyTypePlanServiceImpl.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\ClinicalNote.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\ConsultationPlanPrice.java
-D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\ClinicPlanPrice.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\api\BillResource.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\InvoiceDetailRepository.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\MedicinePlanServiceImpl.java

@@ -64,7 +64,7 @@ public class ProcedurePlanResource {
 		ProcedureTypePlanPrice conPlan = new ProcedureTypePlanPrice();
 		conPlan.setId(procedureTypePlan.getId());
 		
-		InsurancePlan plan = insurancePlanRepository.findByName(procedureTypePlan.getInsurancePlan().getName());
+		InsurancePlan plan = insurancePlanRepository.findByName(procedureTypePlan.getInsurancePlan().getName()).get();
 		ProcedureType procedureType = procedureTypeRepository.findByName(procedureTypePlan.getProcedureType().getName());
 		conPlan.setInsurancePlan(plan);
 		conPlan.setProcedureType(procedureType);

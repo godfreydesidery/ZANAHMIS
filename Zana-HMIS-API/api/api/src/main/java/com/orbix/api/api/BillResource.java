@@ -45,18 +45,23 @@ public class BillResource {
 			@RequestParam(name = "patient_id") Long patient_id){
 		Patient patient = patientRepository.findById(patient_id).get();
 		Optional<Bill> b = billRepository.findById(patient.getRegistrationBillId());
+		if(!b.get().getStatus().equals("UNPAID")) {
+			return null;
+		}
 		return ResponseEntity.ok().body(b.get());
 	}
 	
-	@GetMapping("/bills/get_consultation_bills")
-	public ResponseEntity<List<Bill>> getConsultationBill(
+	@GetMapping("/bills/get_consultation_bill")
+	public ResponseEntity<Bill> getConsultationBill(
 			@RequestParam(name = "patient_id") Long patient_id){
 		Patient patient = patientRepository.findById(patient_id).get();
-		List<Consultation> consultations = consultationRepository.findAllByPatient(patient);
-		List<Bill> bills = new ArrayList<>();
-		for(Consultation c : consultations) {
-			bills.add(c.getBill());
+		Optional<Consultation> c = consultationRepository.findByPatientAndStatus(patient, "PENDING");
+		if(!c.isPresent()) {
+			return null;
 		}
-		return ResponseEntity.ok().body(bills);
+		if(!c.get().getBill().getStatus().equals("UNPAID")) {
+			return null;
+		}
+		return ResponseEntity.ok().body(c.get().getBill());
 	}
 }

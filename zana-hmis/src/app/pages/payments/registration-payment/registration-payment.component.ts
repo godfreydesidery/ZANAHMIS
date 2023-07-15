@@ -46,7 +46,15 @@ export class RegistrationPaymentComponent implements OnInit {
   cardValidationStatus = ''
 
   registrationBill! : IBill
-  consultationBills : IBill[] = []
+  consultationBill! : IBill
+
+  registrationAmount : number = 0
+  consultationAmount : number = 0
+
+
+  total : number = 0
+
+  amountReceived : number = 0
 
   constructor(
               private auth : AuthService,
@@ -86,6 +94,8 @@ export class RegistrationPaymentComponent implements OnInit {
   async searchBySearchKey(key : string): Promise<void> {
     
     var searchElement = ''
+    this.registrationAmount = 0
+    this.consultationAmount = 0
     //var val = key
     for (var i = 0; i < this.searchKeys.length; i++) {
       if (this.searchKeys[i] === key) {
@@ -116,6 +126,7 @@ export class RegistrationPaymentComponent implements OnInit {
         this.address = data!['address']
         this.registrationFeeStatus = data!['registrationFeeStatus']
 
+        this.total = 0
         this.loadRegistrationBill()
         this.loadConsultationBills()
       }
@@ -169,7 +180,11 @@ export class RegistrationPaymentComponent implements OnInit {
     .then(
       data => {
         console.log(data)
-        this.registrationBill = data!        
+        this.registrationBill = data! 
+        if(this.registrationBill != null) {
+          this.registrationAmount = this.registrationBill.amount
+        }
+        this.total = this.total + this.registrationAmount       
       }
     )
     .catch(
@@ -186,13 +201,17 @@ export class RegistrationPaymentComponent implements OnInit {
     }
 
     this.spinner.show()
-    await this.http.get<IBill[]>(API_URL+'/bills/get_consultation_bills?patient_id='+this.id, options)
+    await this.http.get<IBill>(API_URL+'/bills/get_consultation_bill?patient_id='+this.id, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
         console.log(data)
-        this.consultationBills = data!        
+        this.consultationBill = data! 
+        if(this.consultationBill != null) {
+          this.consultationAmount = this.consultationBill.amount
+        }
+        this.total = this.total + this.consultationAmount  
       }
     )
     .catch(

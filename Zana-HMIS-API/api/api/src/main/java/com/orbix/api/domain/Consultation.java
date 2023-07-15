@@ -40,6 +40,8 @@ public class Consultation {
 	private String paymentType = "";//CASH,DEBIT CARD, CREDIT CARD, MOBILE, INSURANCE
 	private String membershipNo = "";
 	
+	private String status = "";
+	
 	private Long createdBy;
 	private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
@@ -55,7 +57,7 @@ public class Consultation {
 	 * One can only have one bill, i.e. A single consultation can only be
 	 * billed once
 	 */
-	@OneToOne(targetEntity = Bill.class, fetch = FetchType.LAZY,  optional = true)
+	@OneToOne(targetEntity = Bill.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "bill_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Bill bill;

@@ -33,8 +33,7 @@ public class ConsultationPlanPrice {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private double generalConsultationFee = 0;
-	private double specialistConsultationFee = 0;
+	private double consultationFee = 0;
 	
 	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)

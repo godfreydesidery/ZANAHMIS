@@ -70,7 +70,7 @@ public class MedicinePlanResource {
 		MedicinePlanPrice conPlan = new MedicinePlanPrice();
 		conPlan.setId(medicinePlan.getId());
 		
-		InsurancePlan plan = insurancePlanRepository.findByName(medicinePlan.getInsurancePlan().getName());
+		InsurancePlan plan = insurancePlanRepository.findByName(medicinePlan.getInsurancePlan().getName()).get();
 		Medicine medicine = medicineRepository.findByName(medicinePlan.getMedicine().getName());
 		conPlan.setInsurancePlan(plan);
 		conPlan.setMedicine(medicine);

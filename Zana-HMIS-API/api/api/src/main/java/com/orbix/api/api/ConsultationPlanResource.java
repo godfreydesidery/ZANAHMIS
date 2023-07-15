@@ -61,12 +61,11 @@ public class ConsultationPlanResource {
 		ConsultationPlanPrice conPlan = new ConsultationPlanPrice();
 		conPlan.setId(consultationPlan.getId());
 		
-		InsurancePlan plan = insurancePlanRepository.findByName(consultationPlan.getInsurancePlan().getName());
-		Clinic clinic = clinicRepository.findByName(consultationPlan.getClinic().getName());
+		InsurancePlan plan = insurancePlanRepository.findByName(consultationPlan.getInsurancePlan().getName()).get();
+		Clinic clinic = clinicRepository.findByName(consultationPlan.getClinic().getName()).get();
 		conPlan.setInsurancePlan(plan);
 		conPlan.setClinic(clinic);
-		conPlan.setGeneralConsultationFee(consultationPlan.getGeneralConsultationFee());
-		conPlan.setSpecialistConsultationFee(consultationPlan.getSpecialistConsultationFee());
+		conPlan.setConsultationFee(consultationPlan.getConsultationFee());
 		
 		if(consultationPlan.getId() == null) {
 			if(consultationPlanPriceRepository.findByInsurancePlanAndClinic(plan, clinic).isPresent()) {

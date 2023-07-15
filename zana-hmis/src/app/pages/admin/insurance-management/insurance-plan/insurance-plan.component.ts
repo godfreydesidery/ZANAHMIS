@@ -173,9 +173,6 @@ export class InsurancePlanComponent implements OnInit {
     .toPromise()
     .then(
       data => {
-        console.log('check1')
-        console.log(data)
-        console.log('check2')
         data?.forEach(element => {
           this.insuranceProviderNames.push(element)
         })
