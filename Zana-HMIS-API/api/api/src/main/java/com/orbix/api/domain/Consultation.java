@@ -64,14 +64,14 @@ public class Consultation {
 	/**
 	 * One patient visit can have one or more consultation i.e. 
 	 */
-	@ManyToOne(targetEntity = Visit.class, fetch = FetchType.LAZY,  optional = true)
+	@ManyToOne(targetEntity = Visit.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "visit_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Visit visit;
 	/**
 	 * One consultation has one clinic, i.e. a patient is sent to one clinic in a single consultation
 	 */
-	@OneToOne(targetEntity = Clinic.class, fetch = FetchType.LAZY,  optional = true)
+	@OneToOne(targetEntity = Clinic.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "clinic_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Clinic clinic;	
@@ -79,7 +79,7 @@ public class Consultation {
 	 * One consultation has one clinician, i.e. a patient is sent to one clinician in a single consultation
 	 * However, a patient can be reasigned to another clinician
 	 */
-	@OneToOne(targetEntity = Clinician.class, fetch = FetchType.LAZY,  optional = true)
+	@OneToOne(targetEntity = Clinician.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "clinician_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Clinician clinician;

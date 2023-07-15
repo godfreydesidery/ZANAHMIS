@@ -37,6 +37,7 @@ public class Payment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private double amount;
+	private String status;
 	
 	@ManyToOne(targetEntity = Bill.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "bill_id", nullable = true , updatable = true)

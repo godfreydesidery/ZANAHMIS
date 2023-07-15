@@ -55,7 +55,9 @@ public class BillResource {
 	public ResponseEntity<Bill> getConsultationBill(
 			@RequestParam(name = "patient_id") Long patient_id){
 		Patient patient = patientRepository.findById(patient_id).get();
-		Optional<Consultation> c = consultationRepository.findByPatientAndStatus(patient, "PENDING");
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		Optional<Consultation> c = consultationRepository.findByPatientAndStatusIn(patient, statuses);
 		if(!c.isPresent()) {
 			return null;
 		}

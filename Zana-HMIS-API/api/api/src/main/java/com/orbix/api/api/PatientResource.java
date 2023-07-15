@@ -20,15 +20,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.orbix.api.domain.Bill;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
+import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.InsurancePlan;
+import com.orbix.api.domain.InvoiceDetail;
 import com.orbix.api.domain.Patient;
+import com.orbix.api.domain.PatientCreditNote;
+import com.orbix.api.domain.Payment;
+import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
+import com.orbix.api.repositories.BillRepository;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.repositories.ClinicianRepository;
+import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
+import com.orbix.api.repositories.InvoiceDetailRepository;
+import com.orbix.api.repositories.PatientCreditNoteRepository;
 import com.orbix.api.repositories.PatientRepository;
+import com.orbix.api.repositories.PaymentRepository;
 import com.orbix.api.service.CompanyProfileService;
 import com.orbix.api.service.PatientService;
 
@@ -43,11 +54,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PatientResource {
-	private final 	PatientService patientService;
+	private final PatientService patientService;
 	private final PatientRepository patientRepository;
 	private final ClinicRepository clinicRepository;
 	private final ClinicianRepository clinicianRepository;
 	private final InsurancePlanRepository insurancePlanRepository;
+	private final ConsultationRepository consultationRepository;
+	private final BillRepository billRepository;
+	private final PaymentRepository paymentRepository;
+	private final PatientCreditNoteRepository patientCreditNoteRepository;
+	private final InvoiceDetailRepository invoiceDetailRepository;
 	
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(){
@@ -121,5 +137,85 @@ public class PatientResource {
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/do_consultation").toUriString());
 		return ResponseEntity.created(uri).body(patientService.doConsultation(p.get(), c.get(), cn.get(), request));
+	}
+	
+	@PostMapping("/patients/cancel_consultation")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<Boolean>consultation(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(id);
+		if(!c.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not cancel, only a PENDING consultation can be canceled");
+		}
+		/**
+		 * Cancel the consultation
+		 */
+		Consultation consultation = c.get();
+		consultation.setStatus("CANCELED");
+		consultation = consultationRepository.save(consultation);		
+		/**
+		 * Now find the bill associated with the consultation
+		 */
+		Bill bill = billRepository.findById(consultation.getBill().getId()).get();
+		/**
+		 * Now cancel the bill
+		 */
+		bill.setStatus("CANCELED");
+		bill = billRepository.save(bill);
+		/**
+		 * Find payment associated with the bill, if there is
+		 */
+		Optional<Payment> p = paymentRepository.findByBill(bill);
+		/**
+		 * If there is a payment associated with this bill, refund it, and create a credit note for it
+		 */
+		if(p.isPresent()) {
+			Payment payment = p.get();
+			payment.setStatus("REFUNDED");
+			payment = paymentRepository.save(payment);
+			/**
+			 * Create credit note
+			 */
+			PatientCreditNote patientCreditNote = new PatientCreditNote();
+			patientCreditNote.setAmount(payment.getAmount());
+			patientCreditNote.setPatient(consultation.getPatient());
+			patientCreditNote.setReference("Cancel consultation");
+			patientCreditNote.setStatus("PENDING");
+			patientCreditNote.setNo("NA");
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+			patientCreditNote.setNo(patientCreditNote.getId().toString());
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+		}
+		/**
+		 * Find invoice detail associated with this bill
+		 */
+		Optional<InvoiceDetail> i = invoiceDetailRepository.findByBill(bill);
+		/**
+		 * If there is a invoice detail associated with this bill, delete it
+		 */
+		if(i.isPresent()) {
+			invoiceDetailRepository.delete(i.get());
+		}
+		
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/cancel_consultation").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
+	@GetMapping("/patients/get_active_consultations")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<List<Consultation>>getActiveConsultations(
+			@RequestParam Long patient_id, HttpServletRequest request){
+			
+		Optional<Patient> p = patientRepository.findById(patient_id);
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		statuses.add("IN-PROCESS");
+		List<Consultation> consultations = consultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
+		
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_active_consultation").toUriString());
+		return ResponseEntity.created(uri).body(consultations);
 	}
 }

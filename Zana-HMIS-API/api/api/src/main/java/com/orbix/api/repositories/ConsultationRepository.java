@@ -24,10 +24,27 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 	List<Consultation> findAllByPatient(Patient patient);
 
 	/**
+	 * @param patient
+	 * @param statuses
+	 * @return
+	 */
+	Optional<Consultation> findByPatientAndStatusIn(Patient patient, List<String> statuses);
+
+	/**
+	 * @param patient
+	 * @param statuses
+	 * @return
+	 */
+	List<Consultation> findAllByPatientAndStatusIn(Patient patient, List<String> statuses);
+
+	
+
+	/**
 	 * @param p
 	 * @param string
 	 * @return
 	 */
-	Optional<Consultation> findByPatientAndStatus(Patient p, String string);
+	//Optional<Consultation> findByPatientAndStatus(Patient p, String string);
 
+	
 }

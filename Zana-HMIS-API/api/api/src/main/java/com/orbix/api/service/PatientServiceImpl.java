@@ -4,6 +4,7 @@
 package com.orbix.api.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -231,11 +232,14 @@ public class PatientServiceImpl implements PatientService {
 		/**
 		 * Check whether patient is assigned to a consultation, if yes, throws error
 		 */
-		Optional<Consultation> pendingCon = consultationRepository.findByPatientAndStatus(p, "PENDING");
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		Optional<Consultation> pendingCon = consultationRepository.findByPatientAndStatusIn(p, statuses);
 		if(pendingCon.isPresent()) {
 			throw new InvalidOperationException("Patient has pending consultation, please consider freeing the patient");
 		}
-		Optional<Consultation> activeCon = consultationRepository.findByPatientAndStatus(p, "IN PROCESS");
+		statuses.add("IN-PROCESS");
+		Optional<Consultation> activeCon = consultationRepository.findByPatientAndStatusIn(p, statuses);
 		if(activeCon.isPresent()) {
 			throw new InvalidOperationException("Patient has an active consultation, please wait for the patient to be released");
 		}

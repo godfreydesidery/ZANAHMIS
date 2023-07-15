@@ -5,7 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { environment } from 'src/environments/environment';
-import { IClinician } from '../../admin/personnel/clinician/clinician.component';
+//import { IClinician } from '../../admin/personnel/clinician/clinician.component';
 
 const API_URL = environment.apiUrl;
 
@@ -59,6 +59,8 @@ export class PatientRegisterComponent implements OnInit {
   consultationFee : number = 0
 
   insurancePlanNames : string[] = []
+
+  consultations : IConsultation[] = []
 
   constructor(
     //private shortcut : ShortCutHandlerService,
@@ -115,6 +117,13 @@ export class PatientRegisterComponent implements OnInit {
     this.kinRelationship = ''
     this.kinPhoneNo = ''
     this.registrationFeeStatus = ''
+    this.insurancePlanName = ''
+    this.registrationFee = 0
+    this.registrationFeeStatus = ''
+    this.cardValidationStatus = ''
+    this.clinicName = ''
+    this.clinicianName = ''
+    this.consultationFee = 0
   }
 
   
@@ -209,6 +218,9 @@ export class PatientRegisterComponent implements OnInit {
           this.insurancePlanName = data!['insurancePlan']?.name
 
           this.patientRecordMode = ''
+
+
+          this.loadActiveConsultation(this.id)
         }
       )
       .catch(
@@ -383,6 +395,9 @@ export class PatientRegisterComponent implements OnInit {
 
           
           this.insurancePlanName = data!['insurancePlan']?.name
+
+
+          this.loadActiveConsultation(this.id)
       }
     )
     .catch(
@@ -438,6 +453,28 @@ export class PatientRegisterComponent implements OnInit {
       error => {
         console.log(error)
         alert('Could not get consultation fee')
+      }
+    )
+  }
+
+  async loadActiveConsultation(patient_id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.consultations = []
+    
+    this.spinner.show()
+    await this.http.get<IConsultation[]>(API_URL+'/patients/get_active_consultations?patient_id='+patient_id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.consultations = data!
+      },
+      error => {
+        console.log(error)
+        alert('Could not load active consultations')
       }
     )
   }
@@ -498,6 +535,9 @@ export class PatientRegisterComponent implements OnInit {
   }
 
   async doConsultation(){
+    if(!window.confirm('Send the selected patient to doctor?')){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -508,7 +548,40 @@ export class PatientRegisterComponent implements OnInit {
     .toPromise()
     .then(
       data => {
-        
+        alert('Patient sent to doctor successifuly')
+        var temp = this.searchKey
+        this.clear()
+        this.searchKey = temp
+        this.searchBySearchKey(this.searchKey)
+      }
+    )
+    .catch(
+      error => {
+        alert(error['error'])
+      }
+    )
+
+  }
+
+  async cancelConsultation(consultationId : any){
+    if(!window.confirm('Cancel this consultation?')){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    
+    this.spinner.show()
+    await this.http.post<IPatient>(API_URL+'/patients/cancel_consultation?id='+consultationId, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        alert('Consultation canceled successifully')
+        var temp = this.searchKey
+        this.clear()
+        this.searchKey = temp
+        this.searchBySearchKey(this.searchKey)
       }
     )
     .catch(
@@ -553,4 +626,27 @@ export interface IPatient {
 export interface IInsurancePlan{
   code : string
   name : string
+}
+
+interface IConsultation{
+  id : any
+  status : string
+  clinic : IClinic
+  clinician : IClinician
+}
+
+
+export  interface IClinician{
+  id : any
+  no : string
+  name : string
+  type : string
+  active : boolean
+  clinics : IClinic[]
+}
+
+export interface IClinic{
+  id       : any
+  name     : string
+  assigned : boolean
 }
