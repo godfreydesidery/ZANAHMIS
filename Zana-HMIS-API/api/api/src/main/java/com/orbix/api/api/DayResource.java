@@ -5,6 +5,8 @@ package com.orbix.api.api;
 
 import java.time.LocalDate;
 
+import javax.transaction.Transactional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Transactional
 public class DayResource {
 	
 	private final DayService dayService;

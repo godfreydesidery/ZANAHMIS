@@ -161,6 +161,9 @@ export class RegistrationPaymentComponent implements OnInit {
     this.kinFullName = ''
     this.kinRelationship = ''
     this.kinPhoneNo = ''
+    this.amountReceived = 0
+    this.total = 0
+    
   }
 
   reset(){
@@ -218,6 +221,38 @@ export class RegistrationPaymentComponent implements OnInit {
       error => {
         console.log(error)
         alert('Could not load consultation bill')
+      }
+    )
+  }
+
+  async confirmRegistrationAndConsultationPayment(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    this.spinner.show()
+    await this.http.post<IBill>(API_URL+'/bills/confirm_registration_and_consultation_payment?patient_id='+this.id+'&total_amount='+this.total, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        alert('Payment successiful')
+        var temp = this.searchKey
+        this.clear()
+        this.searchKey = temp
+        this.searchBySearchKey(this.searchKey)
+        //this.consultationBill = data! 
+        //if(this.consultationBill != null) {
+          //this.consultationAmount = this.consultationBill.amount
+        //}
+        //this.total = this.total + this.consultationAmount  
+      }
+    )
+    .catch(
+      error => {
+        console.log(error)
+        alert('Could not confirm payment')
       }
     )
   }

@@ -4,6 +4,9 @@
 package com.orbix.api.api;
 
 import java.time.LocalDate;
+
+import javax.transaction.Transactional;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/zana-hmis-api")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Transactional
 public class ReportResource {
 	
 

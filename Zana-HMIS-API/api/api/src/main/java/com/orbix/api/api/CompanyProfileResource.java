@@ -9,6 +9,8 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import javax.transaction.Transactional;
+
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/zana-hmis-api")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Transactional
 public class CompanyProfileResource {
 	
 	private final 	CompanyProfileService companyProfileService;

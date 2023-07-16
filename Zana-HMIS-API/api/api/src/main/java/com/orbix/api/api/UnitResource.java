@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/zana-hmis-api")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Transactional
 public class UnitResource {
 	
 	

@@ -3,6 +3,8 @@
  */
 package com.orbix.api.api;
 
+import javax.transaction.Transactional;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/zana-hmis-api")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Transactional
 public class ConnectionResource {
 	@GetMapping("/ping")
 	public boolean ping(){

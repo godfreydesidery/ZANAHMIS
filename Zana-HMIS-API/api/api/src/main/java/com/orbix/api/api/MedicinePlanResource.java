@@ -7,6 +7,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +47,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/zana-hmis-api")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Transactional
 public class MedicinePlanResource {
 	private final InsuranceProviderService insuranceProviderService;
 	private final InsuranceProviderRepository insuranceProviderRepository;
