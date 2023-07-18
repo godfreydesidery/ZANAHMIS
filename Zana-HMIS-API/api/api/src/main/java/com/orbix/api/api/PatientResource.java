@@ -4,6 +4,7 @@
 package com.orbix.api.api;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,22 +27,30 @@ import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.InsurancePlan;
+import com.orbix.api.domain.Invoice;
 import com.orbix.api.domain.InvoiceDetail;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientCreditNote;
 import com.orbix.api.domain.Payment;
+import com.orbix.api.domain.PaymentType;
+import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
+import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.BillRepository;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.ConsultationRepository;
+import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.InvoiceDetailRepository;
+import com.orbix.api.repositories.InvoiceRepository;
 import com.orbix.api.repositories.PatientCreditNoteRepository;
 import com.orbix.api.repositories.PatientRepository;
 import com.orbix.api.repositories.PaymentRepository;
+import com.orbix.api.repositories.VisitRepository;
 import com.orbix.api.service.CompanyProfileService;
+import com.orbix.api.service.DayService;
 import com.orbix.api.service.PatientService;
 
 import lombok.RequiredArgsConstructor;
@@ -66,6 +75,9 @@ public class PatientResource {
 	private final PaymentRepository paymentRepository;
 	private final PatientCreditNoteRepository patientCreditNoteRepository;
 	private final InvoiceDetailRepository invoiceDetailRepository;
+	private final InvoiceRepository invoiceRepository;
+	private final VisitRepository visitRepository;
+	private final DayRepository dayRepository;
 	
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(){
@@ -130,6 +142,7 @@ public class PatientResource {
 	@PostMapping("/patients/do_consultation")
 	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<Patient>consultation(
+			@RequestBody PaymentType paymentType,
 			@RequestParam Long patient_id, @RequestParam String clinic_name, @RequestParam String clinician_name, 
 			HttpServletRequest request){
 		Optional<Patient> p = patientRepository.findById(patient_id);
@@ -138,7 +151,7 @@ public class PatientResource {
 		
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/do_consultation").toUriString());
-		return ResponseEntity.created(uri).body(patientService.doConsultation(p.get(), c.get(), cn.get(), request));
+		return ResponseEntity.created(uri).body(patientService.doConsultation(p.get(), c.get(), cn.get(), paymentType, request));
 	}
 	
 	@PostMapping("/patients/cancel_consultation")
@@ -196,8 +209,16 @@ public class PatientResource {
 		/**
 		 * If there is a invoice detail associated with this bill, delete it
 		 */
-		if(i.isPresent()) {
+		if(i.isPresent()) {			
 			invoiceDetailRepository.delete(i.get());
+			Invoice invoice = i.get().getInvoice();
+			int j = 0;
+			for(InvoiceDetail d : invoice.getInvoiceDetails()) {
+				j = j++;
+			}
+			if(j == 0) {
+				invoiceRepository.delete(invoice);
+			}			
 		}
 		
 		
@@ -220,4 +241,52 @@ public class PatientResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_active_consultation").toUriString());
 		return ResponseEntity.created(uri).body(consultations);
 	}
+	
+	@GetMapping("/patients/last_visit_date")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<LocalDate>getLastVisitDate(
+			@RequestParam Long patient_id){
+			
+		Optional<Patient> p = patientRepository.findById(patient_id);
+		
+		LocalDate lastVistitDate = dayRepository.findById(visitRepository.findLastByPatient(p.get()).get().getVisitedOn()).get().getBussinessDate();
+		
+		
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/last_visit_date").toUriString());
+		return ResponseEntity.created(uri).body(lastVistitDate);
+	}
+	
+	@GetMapping("/patients/load_pending_consultations_by_clinician_id")    // to do later
+	public ResponseEntity<List<Consultation>> loadPendingConsultationsByClinician(
+			@RequestParam(name = "clinician_id") Long clinicianId){
+		Optional<Clinician> c = clinicianRepository.findById(clinicianId);
+		
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		List<Consultation> cons = consultationRepository.findAllByClinicianAndStatusIn(c.get(), statuses);
+		/**
+		 * Should load paid or insurance covered consultations only
+		 */
+		List<Consultation> consultationsToShow = new ArrayList<>();
+		for(Consultation cn : cons) {
+			if(cn.getBill().getStatus().equals("PAID") || cn.getBill().getStatus().equals("COVERED")) {
+				consultationsToShow.add(cn);
+			}
+		}
+		return ResponseEntity.ok().body(consultationsToShow);
+	}
+	
+	@GetMapping("/patients/load_in_process_consultations_by_clinician_id")    // to do later
+	public ResponseEntity<List<Consultation>> loadInProcessConsultationsByClinician(
+			@RequestParam(name = "clinician_id") Long clinicianId){
+		Optional<Clinician> c = clinicianRepository.findById(clinicianId);
+		
+		List<String> statuses = new ArrayList<>();
+		statuses.add("IN-PROCESS");
+		List<Consultation> cons = consultationRepository.findAllByClinicianAndStatusIn(c.get(), statuses);
+		
+		return ResponseEntity.ok().body(cons);
+	}
 }
+

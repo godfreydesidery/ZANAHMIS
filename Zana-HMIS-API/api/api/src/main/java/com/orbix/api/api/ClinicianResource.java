@@ -23,8 +23,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
+import com.orbix.api.domain.User;
+import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.repositories.ClinicianRepository;
+import com.orbix.api.repositories.UserRepository;
 import com.orbix.api.service.ClinicService;
 import com.orbix.api.service.ClinicianService;
 
@@ -45,6 +48,7 @@ public class ClinicianResource {
 	private final ClinicRepository clinicRepository;
 	private final ClinicianService clinicianService;
 	private final ClinicService clinicService;
+	private final UserRepository userRepository;
 	
 	@GetMapping("/clinicians")
 	public ResponseEntity<List<Clinician>>getClinicians(){
@@ -83,5 +87,36 @@ public class ClinicianResource {
 		
 		
 		return ResponseEntity.ok().body(cst);
+	}
+	
+	@GetMapping("/clinicians/load_clinician_by_username")    // to do later
+	public ResponseEntity<Long> loadClinicianByUsername(
+			@RequestParam(name = "username") String username){
+		User user = userRepository.findByUsername(username);
+		Optional<Clinician> c = clinicianRepository.findByUser(user);
+		if(!c.isPresent()) {
+			throw new NotFoundException("User Account not associated with clinician");
+		}		
+		return ResponseEntity.ok().body(c.get().getId());
+	}
+	
+	@PostMapping("/clinicians/assign_user_profile")    // to do later
+	public ResponseEntity<Clinician> assignUserProfile(
+			@RequestParam(name = "id") Long id,
+			@RequestParam(name = "roll_no") String rollNo){
+		Optional<Clinician> c = clinicianRepository.findById(id);
+		if(!c.isPresent()) {
+			throw new NotFoundException("Clinician not found in database");
+		}
+		Optional<User> u = userRepository.findByRollNo(rollNo);
+		if(!u.isPresent()) {
+			throw new NotFoundException("User not found in database");
+		}
+		Optional<Clinician> cu = clinicianRepository.findByUser(u.get());
+		if(cu.isPresent()) {
+			throw new NotFoundException("Can not aasign user account to multiple clinicians");
+		}
+		c.get().setUser(u.get());
+		return ResponseEntity.ok().body(clinicianRepository.save(c.get()));
 	}
 }

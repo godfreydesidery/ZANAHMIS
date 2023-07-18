@@ -113,8 +113,9 @@ public class BillResource {
 			bill.setPaid(bill.getAmount());
 			bill.setStatus("PAID");
 			billRepository.save(bill);
-			conPayment.setAmount(rb.get().getAmount());
-			conPayment.setBill(rb.get());
+			conPayment = new Payment();
+			conPayment.setAmount(bill.getAmount());
+			conPayment.setBill(bill);
 			conPayment.setStatus("RECEIVED");
 			paymentRepository.save(conPayment);
 			amount = amount + bill.getAmount();

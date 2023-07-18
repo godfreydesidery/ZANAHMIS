@@ -16,8 +16,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -46,6 +52,11 @@ public class Clinician {
 	private String name;
 	private String type;
 	private boolean active = true;
+	
+	@OneToOne(targetEntity = User.class, fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "user_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User user;
 		
 	//@ManyToMany
 	//@JoinTable(
@@ -56,5 +67,6 @@ public class Clinician {
 	//Set<Clinic> clinics;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
 	private Collection<Clinic> clinics = new ArrayList<>();	
 }

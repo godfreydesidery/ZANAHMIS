@@ -29,6 +29,8 @@ export class ClinicianComponent implements OnInit {
 
   clinicianClinics : IClinic[] = []
 
+  rollNo : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,
@@ -139,6 +141,7 @@ export class ClinicianComponent implements OnInit {
     this.no = ''
     this.name = ''
     this.type = ''
+    this.rollNo = ''
   }
 
   async getClinician(key: string) {
@@ -240,6 +243,39 @@ export class ClinicianComponent implements OnInit {
        console.log(error)
      })
    }
+
+   public async assignUserProfile(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    
+    
+    if(this.id != null){
+      this.spinner.show()
+      await this.http.post<IClinician>(API_URL+'/clinicians/assign_user_profile?id='+this.id+'&roll_no='+this.rollNo, null, options)
+      .pipe(finalize(() => this.spinner.hide()))
+      .toPromise()
+      .then(
+        data => {
+          this.id           = data?.id
+          this.no       = data!.no
+          this.name = data!.name
+          this.type = data!.type
+          this.clinics = data!.clinics
+          this.active       = data!.active
+          alert('Saved successifully')
+          this.loadClinicians()
+          this.clear()
+        }
+      )
+      .catch(
+        error => {
+          alert(error['error'])
+        }
+      )
+
+    }
+  }
   
 }
 

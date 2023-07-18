@@ -25,19 +25,19 @@
                         <div *ngIf="patientRecordMode === 'new'">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <label>Patient's Credentials</label>
+                                    <h4 class="text-primary"><b>Patient's Credentials</b></h4>
                                     <input type="hidden" [(ngModel)]="id">
                                     <div class="row">
                                         <div class="col-sm-4 form-group">
-                                            <label>First Name*</label>
+                                            <h4 class="text-primary">First Name*</h4>
                                             <input type="text" class="form-control" [(ngModel)]="firstName" placeholder="Enter First Name" required>
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>Middle Name</label>
+                                            <h4 class="text-primary">Middle Name</h4>
                                             <input type="text" class="form-control" [(ngModel)]="middleName" placeholder="Enter Middle Name">
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>Last Name*</label>
+                                            <h4 class="text-primary">Last Name*</h4>
                                             <input type="text" class="form-control" [(ngModel)]="lastName" placeholder="Enter Last Name" required>
                                         </div>
                                     </div>
@@ -47,11 +47,11 @@
                                 <div class="col-sm-12">
                                     <div class="row">
                                         <div class="col-sm-4 form-group">
-                                            <label>Date of Birth*</label>
+                                            <h4 class="text-primary">Date of Birth*</h4>
                                             <input type="date" class="form-control" [(ngModel)]="dateOfBirth" required>
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>Gender*</label>
+                                            <h4 class="text-primary">Gender*</h4>
                                             <select class="form-control" [(ngModel)]="gender">
                                                 <option>{{gender}}</option>
                                                 <option>Male</option>
@@ -59,7 +59,7 @@
                                             </select>
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>Select Patient Type*</label>
+                                            <h4 class="text-primary">Select Patient Type*</h4>
                                             <select class="form-control" [(ngModel)]="patientType">
                                                 <option></option>
                                                 <option>OUTPATIENT</option>
@@ -67,7 +67,7 @@
                                             </select>
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>Nationality</label>
+                                            <h4 class="text-primary">Nationality</h4>
                                             <select class="form-control" [(ngModel)]="nationality">
                                                 <option></option>
                                                 <option>Tanzania</option>
@@ -75,23 +75,23 @@
                                             </select>
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>ID No</label>
+                                            <h4 class="text-primary">ID No</h4>
                                             <input type="text" class="form-control" [(ngModel)]="nationalId" placeholder="ID No" required>
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>Passport No</label>
+                                            <h4 class="text-primary">Passport No</h4>
                                             <input type="text" class="form-control" [(ngModel)]="passportNo" placeholder="Passport No" required>
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>Phone No</label>
+                                            <h4 class="text-primary">Phone No</h4>
                                             <input type="tel" class="form-control" [(ngModel)]="phoneNo" placeholder="Phone Number" required>
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>Email</label>
+                                            <h4 class="text-primary">Email</h4>
                                             <input type="email" class="form-control" [(ngModel)]="email" placeholder="Email" required>
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>Address</label>
+                                            <h4 class="text-primary">Address</h4>
                                             <textarea class="form-control" [(ngModel)]="address"></textarea>
                                         </div>
                                     </div>
@@ -99,18 +99,18 @@
                                 
                                 <div class="col-sm-12">
                                     <hr>
-                                    <label>Relative Information</label>
+                                    <h4 class="text-primary"><b>Relative Information</b></h4>
                                     <div class="row">
                                         <div class="col-sm-4 form-group">
-                                            <label>Full Name</label>
+                                            <h4 class="text-primary">Full Name</h4>
                                             <input type="text" class="form-control" [(ngModel)]="kinFullName" placeholder="Enter Full Name" required>
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>Relationship</label>
+                                            <h4 class="text-primary">Relationship</h4>
                                             <input type="text" class="form-control" [(ngModel)]="kinRelationship" placeholder="Enter Relationship with patient">
                                         </div>
                                         <div class="col-sm-4 form-group">
-                                            <label>Phone No</label>
+                                            <h4 class="text-primary">Phone No</h4>
                                             <input type="tel" class="form-control" [(ngModel)]="kinPhoneNo" placeholder="Enter Phone No" required>
                                         </div>
                                     </div>
@@ -121,7 +121,7 @@
                                 <div class="col-sm-12">
                                     <div class="row">
                                         <div class="col-sm-4 form-group">
-                                            <label>Select Payment Type</label>
+                                            <h4 class="text-primary"><b>Select Payment Type</b></h4>
                                             <select class="form-control" [(ngModel)]="paymentType" (ngModelChange)="changePaymentType(paymentType)">
                                                 <option></option>
                                                 <option>CASH</option>
@@ -129,22 +129,14 @@
                                             </select>
                                         </div>
                                         <div class="col-sm-4 form-group" *ngIf="paymentType === 'INSURANCE'">
-                                            <label>Select Insurance Plan</label>
+                                            <h4 class="text-primary">Select Insurance Plan</h4>
                                             <select class="form-control" [(ngModel)]="insurancePlanName">
                                                 <option></option>
                                                 <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
                                             </select>
                                         </div>
-                                        <div class="col-sm-4 form-group" *ngIf="paymentType === 'Debit Card'">
-                                            <label>Debit Card No</label>
-                                            <input type="text" class="form-control" placeholder="Debit Card No">
-                                        </div>
-                                        <div class="col-sm-4 form-group" *ngIf="paymentType === 'Credit Card'">
-                                            <label>Credit Card No</label>
-                                            <input type="text" class="form-control" placeholder="Credit Card No">
-                                        </div>
                                         <div class="col-sm-4 form-group" *ngIf="insurancePlanName != '' && paymentType === 'INSURANCE'">
-                                            <label>Membership No</label>
+                                            <h4 class="text-primary">Membership No</h4>
                                             <input type="text" class="form-control" [(ngModel)]="membershipNo" placeholder="INSURANCE Membership No">
                                         </div>
                                     </div>
@@ -160,7 +152,7 @@
                                 <div class="col-sm-12">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <label>Search Patient</label>
+                                            <h4 class="text-primary"><b>Search Patient</b></h4>
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="row">
@@ -182,144 +174,131 @@
                             <br>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4" *ngIf="id != null">
-                                <div class="panel-body jumbotron" style="border-radius: 2mm;">
-                                    <div class="table-responsive">
-                                        <h4 class="text-success">Patient Details   <button class="btn btn-success btn-outline  pull-right" data-toggle="modal" data-target="#edit-modal">Edit Patient</button></h4>
-                                        <table class="table table-bordered table-small table-striped" style="text-align: center;">
-                                            <tbody>
-                                                <tr><td>First Name</td><td>{{firstName}}</td></tr>
-                                                <tr><td>Last Name</td><td>{{lastName}}</td></tr>
-                                                <tr><td>Other Names</td><td>{{middleName}}</td></tr>
-                                                <tr><td>File No</td><td>{{no}}</td></tr>
-                                                <tr><td>Phone No</td><td>{{phoneNo}}</td></tr>
-                                                <tr><td>Date of Birth</td><td>{{dateOfBirth}}</td></tr>  
-                                                <tr><td>Gender</td><td>{{gender}}</td></tr>  
-                                                <tr><td>Address</td><td>{{address}}</td></tr>
-                                                <tr><td>Country Name</td><td>{{nationality}}</td></tr> 
-                                                <tr><td>National ID</td><td>{{nationalId}}</td></tr> 
-                                                <tr><td>Passport ID</td><td>{{passportNo}}</td></tr>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <h4 class="text-success">Next of Kin Details</h4>
-                                        <table class="table table-bordered table-small table-striped" style="text-align: center;">
-                                            <tbody>
-                                                <tr><td>Name</td><td>{{kinFullName}}</td></tr>
-                                                <tr><td>Phone No</td><td>{{kinPhoneNo}}</td></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <h4 class="text-success">Last Patient Payment Details</h4>
-                                        <table class="table table-bordered table-small table-striped" style="text-align: center;">
-                                            <tbody>
-                                                <tr><td>Last Visit</td><td></td></tr>
-                                                <tr><td>Last Visit Clinic</td><td></td></tr>  
-                                                <tr><td>Last Visit Doctor</td><td></td></tr>  
-                                                <tr><td>Last Card/Payment Type used</td><td></td></tr>  
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div *ngIf="consultations.length > 0 && id != null">
-                                <div class="col-sm-8 alert alert-success" role="alert" style="text-align: center;">
-                                    This patient has been assigned to the following clinic(s).
-                                </div>
-                                <div class="col-sm-8">
-                                    <table class="table table-bordered table-small table-striped">
-                                        <thead>
-                                            <tr>
-                                                <td>Clinic</td>
-                                                <td>Doctor</td>
-                                                <td>Status</td>
-                                                <td>Action</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr  *ngFor="let consultation of consultations">
-                                                <td>{{consultation.clinic.name}}</td>
-                                                <td>{{consultation.clinician.name}}</td>
-                                                <td>{{consultation.status}}</td>
-                                                <td><button *ngIf="consultation.status === 'PENDING'" (click)="cancelConsultation(consultation.id)">Cancel Consultation</button><span  *ngIf="consultation.status != 'PENDING'">No Action Required</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            
-
-                            <div class="col-sm-4">
-                                <div>
-                                    <div class="row" *ngIf="consultations.length === 0 && id != null">
-                                        <div class="col-sm-12 form-group">
-                                            <label>Payment Type</label>
-                                            <span class="form-control">{{paymentType}}</span>
-                                            <!--<select class="form-control"  (ngModelChange)="changePaymentType(paymentType)">
-                                                <option></option>
-                                                <option>Cash</option>
-                                                <option>Debit Card</option>
-                                                <option>Credit Card</option>
-                                                <option>INSURANCE</option>
-                                            </select>-->
+                            <div class="col-sm-12" *ngIf="id != null">
+                                <div class="panel-body" style="border-radius: 2mm;">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="table-responsive">
+                                                <h4 class="text-primary"><b>Patient Details</b>   <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#edit-modal" style="margin-bottom: 2mm;">Edit Patient</button></h4>
+                                                <table class="table table-bordered table-small table-striped" style="text-align: center;">
+                                                    <tbody>
+                                                        <tr><td>Full Name</td><td>{{firstName}}</td></tr>
+                                                        <tr><td>Last Name</td><td>{{lastName}}</td></tr>
+                                                        <tr><td>Other Names</td><td>{{middleName}}</td></tr>
+                                                        <tr><td>File No</td><td>{{no}}</td></tr>
+                                                        <tr><td>Phone No</td><td>{{phoneNo}}</td></tr>
+                                                        <tr><td>Date of Birth</td><td>{{dateOfBirth}}</td></tr>  
+                                                        <tr><td>Gender</td><td>{{gender}}</td></tr>  
+                                                        <tr><td>Address</td><td>{{address}}</td></tr>
+                                                        <tr><td>Country Name</td><td>{{nationality}}</td></tr> 
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-12 form-group" *ngIf="paymentType === 'INSURANCE'">
-                                            <label>Insurance Plan</label>
-                                            <span class="form-control">{{insurancePlanName}}</span>
-                                            <!--<select class="form-control" [(ngModel)]="insurancePlanName">
-                                                <option></option>
-                                                <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
-                                            </select>-->
+                                        <div class="col-sm-4">
+                                            <div class="table-responsive">
+                                                <h4 class="text-primary"><b>Next of Kin Details</b></h4>
+                                                <table class="table table-bordered table-small table-striped" style="text-align: center;">
+                                                    <tbody>
+                                                        <tr><td>Name</td><td>{{kinFullName}}</td></tr>
+                                                        <tr><td>Phone No</td><td>{{kinPhoneNo}}</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="table-responsive">
+                                                <h4 class="text-primary"><b>Last Patient Payment Details</b></h4>
+                                                <table class="table table-bordered table-small table-striped" style="text-align: center;">
+                                                    <tbody>
+                                                        <tr><td>Last Visit</td><td>{{lastVisitDate | date}}</td></tr>
+                                                        <tr><td>Last Card/Payment Type used</td><td>{{paymentType}}</td></tr>  
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-12 form-group" *ngIf="insurancePlanName != '' && paymentType === 'INSURANCE'">
-                                            <label>Membership No</label>
-                                            <span class="form-control">{{membershipNo}}</span>
-                                            <!--<input type="text" class="form-control" [(ngModel)]="membershipNo" placeholder="Insurance Membership No">-->
-                                        </div>
-                                        <!--<div class="col-sm-12 form-group">
-                                            <button class="btn btn-primary pull-right">Save</button>
-                                        </div>       -->                                         
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="col-sm-4">
-                                <div>
-                                    <div *ngIf="patientType != 'OUTSIDER' && id != null && paymentType != ''">
-                                        <div *ngIf="consultations.length === 0">
-                                            <label>Send to Doctor</label>
-                                            <div class="row">
-                                                <div class="col-sm-12 form-group" >
-                                                    <label>Select Clinic</label>
-                                                    <select class="form-control" [(ngModel)]="clinicName" ngModel (ngModelChange)="loadClinicianNames(clinicName)" (ngModelChange)="loadConsultationFee()">
-                                                        <option></option>
-                                                        <option *ngFor="let name of clinicNames">{{name}}</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-12 form-group" *ngIf="clinicName != ''">
-                                                    <span class="form-control" style="text-align: center;">Consultation Fee  <b>{{consultationFee | currency:'':''}}</b></span>
-                                                </div>
+                                        <div class="col-sm-4">
+                                            <br>
+                                            <div class="row" *ngIf="consultations.length === 0 && id != null">
                                                 <div class="col-sm-12 form-group">
-                                                    <label>Select Doctor</label>
-                                                    <select class="form-control" [(ngModel)]="clinicianName">
+                                                    <h4 class="text-primary"><b>Payment Type</b></h4>
+                                                    <select class="form-control" [(ngModel)]="paymentType" (ngModelChange)="changePaymentType(paymentType)">
                                                         <option></option>
-                                                        <option *ngFor="let name of clinicianNames">{{name}}</option>
+                                                        <option>CASH</option>
+                                                        <option>INSURANCE</option>
                                                     </select>
-                                                    <br>
-                                                    <button class="btn btn-primary pull-right" *ngIf="clinicName != '' && clinicianName != ''" (click)="doConsultation()">Send</button>
+                                                </div>
+                                                <div class="col-sm-12 form-group" *ngIf="paymentType === 'INSURANCE'">
+                                                    <h4 class="text-primary">Insurance Plan</h4>
+                                                    <select class="form-control" [(ngModel)]="insurancePlanName">
+                                                        <option></option>
+                                                        <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-12 form-group" *ngIf="paymentType === 'INSURANCE' && insurancePlanName != null">
+                                                    <div *ngIf="insurancePlanName != ''">
+                                                        <h4 class="text-primary">Membership No</h4>
+                                                        <input type="text" class="form-control" [(ngModel)]="membershipNo" placeholder="Insurance Membership No">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div *ngIf="patientType != 'OUTSIDER' && id != null && paymentType != ''">
+                                                    <div *ngIf="consultations.length === 0">
+                                                        <br><br><br>
+                                                        <h4 class="text-primary"><b>Send to Doctor</b></h4>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 form-group" >
+                                                                <h4 class="text-primary">Select Clinic</h4>
+                                                                <select class="form-control" [(ngModel)]="clinicName" ngModel (ngModelChange)="loadClinicianNames(clinicName)" (ngModelChange)="loadConsultationFee()">
+                                                                    <option></option>
+                                                                    <option *ngFor="let name of clinicNames">{{name}}</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-sm-12 form-group" *ngIf="clinicName != ''">
+                                                                <span class="form-control" style="text-align: center;">Consultation Fee <b *ngIf="paymentType === 'INSURANCE'"></b>  <b *ngIf="paymentType != 'INSURANCE'">{{consultationFee | currency:'':''}}</b></span>
+                                                            </div>
+                                                            <div class="col-sm-12 form-group">
+                                                                <h4 class="text-primary">Select Doctor</h4>
+                                                                <select class="form-control" [(ngModel)]="clinicianName">
+                                                                    <option></option>
+                                                                    <option *ngFor="let name of clinicianNames">{{name}}</option>
+                                                                </select>
+                                                                <br>
+                                                                <button class="btn btn-primary pull-right" *ngIf="clinicName != '' && clinicianName != ''" (click)="doConsultation()">Send</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div *ngIf="patientType === 'OUTSIDER'">
+                                                    for outsider patients
+                                                </div>
+                                            </div>
+                                            <div *ngIf="consultations.length > 0 && id != null">
+                                                <div class="col-sm-12 alert alert-success" role="alert" style="text-align: center;">
+                                                    This patient has been assigned to the following clinic(s).
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <table class="table table-bordered table-small table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <td>Clinic</td>
+                                                                <td>Doctor</td>
+                                                                <td>Status</td>
+                                                                <td>Action</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr  *ngFor="let consultation of consultations">
+                                                                <td>{{consultation.clinic.name}}</td>
+                                                                <td>{{consultation.clinician.name}}</td>
+                                                                <td>{{consultation.status}}</td>
+                                                                <td><button class="btn btn-danger" *ngIf="consultation.status === 'PENDING'" (click)="cancelConsultation(consultation.id)">Cancel Consultation</button><span  *ngIf="consultation.status != 'PENDING'">No Action Required</span></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div *ngIf="patientType === 'OUTSIDER'">
-                                        for outsider patients
-                                    </div>
-                                    
                                 </div>
                             </div>
                         </div>
@@ -327,11 +306,8 @@
                  </div>
              </div>
          </div>
-         
      </section> <!-- /.content -->
-
      <!-- Main content -->
-
 
  <!-- Modal success -->
 <div class="modal fade modal-success" id="edit-modal" tabindex="-1" role="dialog">
@@ -344,19 +320,19 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
-                        <label>Patient's Credentials</label>
+                        <h4 class="text-primary"><b>Patient's Credentials</b></h4>
                         <input type="hidden" [(ngModel)]="id">
                         <div class="row">
                             <div class="col-sm-4 form-group">
-                                <label>First Name*</label>
+                                <h4 class="text-primary">First Name*</h4>
                                 <input type="text" class="form-control" [(ngModel)]="firstName" placeholder="Enter First Name" required>
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>Middle Name</label>
+                                <h4 class="text-primary">Middle Name</h4>
                                 <input type="text" class="form-control" [(ngModel)]="middleName" placeholder="Enter Middle Name">
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>Last Name*</label>
+                                <h4 class="text-primary">Last Name*</h4>
                                 <input type="text" class="form-control" [(ngModel)]="lastName" placeholder="Enter Last Name" required>
                             </div>
                         </div>
@@ -365,11 +341,11 @@
                     <div class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-4 form-group">
-                                <label>Date of Birth*  </label>  *<span>{{dateOfBirth | date}}</span>
+                                <h4 class="text-primary">Date of Birth* *  {{dateOfBirth | date}}</h4>
                                 <input type="date" class="form-control" [(ngModel)]="dateOfBirth" required>
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>Gender*</label>
+                                <h4 class="text-primary">Gender*</h4>
                                 <select class="form-control" [(ngModel)]="gender">
                                     <option>{{gender}}</option>
                                     <option>Male</option>
@@ -377,7 +353,7 @@
                                 </select>
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>Select Patient Type*</label>
+                                <h4 class="text-primary">Select Patient Type*</h4>
                                 <select class="form-control" [(ngModel)]="patientType">
                                     <option></option>
                                     <option>OUTPATIENT</option>
@@ -385,7 +361,7 @@
                                 </select>
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>Nationality</label>
+                                <h4 class="text-primary">Nationality</h4>
                                 <select class="form-control" [(ngModel)]="nationality">
                                     <option></option>
                                     <option>Tanzania</option>
@@ -393,23 +369,23 @@
                                 </select>
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>ID No</label>
+                                <h4 class="text-primary">ID No</h4>
                                 <input type="text" class="form-control" [(ngModel)]="nationalId" placeholder="ID No" required>
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>Passport No</label>
+                                <h4 class="text-primary">Passport No</h4>
                                 <input type="text" class="form-control" [(ngModel)]="passportNo" placeholder="Passport No" required>
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>Phone No</label>
+                                <h4 class="text-primary">Phone No</h4>
                                 <input type="tel" class="form-control" [(ngModel)]="phoneNo" placeholder="Phone Number" required>
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>Email</label>
+                                <h4 class="text-primary">Email</h4>
                                 <input type="email" class="form-control" [(ngModel)]="email" placeholder="Email" required>
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>Address</label>
+                                <h4 class="text-primary">Address</h4>
                                 <textarea class="form-control" [(ngModel)]="address"></textarea>
                             </div>
                         </div>
@@ -417,18 +393,18 @@
                     
                     <div class="col-sm-12">
                         <hr>
-                        <label>Relative Information</label>
+                        <h4 class="text-primary"><b>Next of Kin Information</b></h4>
                         <div class="row">
                             <div class="col-sm-4 form-group">
-                                <label>Full Name</label>
+                                <h4 class="text-primary">Full Name</h4>
                                 <input type="text" class="form-control" [(ngModel)]="kinFullName" placeholder="Enter Full Name" required>
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>Relationship</label>
+                                <h4 class="text-primary">Relationship</h4>
                                 <input type="text" class="form-control" [(ngModel)]="kinRelationship" placeholder="Enter Relationship with patient">
                             </div>
                             <div class="col-sm-4 form-group">
-                                <label>Phone No</label>
+                                <h4 class="text-primary">Phone No</h4>
                                 <input type="tel" class="form-control" [(ngModel)]="kinPhoneNo" placeholder="Enter Phone No" required>
                             </div>
                         </div>                        
@@ -436,7 +412,7 @@
                     <div class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-4 form-group">
-                                <label>Select Payment Type</label>
+                                <h4 class="text-primary"><b>Select Payment Type</b></h4>
                                 <select class="form-control" [(ngModel)]="paymentType" (ngModelChange)="changePaymentType(paymentType)">
                                     <option></option>
                                     <option>CASH</option>
@@ -444,14 +420,14 @@
                                 </select>
                             </div>
                             <div class="col-sm-4 form-group" *ngIf="paymentType === 'INSURANCE'">
-                                <label>Select Insurance Plan</label>
+                                <h4 class="text-primary">Select Insurance Plan</h4>
                                 <select class="form-control" [(ngModel)]="insurancePlanName">
                                     <option></option>
                                     <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
                                 </select>
                             </div>
                             <div class="col-sm-4 form-group" *ngIf="insurancePlanName != '' && paymentType === 'INSURANCE'">
-                                <label>Membership No</label>
+                                <h4 class="text-primary">Membership No</h4>
                                 <input type="text" class="form-control" [(ngModel)]="membershipNo" placeholder="Insurance Membership No">
                             </div>
                         </div>

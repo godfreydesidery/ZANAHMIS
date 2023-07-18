@@ -32,7 +32,10 @@
                                     <td>{{clinician.no}}</td>
                                     <td>{{clinician.name}}</td>
                                     <td>{{clinician.type}}</td>
-                                    <td><button class="" (click)="getClinician(clinician.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</button></td>
+                                    <td>
+                                        <button class="btn btn-primary" (click)="getClinician(clinician.id)" data-toggle="modal" data-target="#add-edit-modal" style="margin: 1px;">Edit</button>
+                                        <button class="btn btn-primary" (click)="getClinician(clinician.id)" data-toggle="modal" data-target="#assign-user-profile" style="margin: 1px;">Assign User Profile</button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -107,3 +110,42 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+
+    <!-- Modal success -->
+ <div class="modal fade modal-success" id="assign-user-profile" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h1 class="modal-title">Assign User Profile to Doctor</h1>
+            </div>
+            <div class="modal-body">
+                    <div class="row">
+                        <input type="hidden" [(ngModel)]="id">
+                        <div class="col-xs-12">
+                            <label>Doctor Code*</label>
+                            <input type="text" class="form-control" [(ngModel)]="no" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Doctor Name*</label>
+                            <input type="text" class="form-control" [(ngModel)]="name" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Role No</label>
+                            <input type="text" class="form-control" [(ngModel)]="rollNo">
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" (click)="assignUserProfile()" data-dismiss="modal">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+

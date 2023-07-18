@@ -11,6 +11,7 @@ import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.Patient;
+import com.orbix.api.domain.PaymentType;
 
 /**
  * @author Godfrey
@@ -18,7 +19,7 @@ import com.orbix.api.domain.Patient;
  */
 public interface PatientService {
 	Patient doRegister(Patient patient, HttpServletRequest request);
-	Patient doConsultation(Patient p, Clinic c, Clinician cn, HttpServletRequest request);
+	Patient doConsultation(Patient p, Clinic c, Clinician cn, PaymentType pt, HttpServletRequest request);
 	Patient update(Patient patient, HttpServletRequest request);
 	List<Patient>getBySearchKey(String searchKey);
 	List<Patient>getAll();

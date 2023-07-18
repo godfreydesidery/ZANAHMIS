@@ -149,6 +149,7 @@ D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\doma
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\reports\models\DailyProductionReport.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\MedicineRepository.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\UserService.java
+D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\PaymentType.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\api\ClinicResource.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\api\RegistrationPlanResource.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\reports\models\DebtTrackerReport.java

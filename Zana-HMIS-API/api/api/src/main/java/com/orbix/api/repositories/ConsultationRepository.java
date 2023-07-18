@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.Patient;
 
@@ -36,6 +37,19 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 	 * @return
 	 */
 	List<Consultation> findAllByPatientAndStatusIn(Patient patient, List<String> statuses);
+
+	/**
+	 * @param clinician
+	 * @return
+	 */
+	List<Consultation> findAllByClinician(Clinician clinician);
+
+	/**
+	 * @param clinician
+	 * @param statuses
+	 * @return
+	 */
+	List<Consultation> findAllByClinicianAndStatusIn(Clinician clinician, List<String> statuses);
 
 	
 

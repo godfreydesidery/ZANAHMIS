@@ -18,23 +18,21 @@
                         <table class="table table-bordered table-hover">
                             <thead class="success">
                             <tr>
-                                <th>SN</th>
+                                <th>ID</th>
                                 <th>Name</th>
                                 <th>Patient's File No</th>
                                 <th>Payment Type</th>
                                 <th>Dr. Name</th>
-                                <th>Duration</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>John Doe</td>
-                                    <td>ZAN/2023/01</td>
-                                    <td>CASH</td>
-                                    <td>Dr Mkenda</td>
-                                    <td>00:06:00pm</td>
+                                <tr *ngFor="let consultation of consultations">
+                                    <td>{{consultation.id}}</td>
+                                    <td>{{consultation.patient.firstName}} {{consultation.patient.middleName}} {{consultation.patient.lastName}}</td>
+                                    <td>{{consultation.patient.no}}</td>
+                                    <td>{{consultation.paymentType}}</td>
+                                    <td>{{consultation.clinician.name}}</td>
                                     <td><a class="btn btn-success" routerLink="/doctor-cracking">Confirm</a></td>
                                 </tr>
                             </tbody>

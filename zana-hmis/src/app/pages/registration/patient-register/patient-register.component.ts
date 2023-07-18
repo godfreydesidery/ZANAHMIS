@@ -62,6 +62,8 @@ export class PatientRegisterComponent implements OnInit {
 
   consultations : IConsultation[] = []
 
+  lastVisitDate! : Date
+
   constructor(
     //private shortcut : ShortCutHandlerService,
               private auth : AuthService,
@@ -232,7 +234,8 @@ export class PatientRegisterComponent implements OnInit {
     }
   }
 
-  async updatePatient(){
+  async updatePatient() : Promise<boolean>{
+    var updated : boolean = false
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -297,14 +300,20 @@ export class PatientRegisterComponent implements OnInit {
         
 
         this.patientRecordMode = ''
+
+        updated = true
       }
     )
     .catch(
       error => {
         console.log(error)
         alert(error['error'])
+        updated = false
       }
+      
     )
+
+    return updated
   }
 
   async loadSearchKeys(){//for unpaid registration
@@ -398,6 +407,7 @@ export class PatientRegisterComponent implements OnInit {
 
 
           this.loadActiveConsultation(this.id)
+          this.getLastVisitDate()
       }
     )
     .catch(
@@ -434,6 +444,9 @@ export class PatientRegisterComponent implements OnInit {
   }
 
   async loadConsultationFee(){//for unpaid registration
+    if(this.paymentType === 'INSURANCE'){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -541,9 +554,13 @@ export class PatientRegisterComponent implements OnInit {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    
+    var paymentType : IPaymentType = {
+      name: this.paymentType,
+      insurancePlanName: this.insurancePlanName,
+      insuranceMembershipNo: this.membershipNo
+    }
     this.spinner.show()
-    await this.http.post<IPatient>(API_URL+'/patients/do_consultation?patient_id='+this.id+'&clinic_name='+this.clinicName+'&clinician_name='+this.clinicianName, null, options)
+    await this.http.post<IPatient>(API_URL+'/patients/do_consultation?patient_id='+this.id+'&clinic_name='+this.clinicName+'&clinician_name='+this.clinicianName, paymentType, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -590,6 +607,29 @@ export class PatientRegisterComponent implements OnInit {
       }
     )
 
+  }
+
+  async getLastVisitDate(){
+  
+    var date : Date 
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    
+    this.spinner.show()
+    await this.http.get<Date>(API_URL+'/patients/last_visit_date?patient_id='+this.id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.lastVisitDate = data!
+      }
+    )
+    .catch(
+      error => {
+       console.log(error)
+      }
+    )
   }
 
 }
@@ -649,4 +689,9 @@ export interface IClinic{
   id       : any
   name     : string
   assigned : boolean
+}
+export interface IPaymentType{
+  name : string
+  insurancePlanName : string
+  insuranceMembershipNo : string
 }

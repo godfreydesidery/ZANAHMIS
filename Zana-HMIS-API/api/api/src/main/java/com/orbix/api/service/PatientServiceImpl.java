@@ -22,6 +22,7 @@ import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.Invoice;
 import com.orbix.api.domain.InvoiceDetail;
 import com.orbix.api.domain.Patient;
+import com.orbix.api.domain.PaymentType;
 import com.orbix.api.domain.RegistrationPlanPrice;
 import com.orbix.api.domain.Visit;
 import com.orbix.api.exceptions.InvalidOperationException;
@@ -182,6 +183,7 @@ public class PatientServiceImpl implements PatientService {
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
 				invoiceDetail.setInvoice(invoice);
 				invoiceDetail.setBill(regBill);
+				invoiceDetail.setPrice(regBill.getAmount());
 				invoiceDetail.setDescription("Registration Fee");
 				invoiceDetail.setQty(1);
 				invoiceDetailRepository.saveAndFlush(invoiceDetail);
@@ -192,6 +194,7 @@ public class PatientServiceImpl implements PatientService {
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
 				invoiceDetail.setInvoice(inv.get());
 				invoiceDetail.setBill(regBill);
+				invoiceDetail.setPrice(regBill.getAmount());
 				invoiceDetail.setDescription("Registration Fee");
 				invoiceDetail.setQty(1);
 				invoiceDetailRepository.saveAndFlush(invoiceDetail);
@@ -227,7 +230,7 @@ public class PatientServiceImpl implements PatientService {
 	}
 	
 	@Override
-	public Patient doConsultation(Patient p, Clinic c, Clinician cn, HttpServletRequest request) {
+	public Patient doConsultation(Patient p, Clinic c, Clinician cn, PaymentType paymentType, HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		/**
 		 * Check whether patient is assigned to a consultation, if yes, throws error
@@ -285,10 +288,63 @@ public class PatientServiceImpl implements PatientService {
 		 */
 		consultation = consultationRepository.save(consultation);
 		
+		
+		/**
+		 * Check whether, if patient should pay by insurance, if the insurance cover is the same as the on registered for the patient
+		 */
+		if(paymentType.getName().equals("INSURANCE")) {
+			Optional<InsurancePlan> plan = insurancePlanRepository.findByName(paymentType.getInsurancePlanName());
+			if(!plan.isPresent()) {
+				throw new NotFoundException("Insurance plan not found in database");
+			}
+			/**
+			 * If plan has changed, check if previous transactions involving the plan have been signed
+			 */
+			Optional<Invoice> pendingInv = invoiceRepository.findByPatientAndStatus(p, "PENDING");
+			if(p.getPaymentType().equals("INSURANCE")) {
+				if(plan.get().getId() != p.getInsurancePlan().getId()) {
+					if(pendingInv.isPresent()) {
+						throw new InvalidOperationException("Use of two or more insurance plan. The patient should sign of the initial invoice before proceeding with another plan");
+					}
+				}
+				if(!paymentType.getInsuranceMembershipNo().equals(p.getMembershipNo())) {
+					throw new InvalidOperationException("Membership number do not match. Please cross check membership no for correction");
+				}
+			}else if(p.getPaymentType().equals("CASH")){
+				if(pendingInv.isPresent()) {
+					throw new InvalidOperationException("Use of two or more insurance plan. The patient should sign of the iniitial invoice before proceeding with another plan");
+				}
+			}
+			p.setPaymentType("INSURANCE");
+			p.setInsurancePlan(plan.get());
+			p.setMembershipNo(paymentType.getInsuranceMembershipNo());
+			p = patientRepository.save(p);
+			
+			consultation.setPaymentType("INSURANCE");
+			consultation.setMembershipNo(paymentType.getInsuranceMembershipNo());
+			consultation.setInsurancePlan(plan.get());
+			consultation = consultationRepository.save(consultation);
+		}else if(paymentType.getName().equals("CASH")){
+			
+			p.setPaymentType("CASH");
+			p.setInsurancePlan(null);
+			p.setMembershipNo("");
+			p = patientRepository.save(p);
+			
+			consultation.setPaymentType("CASH");
+			consultation.setMembershipNo("");
+			consultation.setInsurancePlan(null);
+			consultation = consultationRepository.save(consultation);
+		}else {
+			throw new InvalidOperationException("Invalid Payment type selected");
+		}
+		
 		/**
 		 * Now, if the patient is covered
 		 */
 		if(p.getPaymentType().equals("INSURANCE")) {
+			
+			
 			Optional<ConsultationPlanPrice> consultationPricePlan = consultationPlanPriceRepository.findByClinicAndInsurancePlan(c, p.getInsurancePlan());
 			
 			if(!consultationPricePlan.isPresent()) {
@@ -322,6 +378,7 @@ public class PatientServiceImpl implements PatientService {
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
 				invoiceDetail.setInvoice(invoice);
 				invoiceDetail.setBill(conBill);
+				invoiceDetail.setPrice(conBill.getAmount());
 				invoiceDetail.setDescription("Consultation Fee");
 				invoiceDetail.setQty(1);
 				invoiceDetailRepository.saveAndFlush(invoiceDetail);
@@ -332,6 +389,7 @@ public class PatientServiceImpl implements PatientService {
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
 				invoiceDetail.setInvoice(inv.get());
 				invoiceDetail.setBill(conBill);
+				invoiceDetail.setPrice(conBill.getAmount());
 				invoiceDetail.setDescription("Consultation Fee");
 				invoiceDetail.setQty(1);
 				invoiceDetailRepository.saveAndFlush(invoiceDetail);
@@ -366,10 +424,28 @@ public class PatientServiceImpl implements PatientService {
 			throw new InvalidOperationException("Editing patient file no is not allowed");
 		}
 		
-		patient.setSearchKey(createSearchKey(patient.getNo(), patient.getFirstName(), patient.getMiddleName(), patient.getLastName(), patient.getPhoneNo()));
+		pt.get().setSearchKey(createSearchKey(patient.getNo(), patient.getFirstName(), patient.getMiddleName(), patient.getLastName(), patient.getPhoneNo()));
 		//recreate search key
+		pt.get().setFirstName(patient.getFirstName());
+		pt.get().setMiddleName(patient.getMiddleName());
+		pt.get().setLastName(patient.getLastName());
+		pt.get().setDateOfBirth(patient.getDateOfBirth());
+		pt.get().setGender(patient.getGender());
+		pt.get().setPatientType(patient.getPatientType());
+		pt.get().setNationality(patient.getNationality());
+		pt.get().setNationalId(patient.getNationalId());
+		pt.get().setPassportNo(patient.getPassportNo());
+		pt.get().setPhoneNo(patient.getPhoneNo());
+		pt.get().setEmail(patient.getEmail());
+		pt.get().setAddress(patient.getAddress());
+		pt.get().setKinFullName(patient.getKinFullName());
+		pt.get().setKinRelationship(patient.getKinRelationship());
+		pt.get().setKinPhoneNo(patient.getKinPhoneNo());
+		pt.get().setPaymentType(patient.getPaymentType());
+		pt.get().setInsurancePlan(patient.getInsurancePlan());
+		pt.get().setMembershipNo(patient.getMembershipNo());
 		
-		return patientRepository.saveAndFlush(patient);
+		return patientRepository.save(pt.get());
 		
 	}
 
