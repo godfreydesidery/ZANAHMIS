@@ -288,5 +288,34 @@ public class PatientResource {
 		
 		return ResponseEntity.ok().body(cons);
 	}
+	
+	@GetMapping("/patients/open_consultation")    // to do later
+	public ResponseEntity<Boolean> openConsultation(
+			@RequestParam(name = "consultation_id") Long consultationId){
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		if(c.get().getStatus().equals("PENDING")) {
+			if(c.get().getBill().getStatus().equals("PAID") || c.get().getBill().getStatus().equals("COVERED")) {
+				c.get().setStatus("IN-PROCESS");
+				consultationRepository.save(c.get());
+				return ResponseEntity.ok().body(true);
+			}else {
+				throw new InvalidOperationException("Could not open. Payment not verified.");
+			}
+		}else {
+			throw new InvalidOperationException("Could not open. Not a pending consultation.");
+		}				
+	}
+	
+	@GetMapping("/patients/load_consultation")    // to do later
+	public ResponseEntity<Consultation> loadConsultation(
+			@RequestParam(name = "id") Long id){
+		Optional<Consultation> c = consultationRepository.findById(id);
+		if(c.isPresent()) {
+			URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_consultation").toUriString());
+			return ResponseEntity.created(uri).body(c.get());
+		}else {
+			throw new NotFoundException("Consultation not found");
+		}
+	}
 }
 

@@ -33,7 +33,7 @@
                                     <td>{{consultation.patient.no}}</td>
                                     <td>{{consultation.paymentType}}</td>
                                     <td>{{consultation.clinician.name}}</td>
-                                    <td><a class="btn btn-success" routerLink="/doctor-cracking">Confirm</a></td>
+                                    <td><a class="btn btn-success" (click)="postConsultation(consultation.id)">Attend</a></td>
                                 </tr>
                             </tbody>
                         </table>    

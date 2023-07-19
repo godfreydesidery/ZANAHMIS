@@ -19,7 +19,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-12 alert alert-primary" role="alert">
-                            <h3>Name: Godfrey Desodery Shirima, File No: MNRNO 0001, Age: 34, 3 Months 10 Days, Male, Cash ENT</h3>
+                            <h4>Name: <b>{{consultation?.patient?.firstName}} {{consultation?.patient?.middleName}} {{consultation?.patient?.lastName}}</b>, File No: <b>{{consultation?.patient?.no}}</b>, Date of birth: <b>{{consultation?.patient?.dateOfBirth | date}}</b>, {{consultation?.patient?.gender}}, {{consultation?.paymentType}} {{consultation?.insurancePlan?.name}}</h4>
                         </div>
                         <div class="col-sm-6">
                             <label>Clinical Notes</label>

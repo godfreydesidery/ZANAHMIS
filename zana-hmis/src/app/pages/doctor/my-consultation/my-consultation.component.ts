@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
@@ -21,7 +22,8 @@ export class MyConsultationComponent implements OnInit {
   constructor(private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService) { }
+    private spinner : NgxSpinnerService,
+    private router : Router) { }
 
   async ngOnInit(): Promise<void> {
     await this.loadClinician()
@@ -68,6 +70,14 @@ export class MyConsultationComponent implements OnInit {
         console.log(error)
       }
     )
+  }
+
+  async postConsultation(id : any){
+    /**
+     * Set a global value consultation id to be accessed accross components
+     */
+    localStorage.setItem('consultation-id', id)
+    this.router.navigate(['doctor-cracking'])    
   }
 
 }

@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
@@ -22,11 +23,12 @@ export class ListFromReceptionComponent implements OnInit {
   constructor(private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService) { }
+    private spinner : NgxSpinnerService,
+    private router : Router) { }
 
   async ngOnInit(): Promise<void> {
     await this.loadClinician()
-    this.loadListFromReception(this.clinicianId)
+    await this.loadListFromReception(this.clinicianId)
   }
 
   async loadClinician(){    
@@ -35,7 +37,7 @@ export class ListFromReceptionComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<any>(API_URL+'/clinicians/load_clinician_by_username?username='+username, options)
+    await this.http.get<number>(API_URL+'/clinicians/load_clinician_by_username?username='+username, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -46,11 +48,13 @@ export class ListFromReceptionComponent implements OnInit {
     .catch(
       error => {
         alert('Could not load clinician')
+        console.log(error)
       }
     )
   }
 
-  async loadListFromReception(clinicianIid : any){    let options = {
+  async loadListFromReception(clinicianIid : any){
+    let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
@@ -71,6 +75,39 @@ export class ListFromReceptionComponent implements OnInit {
     )
   }
 
+  async postConsultation(id : any){
+    /**
+     * Set a global value consultation id to be accessed accross components
+     */
+    localStorage.setItem('consultation-id', id)
+     /**
+      * Open patients consultation
+      */
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var opened : boolean = false
+    this.spinner.show()
+    await this.http.get<boolean>(API_URL+'/patients/open_consultation?consultation_id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        opened = true
+      }
+    )
+    .catch(
+      error => {
+        alert(error['error'])
+        console.log(error)
+      }
+    )
+    if(opened){
+      this.router.navigate(['doctor-cracking'])
+    }else{
+      alert('Could not open')
+    }
+  }
 }
 
 export interface IConsultation{  

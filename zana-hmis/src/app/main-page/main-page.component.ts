@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: 'app-main-page',
+  templateUrl: './main-page.component.html',
+  styleUrls: ['./main-page.component.scss']
 })
-export class AppComponent implements OnInit {
-  title = 'zana-hmis';
+export class MainPageComponent implements OnInit {
+
   isLoggedIn : boolean = false;
 
   userName : string = ''
@@ -16,7 +16,6 @@ export class AppComponent implements OnInit {
   constructor(private router : Router) { }
 
   ngOnInit(): void {
-    this.router.navigate([''])//Navigates to home if url is entered on address bar
     var currentUser = null
     if(localStorage.getItem('user-name') != null){
       this.userName = localStorage.getItem('user-name')!
@@ -39,5 +38,5 @@ export class AppComponent implements OnInit {
     await this.router.navigate([''])
     window.location.reload()
   }
-  
+
 }

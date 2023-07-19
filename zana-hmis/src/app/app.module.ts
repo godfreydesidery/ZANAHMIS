@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
@@ -35,6 +35,8 @@ import { UserProfileComponent } from './pages/admin/user-and-access/user-profile
 import { RoleComponent } from './pages/admin/user-and-access/role/role.component';
 import { AccessManagementComponent } from './pages/admin/user-and-access/access-management/access-management.component';
 import { MedicineComponent } from './pages/admin/medical-operations/medicine/medicine.component';
+import { MainPageComponent } from './main-page/main-page.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   declarations: [
@@ -65,11 +67,13 @@ import { MedicineComponent } from './pages/admin/medical-operations/medicine/med
     UserProfileComponent,
     RoleComponent,
     AccessManagementComponent,
-    MedicineComponent
+    MedicineComponent,
+    MainPageComponent,
   ],
   imports: [
     HttpClientModule,
     BrowserModule,
+    NgxSpinnerModule,
     AppRoutingModule,
     FormsModule,
       RouterModule.forRoot([
@@ -100,6 +104,7 @@ import { MedicineComponent } from './pages/admin/medical-operations/medicine/med
     {path : 'medicine', component : MedicineComponent},
     ])
   ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   providers: [
     DatePipe,
     JwtHelperService,
