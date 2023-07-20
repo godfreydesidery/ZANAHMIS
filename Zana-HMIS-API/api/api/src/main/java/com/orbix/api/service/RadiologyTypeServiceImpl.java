@@ -47,7 +47,7 @@ public class RadiologyTypeServiceImpl implements RadiologyTypeService{
 
 	@Override
 	public RadiologyType getRadiologyTypeByName(String name) {
-		return radiologyTypeRepository.findByName(name);
+		return radiologyTypeRepository.findByName(name).get();
 	}
 
 	@Override

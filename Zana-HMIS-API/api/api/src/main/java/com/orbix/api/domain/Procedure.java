@@ -36,17 +36,22 @@ public class Procedure {
 	private String result = "";
 	private String status = "";
 	
-	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.LAZY,  optional = true)
+	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "consultation_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Consultation consultation;
 	
-	@ManyToOne(targetEntity = ProcedureType.class, fetch = FetchType.LAZY,  optional = true)
+	@ManyToOne(targetEntity = NonConsultation.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "non_consultation_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private NonConsultation nonConsultation;
+	
+	@ManyToOne(targetEntity = ProcedureType.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "procedure_type_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private ProcedureType procedureType;
 	
-	@OneToOne(targetEntity = Bill.class, fetch = FetchType.LAZY,  optional = true)
+	@OneToOne(targetEntity = Bill.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "bill_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Bill bill;

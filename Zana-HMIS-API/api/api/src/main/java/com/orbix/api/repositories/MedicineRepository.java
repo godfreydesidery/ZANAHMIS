@@ -4,6 +4,7 @@
 package com.orbix.api.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +22,7 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 	 * @param name
 	 * @return
 	 */
-	Medicine findByName(String name);
+	Optional<Medicine> findByName(String name);
 	
 	@Query("SELECT m.name FROM Medicine m")
 	List<String> getNames();

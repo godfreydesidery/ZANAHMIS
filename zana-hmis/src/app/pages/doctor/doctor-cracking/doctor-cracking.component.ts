@@ -69,13 +69,22 @@ export class DoctorCrackingComponent implements OnInit {
 
   diagnosisTypeNames : string[] = []
   labTestTypeNames : string[] = []
+  radiologyTypeNames : string[] = []
+  procedureTypeNames : string[] = []
+  medicineNames : string[] = []
 
   workingDiagnosises : IWorkingDiagnosis[] = []
   finalDiagnosises : IFinalDiagnosis[] = []
 
   labTests : ILabTest[] = []
+  radiologies : IRadiology[] = []
+  procedures : IProcedure[] = []
+  prescriptions : IPrescription[] = []
 
   labTestTypeName : string = ''
+  radiologyTypeName : string = ''
+  procedureTypeName : string = ''
+  medicineName : string = ''
 
   constructor(private auth : AuthService,
     private http :HttpClient,
@@ -91,9 +100,15 @@ export class DoctorCrackingComponent implements OnInit {
     this.loadGeneralExaminationByConsultationId(this.id)
     this.loadDiagnosisTypeNames()
     this.loadLabTestTypeNames()
+    this.loadRadiologyTypeNames()
+    this.loadProcedureTypeNames()
+    this.loadMedicineNames()
     this.loadWorkingDiagnosis(this.id)
     this.loadFinalDiagnosis(this.id)
     this.loadLabTest(this.id, 0)
+    this.loadRadiologies(this.id, 0)
+    this.loadProcedures(this.id, 0)
+    this.loadPrescriptions(this.id, 0)
   }
 
   async loadConsultation(id : any){
@@ -441,6 +456,22 @@ export class DoctorCrackingComponent implements OnInit {
     this.diagnosisDescription = ''
   }
 
+  clearLabTest(){
+    this.labTestTypeName = ''
+  }
+
+  clearRadiology(){
+    this.radiologyTypeName = ''
+  }
+
+  clearProcedure(){
+    this.procedureTypeName = ''
+  }
+
+  clearPrescription(){
+    this.medicineName = ''
+  }
+
   async loadLabTestTypeNames(){
     this.labTestTypeNames = []
     let options = {
@@ -461,6 +492,78 @@ export class DoctorCrackingComponent implements OnInit {
     .catch(
       error => {
         alert('Could not load lab test types names')
+      }
+    )
+  }
+
+  async loadRadiologyTypeNames(){
+    this.radiologyTypeNames = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/radiology_types/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        data?.forEach(element => {
+          this.radiologyTypeNames.push(element)
+        })
+      }
+    )
+    .catch(
+      error => {
+        alert('Could not load radiology types names')
+      }
+    )
+  }
+
+  async loadProcedureTypeNames(){
+    this.procedureTypeNames = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/procedure_types/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        data?.forEach(element => {
+          this.procedureTypeNames.push(element)
+        })
+      }
+    )
+    .catch(
+      error => {
+        alert('Could not load procedure types names')
+      }
+    )
+  }
+
+  async loadMedicineNames(){
+    this.medicineNames = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/medicines/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        data?.forEach(element => {
+          this.medicineNames.push(element)
+        })
+      }
+    )
+    .catch(
+      error => {
+        alert('Could not load medicine names')
       }
     )
   }
@@ -496,13 +599,106 @@ export class DoctorCrackingComponent implements OnInit {
     this.loadLabTest(this.id, 0)
   }
 
+  async saveRadiology(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var radiology : any = {
+      radiologyType : {
+        id : null,
+        code : '',
+        name : this.radiologyTypeName
+      }
+    }
+    this.spinner.show()
+    await this.http.post<IRadiology>(API_URL+'/patients/save_radiology?consultation_id='+this.id+'&non_consultation_id='+0, radiology, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log('test')
+        console.log(data)
+        console.log('test')
+      }
+    )
+    .catch(
+      error => {
+        alert('Could not save')
+        console.log(error)
+      }
+    )
+    this.loadRadiologies(this.id, 0)
+  }
+
+  async saveProcedure(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var procedure : any = {
+      procedureType : {
+        id : null,
+        code : '',
+        name : this.procedureTypeName
+      }
+    }
+    this.spinner.show()
+    await this.http.post<IProcedure>(API_URL+'/patients/save_procedure?consultation_id='+this.id+'&non_consultation_id='+0, procedure, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log('test')
+        console.log(data)
+        console.log('test')
+      }
+    )
+    .catch(
+      error => {
+        alert('Could not save')
+        console.log(error)
+      }
+    )
+    this.loadProcedures(this.id, 0)
+  }
+
+  async savePrescription(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var prescription : any = {
+      medicine : {
+        id : null,
+        code : '',
+        name : this.medicineName
+      }
+    }
+    this.spinner.show()
+    await this.http.post<IPrescription>(API_URL+'/patients/save_prescription?consultation_id='+this.id+'&non_consultation_id='+0, prescription, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log('test')
+        console.log(data)
+        console.log('test')
+      }
+    )
+    .catch(
+      error => {
+        alert('Could not save')
+        console.log(error)
+      }
+    )
+    this.loadPrescriptions(this.id, 0)
+  }
+
   async loadLabTest(consultationId : any, nonConsultationId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.labTests = []
     this.spinner.show()
-    await this.http.get<ILabTest[]>(API_URL+'/patients/load_lab_test?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    await this.http.get<ILabTest[]>(API_URL+'/patients/load_lab_tests?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -519,12 +715,81 @@ export class DoctorCrackingComponent implements OnInit {
     
   }
 
+  async loadRadiologies(consultationId : any, nonConsultationId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.radiologies = []
+    this.spinner.show()
+    await this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.radiologies = data!
+      }
+    )
+    .catch(
+      error => {
+        alert('Could not load rediologies')
+      }
+    )
+    
+  }
+
+  async loadProcedures(consultationId : any, nonConsultationId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.procedures = []
+    this.spinner.show()
+    await this.http.get<IProcedure[]>(API_URL+'/patients/load_procedures?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.procedures = data!
+      }
+    )
+    .catch(
+      error => {
+        alert('Could not load procedures')
+      }
+    )
+    
+  }
+
+  async loadPrescriptions(consultationId : any, nonConsultationId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.prescriptions = []
+    this.spinner.show()
+    await this.http.get<IPrescription[]>(API_URL+'/patients/load_prescriptions?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.prescriptions = data!
+      }
+    )
+    .catch(
+      error => {
+        alert('Could not load prescriptions')
+      }
+    )
+    
+  }
+
   async deleteLabTest(labTestId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<boolean>(API_URL+'/patients/delete_lab_test?id='+labTestId, options)
+    await this.http.post<boolean>(API_URL+'/patients/delete_lab_test?id='+labTestId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -535,10 +800,76 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not delete')
+        alert(error['error'])
       }
     )
     this.loadLabTest(this.id, 0)
+  }
+
+  async deleteRadiology(radiologyId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/delete_radiology?id='+radiologyId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        
+      }
+    )
+    .catch(
+      error => {
+        alert(error['error'])
+      }
+    )
+    this.loadRadiologies(this.id, 0)
+  }
+
+  async deleteProcedure(procedureId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/delete_procedure?id='+procedureId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        
+      }
+    )
+    .catch(
+      error => {
+        alert(error['error'])
+      }
+    )
+    this.loadProcedures(this.id, 0)
+  }
+
+  async deletePrescription(prescriptionId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/delete_prescription?id='+prescriptionId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        
+      }
+    )
+    .catch(
+      error => {
+        alert(error['error'])
+      }
+    )
+    this.loadPrescriptions(this.id, 0)
   }
 
 }

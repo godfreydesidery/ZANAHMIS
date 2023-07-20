@@ -26,5 +26,13 @@ public interface ProcedureTypePlanPriceRepository extends JpaRepository<Procedur
 	Optional<ProcedureTypePlanPrice> findByInsurancePlanAndProcedureType(InsurancePlan insurancePlan,
 			ProcedureType procedureType);
 
+	/**
+	 * @param procedureType
+	 * @param insurancePlan
+	 * @return
+	 */
+	Optional<ProcedureTypePlanPrice> findByProcedureTypeAndInsurancePlan(ProcedureType procedureType,
+			InsurancePlan insurancePlan);
+
 
 }

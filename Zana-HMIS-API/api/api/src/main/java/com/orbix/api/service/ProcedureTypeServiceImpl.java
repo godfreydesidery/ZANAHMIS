@@ -47,7 +47,7 @@ public class ProcedureTypeServiceImpl implements ProcedureTypeService{
 
 	@Override
 	public ProcedureType getProcedureTypeByName(String name) {
-		return procedureTypeRepository.findByName(name);
+		return procedureTypeRepository.findByName(name).get();
 	}
 
 	@Override

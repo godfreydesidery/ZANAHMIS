@@ -47,7 +47,7 @@ public class MedicineServiceImpl implements MedicineService{
 
 	@Override
 	public Medicine getMedicineByName(String name) {
-		return medicineRepository.findByName(name);
+		return medicineRepository.findByName(name).get();
 	}
 
 	@Override

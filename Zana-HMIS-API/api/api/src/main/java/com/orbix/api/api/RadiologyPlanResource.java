@@ -68,7 +68,7 @@ public class RadiologyPlanResource {
 		conPlan.setId(radiologyTypePlan.getId());
 		
 		InsurancePlan plan = insurancePlanRepository.findByName(radiologyTypePlan.getInsurancePlan().getName()).get();
-		RadiologyType radiologyType = radiologyTypeRepository.findByName(radiologyTypePlan.getRadiologyType().getName());
+		RadiologyType radiologyType = radiologyTypeRepository.findByName(radiologyTypePlan.getRadiologyType().getName()).get();
 		conPlan.setInsurancePlan(plan);
 		conPlan.setRadiologyType(radiologyType);
 		conPlan.setPrice(radiologyTypePlan.getPrice());

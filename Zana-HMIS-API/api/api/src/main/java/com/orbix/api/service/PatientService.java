@@ -15,6 +15,9 @@ import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PaymentType;
+import com.orbix.api.domain.Prescription;
+import com.orbix.api.domain.Procedure;
+import com.orbix.api.domain.Radiology;
 
 /**
  * @author Godfrey
@@ -30,4 +33,10 @@ public interface PatientService {
 	Patient findBySearchKey(String code);
 	
 	LabTest saveLabTest(LabTest test, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request);
+	
+	Radiology saveRadiology(Radiology radio, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request);
+	
+	Procedure saveProcedure(Procedure procedure, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request);
+	
+	Prescription savePrescription(Prescription prescription, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request);
 }

@@ -39,6 +39,9 @@ import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientCreditNote;
 import com.orbix.api.domain.Payment;
 import com.orbix.api.domain.PaymentType;
+import com.orbix.api.domain.Prescription;
+import com.orbix.api.domain.Procedure;
+import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.User;
 import com.orbix.api.domain.WorkingDiagnosis;
 import com.orbix.api.exceptions.InvalidOperationException;
@@ -56,10 +59,14 @@ import com.orbix.api.repositories.GeneralExaminationRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.InvoiceDetailRepository;
 import com.orbix.api.repositories.InvoiceRepository;
+import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
 import com.orbix.api.repositories.PatientCreditNoteRepository;
 import com.orbix.api.repositories.PatientRepository;
 import com.orbix.api.repositories.PaymentRepository;
+import com.orbix.api.repositories.PrescriptionRepository;
+import com.orbix.api.repositories.ProcedureRepository;
+import com.orbix.api.repositories.RadiologyRepository;
 import com.orbix.api.repositories.VisitRepository;
 import com.orbix.api.repositories.WorkingDiagnosisRepository;
 import com.orbix.api.service.CompanyProfileService;
@@ -98,6 +105,10 @@ public class PatientResource {
 	private final DiagnosisTypeRepository diagnosisTypeRepository;
 	private final WorkingDiagnosisRepository workingDiagnosisRepository;
 	private final FinalDiagnosisRepository finalDiagnosisRepository;
+	private final LabTestRepository labTestRepository;
+	private final RadiologyRepository radiologyRepository;
+	private final ProcedureRepository procedureRepository;
+	private final PrescriptionRepository prescriptionRepository;
 	
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(){
@@ -176,7 +187,7 @@ public class PatientResource {
 	
 	@PostMapping("/patients/cancel_consultation")
 	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
-	public ResponseEntity<Boolean>consultation(
+	public ResponseEntity<Boolean>cancelConsultation(
 			@RequestParam Long id, 
 			HttpServletRequest request){
 		Optional<Consultation> c = consultationRepository.findById(id);
@@ -550,7 +561,46 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(patientService.saveLabTest(labTest, c, nc, request));
 	}
 	
-	@GetMapping("/patients/load_lab_test") 
+	@PostMapping("/patients/save_radiology")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<Radiology>saveRadiology(
+			@RequestBody Radiology radiology,
+			@RequestParam Long consultation_id, @RequestParam Long non_consultation_id, 
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_radiology").toUriString());
+		return ResponseEntity.created(uri).body(patientService.saveRadiology(radiology, c, nc, request));
+	}
+	
+	@PostMapping("/patients/save_procedure")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<Procedure>saveProcedure(
+			@RequestBody Procedure procedure,
+			@RequestParam Long consultation_id, @RequestParam Long non_consultation_id, 
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_procedure").toUriString());
+		return ResponseEntity.created(uri).body(patientService.saveProcedure(procedure, c, nc, request));
+	}
+	
+	@PostMapping("/patients/save_prescription")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<Prescription>savePrescription(
+			@RequestBody Prescription prescription,
+			@RequestParam Long consultation_id, @RequestParam Long non_consultation_id, 
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_prescription").toUriString());
+		return ResponseEntity.created(uri).body(patientService.savePrescription(prescription, c, nc, request));
+	}
+	
+	@GetMapping("/patients/load_lab_tests") 
 	public ResponseEntity<List<LabTest>> loadLabTests(
 			@RequestParam(name = "consultation_id") Long consultationId,
 			@RequestParam(name = "non_consultation_id") Long nonConsultationId){
@@ -567,7 +617,262 @@ public class PatientResource {
 		}
 	}
 	
+	@GetMapping("/patients/load_radiologies") 
+	public ResponseEntity<List<Radiology>> loadRadiologies(
+			@RequestParam(name = "consultation_id") Long consultationId,
+			@RequestParam(name = "non_consultation_id") Long nonConsultationId){
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_radiologies").toUriString());
+		if(c.isPresent()) {
+			return ResponseEntity.created(uri).body(c.get().getRadiologies());
+		}else if(nc.isPresent()){		
+			return ResponseEntity.created(uri).body(nc.get().getRadiologies());
+		
+		}else {
+			return null;
+		}
+	}
 	
+	@GetMapping("/patients/load_procedures") 
+	public ResponseEntity<List<Procedure>> loadProcedures(
+			@RequestParam(name = "consultation_id") Long consultationId,
+			@RequestParam(name = "non_consultation_id") Long nonConsultationId){
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_procedures").toUriString());
+		if(c.isPresent()) {
+			return ResponseEntity.created(uri).body(c.get().getProcedures());
+		}else if(nc.isPresent()){		
+			return ResponseEntity.created(uri).body(nc.get().getProcedures());
+		
+		}else {
+			return null;
+		}
+	}
+	
+	@GetMapping("/patients/load_prescriptions") 
+	public ResponseEntity<List<Prescription>> loadPrescriptions(
+			@RequestParam(name = "consultation_id") Long consultationId,
+			@RequestParam(name = "non_consultation_id") Long nonConsultationId){
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_prescriptions").toUriString());
+		if(c.isPresent()) {
+			return ResponseEntity.created(uri).body(c.get().getPrescriptions());
+		}else if(nc.isPresent()){		
+			return ResponseEntity.created(uri).body(nc.get().getPrescriptions());
+		
+		}else {
+			return null;
+		}
+	}
+	
+	@PostMapping("/patients/delete_lab_test")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<Boolean>deleteLabTest(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<LabTest> t = labTestRepository.findById(id);
+		if(!t.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not delete, only a PENDING lab test can be deleted");
+		}
+		LabTest labTest = t.get();
+		
+		Bill bill = billRepository.findById(t.get().getBill().getId()).get();
+		
+		Optional<Payment> p = paymentRepository.findByBill(bill);
+		if(p.isPresent()) {
+			
+			PatientCreditNote patientCreditNote = new PatientCreditNote();
+			patientCreditNote.setAmount(p.get().getAmount());
+			patientCreditNote.setPatient(bill.getPatient());
+			patientCreditNote.setReference("Lab test canceled");
+			patientCreditNote.setStatus("PENDING");
+			patientCreditNote.setNo("NA");
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+			patientCreditNote.setNo(patientCreditNote.getId().toString());
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+		}
+		Optional<InvoiceDetail> i = invoiceDetailRepository.findByBill(bill);
+		/**
+		 * If there is a invoice detail associated with this bill, delete it
+		 */
+		if(i.isPresent()) {			
+			invoiceDetailRepository.delete(i.get());
+			Invoice invoice = i.get().getInvoice();
+			int j = 0;
+			for(InvoiceDetail d : invoice.getInvoiceDetails()) {
+				j = j++;
+			}
+			if(j == 0) {
+				invoiceRepository.delete(invoice);
+			}			
+		}
+		if(p.isPresent()) {
+			paymentRepository.delete(p.get());
+		}
+		billRepository.delete(bill);
+		labTestRepository.delete(labTest);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_lab_test").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
+	
+	@PostMapping("/patients/delete_radiology")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<Boolean>deleteRadiology(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<Radiology> r = radiologyRepository.findById(id);
+		if(!r.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not delete, only a PENDING radiology can be deleted");
+		}
+		Radiology radiology = r.get();
+		
+		Bill bill = billRepository.findById(r.get().getBill().getId()).get();
+		
+		Optional<Payment> p = paymentRepository.findByBill(bill);
+		if(p.isPresent()) {
+			
+			PatientCreditNote patientCreditNote = new PatientCreditNote();
+			patientCreditNote.setAmount(p.get().getAmount());
+			patientCreditNote.setPatient(bill.getPatient());
+			patientCreditNote.setReference("Radiology canceled");
+			patientCreditNote.setStatus("PENDING");
+			patientCreditNote.setNo("NA");
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+			patientCreditNote.setNo(patientCreditNote.getId().toString());
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+		}
+		Optional<InvoiceDetail> i = invoiceDetailRepository.findByBill(bill);
+		/**
+		 * If there is a invoice detail associated with this bill, delete it
+		 */
+		if(i.isPresent()) {			
+			invoiceDetailRepository.delete(i.get());
+			Invoice invoice = i.get().getInvoice();
+			int j = 0;
+			for(InvoiceDetail d : invoice.getInvoiceDetails()) {
+				j = j++;
+			}
+			if(j == 0) {
+				invoiceRepository.delete(invoice);
+			}			
+		}
+		if(p.isPresent()) {
+			paymentRepository.delete(p.get());
+		}
+		billRepository.delete(bill);
+		radiologyRepository.delete(radiology);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_radiology").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
+	@PostMapping("/patients/delete_procedure")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<Boolean>deleteProcedure(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<Procedure> pr = procedureRepository.findById(id);
+		if(!pr.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not delete, only a PENDING procedure can be deleted");
+		}
+		Procedure procedure = pr.get();
+		
+		Bill bill = billRepository.findById(pr.get().getBill().getId()).get();
+		
+		Optional<Payment> p = paymentRepository.findByBill(bill);
+		if(p.isPresent()) {
+			
+			PatientCreditNote patientCreditNote = new PatientCreditNote();
+			patientCreditNote.setAmount(p.get().getAmount());
+			patientCreditNote.setPatient(bill.getPatient());
+			patientCreditNote.setReference("Procedure canceled");
+			patientCreditNote.setStatus("PENDING");
+			patientCreditNote.setNo("NA");
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+			patientCreditNote.setNo(patientCreditNote.getId().toString());
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+		}
+		Optional<InvoiceDetail> i = invoiceDetailRepository.findByBill(bill);
+		/**
+		 * If there is a invoice detail associated with this bill, delete it
+		 */
+		if(i.isPresent()) {			
+			invoiceDetailRepository.delete(i.get());
+			Invoice invoice = i.get().getInvoice();
+			int j = 0;
+			for(InvoiceDetail d : invoice.getInvoiceDetails()) {
+				j = j++;
+			}
+			if(j == 0) {
+				invoiceRepository.delete(invoice);
+			}			
+		}
+		if(p.isPresent()) {
+			paymentRepository.delete(p.get());
+		}
+		billRepository.delete(bill);
+		procedureRepository.delete(procedure);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_procedure").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
+	@PostMapping("/patients/delete_prescription")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<Boolean>deletePrescription(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<Prescription> pr = prescriptionRepository.findById(id);
+		if(!pr.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not delete, only a PENDING prescription can be deleted");
+		}
+		Prescription prescription = pr.get();
+		
+		Bill bill = billRepository.findById(pr.get().getBill().getId()).get();
+		
+		Optional<Payment> p = paymentRepository.findByBill(bill);
+		if(p.isPresent()) {
+			
+			PatientCreditNote patientCreditNote = new PatientCreditNote();
+			patientCreditNote.setAmount(p.get().getAmount());
+			patientCreditNote.setPatient(bill.getPatient());
+			patientCreditNote.setReference("Prescription canceled");
+			patientCreditNote.setStatus("PENDING");
+			patientCreditNote.setNo("NA");
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+			patientCreditNote.setNo(patientCreditNote.getId().toString());
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+		}
+		Optional<InvoiceDetail> i = invoiceDetailRepository.findByBill(bill);
+		/**
+		 * If there is a invoice detail associated with this bill, delete it
+		 */
+		if(i.isPresent()) {			
+			invoiceDetailRepository.delete(i.get());
+			Invoice invoice = i.get().getInvoice();
+			int j = 0;
+			for(InvoiceDetail d : invoice.getInvoiceDetails()) {
+				j = j++;
+			}
+			if(j == 0) {
+				invoiceRepository.delete(invoice);
+			}			
+		}
+		if(p.isPresent()) {
+			paymentRepository.delete(p.get());
+		}
+		billRepository.delete(bill);
+		prescriptionRepository.delete(prescription);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_prescription").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+		
 }
 
 @Data

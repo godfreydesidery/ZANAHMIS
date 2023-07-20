@@ -86,4 +86,22 @@ public class NonConsultation {
     @JsonIgnoreProperties("nonConsultation")
 	@Fetch(value = FetchMode.SUBSELECT)
     private List<LabTest> labTests;
+	
+	@OneToMany(targetEntity = Radiology.class, mappedBy = "nonConsultation", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Valid
+    @JsonIgnoreProperties("nonConsultation")
+	@Fetch(value = FetchMode.SUBSELECT)
+    private List<Radiology> radiologies;
+	
+	@OneToMany(targetEntity = Procedure.class, mappedBy = "nonConsultation", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Valid
+    @JsonIgnoreProperties("nonConsultation")
+	@Fetch(value = FetchMode.SUBSELECT)
+    private List<Procedure> procedures;
+	
+	@OneToMany(targetEntity = Prescription.class, mappedBy = "consultation", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Valid
+    @JsonIgnoreProperties("consultation")
+	@Fetch(value = FetchMode.SUBSELECT)
+    private List<Prescription> prescriptions;
 }

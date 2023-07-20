@@ -75,159 +75,166 @@
                             <hr>
                         </div>
 
-                        <div class="col-sm-12" style="text-align: center;">
-                            <button class="btn btn-primary pull-right" (click)="clearDiagnosis()" data-toggle="modal" data-target="#assign-diagnosis-modal">Assign Diagnosis</button>
-                        </div>
-                        
-                        <div class="col-sm-6">
-                            <label>Working Diagnosis</label>
-                            <div class="jumbotron jumbotron-fluid">                               
-                                <div class="container">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-hover  table-striped">
-                                            <thead class="success">
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Code</th>
-                                                <th>Name</th>
-                                                <th>Description</th>
-                                                <th>Action</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr *ngFor="let workingDiagnosis of workingDiagnosises">
-                                                    <td>{{workingDiagnosis.id}}</td>
-                                                    <td>{{workingDiagnosis.diagnosisType.code}}</td>
-                                                    <td>{{workingDiagnosis.diagnosisType.name}}</td>
-                                                    <td>{{workingDiagnosis.description}}</td>
-                                                    <td><a (click)="deleteWorkingDiagnosis(workingDiagnosis.id)"><i class="fa fa-trash"></i>Delete</a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>    
-                                    </div>
-                                </div>
+                        <div class="row" style="margin-left: 1mm; margin-right: 1mm;">
+                            <div class="col-sm-12" style="text-align: center;">
+                                <button class="btn btn-primary pull-right" (click)="clearDiagnosis()" data-toggle="modal" data-target="#assign-diagnosis-modal">Assign Diagnosis</button>
+                                <br>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <label>Final Diagnosis</label>
-                            <div class="jumbotron jumbotron-fluid">                               
-                                <div class="container">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-hover  table-striped">
-                                            <thead class="success">
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Code</th>
-                                                <th>Name</th>
-                                                <th>Description</th>
-                                                <th>Action</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr *ngFor="let finalDiagnosis of finalDiagnosises">
-                                                    <td>{{finalDiagnosis.id}}</td>
-                                                    <td>{{finalDiagnosis.diagnosisType.code}}</td>
-                                                    <td>{{finalDiagnosis.diagnosisType.name}}</td>
-                                                    <td>{{finalDiagnosis.description}}</td>
-                                                    <td><a (click)="deleteFinalDiagnosis(finalDiagnosis.id)"><i class="fa fa-trash"></i>Delete</a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>    
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="col-sm-6">
                             
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <label>Laboratory</label>
-                                    <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#assign-lab-test-modal" style="margin-right: 2mm;">Assign Lab Test</button>
-                                    <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#lab-test-result-modal" style="margin-right: 2mm;">View Result</button>
+                            <div class="col-sm-6">
+                                <label>Working Diagnosis</label>
+                                <div class="jumbotron jumbotron-fluid">                               
+                                    <div class="container">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover  table-striped">
+                                                <thead class="success">
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Code</th>
+                                                    <th>Name</th>
+                                                    <th>Description</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let workingDiagnosis of workingDiagnosises">
+                                                        <td>{{workingDiagnosis.id}}</td>
+                                                        <td>{{workingDiagnosis.diagnosisType.code}}</td>
+                                                        <td>{{workingDiagnosis.diagnosisType.name}}</td>
+                                                        <td>{{workingDiagnosis.description}}</td>
+                                                        <td><a (click)="deleteWorkingDiagnosis(workingDiagnosis.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>    
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="jumbotron jumbotron-fluid">                               
-                                <div class="container">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-hover  table-striped">
-                                            <thead class="success">
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Lab Test</th>
-                                                <th>Price</th>
-                                                <th>Payment Status</th>
-                                                <th>Action</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr *ngFor="let labTest of labTests">
-                                                    <td>{{labTest.id}}</td>
-                                                    <td>{{labTest.labTestType.name}}</td>
-                                                    <td style="text-align: right;"><span *ngIf="labTest.bill.status != 'COVERED'">{{labTest.bill.amount | currency:'':''}}</span><span *ngIf="labTest.bill.status === 'COVERED'">---</span></td>
-                                                    <td>
-                                                        <span *ngIf="labTest.bill.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest.bill.status}}</span>
-                                                        <span *ngIf="labTest.bill.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{labTest.bill.status}}</span>
-                                                        <span *ngIf="labTest.bill.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest.bill.status}}(NOT COVERED)</span>
-                                                    </td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                            <div class="col-sm-6">
+                                <label>Final Diagnosis</label>
+                                <div class="jumbotron jumbotron-fluid">                               
+                                    <div class="container">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover  table-striped">
+                                                <thead class="success">
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Code</th>
+                                                    <th>Name</th>
+                                                    <th>Description</th>
+                                                    <th>Action</th>
                                                 </tr>
-                                            </tbody>
-                                        </table>    
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let finalDiagnosis of finalDiagnosises">
+                                                        <td>{{finalDiagnosis.id}}</td>
+                                                        <td>{{finalDiagnosis.diagnosisType.code}}</td>
+                                                        <td>{{finalDiagnosis.diagnosisType.name}}</td>
+                                                        <td>{{finalDiagnosis.description}}</td>
+                                                        <td><a (click)="deleteFinalDiagnosis(finalDiagnosis.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <br>
+
+                        <div class="row" style="margin-left: 1mm; margin-right: 1mm;">
+                            <div class="col-sm-6">
+                            
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label>Laboratory</label>
+                                        <button class="btn btn-primary pull-right" (click)="clearLabTest()" data-toggle="modal" data-target="#assign-lab-test-modal" style="margin-right: 2mm;">Assign Lab Test</button>
+                                        <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#lab-test-result-modal" style="margin-right: 2mm;">View Result</button>
+                                    </div>
+                                </div>
+                                <div class="jumbotron jumbotron-fluid">                               
+                                    <div class="container">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover  table-striped">
+                                                <thead class="success">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Lab Test</th>
+                                                    <th>Price</th>
+                                                    <th>Payment Status</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let labTest of labTests">
+                                                        <td>{{labTest.id}}</td>
+                                                        <td>{{labTest.labTestType.name}}</td>
+                                                        <td style="text-align: right;"><span *ngIf="labTest.bill.status != 'COVERED'">{{labTest.bill.amount | currency:'':''}}</span><span *ngIf="labTest.bill.status === 'COVERED'">---</span></td>
+                                                        <td>
+                                                            <span *ngIf="labTest.bill.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest.bill.status}}</span>
+                                                            <span *ngIf="labTest.bill.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{labTest.bill.status}}</span>
+                                                            <span *ngIf="labTest.bill.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest.bill.status}}(NOT COVERED)</span>
+                                                        </td>
+                                                        <td>{{labTest.status}}</td>
+                                                        <td><a (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label>Radiology</label>
+                                        <button class="btn btn-primary pull-right" (click)="clearRadiology()" data-toggle="modal" data-target="#assign-radiology-modal" style="margin-right: 2mm;">Assign Radiology</button>
+                                        <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#radiology-result-modal" style="margin-right: 2mm;">View Result</button>
+                                    </div>
+                                </div>
+                                <div class="jumbotron jumbotron-fluid">                               
+                                    <div class="container">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover  table-striped">
+                                                <thead class="success">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Radiology</th>
+                                                    <th>Price</th>
+                                                    <th>Payment Status</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let radiology of radiologies">
+                                                        <td>{{radiology.id}}</td>
+                                                        <td>{{radiology.radiologyType.name}}</td>
+                                                        <td style="text-align: right;"><span *ngIf="radiology.bill.status != 'COVERED'">{{radiology.bill.amount | currency:'':''}}</span><span *ngIf="radiology.bill.status === 'COVERED'">---</span></td>
+                                                        <td>
+                                                            <span *ngIf="radiology.bill.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{radiology.bill.status}}</span>
+                                                            <span *ngIf="radiology.bill.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{radiology.bill.status}}</span>
+                                                            <span *ngIf="radiology.bill.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{radiology.bill.status}}(NOT COVERED)</span>
+                                                        </td>
+                                                        <td>{{radiology.status}}</td>
+                                                        <td><a (click)="deleteRadiology(radiology.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>    
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="col-sm-6">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <label>Radiology</label>
-                                    <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#assign-radiology-modal" style="margin-right: 2mm;">Assign Radiology</button>
-                                    <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#radiology-result-modal" style="margin-right: 2mm;">View Result</button>
-                                </div>
-                            </div>
-                            <div class="jumbotron jumbotron-fluid">                               
-                                <div class="container">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-hover  table-striped">
-                                            <thead class="success">
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Radiology</th>
-                                                <th>Price</th>
-                                                <th>Action</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>X-Ray</td>
-                                                    <td style="text-align: right;">20,000.00</td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>MRI</td>
-                                                    <td style="text-align: right;">20,000.00</td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>CT Scan</td>
-                                                    <td style="text-align: right;">20,000.00</td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>    
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         
                         <div class="col-sm-12">
                             <hr>
-                            <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#assign-drugs-modal">Assign Drugs</button>
+                            <button class="btn btn-primary pull-right" (click)="clearPrescription()" data-toggle="modal" data-target="#assign-drugs-modal">Assign Drugs</button>
                             <br>
                         </div>
                         <div class="col-sm-12">
@@ -238,28 +245,26 @@
                                         <table class="table table-bordered table-hover  table-striped">
                                             <thead class="success">
                                             <tr>
-                                                <th>Date</th>
-                                                <th>Unit</th>
-                                                <th>Dosage</th>
-                                                <th>Frequency</th>
-                                                <th>Route</th>
-                                                <th>Day</th>
-                                                <th>Qty</th>
+                                                <th>ID</th>
+                                                <th>Prescription</th>
                                                 <th>Price</th>
+                                                <th>Payment Status</th>
+                                                <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                <tr *ngFor="let prescription of prescriptions">
+                                                    <td>{{prescription.id}}</td>
+                                                    <td>{{prescription.medicine.name}}</td>
+                                                    <td style="text-align: right;"><span *ngIf="prescription.bill.status != 'COVERED'">{{prescription.bill.amount | currency:'':''}}</span><span *ngIf="prescription.bill.status === 'COVERED'">---</span></td>
+                                                    <td>
+                                                        <span *ngIf="prescription.bill.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{prescription.bill.status}}</span>
+                                                        <span *ngIf="prescription.bill.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{prescription.bill.status}}</span>
+                                                        <span *ngIf="prescription.bill.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{prescription.bill.status}}(NOT COVERED)</span>
+                                                    </td>
+                                                    <td>{{prescription.status}}</td>
+                                                    <td><a (click)="deletePrescription(prescription.id)"><i class="fa fa-trash"></i>Delete</a></td>
                                                 </tr>
                                             </tbody>
                                         </table>    
@@ -269,7 +274,7 @@
                         </div>
                         <div class="col-sm-12">
                             <hr>
-                            <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#assign-procedure-modal">Assign Procedure</button>
+                            <button class="btn btn-primary pull-right" (click)="clearProcedure()" data-toggle="modal" data-target="#assign-procedure-modal">Assign Procedure</button>
                             <br>
                         </div>
                         <div class="col-sm-12">
@@ -280,27 +285,29 @@
                                         <table class="table table-bordered table-hover  table-striped">
                                             <thead class="success">
                                             <tr>
-                                                <th>Date</th>
-                                                <th>Procedure</th>
-                                                <th>Procedure Note</th>
+                                                <th>ID</th>
+                                                <th>Radiology</th>
                                                 <th>Price</th>
+                                                <th>Payment Status</th>
                                                 <th>Status</th>
-                                                <th>Doctor Name</th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                <tr *ngFor="let procedure of procedures">
+                                                    <td>{{procedure.id}}</td>
+                                                    <td>{{procedure.procedureType.name}}</td>
+                                                    <td style="text-align: right;"><span *ngIf="procedure.bill.status != 'COVERED'">{{procedure.bill.amount | currency:'':''}}</span><span *ngIf="procedure.bill.status === 'COVERED'">---</span></td>
+                                                    <td>
+                                                        <span *ngIf="procedure.bill.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{procedure.bill.status}}</span>
+                                                        <span *ngIf="procedure.bill.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{procedure.bill.status}}</span>
+                                                        <span *ngIf="procedure.bill.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{procedure.bill.status}}(NOT COVERED)</span>
+                                                    </td>
+                                                    <td>{{procedure.status}}</td>
+                                                    <td><a (click)="deleteProcedure(procedure.id)"><i class="fa fa-trash"></i>Delete</a></td>
                                                 </tr>
                                             </tbody>
-                                        </table>    
+                                        </table>   
                                     </div>
                                 </div>
                             </div>
@@ -407,13 +414,19 @@
                 <h3 class="modal-title">Assign Radiology</h3>
             </div>
             <div class="modal-body">
-                    
-                    
-                    
-                    
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save</button>
-                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                       <h4>Select Radiology Type</h4>
+                       <select class="form-control" [(ngModel)]="radiologyTypeName">
+                           <option></option>
+                           <option *ngFor="let name of radiologyTypeNames">{{name}}</option>
+                       </select>
+                    </div>
+                </div>   
+                   
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-success pull-right" (click)="saveRadiology()" data-dismiss="modal">Save</button>
+               </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
@@ -447,13 +460,19 @@
                 <h3 class="modal-title">Assign Procedure</h3>
             </div>
             <div class="modal-body">
-                    
-                    
-                    
-                    
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save</button>
-                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                       <h4>Select Procedure Type</h4>
+                       <select class="form-control" [(ngModel)]="procedureTypeName">
+                           <option></option>
+                           <option *ngFor="let name of procedureTypeNames">{{name}}</option>
+                       </select>
+                    </div>
+                </div>   
+                   
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-success pull-right" (click)="saveProcedure()" data-dismiss="modal">Save</button>
+               </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
@@ -468,13 +487,19 @@
                 <h3 class="modal-title">Assign Drugs</h3>
             </div>
             <div class="modal-body">
-                    
-                    
-                    
-                    
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save</button>
-                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                       <h4>Select Medicine</h4>
+                       <select class="form-control" [(ngModel)]="medicineName">
+                           <option></option>
+                           <option *ngFor="let name of medicineNames">{{name}}</option>
+                       </select>
+                    </div>
+                </div>   
+                   
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-success pull-right" (click)="savePrescription()" data-dismiss="modal">Save</button>
+               </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
