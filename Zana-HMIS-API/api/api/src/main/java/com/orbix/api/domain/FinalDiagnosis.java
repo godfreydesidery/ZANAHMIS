@@ -32,13 +32,14 @@ public class FinalDiagnosis {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private String description;
 	
-	@ManyToOne(targetEntity = DiagnosisType.class, fetch = FetchType.LAZY,  optional = true)
+	@ManyToOne(targetEntity = DiagnosisType.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "diagnosis_type_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
-    private DiagnosisType diagnositType;
+    private DiagnosisType diagnosisType;
 	
-	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.LAZY,  optional = true)
+	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "consultation_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Consultation consultation;

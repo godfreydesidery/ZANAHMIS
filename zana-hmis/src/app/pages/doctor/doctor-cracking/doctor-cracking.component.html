@@ -27,14 +27,14 @@
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <textarea class="form-control" placeholder="Main Complain"></textarea>
-                                            <textarea class="form-control" placeholder="History of Present Illness"></textarea>
-                                            <textarea class="form-control" placeholder="Past Medical History"></textarea>
-                                            <textarea class="form-control" placeholder="Family and Social History"></textarea>
-                                            <textarea class="form-control" placeholder="Drugs and Allergy History"></textarea>
-                                            <textarea class="form-control" placeholder="Review of Other Systems"></textarea>
-                                            <textarea class="form-control" placeholder="Physical Examination"></textarea>
-                                            <textarea class="form-control" placeholder="Management Plan"></textarea>
+                                            <textarea class="form-control" [(ngModel)]="cNMainComplain" placeholder="Main Complain"></textarea>
+                                            <textarea class="form-control" [(ngModel)]="cNPresentIllnessHistory" placeholder="History of Present Illness"></textarea>
+                                            <textarea class="form-control" [(ngModel)]="cNPastMedicalHistory" placeholder="Past Medical History"></textarea>
+                                            <textarea class="form-control" [(ngModel)]="cNFamilyAndSocialHistory" placeholder="Family and Social History"></textarea>
+                                            <textarea class="form-control" [(ngModel)]="cNDrugsAndAllergyHistory" placeholder="Drugs and Allergy History"></textarea>
+                                            <textarea class="form-control" [(ngModel)]="cNReviewOfOtherSystem" placeholder="Review of Other Systems"></textarea>
+                                            <textarea class="form-control" [(ngModel)]="cNPhysicalExamination" placeholder="Physical Examination"></textarea>
+                                            <textarea class="form-control" [(ngModel)]="cNManagementPlan" placeholder="Management Plan"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -45,39 +45,38 @@
                             <div class="jumbotron jumbotron-fluid">                               
                                 <div class="container">
                                     <div class="row">
-                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Pressure(mmHg)"></div>
-                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Temparature(c)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" [(ngModel)]="gEPressure" placeholder="Pressure(mmHg)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" [(ngModel)]="gETemperature" placeholder="Temparature(c)"></div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Pulse Rate(b/Min)"></div>
-                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Weight(kg)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" [(ngModel)]="gEPulseRate" placeholder="Pulse Rate(b/Min)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" [(ngModel)]="gEWeight" placeholder="Weight(kg)"></div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Height(cm)"></div>
-                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Body Mass Index(kg/m)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" [(ngModel)]="gEHeight" placeholder="Height(cm)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" [(ngModel)]="gEBodyMassIndex" placeholder="Body Mass Index(kg/m)"></div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Body Surface Area(cmkg)"></div>
-                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Body Mass Index Comment"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" [(ngModel)]="gEBodySurfaceArea" placeholder="Body Surface Area(cmkg)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" [(ngModel)]="gEBodyMassIndex" placeholder="Body Mass Index Comment"></div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Saturation Oxygen(%)"></div>
-                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" placeholder="Respiratory Rate(cycles/Min)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" [(ngModel)]="gESaturationOxygen" placeholder="Saturation Oxygen(%)"></div>
+                                        <div class="col-sm-6" style="margin-bottom: 3mm;"><input type="text" class="form-control" [(ngModel)]="gERespiratoryRate" placeholder="Respiratory Rate(cycles/Min)"></div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-sm-12" style="margin-bottom: 3mm;"><textarea class="form-control" placeholder="Description"></textarea></div>
+                                        <div class="col-sm-12" style="margin-bottom: 3mm;"><textarea class="form-control" [(ngModel)]="gEDescription" placeholder="Description"></textarea></div>
                                     </div>
-                                    
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-12" style="text-align: center;">
-                            <button class="btn btn-primary">Save</button>
+                            <button class="btn btn-primary" (click)="saveCG()">Save</button>
                             <hr>
                         </div>
 
                         <div class="col-sm-12" style="text-align: center;">
-                            <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#assign-diagnosis-modal">Assign Diagnosis</button>
+                            <button class="btn btn-primary pull-right" (click)="clearDiagnosis()" data-toggle="modal" data-target="#assign-diagnosis-modal">Assign Diagnosis</button>
                         </div>
                         
                         <div class="col-sm-6">
@@ -89,29 +88,19 @@
                                             <thead class="success">
                                             <tr>
                                                 <th>No</th>
-                                                <th>Diagnosis Code</th>
+                                                <th>Code</th>
+                                                <th>Name</th>
                                                 <th>Description</th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Hypertension</td>
-                                                    <td>Hypertension</td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Hypertension</td>
-                                                    <td>Hypertension</td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Hypertension</td>
-                                                    <td>Hypertension</td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                <tr *ngFor="let workingDiagnosis of workingDiagnosises">
+                                                    <td>{{workingDiagnosis.id}}</td>
+                                                    <td>{{workingDiagnosis.diagnosisType.code}}</td>
+                                                    <td>{{workingDiagnosis.diagnosisType.name}}</td>
+                                                    <td>{{workingDiagnosis.description}}</td>
+                                                    <td><a (click)="deleteWorkingDiagnosis(workingDiagnosis.id)"><i class="fa fa-trash"></i>Delete</a></td>
                                                 </tr>
                                             </tbody>
                                         </table>    
@@ -128,29 +117,19 @@
                                             <thead class="success">
                                             <tr>
                                                 <th>No</th>
-                                                <th>Diagnosis Code</th>
+                                                <th>Code</th>
+                                                <th>Name</th>
                                                 <th>Description</th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Hypertension</td>
-                                                    <td>Hypertension</td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Hypertension</td>
-                                                    <td>Hypertension</td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Hypertension</td>
-                                                    <td>Hypertension</td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
+                                                <tr *ngFor="let finalDiagnosis of finalDiagnosises">
+                                                    <td>{{finalDiagnosis.id}}</td>
+                                                    <td>{{finalDiagnosis.diagnosisType.code}}</td>
+                                                    <td>{{finalDiagnosis.diagnosisType.name}}</td>
+                                                    <td>{{finalDiagnosis.description}}</td>
+                                                    <td><a (click)="deleteFinalDiagnosis(finalDiagnosis.id)"><i class="fa fa-trash"></i>Delete</a></td>
                                                 </tr>
                                             </tbody>
                                         </table>    
@@ -174,29 +153,23 @@
                                         <table class="table table-bordered table-hover  table-striped">
                                             <thead class="success">
                                             <tr>
-                                                <th>No</th>
+                                                <th>ID</th>
                                                 <th>Lab Test</th>
                                                 <th>Price</th>
+                                                <th>Payment Status</th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>FBP</td>
-                                                    <td style="text-align: right;">20,000.00</td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>FBP</td>
-                                                    <td style="text-align: right;">20,000.00</td>
-                                                    <td><a><i class="fa fa-trash"></i>Delete</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>FBP</td>
-                                                    <td style="text-align: right;">20,000.00</td>
+                                                <tr *ngFor="let labTest of labTests">
+                                                    <td>{{labTest.id}}</td>
+                                                    <td>{{labTest.labTestType.name}}</td>
+                                                    <td style="text-align: right;"><span *ngIf="labTest.bill.status != 'COVERED'">{{labTest.bill.amount | currency:'':''}}</span><span *ngIf="labTest.bill.status === 'COVERED'">---</span></td>
+                                                    <td>
+                                                        <span *ngIf="labTest.bill.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest.bill.status}}</span>
+                                                        <span *ngIf="labTest.bill.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{labTest.bill.status}}</span>
+                                                        <span *ngIf="labTest.bill.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest.bill.status}}(NOT COVERED)</span>
+                                                    </td>
                                                     <td><a><i class="fa fa-trash"></i>Delete</a></td>
                                                 </tr>
                                             </tbody>
@@ -352,13 +325,25 @@
                 <h3 class="modal-title">Assign Diagnosis</h3>
             </div>
             <div class="modal-body">
-                    
-                    
-                    
-                    
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>Select Diagnosis Type</h4>
+                        <select class="form-control" [(ngModel)]="diagnosisTypeName">
+                            <option></option>
+                            <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>Description</h4>
+                        <input type="text" class="form-control" [(ngModel)]="diagnosisDescription">
+                    </div>
+                </div>
+                  
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">Working</button>
-                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Final</button>
+                    <button type="button" class="btn btn-primary pull-left" *ngIf="diagnosisTypeName != ''" (click)="saveWorkingDiagnosis()" data-dismiss="modal">Working</button>
+                    <button type="button" class="btn btn-success pull-right" *ngIf="diagnosisTypeName != ''" (click)="saveFinalDiagnosis()" data-dismiss="modal">Final</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -375,12 +360,18 @@
                 <h3 class="modal-title">Assign Lab Test</h3>
             </div>
             <div class="modal-body">
-                    
-                    
-                    
+                 <div class="row">
+                     <div class="col-sm-12">
+                        <h4>Select Lab Test Type</h4>
+                        <select class="form-control" [(ngModel)]="labTestTypeName">
+                            <option></option>
+                            <option *ngFor="let name of labTestTypeNames">{{name}}</option>
+                        </select>
+                     </div>
+                 </div>   
                     
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save</button>
+                    <button type="button" class="btn btn-success pull-right" (click)="saveLabTest()" data-dismiss="modal">Save</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->

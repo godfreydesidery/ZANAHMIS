@@ -71,7 +71,7 @@ public class LabTestTypePlanResource {
 		conPlan.setId(labTestTypePlan.getId());
 		
 		InsurancePlan plan = insurancePlanRepository.findByName(labTestTypePlan.getInsurancePlan().getName()).get();
-		LabTestType labTestType = labTestTypeRepository.findByName(labTestTypePlan.getLabTestType().getName());
+		LabTestType labTestType = labTestTypeRepository.findByName(labTestTypePlan.getLabTestType().getName()).get();
 		conPlan.setInsurancePlan(plan);
 		conPlan.setLabTestType(labTestType);
 		conPlan.setPrice(labTestTypePlan.getPrice());

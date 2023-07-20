@@ -47,7 +47,7 @@ public class LabTestTypeServiceImpl implements LabTestTypeService{
 
 	@Override
 	public LabTestType getLabTestTypeByName(String name) {
-		return labTestTypeRepository.findByName(name);
+		return labTestTypeRepository.findByName(name).get();
 	}
 
 	@Override

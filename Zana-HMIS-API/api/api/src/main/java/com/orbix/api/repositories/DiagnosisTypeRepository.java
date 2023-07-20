@@ -4,6 +4,7 @@
 package com.orbix.api.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +22,7 @@ public interface DiagnosisTypeRepository extends JpaRepository<DiagnosisType, Lo
 	 * @param name
 	 * @return
 	 */
-	DiagnosisType findByName(String name);
+	Optional<DiagnosisType> findByName(String name);
 	
 	@Query("SELECT d.name FROM DiagnosisType d")
 	List<String> getNames();

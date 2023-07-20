@@ -26,4 +26,12 @@ public interface LabTestTypePlanPriceRepository extends JpaRepository<LabTestTyp
 	Optional<LabTestTypePlanPrice> findByInsurancePlanAndLabTestType(InsurancePlan insurancePlan,
 			LabTestType labTestType);
 
+	/**
+	 * @param labTestType
+	 * @param insurancePlan
+	 * @return
+	 */
+	Optional<LabTestTypePlanPrice> findByLabTestTypeAndInsurancePlan(LabTestType labTestType,
+			InsurancePlan insurancePlan);
+
 }

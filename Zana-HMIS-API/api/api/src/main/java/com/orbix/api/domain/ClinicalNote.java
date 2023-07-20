@@ -43,6 +43,7 @@ public class ClinicalNote {
 	private String drugsAndAllergyHistory;
 	private String reviewOfOtherSystem;
 	private String physicalExamination;
+	private String managementPlan;
 	
 	@OneToOne(targetEntity = Consultation.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "consultation_id", nullable = true , updatable = true)

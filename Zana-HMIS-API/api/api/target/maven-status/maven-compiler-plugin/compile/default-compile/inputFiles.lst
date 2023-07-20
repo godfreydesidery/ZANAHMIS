@@ -20,6 +20,7 @@ D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repo
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\Clinician.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\exceptions\InvalidEntryException.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\exceptions\OperationFailedException.java
+D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\NonConsultationRepository.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\PatientRepository.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\Patient.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\reports\models\FastMovingProductsReport.java
@@ -133,6 +134,7 @@ D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repo
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\reports\models\DailySalesReport.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\filter\package-info.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\reports\models\GrnReport.java
+D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\NonConsultation.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\LabTestTypePlanPriceRepository.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\CashReceipt.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\api\ClinicianResource.java

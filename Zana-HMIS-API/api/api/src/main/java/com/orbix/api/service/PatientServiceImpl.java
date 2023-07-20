@@ -21,6 +21,11 @@ import com.orbix.api.domain.ConsultationPlanPrice;
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.Invoice;
 import com.orbix.api.domain.InvoiceDetail;
+import com.orbix.api.domain.LabTest;
+import com.orbix.api.domain.LabTestPlanPrice;
+import com.orbix.api.domain.LabTestType;
+import com.orbix.api.domain.LabTestTypePlanPrice;
+import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PaymentType;
 import com.orbix.api.domain.RegistrationPlanPrice;
@@ -34,6 +39,9 @@ import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.InvoiceDetailRepository;
 import com.orbix.api.repositories.InvoiceRepository;
+import com.orbix.api.repositories.LabTestRepository;
+import com.orbix.api.repositories.LabTestTypePlanPriceRepository;
+import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.repositories.PatientRepository;
 import com.orbix.api.repositories.RegistrationPlanPriceRepository;
 import com.orbix.api.repositories.VisitRepository;
@@ -60,6 +68,9 @@ public class PatientServiceImpl implements PatientService {
 	private final UserService userService;
 	private final DayService dayService;
 	private final ConsultationPlanPriceRepository consultationPlanPriceRepository;
+	private final LabTestTypePlanPriceRepository labTestTypePlanPriceRepository;
+	private final LabTestTypeRepository labTestTypeRepository;
+	private final LabTestRepository labTestRepository;
 	private final InsurancePlanRepository insurancePlanRepository;
 	private final RegistrationPlanPriceRepository registrationPlanPriceRepository;
 	private final VisitRepository visitRepository;
@@ -465,5 +476,96 @@ public class PatientServiceImpl implements PatientService {
 		key = key.replaceAll("[+^]*#$%&", ""); 
 		return  key;
 	}
+
+	@Override
+	public LabTest saveLabTest(LabTest test, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request) {
+		Patient patient = new Patient();
+		Optional<LabTestType> ltt = labTestTypeRepository.findByName(test.getLabTestType().getName());
+		 
+		if(!ltt.isPresent()) {
+			throw new NotFoundException("Lab Test type not found");
+		}
+		//LabTestType labTestType = labTestTypeRepository.save(ltt.get());
+		if(c.isPresent() && nc.isPresent()) {
+			throw new InvalidOperationException("Could not save, labtest has two controversial properties");
+		}
+		if(!c.isPresent() && !nc.isPresent()) {
+			throw new InvalidOperationException("Could not save, labtest must have one property");
+		}
+		if(c.isPresent()) {
+			patient = c.get().getPatient();
+			test.setConsultation(c.get());
+		}
+		if(nc.isPresent()) {
+			patient = nc.get().getPatient();
+			test.setNonConsultation(nc.get());
+		}
+		test.setLabTestType(ltt.get());
+		Bill bill = new Bill();
+		bill.setAmount(test.getLabTestType().getPrice());
+		bill.setPaid(0);
+		bill.setBalance(test.getLabTestType().getPrice());
+		bill.setQty(1);
+		bill.setDescription("Lab Test Fee");
+		bill.setStatus("UNPAID");		
+		bill.setCreatedBy(userService.getUserId(request));
+		bill.setCreatedOn(dayService.getDayId());
+		bill.setPatient(patient);
+		bill = billRepository.save(bill);
+		
+		if(patient.getPaymentType().equals("INSURANCE")) {
+			
+			Optional<LabTestTypePlanPrice> labTestTypePricePlan = labTestTypePlanPriceRepository.findByLabTestTypeAndInsurancePlan(ltt.get(), patient.getInsurancePlan());
+			
+			if(labTestTypePricePlan.isPresent()) {
+				bill.setAmount(labTestTypePricePlan.get().getPrice());
+				bill.setPaid(labTestTypePricePlan.get().getPrice());
+				bill.setBalance(0);
+				bill.setStatus("COVERED");
+				bill = billRepository.save(bill);
+				
+				Optional<Invoice> inv = invoiceRepository.findByPatientAndStatus(patient, "PENDING");
+				if(!inv.isPresent()) {
+					/**
+					 * If no pending invoice
+					 */
+					Invoice invoice = new Invoice();
+					invoice.setNo("NA");
+					invoice.setPatient(patient);
+					invoice.setInsurancePlan(patient.getInsurancePlan());
+					invoice.setStatus("PENDING");
+					invoice = invoiceRepository.save(invoice);
+					invoice.setNo(invoice.getId().toString());
+					invoice = invoiceRepository.save(invoice);
+					/**
+					 * Add lab test bill claim to invoice
+					 */
+					InvoiceDetail invoiceDetail = new InvoiceDetail();
+					invoiceDetail.setInvoice(invoice);
+					invoiceDetail.setBill(bill);
+					invoiceDetail.setPrice(bill.getAmount());
+					invoiceDetail.setDescription("Lab Test Fee");
+					invoiceDetail.setQty(1);
+					invoiceDetailRepository.save(invoiceDetail);
+				}else {
+					/**
+					 * If there is a .pending invoice
+					 */
+					InvoiceDetail invoiceDetail = new InvoiceDetail();
+					invoiceDetail.setInvoice(inv.get());
+					invoiceDetail.setBill(bill);
+					invoiceDetail.setPrice(bill.getAmount());
+					invoiceDetail.setDescription("Lab Test Fee");
+					invoiceDetail.setQty(1);
+					invoiceDetailRepository.save(invoiceDetail);
+				}
+			}
+			
+		}
+		test.setBill(bill);
+		return labTestRepository.save(test);		
+	}
+	
+	
 
 }

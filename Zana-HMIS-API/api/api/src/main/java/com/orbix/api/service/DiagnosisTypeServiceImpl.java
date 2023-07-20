@@ -47,7 +47,7 @@ public class DiagnosisTypeServiceImpl implements DiagnosisTypeService{
 
 	@Override
 	public DiagnosisType getDiagnosisTypeByName(String name) {
-		return diagnosisTypeRepository.findByName(name);
+		return diagnosisTypeRepository.findByName(name).get();
 	}
 
 	@Override
