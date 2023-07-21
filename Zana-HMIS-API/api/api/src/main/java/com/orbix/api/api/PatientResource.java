@@ -6,6 +6,7 @@ package com.orbix.api.api;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -487,6 +488,7 @@ public class PatientResource {
 		}
 		diagnosis.setConsultation(c.get());
 		diagnosis.setDiagnosisType(dt.get());
+		diagnosis.setPatient(c.get().getPatient());
 		
 				
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_working_diagnosis").toUriString());
@@ -517,6 +519,7 @@ public class PatientResource {
 		}
 		diagnosis.setConsultation(c.get());
 		diagnosis.setDiagnosisType(dt.get());
+		diagnosis.setPatient(c.get().getPatient());
 		
 				
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_final_diagnosis").toUriString());
@@ -545,8 +548,6 @@ public class PatientResource {
 			@RequestParam(name = "id") Long id){				
 		finalDiagnosisRepository.deleteById(id);
 	}
-	
-	
 	
 	@PostMapping("/patients/save_lab_test")
 	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
@@ -872,7 +873,24 @@ public class PatientResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_prescription").toUriString());
 		return ResponseEntity.created(uri).body(true);
 	}
-		
+	
+	
+	@GetMapping("/patients/get_lab_outpatient_list") 
+	public ResponseEntity<List<Patient>> getLabOutpatientList(){	
+		List<String> statusToView = new ArrayList<>();
+		statusToView.add("PENDING");
+		statusToView.add("ACCEPTED");
+		List<LabTest> labTests = labTestRepository.findAllByStatusIn(statusToView);
+		List<Patient> patients = new ArrayList<>();		
+		for(LabTest t : labTests) {
+			if(t.getPatient().getPatientType().equals("OUTPATIENT")) {
+				patients.add(t.getPatient());
+			}
+		}
+		HashSet<Patient> h = new HashSet<Patient>(patients);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_lab_outpatient_list").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
+	}		
 }
 
 @Data

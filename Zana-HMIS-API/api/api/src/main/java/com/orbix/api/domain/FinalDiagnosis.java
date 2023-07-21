@@ -43,4 +43,9 @@ public class FinalDiagnosis {
     @JoinColumn(name = "consultation_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Consultation consultation;
+	
+	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "patient_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private Patient patient;
 }

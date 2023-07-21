@@ -57,4 +57,9 @@ public class LabTest {
     @JoinColumn(name = "bill_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Bill bill;
+	
+	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "patient_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private Patient patient;
 }

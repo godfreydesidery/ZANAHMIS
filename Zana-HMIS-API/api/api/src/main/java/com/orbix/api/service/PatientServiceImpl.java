@@ -527,6 +527,7 @@ public class PatientServiceImpl implements PatientService {
 			patient = nc.get().getPatient();
 			test.setNonConsultation(nc.get());
 		}
+		
 		test.setLabTestType(ltt.get());
 		test.setStatus("PENDING");
 		Bill bill = new Bill();
@@ -590,6 +591,7 @@ public class PatientServiceImpl implements PatientService {
 			}
 			
 		}
+		test.setPatient(patient);
 		test.setBill(bill);
 		return labTestRepository.save(test);		
 	}
@@ -679,6 +681,7 @@ public class PatientServiceImpl implements PatientService {
 			}
 			
 		}
+		radio.setPatient(patient);
 		radio.setBill(bill);
 		return radiologyRepository.save(radio);		
 	}
@@ -769,6 +772,7 @@ public class PatientServiceImpl implements PatientService {
 			}
 			
 		}
+		procedure.setPatient(patient);
 		procedure.setBill(bill);
 		return procedureRepository.save(procedure);		
 	}
@@ -860,12 +864,8 @@ public class PatientServiceImpl implements PatientService {
 			}
 			
 		}
+		prescription.setPatient(patient);
 		prescription.setBill(bill);
 		return prescriptionRepository.save(prescription);		
 	}
-
-
-	
-	
-
 }

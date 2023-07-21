@@ -11,10 +11,67 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    
+                    <a class="btn btn-success" style="margin-right: 1mm;" routerLink="/lab-outpatient-list">Outpatient List</a>
+                    <a class="btn btn-success" style="margin-right: 1mm;" routerLink="/lab-inpatient-list">Inpatient List</a>
+                    <a class="btn btn-success" style="margin-right: 1mm;" routerLink="/lab-outsider-list">Outsider List</a>
                 </div>
                 <div class="panel-body">
-                    
+                    <div class="row">
+                        <div class="col-sm-12 alert alert-primary" role="alert">
+                            <h4>Name: <b>GODFREY DESIDERY SHIRIMA</b>, File No: <b>MNR0123/8774/23</b>, Date of birth: <b>14 Apr, 1989</b>, Male, CASH </h4>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="col-sm-6" *ngFor="let r of rs">
+                        <div class="row" style="margin: 1mm; background-color: rgb(246, 246, 248);">
+                            <div class="col-sm-12">
+                                <h4><b>MRDT</b></h4>
+                            </div>
+                            <div class="col-sm-12">
+                                <button class="btn btn-primary btn-rounded" style="margin: 1mm;">Accept</button>
+                                <button class="btn btn-danger btn-rounded" style="margin: 1mm;">Reject</button>
+                                <button class="btn btn-default btn-rounded" style="margin: 1mm;">Pending</button>
+                                <button class="btn btn-success btn-rounded" style="margin: 1mm;">Collect</button>
+                            </div>
+                            <div class="col-sm-12">
+                                <textarea class="form-control" placeholder="Input Results"></textarea>
+                            </div>
+                            <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
+                                <div class="col-sm-3">
+                                    <span>Range</span>
+                                    <select class="form-control">
+                                        <option></option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <span>Level</span>
+                                    <select class="form-control">
+                                        <option></option>
+                                        <option>Low</option>
+                                        <option>Medium</option>
+                                        <option>High</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <span>Unit</span>
+                                    <input type="text" class="form-control" placeholder="Unit">
+                                </div>
+                                <div class="col-sm-3">
+                                    <span>Attachment</span>
+                                    <input type="file" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
+                                <br>
+                                <div class="col-sm-12">
+                                    <span>Verified By: ....................</span>
+                                </div>
+                                <div class="col-sm-12" style="text-align: right;">
+                                    <button class="btn btn-primary">Verify Results</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div> 
                     
             </div>

@@ -31,5 +31,11 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
 	 */
 	List<LabTest> findAllByNonConsultationAndStatusIn(Consultation consultation, List<String> statuses);
 
+	/**
+	 * @param statusToView
+	 * @return
+	 */
+	List<LabTest> findAllByStatusIn(List<String> statusToView);
+
 	
 }

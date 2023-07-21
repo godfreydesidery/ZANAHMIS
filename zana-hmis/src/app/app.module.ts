@@ -40,6 +40,9 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { InvestigationPaymentComponent } from './pages/payments/investigation-payment/investigation-payment.component';
 import { LabTestComponent } from './pages/laboratory/lab-test/lab-test.component';
 import { LabPatientListComponent } from './pages/laboratory/lab-patient-list/lab-patient-list.component';
+import { LabOutpatientListComponent } from './pages/laboratory/lab-outpatient-list/lab-outpatient-list.component';
+import { LabInpatientListComponent } from './pages/laboratory/lab-inpatient-list/lab-inpatient-list.component';
+import { LabOutsiderListComponent } from './pages/laboratory/lab-outsider-list/lab-outsider-list.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +78,9 @@ import { LabPatientListComponent } from './pages/laboratory/lab-patient-list/lab
     InvestigationPaymentComponent,
     LabTestComponent,
     LabPatientListComponent,
+    LabOutpatientListComponent,
+    LabInpatientListComponent,
+    LabOutsiderListComponent,
   ],
   imports: [
     HttpClientModule,
@@ -110,7 +116,9 @@ import { LabPatientListComponent } from './pages/laboratory/lab-patient-list/lab
     {path : 'access-management', component : AccessManagementComponent},
     {path : 'medicine', component : MedicineComponent},
     {path : 'lab-test', component : LabTestComponent},
-    {path : 'lab-patient-list', component : LabPatientListComponent},
+    {path : 'lab-outpatient-list', component : LabOutpatientListComponent},
+    {path : 'lab-inpatient-list', component : LabInpatientListComponent},
+    {path : 'lab-outsider-list', component : LabOutsiderListComponent},
     ])
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
