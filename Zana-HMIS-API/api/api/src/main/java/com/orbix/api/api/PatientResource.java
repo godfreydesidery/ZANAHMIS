@@ -48,6 +48,7 @@ import com.orbix.api.domain.WorkingDiagnosis;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.models.LabTestModel;
 import com.orbix.api.repositories.BillRepository;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.repositories.ClinicalNoteRepository;
@@ -120,6 +121,12 @@ public class PatientResource {
 	public ResponseEntity<Patient> getProductBySearchKey(
 			@RequestParam(name = "search_key") String searchKey){
 		return ResponseEntity.ok().body(patientService.findBySearchKey(searchKey));
+	}
+	
+	@GetMapping("/patients/get")
+	public ResponseEntity<Patient> get(
+			@RequestParam(name = "id") Long id){
+		return ResponseEntity.ok().body(patientRepository.findById(id).get());
 	}
 	
 	@GetMapping("/patients/get_all_search_keys")
@@ -883,13 +890,64 @@ public class PatientResource {
 		List<LabTest> labTests = labTestRepository.findAllByStatusIn(statusToView);
 		List<Patient> patients = new ArrayList<>();		
 		for(LabTest t : labTests) {
-			if(t.getPatient().getPatientType().equals("OUTPATIENT")) {
+			if(t.getPatient().getPatientType().equals("OUTPATIENT") && (t.getBill().getStatus().equals("PAID") || t.getBill().getStatus().equals("COVERED"))) {
 				patients.add(t.getPatient());
 			}
 		}
 		HashSet<Patient> h = new HashSet<Patient>(patients);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_lab_outpatient_list").toUriString());
 		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
+	}
+	
+	@GetMapping("/patients/get_lab_tests_by_patient_id") 
+	public ResponseEntity<List<LabTestModel>> getLabTestByPatientId(
+			@RequestParam(name = "id") Long id){
+		Optional<Patient> p = patientRepository.findById(id);
+		if(!p.isPresent()) {
+			return null;
+		}		
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		statuses.add("ACCEPTED");
+		List<LabTest> labTests = labTestRepository.findAllByStatusIn(statuses);	
+		List<LabTestModel> labTestsToReturn = new ArrayList<>();
+		for(LabTest test : labTests) {
+			if(test.getBill().getStatus().equals("PAID") || test.getBill().getStatus().equals("COVERED")) {
+				LabTestModel t = new LabTestModel();
+				t.setId(test.getId());
+				t.setResult(test.getResult());
+				t.setRange(test.getRange());
+				t.setLevel(test.getLevel());
+				t.setUnit(test.getUnit());
+				t.setLabTestType(test.getLabTestType());
+				t.setPatient(test.getPatient());
+				t.setConsultation(test.getConsultation());
+				t.setNonConsultation(test.getNonConsultation());
+				t.setBill(test.getBill());
+				t.setStatus(test.getStatus());
+				t.setVerified("Not Available");;
+				labTestsToReturn.add(t);				
+			}
+		}
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_lab_tests_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(labTestsToReturn);
+		//return ResponseEntity.created(uri).body(labTests);
+	}
+	
+	@PostMapping("/patients/save_lab_test_result") 
+	public boolean getSaveLabTestResult(
+			@RequestBody LLabTest test,
+			HttpServletRequest request){
+		Optional<LabTest> t = labTestRepository.findById(test.getId());
+		if(!t.isPresent()) {
+			throw new NotFoundException("Lab Test not found");
+		}
+		t.get().setResult(test.getResult());
+		t.get().setLevel(test.getLevel());
+		t.get().setRange(test.getRange());
+		t.get().setUnit(test.getUnit());
+		labTestRepository.save(t.get());
+		return true;
 	}		
 }
 
@@ -897,5 +955,15 @@ public class PatientResource {
 class CG {
 	private ClinicalNote clinicalNote;
 	private GeneralExamination generalExamination;
+}
+
+@Data
+class LLabTest {
+	private Long id;
+	private String result;
+	private String range;
+	private String level;
+	private String unit;
+	
 }
 

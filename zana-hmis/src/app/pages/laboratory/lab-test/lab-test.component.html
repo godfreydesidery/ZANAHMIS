@@ -18,14 +18,14 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-12 alert alert-primary" role="alert">
-                            <h4>Name: <b>GODFREY DESIDERY SHIRIMA</b>, File No: <b>MNR0123/8774/23</b>, Date of birth: <b>14 Apr, 1989</b>, Male, CASH </h4>
+                            <h4>Name: <b>{{patient?.firstName}} {{patient?.middleName}} {{patient?.lastName}}</b>, File No: <b>{{patient?.no}}</b>, Date of birth: <b>{{patient?.dateOfBirth | date}}</b>, {{patient?.gender}}, {{patient?.paymentType}}</h4>
                         </div>
                         <hr>
                     </div>
-                    <div class="col-sm-6" *ngFor="let r of rs">
+                    <div class="col-sm-6" *ngFor="let labTest of labTests">
                         <div class="row" style="margin: 1mm; background-color: rgb(246, 246, 248);">
                             <div class="col-sm-12">
-                                <h4><b>MRDT</b></h4>
+                                <h4><b>{{labTest.labTestType.name}}</b></h4>
                             </div>
                             <div class="col-sm-12">
                                 <button class="btn btn-primary btn-rounded" style="margin: 1mm;">Accept</button>
@@ -34,18 +34,19 @@
                                 <button class="btn btn-success btn-rounded" style="margin: 1mm;">Collect</button>
                             </div>
                             <div class="col-sm-12">
-                                <textarea class="form-control" placeholder="Input Results"></textarea>
+                                <b><textarea class="form-control" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;"></textarea></b>
                             </div>
                             <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
                                 <div class="col-sm-3">
                                     <span>Range</span>
-                                    <select class="form-control">
+                                    <select class="form-control" [(ngModel)]="labTest.range">
                                         <option></option>
+                                        <option *ngFor="let range of labTest.labTestType.labTestTypeRanges">{{range.name}}</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-3">
                                     <span>Level</span>
-                                    <select class="form-control">
+                                    <select class="form-control" [(ngModel)]="labTest.level">
                                         <option></option>
                                         <option>Low</option>
                                         <option>Medium</option>
@@ -54,7 +55,7 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <span>Unit</span>
-                                    <input type="text" class="form-control" placeholder="Unit">
+                                    <input type="text" class="form-control" [(ngModel)]="labTest.unit" placeholder="Unit">
                                 </div>
                                 <div class="col-sm-3">
                                     <span>Attachment</span>
@@ -64,10 +65,10 @@
                             <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
                                 <br>
                                 <div class="col-sm-12">
-                                    <span>Verified By: ....................</span>
+                                    <span>Verified By: {{labTest.verified}}</span>
                                 </div>
                                 <div class="col-sm-12" style="text-align: right;">
-                                    <button class="btn btn-primary">Verify Results</button>
+                                    <button class="btn btn-primary" (click)="saveResults(labTest)">Verify Results</button>
                                 </div>
                             </div>
                         </div>

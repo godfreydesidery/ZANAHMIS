@@ -36,6 +36,10 @@ public class LabTest {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String result = "";
+	@Column(name = "rrange")//this way because range is a reserved keyword in databases
+	private String range = "";
+	private String level = "";
+	private String unit = "";
 	private String status = "";
 	
 	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)

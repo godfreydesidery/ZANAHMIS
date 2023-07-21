@@ -43,6 +43,7 @@ import { LabPatientListComponent } from './pages/laboratory/lab-patient-list/lab
 import { LabOutpatientListComponent } from './pages/laboratory/lab-outpatient-list/lab-outpatient-list.component';
 import { LabInpatientListComponent } from './pages/laboratory/lab-inpatient-list/lab-inpatient-list.component';
 import { LabOutsiderListComponent } from './pages/laboratory/lab-outsider-list/lab-outsider-list.component';
+import { LabTestTypeRangeComponent } from './pages/admin/medical-operations/lab-test-type-range/lab-test-type-range.component';
 
 @NgModule({
   declarations: [
@@ -81,6 +82,7 @@ import { LabOutsiderListComponent } from './pages/laboratory/lab-outsider-list/l
     LabOutpatientListComponent,
     LabInpatientListComponent,
     LabOutsiderListComponent,
+    LabTestTypeRangeComponent,
   ],
   imports: [
     HttpClientModule,
@@ -101,6 +103,7 @@ import { LabOutsiderListComponent } from './pages/laboratory/lab-outsider-list/l
     {path : 'list-from-reception', component : ListFromReceptionComponent},
     {path : 'diagnosis-type', component : DiagnosisTypeComponent},
     {path : 'lab-test-type', component : LabTestTypeComponent},
+    {path : 'lab-test-type-range', component : LabTestTypeRangeComponent},
     {path : 'procedure-type', component : ProcedureTypeComponent},
     {path : 'radiology-type', component : RadiologyTypeComponent},
     {path : 'insurance-provider', component : InsuranceProviderComponent},

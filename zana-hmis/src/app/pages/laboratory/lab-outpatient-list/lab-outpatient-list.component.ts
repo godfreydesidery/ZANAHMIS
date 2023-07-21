@@ -27,7 +27,8 @@ export class LabOutpatientListComponent implements OnInit {
     this.loadOutpatientList()
   }
 
-  attend(){
+  attend(id : any){
+    localStorage.setItem('lab-test-patient-id', id)
     this.router.navigate(['lab-test'])
   }
 
