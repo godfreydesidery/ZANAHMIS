@@ -233,7 +233,7 @@ public class PatientServiceImpl implements PatientService {
 				invoiceDetail.setInvoice(inv.get());
 				invoiceDetail.setBill(regBill);
 				invoiceDetail.setPrice(regBill.getAmount());
-				invoiceDetail.setDescription("Registration Fee");
+				invoiceDetail.setDescription("Registration");
 				invoiceDetail.setQty(1);
 				invoiceDetailRepository.saveAndFlush(invoiceDetail);
 			}
@@ -292,7 +292,7 @@ public class PatientServiceImpl implements PatientService {
 		conBill.setPaid(0);
 		conBill.setBalance(c.getConsultationFee());
 		conBill.setQty(1);
-		conBill.setDescription("Consultation Fee");
+		conBill.setDescription("Consultation");
 		conBill.setStatus("UNPAID");
 		/**
 		 * Add forensic data to registration bill
@@ -417,7 +417,7 @@ public class PatientServiceImpl implements PatientService {
 				invoiceDetail.setInvoice(invoice);
 				invoiceDetail.setBill(conBill);
 				invoiceDetail.setPrice(conBill.getAmount());
-				invoiceDetail.setDescription("Consultation Fee");
+				invoiceDetail.setDescription("Consultation");
 				invoiceDetail.setQty(1);
 				invoiceDetailRepository.saveAndFlush(invoiceDetail);
 			}else {
@@ -428,7 +428,7 @@ public class PatientServiceImpl implements PatientService {
 				invoiceDetail.setInvoice(inv.get());
 				invoiceDetail.setBill(conBill);
 				invoiceDetail.setPrice(conBill.getAmount());
-				invoiceDetail.setDescription("Consultation Fee");
+				invoiceDetail.setDescription("Consultation");
 				invoiceDetail.setQty(1);
 				invoiceDetailRepository.saveAndFlush(invoiceDetail);
 			}
@@ -534,7 +534,7 @@ public class PatientServiceImpl implements PatientService {
 		bill.setPaid(0);
 		bill.setBalance(test.getLabTestType().getPrice());
 		bill.setQty(1);
-		bill.setDescription("Lab Test Fee");
+		bill.setDescription("Lab Test: "+test.getLabTestType().getName());
 		bill.setStatus("UNPAID");		
 		bill.setCreatedBy(userService.getUserId(request));
 		bill.setCreatedOn(dayService.getDayId());
@@ -572,7 +572,7 @@ public class PatientServiceImpl implements PatientService {
 					invoiceDetail.setInvoice(invoice);
 					invoiceDetail.setBill(bill);
 					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Lab Test Fee");
+					invoiceDetail.setDescription("Lab Test: "+test.getLabTestType().getName());
 					invoiceDetail.setQty(1);
 					invoiceDetailRepository.save(invoiceDetail);
 				}else {
@@ -583,7 +583,7 @@ public class PatientServiceImpl implements PatientService {
 					invoiceDetail.setInvoice(inv.get());
 					invoiceDetail.setBill(bill);
 					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Lab Test Fee");
+					invoiceDetail.setDescription("Lab Test: "+test.getLabTestType().getName());
 					invoiceDetail.setQty(1);
 					invoiceDetailRepository.save(invoiceDetail);
 				}
@@ -623,7 +623,7 @@ public class PatientServiceImpl implements PatientService {
 		bill.setPaid(0);
 		bill.setBalance(radio.getRadiologyType().getPrice());
 		bill.setQty(1);
-		bill.setDescription("Radiology Fee");
+		bill.setDescription("Radiology: "+radio.getRadiologyType().getName());
 		bill.setStatus("UNPAID");		
 		bill.setCreatedBy(userService.getUserId(request));
 		bill.setCreatedOn(dayService.getDayId());
@@ -661,7 +661,7 @@ public class PatientServiceImpl implements PatientService {
 					invoiceDetail.setInvoice(invoice);
 					invoiceDetail.setBill(bill);
 					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Radiology Fee");
+					invoiceDetail.setDescription("Radiology: "+radio.getRadiologyType().getName());
 					invoiceDetail.setQty(1);
 					invoiceDetailRepository.save(invoiceDetail);
 				}else {
@@ -672,7 +672,7 @@ public class PatientServiceImpl implements PatientService {
 					invoiceDetail.setInvoice(inv.get());
 					invoiceDetail.setBill(bill);
 					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Radiology Fee");
+					invoiceDetail.setDescription("Radiology: "+radio.getRadiologyType().getName());
 					invoiceDetail.setQty(1);
 					invoiceDetailRepository.save(invoiceDetail);
 				}
@@ -713,7 +713,7 @@ public class PatientServiceImpl implements PatientService {
 		bill.setPaid(0);
 		bill.setBalance(procedure.getProcedureType().getPrice());
 		bill.setQty(1);
-		bill.setDescription("Procedure Fee");
+		bill.setDescription("Procedure: "+procedure.getProcedureType().getName());
 		bill.setStatus("UNPAID");		
 		bill.setCreatedBy(userService.getUserId(request));
 		bill.setCreatedOn(dayService.getDayId());
@@ -751,7 +751,7 @@ public class PatientServiceImpl implements PatientService {
 					invoiceDetail.setInvoice(invoice);
 					invoiceDetail.setBill(bill);
 					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Procedure Fee");
+					invoiceDetail.setDescription("Procedure: "+procedure.getProcedureType().getName());
 					invoiceDetail.setQty(1);
 					invoiceDetailRepository.save(invoiceDetail);
 				}else {
@@ -762,7 +762,7 @@ public class PatientServiceImpl implements PatientService {
 					invoiceDetail.setInvoice(inv.get());
 					invoiceDetail.setBill(bill);
 					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Procedure Fee");
+					invoiceDetail.setDescription("Procedure: "+procedure.getProcedureType().getName());
 					invoiceDetail.setQty(1);
 					invoiceDetailRepository.save(invoiceDetail);
 				}
@@ -804,7 +804,7 @@ public class PatientServiceImpl implements PatientService {
 		bill.setPaid(0);
 		bill.setBalance(prescription.getMedicine().getPrice());
 		bill.setQty(1);
-		bill.setDescription("Medicine Fee");
+		bill.setDescription("Medicine: "+prescription.getMedicine().getName());
 		bill.setStatus("UNPAID");		
 		bill.setCreatedBy(userService.getUserId(request));
 		bill.setCreatedOn(dayService.getDayId());
@@ -842,7 +842,7 @@ public class PatientServiceImpl implements PatientService {
 					invoiceDetail.setInvoice(invoice);
 					invoiceDetail.setBill(bill);
 					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Medicine Fee");
+					invoiceDetail.setDescription("Medicine: "+prescription.getMedicine().getName());
 					invoiceDetail.setQty(1);
 					invoiceDetailRepository.save(invoiceDetail);
 				}else {
@@ -853,7 +853,7 @@ public class PatientServiceImpl implements PatientService {
 					invoiceDetail.setInvoice(inv.get());
 					invoiceDetail.setBill(bill);
 					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Medicine Fee");
+					invoiceDetail.setDescription("Medicine: "+prescription.getMedicine().getName());
 					invoiceDetail.setQty(1);
 					invoiceDetailRepository.save(invoiceDetail);
 				}

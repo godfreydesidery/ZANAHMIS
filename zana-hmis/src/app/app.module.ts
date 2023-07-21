@@ -37,6 +37,9 @@ import { AccessManagementComponent } from './pages/admin/user-and-access/access-
 import { MedicineComponent } from './pages/admin/medical-operations/medicine/medicine.component';
 import { MainPageComponent } from './main-page/main-page.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { InvestigationPaymentComponent } from './pages/payments/investigation-payment/investigation-payment.component';
+import { LabTestComponent } from './pages/laboratory/lab-test/lab-test.component';
+import { LabPatientListComponent } from './pages/laboratory/lab-patient-list/lab-patient-list.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +72,9 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     AccessManagementComponent,
     MedicineComponent,
     MainPageComponent,
+    InvestigationPaymentComponent,
+    LabTestComponent,
+    LabPatientListComponent,
   ],
   imports: [
     HttpClientModule,
@@ -81,6 +87,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     {path : 'patient-list', component : PatientListComponent},
     {path : 'patient-payment', component : PatientPaymentComponent},
     {path : 'registration-payment', component : RegistrationPaymentComponent},
+    {path : 'investigation-payment', component : InvestigationPaymentComponent},
     {path : 'clinic', component : ClinicComponent},
     {path : 'clinician', component : ClinicianComponent},
     {path : 'my-consultation', component : MyConsultationComponent},
@@ -102,6 +109,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     {path : 'role', component : RoleComponent},
     {path : 'access-management', component : AccessManagementComponent},
     {path : 'medicine', component : MedicineComponent},
+    {path : 'lab-test', component : LabTestComponent},
+    {path : 'lab-patient-list', component : LabPatientListComponent},
     ])
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
