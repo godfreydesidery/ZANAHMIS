@@ -28,15 +28,17 @@
                                 <h4><b>{{labTest.labTestType.name}}</b></h4>
                             </div>
                             <div class="col-sm-12">
-                                <button class="btn btn-primary btn-rounded" (click)="acceptLabTest(labTest)" style="margin: 1mm;">Accept</button>
-                                <button class="btn btn-danger btn-rounded" (click)="rejectLabTest(labTest)" style="margin: 1mm;">Reject</button>
-                                <button class="btn btn-default btn-rounded" (click)="holdLabTest(labTest)" style="margin: 1mm;">Hold</button>
-                                <button class="btn btn-success btn-rounded" (click)="collectLabTest(labTest)" style="margin: 1mm;">Collect</button>
+                                <span class="label label-success m-r-15"><small>{{labTest.status}}</small></span>
+                                <button class="btn btn-default btn-rounded" (click)="acceptLabTest(labTest)">Accept</button>
+                                <button class="btn btn-default btn-rounded" (click)="rejectLabTest(labTest)">Reject</button>
+                                <button class="btn btn-default btn-rounded" (click)="holdLabTest(labTest)">Hold</button>
+                                <button class="btn btn-default btn-rounded" (click)="collectLabTest(labTest)">Collect</button>
                                 <hr>
                             </div>
-                            <div class="col-sm-12">
-                                <span>Status: {{labTest.status}}</span><br>
-                            </div>
+                            <small>Last Tested </small><span class="label label-warning m-r-15">NONE</span><br>
+                            <small>Doctor: </small><br>
+                            <small>Ordered on: </small><br>
+                            <small>Test ID </small><span class="label label-primary m-r-15">{{labTest?.id}}</span>
                             <div *ngIf="labTest?.status === 'ACCEPTED' || labTest?.status === 'COLLECTED' || labTest?.status === 'VERIFIED'">
                                 <div class="col-sm-12">
                                     <textarea class="form-control" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;"></textarea>
@@ -70,7 +72,7 @@
                                 <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
                                     <br>
                                     <div class="col-sm-12">
-                                        <span>Verified By: {{labTest.verified}}</span>
+                                        <span class="label label-info m-r-15">Verified By: {{labTest.verified}}</span>
                                     </div>
                                     <div class="col-sm-12" style="text-align: right;">
                                         <button class="btn btn-primary" (click)="verifyLabTest(labTest)">Verify Results</button>

@@ -28,6 +28,7 @@ import com.orbix.api.domain.Payment;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.Radiology;
+import com.orbix.api.domain.Registration;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.BillRepository;
@@ -40,6 +41,7 @@ import com.orbix.api.repositories.PaymentRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.RadiologyRepository;
+import com.orbix.api.repositories.RegistrationRepository;
 import com.orbix.api.service.ClinicianService;
 
 import lombok.RequiredArgsConstructor;
@@ -65,17 +67,18 @@ public class BillResource {
 	private final ProcedureRepository procedureRepository;
 	private final PrescriptionRepository prescriptionRepository;
 	private final RadiologyRepository radiologyRepository;
+	private final RegistrationRepository registrationRepository;
 	
 	
 	@GetMapping("/bills/get_registration_bill")
 	public ResponseEntity<Bill> getRegistrationBill(
 			@RequestParam(name = "patient_id") Long patient_id){
 		Patient patient = patientRepository.findById(patient_id).get();
-		Optional<Bill> b = billRepository.findById(patient.getRegistrationBillId());
-		if(!b.get().getStatus().equals("UNPAID")) {
+		Bill bill = registrationRepository.findByPatient(patient).getBill();
+		if(!bill.getStatus().equals("UNPAID")) {
 			return null;
 		}
-		return ResponseEntity.ok().body(b.get());
+		return ResponseEntity.ok().body(bill);
 	}
 	
 	@GetMapping("/bills/get_consultation_bill")
@@ -100,11 +103,9 @@ public class BillResource {
 		Patient patient = patientRepository.findById(patientId).get();
 		
 		double amount = 0;
-		Optional<Bill> rb = billRepository.findById(patient.getRegistrationBillId());
-		if(rb.isPresent()) {
-			if(rb.get().getStatus().equals("UNPAID")) {
-				amount = amount + rb.get().getAmount();
-			}
+		Bill rb = registrationRepository.findByPatient(patient).getBill();
+		if(rb.getStatus().equals("UNPAID")) {
+			amount = amount + rb.getAmount();
 		}
 		
 		List<String> statuses = new ArrayList<>();
@@ -115,13 +116,13 @@ public class BillResource {
 		Payment regPayment = new Payment();
 		Payment conPayment = new Payment();
 		
-		if(rb.get().getStatus().equals("UNPAID")) {
-			rb.get().setBalance(0);
-			rb.get().setPaid(rb.get().getAmount());
-			rb.get().setStatus("PAID");
-			billRepository.save(rb.get());
-			regPayment.setAmount(rb.get().getAmount());
-			regPayment.setBill(rb.get());
+		if(rb.getStatus().equals("UNPAID")) {
+			rb.setBalance(0);
+			rb.setPaid(rb.getAmount());
+			rb.setStatus("PAID");
+			billRepository.save(rb);
+			regPayment.setAmount(rb.getAmount());
+			regPayment.setBill(rb);
 			regPayment.setStatus("RECEIVED");
 			paymentRepository.save(regPayment);
 		}

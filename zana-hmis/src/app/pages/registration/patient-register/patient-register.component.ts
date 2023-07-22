@@ -23,7 +23,7 @@ export class PatientRegisterComponent implements OnInit {
   firstName : string
   middleName : string
   lastName : string
-  patientType : string = ''
+  type : string = ''
   dateOfBirth! :Date
   gender : string
   paymentType : string
@@ -43,11 +43,6 @@ export class PatientRegisterComponent implements OnInit {
   insurancePlan! : IInsurancePlan
 
   insurancePlanName : string = ''
-
-  registrationFee : number = 0
-  registrationFeeStatus = ''
-  cardValidationStatus = ''
-
 
   searchKeys : string[] = []
   clinicNames : string[] = []
@@ -77,7 +72,7 @@ export class PatientRegisterComponent implements OnInit {
     this.firstName = ''
     this.middleName = ''
     this.lastName = ''
-    this.patientType = ''
+    this.type = ''
     this.gender = ''
     this.paymentType = ''
     this.membershipNo = ''
@@ -105,7 +100,7 @@ export class PatientRegisterComponent implements OnInit {
     this.firstName = ''
     this.middleName = ''
     this.lastName = ''
-    this.patientType = ''
+    this.type = ''
     this.gender = ''
     this.paymentType = ''
     this.membershipNo = ''
@@ -118,17 +113,11 @@ export class PatientRegisterComponent implements OnInit {
     this.kinFullName = ''
     this.kinRelationship = ''
     this.kinPhoneNo = ''
-    this.registrationFeeStatus = ''
     this.insurancePlanName = ''
-    this.registrationFee = 0
-    this.registrationFeeStatus = ''
-    this.cardValidationStatus = ''
     this.clinicName = ''
     this.clinicianName = ''
     this.consultationFee = 0
   }
-
-  
 
   newPatientPrompt(){
     this.patientRecordMode = 'new'
@@ -161,7 +150,7 @@ export class PatientRegisterComponent implements OnInit {
       middleName          : this.middleName,
       lastName            : this.lastName,
       gender              : this.gender,
-      patientType         : this.patientType,
+      type         : this.type,
       dateOfBirth         : this.dateOfBirth,
       paymentType         : this.paymentType,
       membershipNo        : this.membershipNo,
@@ -202,7 +191,7 @@ export class PatientRegisterComponent implements OnInit {
           this.lastName = data!['lastName']
           this.gender = data!['gender']
           this.paymentType = data!['paymentType']
-          this.patientType = data!['patientType']
+          this.type = data!['type']
           this.membershipNo = data!['membershipNo']
           this.phoneNo = data!['phoneNo']
           this.address = data!['address']
@@ -214,8 +203,7 @@ export class PatientRegisterComponent implements OnInit {
           this.kinRelationship = data!['kinRelationship']
           this.kinPhoneNo = data!['kinPhoneNo']
 
-          this.registrationFeeStatus = data!['registrationFeeStatus']
-          this.cardValidationStatus = data!['cardValidationStatus']
+          
           
           this.insurancePlanName = data!['insurancePlan']?.name
 
@@ -246,7 +234,7 @@ export class PatientRegisterComponent implements OnInit {
       middleName          : this.middleName,
       lastName            : this.lastName,
       gender              : this.gender,
-      patientType         : this.patientType,
+      type         : this.type,
       dateOfBirth         : this.dateOfBirth,
       paymentType         : this.paymentType,
       membershipNo        : this.membershipNo,
@@ -281,7 +269,7 @@ export class PatientRegisterComponent implements OnInit {
         this.lastName = data!['lastName']
         this.gender = data!['gender']
         this.paymentType = data!['paymentType']
-        this.patientType = data!['patientType']
+        this.type = data!['type']
         this.membershipNo = data!['membershipNo']
         this.phoneNo = data!['phoneNo']
         this.address = data!['address']
@@ -293,8 +281,7 @@ export class PatientRegisterComponent implements OnInit {
         this.kinRelationship = data!['kinRelationship']
         this.kinPhoneNo = data!['kinPhoneNo']
 
-        this.registrationFeeStatus = data!['registrationFeeStatus']
-        this.cardValidationStatus = data!['cardValidationStatus']
+       
 
         this.insurancePlanName = data!['insurancePlan']?.name
         
@@ -387,7 +374,7 @@ export class PatientRegisterComponent implements OnInit {
           this.gender = data!['gender']
           this.dateOfBirth =data!['dateOfBirth']
           this.paymentType = data!['paymentType']
-          this.patientType = data!['patientType']
+          this.type = data!['type']
           this.membershipNo = data!['membershipNo']
           this.phoneNo = data!['phoneNo']
           this.address = data!['address']
@@ -399,8 +386,7 @@ export class PatientRegisterComponent implements OnInit {
           this.kinRelationship = data!['kinRelationship']
           this.kinPhoneNo = data!['kinPhoneNo']
 
-          this.registrationFeeStatus = data!['registrationFeeStatus']
-          this.cardValidationStatus = data!['cardValidationStatus']
+          
 
           
           this.insurancePlanName = data!['insurancePlan']?.name
@@ -642,7 +628,7 @@ export interface IPatient {
   lastName : string
   dateOfBirth :Date
   gender : string
-  patientType : string
+  type : string
   paymentType : string
   membershipNo : string
   phoneNo : string		
@@ -658,9 +644,6 @@ export interface IPatient {
   paymentMode : string
   insurancePlan : IInsurancePlan 
 
-  registrationFee : number
-  registrationFeeStatus : string
-  cardValidationStatus : string
 }
 
 export interface IInsurancePlan{

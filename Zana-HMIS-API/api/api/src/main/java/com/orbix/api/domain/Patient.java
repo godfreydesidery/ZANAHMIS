@@ -55,7 +55,7 @@ public class Patient {
 	private String lastName;
 	private LocalDate dateOfBirth;
 	private String gender;
-	private String patientType;
+	private String type;
 	/**
 	 * Payment method
 	 */
@@ -86,13 +86,6 @@ public class Patient {
 	private Long createdBy;
 	private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
-	
-	private Long registrationBillId;
-	private double registrationFee;
-	private String registrationFeeStatus = "";
-	
-	private String cardNo = "";
-	private String cardValidationStatus = "";
 	
 	@OneToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)

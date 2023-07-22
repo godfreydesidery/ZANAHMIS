@@ -151,7 +151,7 @@ public class PatientResource {
 			if(patient.getMembershipNo().equals("")) {
 				throw new MissingInformationException("Membership number required");
 			}
-			patient.setCardNo("");
+			
 		}else {
 			patient.setInsurancePlan(null);
 		}
@@ -170,7 +170,7 @@ public class PatientResource {
 			if(patient.getMembershipNo().equals("")) {
 				throw new MissingInformationException("Membership number required");
 			}
-			patient.setCardNo("");
+			
 		}else {
 			patient.setInsurancePlan(null);
 		}
@@ -903,7 +903,7 @@ public class PatientResource {
 		List<LabTest> labTests = labTestRepository.findAllByConsultationIn(cs);			
 		List<Patient> patients = new ArrayList<>();		
 		for(LabTest t : labTests) {
-			if(t.getPatient().getPatientType().equals("OUTPATIENT") && (t.getBill().getStatus().equals("PAID") || t.getBill().getStatus().equals("COVERED"))) {
+			if(t.getPatient().getType().equals("OUTPATIENT") && (t.getBill().getStatus().equals("PAID") || t.getBill().getStatus().equals("COVERED"))) {
 				patients.add(t.getPatient());
 			}
 		}

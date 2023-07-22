@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.InsuranceProvider;
 import com.orbix.api.domain.InsurancePlan;
@@ -80,6 +81,7 @@ public class InsurancePlanResource {
 			@RequestBody InsurancePlan insurancePlan){
 		InsuranceProvider insuranceProvider = insuranceProviderRepository.findByName(insurancePlan.getInsuranceProvider().getName());
 		insurancePlan.setInsuranceProvider(insuranceProvider);
+		insurancePlan.setName(Sanitizer.sanitizeString(insurancePlan.getName()));
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/insurance_plans/save").toUriString());
 		return ResponseEntity.created(uri).body(insurancePlanService.save(insurancePlan));

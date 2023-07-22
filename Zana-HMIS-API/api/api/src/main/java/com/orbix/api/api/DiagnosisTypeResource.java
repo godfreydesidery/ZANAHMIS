@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
@@ -62,6 +63,7 @@ public class DiagnosisTypeResource {
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<DiagnosisType>save(
 			@RequestBody DiagnosisType diagnosisType){
+		diagnosisType.setName(Sanitizer.sanitizeString(diagnosisType.getName()));
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/diagnosis_types/save").toUriString());
 		return ResponseEntity.created(uri).body(diagnosisTypeService.save(diagnosisType));

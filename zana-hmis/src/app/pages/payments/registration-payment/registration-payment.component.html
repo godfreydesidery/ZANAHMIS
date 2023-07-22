@@ -11,7 +11,11 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    
+                    <button class="btn btn-primary" routerLink="/registration-payment" style="margin: 1mm;">Registration</button>
+                    <button class="btn btn-primary btn-outline" routerLink="/lab-test-payment" style="margin: 1mm;">Lab Investigation</button>
+                    <button class="btn btn-primary btn-outline" routerLink="/radiology-payment" style="margin: 1mm;">Radiology</button>
+                    <button class="btn btn-primary btn-outline" routerLink="/medication-payment" style="margin: 1mm;">Medication</button>
+                    <button class="btn btn-primary btn-outline" routerLink="/procedure-payment" style="margin: 1mm;">Procedure</button>
                 </div>
                 <div class="panel-body">
                     
@@ -67,6 +71,7 @@
                                             <tr>
                                                 <td>ID</td>
                                                 <td>Description</td>
+                                                <td>Qty</td>
                                                 <td>Amount</td>
                                             </tr>
                                         </thead>
@@ -74,16 +79,19 @@
                                             <tr *ngIf="registrationBill != null">
                                                 <td>{{registrationBill.id}}</td>
                                                 <td>{{registrationBill.description}}</td>
+                                                <td>{{registrationBill.qty}}</td>
                                                 <td style="text-align: right;">{{registrationBill.amount | currency:'':''}}</td>
                                             </tr>
                                             <tr *ngIf="consultationBill != null">
                                                 <td>{{consultationBill.id}}</td>
                                                 <td>{{consultationBill.description}}</td>
+                                                <td>{{consultationBill.qty}}</td>
                                                 <td style="text-align: right;">{{consultationBill.amount | currency:'':''}}</td>
                                             </tr>
                                             <tr *ngIf="total > 0">
                                                 <td></td>
-                                                <td><b>Total</b></td>
+                                                <td></td>
+                                                <td style="text-align: right;"><b>Total</b></td>
                                                 <td style="text-align: right;"><b>{{total | currency:'':''}}</b></td>
                                             </tr>
                                         </tbody>

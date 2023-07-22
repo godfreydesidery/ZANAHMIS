@@ -44,6 +44,10 @@ import { LabOutpatientListComponent } from './pages/laboratory/lab-outpatient-li
 import { LabInpatientListComponent } from './pages/laboratory/lab-inpatient-list/lab-inpatient-list.component';
 import { LabOutsiderListComponent } from './pages/laboratory/lab-outsider-list/lab-outsider-list.component';
 import { LabTestTypeRangeComponent } from './pages/admin/medical-operations/lab-test-type-range/lab-test-type-range.component';
+import { LabTestPaymentComponent } from './pages/payments/lab-test-payment/lab-test-payment.component';
+import { RadiologyPaymentComponent } from './pages/payments/radiology-payment/radiology-payment.component';
+import { MedicationPaymentComponent } from './pages/payments/medication-payment/medication-payment.component';
+import { ProcedurePaymentComponent } from './pages/payments/procedure-payment/procedure-payment.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +87,10 @@ import { LabTestTypeRangeComponent } from './pages/admin/medical-operations/lab-
     LabInpatientListComponent,
     LabOutsiderListComponent,
     LabTestTypeRangeComponent,
+    LabTestPaymentComponent,
+    RadiologyPaymentComponent,
+    MedicationPaymentComponent,
+    ProcedurePaymentComponent,
   ],
   imports: [
     HttpClientModule,
@@ -95,7 +103,10 @@ import { LabTestTypeRangeComponent } from './pages/admin/medical-operations/lab-
     {path : 'patient-list', component : PatientListComponent},
     {path : 'patient-payment', component : PatientPaymentComponent},
     {path : 'registration-payment', component : RegistrationPaymentComponent},
-    {path : 'investigation-payment', component : InvestigationPaymentComponent},
+    {path : 'lab-test-payment', component : LabTestPaymentComponent},
+    {path : 'radiology-payment', component : RadiologyPaymentComponent},
+    {path : 'medication-payment', component : MedicationPaymentComponent},
+    {path : 'procedure-payment', component : ProcedurePaymentComponent},
     {path : 'clinic', component : ClinicComponent},
     {path : 'clinician', component : ClinicianComponent},
     {path : 'my-consultation', component : MyConsultationComponent},

@@ -292,5 +292,6 @@ export interface IBill{
   id : any
   amount : number
   description : string
+  qty : number
 }
 

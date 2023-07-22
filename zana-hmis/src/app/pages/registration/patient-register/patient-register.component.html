@@ -60,7 +60,7 @@
                                         </div>
                                         <div class="col-sm-4 form-group">
                                             <h4 class="text-primary">Select Patient Type*</h4>
-                                            <select class="form-control" [(ngModel)]="patientType">
+                                            <select class="form-control" [(ngModel)]="type">
                                                 <option></option>
                                                 <option>OUTPATIENT</option>
                                                 <option>OUTSIDER</option>
@@ -241,7 +241,7 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <div *ngIf="patientType != 'OUTSIDER' && id != null && paymentType != ''">
+                                                <div *ngIf="type != 'OUTSIDER' && id != null && paymentType != ''">
                                                     <div *ngIf="consultations.length === 0">
                                                         <br><br><br>
                                                         <h4 class="text-primary"><b>Send to Doctor</b></h4>
@@ -268,7 +268,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div *ngIf="patientType === 'OUTSIDER'">
+                                                <div *ngIf="type === 'OUTSIDER'">
                                                     for outsider patients
                                                 </div>
                                             </div>
@@ -354,7 +354,7 @@
                             </div>
                             <div class="col-sm-4 form-group">
                                 <h4 class="text-primary">Select Patient Type*</h4>
-                                <select class="form-control" [(ngModel)]="patientType">
+                                <select class="form-control" [(ngModel)]="type">
                                     <option></option>
                                     <option>OUTPATIENT</option>
                                     <option>OUTSIDER</option>

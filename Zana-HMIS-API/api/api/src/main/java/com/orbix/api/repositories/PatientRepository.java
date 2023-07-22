@@ -16,8 +16,8 @@ import com.orbix.api.domain.Patient;
  *
  */
 public interface PatientRepository extends JpaRepository<Patient, Long> {
-	@Query("SELECT p.searchKey FROM Patient p WHERE p.registrationFeeStatus = 'UNPAID'")
-	List<String> getUnpaidRegSearchKeyss();
+	//@Query("SELECT p.searchKey FROM Patient p WHERE p.registrationFeeStatus = 'UNPAID'")
+	//List<String> getUnpaidRegSearchKeyss();
 	
 	@Query("SELECT p.searchKey FROM Patient p")
 	List<String> getSearchKeys();

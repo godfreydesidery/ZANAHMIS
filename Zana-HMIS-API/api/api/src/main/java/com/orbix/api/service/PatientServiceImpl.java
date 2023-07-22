@@ -4,6 +4,7 @@
 package com.orbix.api.service;
 
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Bill;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
@@ -37,6 +39,7 @@ import com.orbix.api.domain.ProcedureTypePlanPrice;
 import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.RadiologyTypePlanPrice;
+import com.orbix.api.domain.Registration;
 import com.orbix.api.domain.RegistrationPlanPrice;
 import com.orbix.api.domain.Visit;
 import com.orbix.api.exceptions.InvalidOperationException;
@@ -62,6 +65,7 @@ import com.orbix.api.repositories.RadiologyRepository;
 import com.orbix.api.repositories.RadiologyTypePlanPriceRepository;
 import com.orbix.api.repositories.RadiologyTypeRepository;
 import com.orbix.api.repositories.RegistrationPlanPriceRepository;
+import com.orbix.api.repositories.RegistrationRepository;
 import com.orbix.api.repositories.VisitRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -101,6 +105,7 @@ public class PatientServiceImpl implements PatientService {
 	private final ProcedureRepository procedureRepository;
 	private final MedicineRepository medicineRepository;
 	private final PrescriptionRepository prescriptionRepository;
+	private final RegistrationRepository registrationRepository;
 	
 	@Override
 	public List<Patient> getAll() {
@@ -130,13 +135,14 @@ public class PatientServiceImpl implements PatientService {
 		/**
 		 * generate patient unique file no// change this to conventional no, this is only for starting
 		 */
-		patient.setNo(patient.getId().toString());
+		patient.setNo("MRNO/"+String.valueOf(Year.now().getValue())+"/"+ patient.getId().toString());
 		/**
 		 * Create a search key; to sanitize searchkey later
 		 */
 		patient.setSearchKey("NA");
 		patient = patientRepository.save(patient);//generate search key, 
-		patient.setSearchKey(createSearchKey(patient.getNo(), patient.getFirstName(), patient.getMiddleName(), patient.getLastName(), patient.getPhoneNo()));		
+		patient.setSearchKey(createSearchKey(patient.getNo(), patient.getFirstName(), patient.getMiddleName(), patient.getLastName(), patient.getPhoneNo()));
+		patient.setSearchKey(Sanitizer.sanitizeString(patient.getSearchKey()));
 		/**
 		 * Add forensic data to patient
 		 */
@@ -167,8 +173,16 @@ public class PatientServiceImpl implements PatientService {
 		/**
 		 * Assign registration bill to patient
 		 */
-		patient.setRegistrationBillId(regBill.getId());
-		patient.setRegistrationFeeStatus("UNPAID");
+		
+		Registration reg = new Registration();
+		reg.setPatient(patient);
+		reg.setCreatedBy(userService.getUserId(request));
+		reg.setCreatedOn(dayService.getDayId());
+		reg.setBill(regBill);
+		registrationRepository.save(reg);
+		
+		//patient.setRegistrationBillId(regBill.getId());
+		//patient.setRegistrationFeeStatus("UNPAID");
 		/**
 		 * Save patient
 		 */
@@ -181,10 +195,7 @@ public class PatientServiceImpl implements PatientService {
 			/**
 			 * Validate card, if card not valid, throw error, if valid, proceed		
 			 */
-			/**
-			 * Set card validation status to valid, if card valid
-			 */
-			patient.setCardValidationStatus("VALID");
+			
 			/**
 			 * Load Registration plan
 			 */
@@ -249,7 +260,7 @@ public class PatientServiceImpl implements PatientService {
 			/**
 			 * Set patient Registration fee status to PAID
 			 */
-			patient.setRegistrationFeeStatus("PAID");
+			//patient.setRegistrationFeeStatus("PAID");
 			patient = patientRepository.save(patient);			
 			
 			patient = patientRepository.saveAndFlush(patient);			
@@ -467,13 +478,14 @@ public class PatientServiceImpl implements PatientService {
 		}
 		
 		pt.get().setSearchKey(createSearchKey(patient.getNo(), patient.getFirstName(), patient.getMiddleName(), patient.getLastName(), patient.getPhoneNo()));
+		pt.get().setSearchKey(Sanitizer.sanitizeString(pt.get().getSearchKey()));
 		//recreate search key
 		pt.get().setFirstName(patient.getFirstName());
 		pt.get().setMiddleName(patient.getMiddleName());
 		pt.get().setLastName(patient.getLastName());
 		pt.get().setDateOfBirth(patient.getDateOfBirth());
 		pt.get().setGender(patient.getGender());
-		pt.get().setPatientType(patient.getPatientType());
+		pt.get().setType(patient.getType());
 		pt.get().setNationality(patient.getNationality());
 		pt.get().setNationalId(patient.getNationalId());
 		pt.get().setPassportNo(patient.getPassportNo());
