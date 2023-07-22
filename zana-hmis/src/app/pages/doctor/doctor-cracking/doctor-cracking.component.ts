@@ -989,6 +989,9 @@ export interface ILabTestType{
 export interface ILabTest{
   id : any
   result : string
+  range : string
+  level : string
+  unit : string
   status : string
   labTestType : ILabTestType
   bill : IBill

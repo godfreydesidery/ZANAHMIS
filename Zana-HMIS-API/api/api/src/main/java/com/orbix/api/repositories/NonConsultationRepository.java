@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,5 +23,18 @@ public interface NonConsultationRepository extends JpaRepository<NonConsultation
 	 * @return
 	 */
 	Optional<NonConsultation> findByPatientAndStatus(Patient patient, String string);
+
+	/**
+	 * @param patient
+	 * @param string
+	 * @return
+	 */
+	List<NonConsultation> findAllByPatientAndStatus(Patient patient, String string);
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	List<NonConsultation> findAllByStatus(String string);
 
 }

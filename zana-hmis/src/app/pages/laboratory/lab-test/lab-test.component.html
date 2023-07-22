@@ -28,49 +28,70 @@
                                 <h4><b>{{labTest.labTestType.name}}</b></h4>
                             </div>
                             <div class="col-sm-12">
-                                <button class="btn btn-primary btn-rounded" style="margin: 1mm;">Accept</button>
-                                <button class="btn btn-danger btn-rounded" style="margin: 1mm;">Reject</button>
-                                <button class="btn btn-default btn-rounded" style="margin: 1mm;">Pending</button>
-                                <button class="btn btn-success btn-rounded" style="margin: 1mm;">Collect</button>
+                                <button class="btn btn-primary btn-rounded" (click)="acceptLabTest(labTest)" style="margin: 1mm;">Accept</button>
+                                <button class="btn btn-danger btn-rounded" (click)="rejectLabTest(labTest)" style="margin: 1mm;">Reject</button>
+                                <button class="btn btn-default btn-rounded" (click)="holdLabTest(labTest)" style="margin: 1mm;">Hold</button>
+                                <button class="btn btn-success btn-rounded" (click)="collectLabTest(labTest)" style="margin: 1mm;">Collect</button>
+                                <hr>
                             </div>
                             <div class="col-sm-12">
-                                <b><textarea class="form-control" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;"></textarea></b>
+                                <span>Status: {{labTest.status}}</span><br>
                             </div>
-                            <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
-                                <div class="col-sm-3">
-                                    <span>Range</span>
-                                    <select class="form-control" [(ngModel)]="labTest.range">
-                                        <option></option>
-                                        <option *ngFor="let range of labTest.labTestType.labTestTypeRanges">{{range.name}}</option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-3">
-                                    <span>Level</span>
-                                    <select class="form-control" [(ngModel)]="labTest.level">
-                                        <option></option>
-                                        <option>Low</option>
-                                        <option>Medium</option>
-                                        <option>High</option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-3">
-                                    <span>Unit</span>
-                                    <input type="text" class="form-control" [(ngModel)]="labTest.unit" placeholder="Unit">
-                                </div>
-                                <div class="col-sm-3">
-                                    <span>Attachment</span>
-                                    <input type="file" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
-                                <br>
+                            <div *ngIf="labTest?.status === 'ACCEPTED' || labTest?.status === 'COLLECTED' || labTest?.status === 'VERIFIED'">
                                 <div class="col-sm-12">
-                                    <span>Verified By: {{labTest.verified}}</span>
+                                    <textarea class="form-control" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;"></textarea>
                                 </div>
-                                <div class="col-sm-12" style="text-align: right;">
-                                    <button class="btn btn-primary" (click)="saveResults(labTest)">Verify Results</button>
+                                <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
+                                    <div class="col-sm-3">
+                                        <span>Range</span>
+                                        <select class="form-control" [(ngModel)]="labTest.range">
+                                            <option></option>
+                                            <option *ngFor="let range of labTest.labTestType.labTestTypeRanges">{{range.name}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <span>Level</span>
+                                        <select class="form-control" [(ngModel)]="labTest.level">
+                                            <option></option>
+                                            <option>Low</option>
+                                            <option>Medium</option>
+                                            <option>High</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <span>Unit</span>
+                                        <input type="text" class="form-control" [(ngModel)]="labTest.unit" placeholder="Unit">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <span>Attachment</span>
+                                        <input type="file" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
+                                    <br>
+                                    <div class="col-sm-12">
+                                        <span>Verified By: {{labTest.verified}}</span>
+                                    </div>
+                                    <div class="col-sm-12" style="text-align: right;">
+                                        <button class="btn btn-primary" (click)="verifyLabTest(labTest)">Verify Results</button>
+                                    </div>
                                 </div>
                             </div>
+                            <div *ngIf="labTest?.status === 'REJECTED'">
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h5>Reason for rejection</h5>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" placeholder="Reason for rejection">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-info">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                 </div> 

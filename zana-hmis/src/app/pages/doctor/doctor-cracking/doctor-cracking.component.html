@@ -386,17 +386,33 @@
 </div>
 
 <div class="modal fade modal-success" id="lab-test-result-modal" tabindex="-2" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h3 class="modal-title">Lab Test Results</h3>
             </div>
             <div class="modal-body">
-                    
-                    
-                    
-                    
+                <div class="row">
+                    <div class="col-sm-6" *ngFor="let labTest of labTests" style="background-color: rgb(248, 248, 248);">
+                        <h4><b>{{labTest?.labTestType?.name}}</b></h4>
+                        <br>
+                        <span>Results</span>
+                        <textarea class="form-control"  style="height: 5cm;" readonly>{{labTest.result}}</textarea>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <small>Range: <b>{{labTest.range}}</b></small><br>
+                                <small>Level: <b>{{labTest.level}}</b></small><br>
+                                <small>Unit: <b>{{labTest.unit}}</b></small><br>
+                            </div>
+                            <div class="col-sm-6">
+                                <small>Status: <b>{{labTest.status}}</b></small><br>
+                                <small>Comments: level</small><br>
+                                <small>Reject Comment: unit</small><br>
+                           </div>
+                        </div>
+                    </div>
+                </div>                        
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Close</button>
                 </div>

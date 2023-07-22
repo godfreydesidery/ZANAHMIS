@@ -79,12 +79,13 @@ export class LabTestComponent implements OnInit {
     )
     .catch(
       error => {
+        this.labTests = []
         alert('Could not load lab tests')
       }
     )
   }
 
-  async saveResults(labTest : ILabTest){
+  async acceptLabTest(labTest : ILabTest){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -96,21 +97,133 @@ export class LabTestComponent implements OnInit {
       unit : labTest.unit
     }
     this.spinner.show()
-    await this.http.post<boolean>(API_URL+'/patients/save_lab_test_result', test, options)
+    await this.http.post<boolean>(API_URL+'/patients/accept_lab_test', test, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
-        
+        alert('Status changed : ACCEPTED')
       }
     )
     .catch(
       error => {
-        alert('Could not save lab test')
+        alert(error['error'])
       }
     )
+    this.loadLabTestsByPatient(this.id)
   }
 
+  async rejectLabTest(labTest : ILabTest){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var test  = {
+      id : labTest.id,
+      result : labTest.result,
+      range : labTest.range,
+      level : labTest.level,
+      unit : labTest.unit
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/reject_lab_test', test, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        alert('Status changed : REJECTED')
+      }
+    )
+    .catch(
+      error => {
+        alert(error['error'])
+      }
+    )
+    this.loadLabTestsByPatient(this.id)
+  }
+
+  async holdLabTest(labTest : ILabTest){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var test  = {
+      id : labTest.id,
+      result : labTest.result,
+      range : labTest.range,
+      level : labTest.level,
+      unit : labTest.unit
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/hold_lab_test', test, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        alert('Status changed : PENDING')
+      }
+    )
+    .catch(
+      error => {
+        alert(error['error'])
+      }
+    )
+    this.loadLabTestsByPatient(this.id)
+  }
+
+  async collectLabTest(labTest : ILabTest){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var test  = {
+      id : labTest.id,
+      result : labTest.result,
+      range : labTest.range,
+      level : labTest.level,
+      unit : labTest.unit
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/collect_lab_test', test, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        alert('Status changed : COLLECTED')
+      }
+    )
+    .catch(
+      error => {
+        alert(error['error'])
+      }
+    )
+    this.loadLabTestsByPatient(this.id)
+  }
+
+  async verifyLabTest(labTest : ILabTest){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var test  = {
+      id : labTest.id,
+      result : labTest.result,
+      range : labTest.range,
+      level : labTest.level,
+      unit : labTest.unit
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/verify_lab_test', test, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        alert('Status changed : VERIFIED, Saved successifully')
+      }
+    )
+    .catch(
+      error => {
+        alert(error['error'])
+      }
+    )
+    this.loadLabTestsByPatient(this.id)
+  }
 }
 
 export interface ILabTest{

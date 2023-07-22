@@ -260,7 +260,7 @@ public class PatientServiceImpl implements PatientService {
 		Visit visit = new Visit();
 		visit.setPatient(patient);
 		visit.setVisitSequence("FIRST");
-		//visit.setVisitedAt(visitedAt);
+		visit.setStatus("PENDING");
 		visit.setVisitedOn(dayService.getDayId());
 		visitRepository.save(visit);
 		
@@ -438,10 +438,14 @@ public class PatientServiceImpl implements PatientService {
 		 */
 		Optional<Visit> v = visitRepository.findLastByPatient(p);
 		Visit visit = new Visit();
-		if(!v.isPresent() || v.get().getVisitedOn() != dayService.getDayId()) {			
+		if(!v.isPresent() || !v.get().getStatus().equals("PENDING")) {			
 			visit.setPatient(p);
-			visit.setVisitSequence("FIRST");
-			//visit.setVisitedAt(visitedAt);
+			if(!v.isPresent()) {
+				visit.setVisitSequence("FIRST");
+			}else {
+				visit.setVisitSequence("SUBSEQUENT");
+			}
+			
 			visit.setVisitedOn(dayService.getDayId());
 			visitRepository.save(visit);
 		}else {

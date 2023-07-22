@@ -58,6 +58,19 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 	 */
 	Optional<Consultation> findByPatientAndStatus(Patient patient, String string);
 
+	/**
+	 * @param patient
+	 * @param string
+	 * @return
+	 */
+	List<Consultation> findAllByPatientAndStatus(Patient patient, String string);
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	List<Consultation> findAllByStatus(String string);
+
 	
 
 	/**

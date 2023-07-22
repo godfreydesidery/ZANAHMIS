@@ -44,6 +44,7 @@ import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.User;
+import com.orbix.api.domain.Visit;
 import com.orbix.api.domain.WorkingDiagnosis;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
@@ -615,11 +616,23 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultationId);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_lab_test").toUriString());
+		Patient patient = new Patient();
+		Visit visit = new Visit();
+		List<LabTest> labTests = new ArrayList<>();
 		if(c.isPresent()) {
-			return ResponseEntity.created(uri).body(c.get().getLabTests());
+			patient = c.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				labTests = c.get().getLabTests();
+			}			
+			return ResponseEntity.created(uri).body(labTests);
 		}else if(nc.isPresent()){		
-			return ResponseEntity.created(uri).body(nc.get().getLabTests());
-		
+			patient = nc.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				labTests = nc.get().getLabTests();
+			}			
+			return ResponseEntity.created(uri).body(labTests);		
 		}else {
 			return null;
 		}
@@ -883,11 +896,11 @@ public class PatientResource {
 	
 	
 	@GetMapping("/patients/get_lab_outpatient_list") 
-	public ResponseEntity<List<Patient>> getLabOutpatientList(){	
-		List<String> statusToView = new ArrayList<>();
-		statusToView.add("PENDING");
-		statusToView.add("ACCEPTED");
-		List<LabTest> labTests = labTestRepository.findAllByStatusIn(statusToView);
+	public ResponseEntity<List<Patient>> getLabOutpatientList(){
+		
+		List<Consultation> cs = consultationRepository.findAllByStatus("IN-PROCESS");
+		List<NonConsultation> ncs = nonConsultationRepository.findAllByStatus("IN-PROCESS");
+		List<LabTest> labTests = labTestRepository.findAllByConsultationIn(cs);			
 		List<Patient> patients = new ArrayList<>();		
 		for(LabTest t : labTests) {
 			if(t.getPatient().getPatientType().equals("OUTPATIENT") && (t.getBill().getStatus().equals("PAID") || t.getBill().getStatus().equals("COVERED"))) {
@@ -905,11 +918,11 @@ public class PatientResource {
 		Optional<Patient> p = patientRepository.findById(id);
 		if(!p.isPresent()) {
 			return null;
-		}		
-		List<String> statuses = new ArrayList<>();
-		statuses.add("PENDING");
-		statuses.add("ACCEPTED");
-		List<LabTest> labTests = labTestRepository.findAllByStatusIn(statuses);	
+		}
+		List<Consultation> cs = consultationRepository.findAllByPatientAndStatus(p.get(), "IN-PROCESS");
+		List<NonConsultation> ncs = nonConsultationRepository.findAllByPatientAndStatus(p.get(), "IN-PROCESS");
+		List<LabTest> labTests = labTestRepository.findAllByConsultationInOrNonConsultationIn(cs, ncs);	
+		
 		List<LabTestModel> labTestsToReturn = new ArrayList<>();
 		for(LabTest test : labTests) {
 			if(test.getBill().getStatus().equals("PAID") || test.getBill().getStatus().equals("COVERED")) {
@@ -931,24 +944,92 @@ public class PatientResource {
 		}
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_lab_tests_by_patient_id").toUriString());
 		return ResponseEntity.created(uri).body(labTestsToReturn);
-		//return ResponseEntity.created(uri).body(labTests);
 	}
 	
-	@PostMapping("/patients/save_lab_test_result") 
-	public boolean getSaveLabTestResult(
+	@PostMapping("/patients/accept_lab_test") 
+	public boolean acceptLabTest(
 			@RequestBody LLabTest test,
 			HttpServletRequest request){
 		Optional<LabTest> t = labTestRepository.findById(test.getId());
 		if(!t.isPresent()) {
 			throw new NotFoundException("Lab Test not found");
 		}
+		if(!(t.get().getStatus().equals("PENDING") || t.get().getStatus().equals("REJECTED"))) {
+			throw new InvalidOperationException("Could not accept, only PENDING or REJECTED tests can be accepted");
+		}
+		t.get().setStatus("ACCEPTED");
+		labTestRepository.save(t.get());
+		return true;
+	}
+	
+	@PostMapping("/patients/reject_lab_test") 
+	public boolean rejectLabTest(
+			@RequestBody LLabTest test,
+			HttpServletRequest request){
+		Optional<LabTest> t = labTestRepository.findById(test.getId());
+		if(!t.isPresent()) {
+			throw new NotFoundException("Lab Test not found");
+		}
+		if(!(t.get().getStatus().equals("PENDING") || t.get().getStatus().equals("ACCEPTED"))) {
+			throw new InvalidOperationException("Could not accept, only PENDING or ACCEPTED tests can be rejected");
+		}
+		t.get().setStatus("REJECTED");
+		labTestRepository.save(t.get());
+		return true;
+	}
+	
+	@PostMapping("/patients/collect_lab_test") 
+	public boolean collectLabTest(
+			@RequestBody LLabTest test,
+			HttpServletRequest request){
+		Optional<LabTest> t = labTestRepository.findById(test.getId());
+		if(!t.isPresent()) {
+			throw new NotFoundException("Lab Test not found");
+		}
+		if(!(t.get().getStatus().equals("ACCEPTED"))) {
+			throw new InvalidOperationException("Could not accept, only ACCEPTED tests can be collected");
+		}
+		t.get().setStatus("COLLECTED");
+		labTestRepository.save(t.get());
+		return true;
+	}
+	
+	@PostMapping("/patients/verify_lab_test") 
+	public boolean verifyLabTestResult(
+			@RequestBody LLabTest test,
+			HttpServletRequest request){
+		Optional<LabTest> t = labTestRepository.findById(test.getId());
+		if(!t.isPresent()) {
+			throw new NotFoundException("Lab Test not found");
+		}
+		if(!t.get().getStatus().equals("COLLECTED")) {
+			throw new InvalidOperationException("Could not verify, only COLLECTED tests can be verified");
+		}
 		t.get().setResult(test.getResult());
 		t.get().setLevel(test.getLevel());
 		t.get().setRange(test.getRange());
 		t.get().setUnit(test.getUnit());
+		t.get().setStatus("VERIFIED");
 		labTestRepository.save(t.get());
 		return true;
-	}		
+	}	
+	
+	@PostMapping("/patients/hold_lab_test") 
+	public boolean holdLabTest(
+			@RequestBody LLabTest test,
+			HttpServletRequest request){
+		Optional<LabTest> t = labTestRepository.findById(test.getId());
+		if(!t.isPresent()) {
+			throw new NotFoundException("Lab Test not found");
+		}
+		if(!(t.get().getStatus().equals("ACCEPTED"))) {
+			throw new InvalidOperationException("Could not hold, only ACCEPTED tests can be held");
+		}
+		t.get().setStatus("PENDING");
+		labTestRepository.save(t.get());
+		return true;
+	}
+	
 }
 
 @Data

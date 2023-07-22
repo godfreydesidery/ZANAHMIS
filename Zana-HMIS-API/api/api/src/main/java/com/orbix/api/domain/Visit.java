@@ -40,6 +40,7 @@ public class Visit {
 	
 	private Long visitedOn;
 	private LocalDateTime visitedAt = LocalDateTime.now();
+	private String status = "";
 	
 	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "patient_id", nullable = true , updatable = true)
