@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -35,7 +36,8 @@ export class ClinicianComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) {
     this.clinics           = []
   }
@@ -77,14 +79,14 @@ export class ClinicianComponent implements OnInit {
           this.type = data!.type
           this.clinics = data!.clinics
           this.active       = data!.active
-          alert('Clinician created successifully')
+          this.msgBox.showSuccessMessage('Clinician created successifully')
           this.loadClinicians()
           this.clear()
         }
       )
       .catch(
         error => {
-          alert('Could not create clinician')
+          this.msgBox.showErrorMessage('Could not create clinician')
         }
       )
 
@@ -101,13 +103,13 @@ export class ClinicianComponent implements OnInit {
           this.name = data!.name
           this.type = data!.type
           this.active       = data!.active
-          alert('Clinician updated successifully')
+          this.msgBox.showSuccessMessage('Clinician updated successifully')
           this.loadClinicians()
         }
       )
       .catch(
         error => {
-          alert('Could not update clinician')
+          this.msgBox.showErrorMessage('Could not update clinician')
         }
       )
     }
@@ -131,7 +133,7 @@ export class ClinicianComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load clinicians')
+        this.msgBox.showErrorMessage('Could not load clinicians')
       }
     )
   }
@@ -171,7 +173,7 @@ export class ClinicianComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not find clinic')
+        this.msgBox.showErrorMessage('Could not find clinic')
       }
     )
   }
@@ -263,14 +265,14 @@ export class ClinicianComponent implements OnInit {
           this.type = data!.type
           this.clinics = data!.clinics
           this.active       = data!.active
-          alert('Saved successifully')
+          this.msgBox.showSuccessMessage('Saved successifully')
           this.loadClinicians()
           this.clear()
         }
       )
       .catch(
         error => {
-          alert(error['error'])
+          this.msgBox.showErrorMessage(error['error'])
         }
       )
 

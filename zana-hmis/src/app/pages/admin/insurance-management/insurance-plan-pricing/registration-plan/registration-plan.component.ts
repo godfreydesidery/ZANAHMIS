@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -32,7 +33,8 @@ export class RegistrationPlanComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -58,7 +60,7 @@ export class RegistrationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Providers')
+        this.msgBox.showErrorMessage('Could not load Providers')
       }
     )
   }
@@ -81,7 +83,7 @@ export class RegistrationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Plans')
+        this.msgBox.showErrorMessage('Could not load Plans')
       }
     )
   }
@@ -104,7 +106,7 @@ export class RegistrationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load registration plans')
+        this.msgBox.showErrorMessage('Could not load registration plans')
       }
     )
   }
@@ -130,14 +132,14 @@ export class RegistrationPlanComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          alert('Registration plan created successifully')
+          this.msgBox.showSuccessMessage('Registration plan created successifully')
           this.loadRegistrationPlans()
           
         }
       )
       .catch(
         error => {
-          alert('Could not create registration plan')
+          this.msgBox.showErrorMessage('Could not create registration plan')
         }
       )
 
@@ -151,13 +153,13 @@ export class RegistrationPlanComponent implements OnInit {
         data => {
           this.id           = data?.id
           
-          alert('Registration plan updated successifully')
+          this.msgBox.showSuccessMessage('Registration plan updated successifully')
           this.loadRegistrationPlans()
         }
       )
       .catch(
         error => {
-          alert('Could not update registration plan')
+          this.msgBox.showErrorMessage('Could not update registration plan')
         }
       )
     }
@@ -194,7 +196,7 @@ export class RegistrationPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not find registration plan')
+        this.msgBox.showErrorMessage('Could not find registration plan')
       }
     )
   }
@@ -219,7 +221,7 @@ export class RegistrationPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not delete registration plan')
+        this.msgBox.showErrorMessage('Could not delete registration plan')
       }
     )
   }

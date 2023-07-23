@@ -485,7 +485,7 @@ public class PatientServiceImpl implements PatientService {
 		pt.get().setLastName(patient.getLastName());
 		pt.get().setDateOfBirth(patient.getDateOfBirth());
 		pt.get().setGender(patient.getGender());
-		pt.get().setType(patient.getType());
+		//pt.get().setType(patient.getType());
 		pt.get().setNationality(patient.getNationality());
 		pt.get().setNationalId(patient.getNationalId());
 		pt.get().setPassportNo(patient.getPassportNo());
@@ -495,9 +495,9 @@ public class PatientServiceImpl implements PatientService {
 		pt.get().setKinFullName(patient.getKinFullName());
 		pt.get().setKinRelationship(patient.getKinRelationship());
 		pt.get().setKinPhoneNo(patient.getKinPhoneNo());
-		pt.get().setPaymentType(patient.getPaymentType());
-		pt.get().setInsurancePlan(patient.getInsurancePlan());
-		pt.get().setMembershipNo(patient.getMembershipNo());
+		//pt.get().setPaymentType(patient.getPaymentType());
+		//pt.get().setInsurancePlan(patient.getInsurancePlan());
+		//pt.get().setMembershipNo(patient.getMembershipNo());
 		
 		return patientRepository.save(pt.get());
 		

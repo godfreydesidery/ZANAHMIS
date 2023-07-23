@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -30,7 +31,8 @@ export class LabTestTypeComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -65,14 +67,14 @@ export class LabTestTypeComponent implements OnInit {
           this.price = data!.price
           this.uom = data!.uom
           this.active       = data!.active
-          alert('Lab Test Type created successifully')
+          this.msgBox.showSuccessMessage('Lab Test Type created successifully')
           this.loadLabTestTypes()
           
         }
       )
       .catch(
         error => {
-          alert('Could not create lab test type')
+          this.msgBox.showErrorMessage('Could not create lab test type')
         }
       )
 
@@ -91,13 +93,13 @@ export class LabTestTypeComponent implements OnInit {
           this.price = data!.price
           this.uom = data!.uom
           this.active       = data!.active
-          alert('Lab Test Type updated successifully')
+          this.msgBox.showSuccessMessage('Lab Test Type updated successifully')
           this.loadLabTestTypes()
         }
       )
       .catch(
         error => {
-          alert('Could not update lab test type')
+          this.msgBox.showErrorMessage('Could not update lab test type')
         }
       )
     }
@@ -122,7 +124,7 @@ export class LabTestTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load lab test types')
+        this.msgBox.showErrorMessage('Could not load lab test types')
       }
     )
   }
@@ -162,7 +164,7 @@ export class LabTestTypeComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not find lab test type')
+        this.msgBox.showErrorMessage('Could not find lab test type')
       }
     )
   }

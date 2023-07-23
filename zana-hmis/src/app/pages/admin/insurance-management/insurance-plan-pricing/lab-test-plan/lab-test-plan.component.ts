@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -35,7 +36,8 @@ export class LabTestPlanComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -62,7 +64,7 @@ export class LabTestPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Providers')
+        this.msgBox.showErrorMessage('Could not load Providers')
       }
     )
   }
@@ -85,7 +87,7 @@ export class LabTestPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Plans')
+        this.msgBox.showErrorMessage('Could not load Plans')
       }
     )
   }
@@ -108,7 +110,7 @@ export class LabTestPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load labTestType plans')
+        this.msgBox.showErrorMessage('Could not load labTestType plans')
       }
     )
   }
@@ -137,14 +139,14 @@ export class LabTestPlanComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          alert('LabTestType plan created successifully')
+          this.msgBox.showSuccessMessage('LabTestType plan created successifully')
           this.loadLabTestTypePlans()
           
         }
       )
       .catch(
         error => {
-          alert('Could not create labTestType plan')
+          this.msgBox.showErrorMessage('Could not create labTestType plan')
         }
       )
 
@@ -158,13 +160,13 @@ export class LabTestPlanComponent implements OnInit {
         data => {
           this.id           = data?.id
           
-          alert('LabTestType plan updated successifully')
+          this.msgBox.showSuccessMessage('LabTestType plan updated successifully')
           this.loadLabTestTypePlans()
         }
       )
       .catch(
         error => {
-          alert('Could not update labTestType plan')
+          this.msgBox.showErrorMessage('Could not update labTestType plan')
         }
       )
     }
@@ -203,7 +205,7 @@ export class LabTestPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not find labTestType plan')
+        this.msgBox.showErrorMessage('Could not find labTestType plan')
       }
     )
   }
@@ -228,7 +230,7 @@ export class LabTestPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not delete labTestType plan')
+        this.msgBox.showErrorMessage('Could not delete labTestType plan')
       }
     )
   }
@@ -251,7 +253,7 @@ export class LabTestPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load lab_test_types')
+        this.msgBox.showErrorMessage('Could not load lab_test_types')
       }
     )
   }

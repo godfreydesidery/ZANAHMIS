@@ -179,6 +179,20 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(patientService.update(patient, request));
 	}
 	
+	@PostMapping("/patients/change_type")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<Patient>changeType(
+			@RequestBody Patient patient,
+			HttpServletRequest request){
+		Optional p = patientRepository.findById(patient.getId());
+		if(!p.isPresent()) {
+			throw new NotFoundException("Could not process, patient not available");
+		}
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/change_type").toUriString());
+		return ResponseEntity.created(uri).body(patient);
+	}
+	
 	@PostMapping("/patients/do_consultation")
 	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<Patient>consultation(

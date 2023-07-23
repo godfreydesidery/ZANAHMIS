@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -35,7 +36,8 @@ export class ConsultationPlanComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -62,7 +64,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Providers')
+        this.msgBox.showErrorMessage('Could not load Providers')
       }
     )
   }
@@ -85,7 +87,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Plans')
+        this.msgBox.showErrorMessage('Could not load Plans')
       }
     )
   }
@@ -108,7 +110,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load consultation plans')
+        this.msgBox.showErrorMessage('Could not load consultation plans')
       }
     )
   }
@@ -137,14 +139,14 @@ export class ConsultationPlanComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          alert('Consultation plan created successifully')
+          this.msgBox.showSuccessMessage('Consultation plan created successifully')
           this.loadConsultationPlans()
           
         }
       )
       .catch(
         error => {
-          alert('Could not create consultation plan')
+          this.msgBox.showErrorMessage('Could not create consultation plan')
         }
       )
 
@@ -158,13 +160,13 @@ export class ConsultationPlanComponent implements OnInit {
         data => {
           this.id           = data?.id
           
-          alert('Consultation plan updated successifully')
+          this.msgBox.showSuccessMessage('Consultation plan updated successifully')
           this.loadConsultationPlans()
         }
       )
       .catch(
         error => {
-          alert('Could not update consultation plan')
+          this.msgBox.showErrorMessage('Could not update consultation plan')
         }
       )
     }
@@ -203,7 +205,7 @@ export class ConsultationPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not find consultation plan')
+        this.msgBox.showErrorMessage('Could not find consultation plan')
       }
     )
   }
@@ -228,7 +230,7 @@ export class ConsultationPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not delete consultation plan')
+        this.msgBox.showErrorMessage('Could not delete consultation plan')
       }
     )
   }
@@ -251,7 +253,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load clinics')
+        this.msgBox.showErrorMessage('Could not load clinics')
       }
     )
   }

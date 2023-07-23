@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -35,7 +36,8 @@ export class RadiologyPlanComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -62,7 +64,7 @@ export class RadiologyPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Providers')
+        this.msgBox.showErrorMessage('Could not load Providers')
       }
     )
   }
@@ -85,7 +87,7 @@ export class RadiologyPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Plans')
+        this.msgBox.showErrorMessage('Could not load Plans')
       }
     )
   }
@@ -108,7 +110,7 @@ export class RadiologyPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not loadradiologyType plans')
+        this.msgBox.showErrorMessage('Could not loadradiologyType plans')
       }
     )
   }
@@ -137,14 +139,14 @@ export class RadiologyPlanComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          alert('RadiologyType plan created successifully')
+          this.msgBox.showSuccessMessage('RadiologyType plan created successifully')
           this.loadRadiologyTypePlans()
           
         }
       )
       .catch(
         error => {
-          alert('Could not createradiologyType plan')
+          this.msgBox.showErrorMessage('Could not createradiologyType plan')
         }
       )
 
@@ -158,13 +160,13 @@ export class RadiologyPlanComponent implements OnInit {
         data => {
           this.id           = data?.id
           
-          alert('RadiologyType plan updated successifully')
+          this.msgBox.showSuccessMessage('RadiologyType plan updated successifully')
           this.loadRadiologyTypePlans()
         }
       )
       .catch(
         error => {
-          alert('Could not updateradiologyType plan')
+          this.msgBox.showErrorMessage('Could not updateradiologyType plan')
         }
       )
     }
@@ -203,7 +205,7 @@ export class RadiologyPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not findradiologyType plan')
+        this.msgBox.showErrorMessage('Could not findradiologyType plan')
       }
     )
   }
@@ -228,7 +230,7 @@ export class RadiologyPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not deleteradiologyType plan')
+        this.msgBox.showErrorMessage('Could not deleteradiologyType plan')
       }
     )
   }
@@ -251,7 +253,7 @@ export class RadiologyPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load radiology_types')
+        this.msgBox.showErrorMessage('Could not load radiology_types')
       }
     )
   }

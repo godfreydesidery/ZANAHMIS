@@ -5,6 +5,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -90,7 +91,8 @@ export class DoctorCrackingComponent implements OnInit {
     private http :HttpClient,
     private modalService: NgbModal,
     private spinner : NgxSpinnerService,
-    private router : Router) { }
+    private router : Router,
+    private msgBox : MsgBoxService) { }
 
   ngOnInit(): void {
     this.id = localStorage.getItem('consultation-id')
@@ -128,7 +130,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load consultation')
+        this.msgBox.showErrorMessage('Could not load consultation')
         console.log(error)
       }
     )
@@ -159,7 +161,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load clinical note')
+        this.msgBox.showErrorMessage('Could not load clinical note')
         console.log(error)
       }
     )
@@ -193,7 +195,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load general examination')
+        this.msgBox.showErrorMessage('Could not load general examination')
         console.log(error)
       }
     )
@@ -265,7 +267,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not save')
+        this.msgBox.showErrorMessage('Could not save')
         console.log(error)
       }
     )
@@ -297,7 +299,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not save')
+        this.msgBox.showErrorMessage('Could not save')
         console.log(error)
       }
     )
@@ -330,7 +332,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not save')
+        this.msgBox.showErrorMessage('Could not save')
         console.log(error)
       }
     )
@@ -356,7 +358,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load diagnosis types names')
+        this.msgBox.showErrorMessage('Could not load diagnosis types names')
       }
     )
   }
@@ -378,7 +380,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load working diagnosises')
+        this.msgBox.showErrorMessage('Could not load working diagnosises')
       }
     )
     
@@ -401,7 +403,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load final diagnosises')
+        this.msgBox.showErrorMessage('Could not load final diagnosises')
       }
     )
     
@@ -423,7 +425,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not delete')
+        this.msgBox.showErrorMessage('Could not delete')
       }
     )
     this.loadFinalDiagnosis(this.id)
@@ -445,7 +447,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not delete')
+        this.msgBox.showErrorMessage('Could not delete')
       }
     )
     this.loadWorkingDiagnosis(this.id)
@@ -491,7 +493,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load lab test types names')
+        this.msgBox.showErrorMessage('Could not load lab test types names')
       }
     )
   }
@@ -515,7 +517,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load radiology types names')
+        this.msgBox.showErrorMessage('Could not load radiology types names')
       }
     )
   }
@@ -539,7 +541,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load procedure types names')
+        this.msgBox.showErrorMessage('Could not load procedure types names')
       }
     )
   }
@@ -563,7 +565,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load medicine names')
+        this.msgBox.showErrorMessage('Could not load medicine names')
       }
     )
   }
@@ -592,7 +594,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not save')
+        this.msgBox.showErrorMessage('Could not save')
         console.log(error)
       }
     )
@@ -623,7 +625,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not save')
+        this.msgBox.showErrorMessage('Could not save')
         console.log(error)
       }
     )
@@ -654,7 +656,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not save')
+        this.msgBox.showErrorMessage('Could not save')
         console.log(error)
       }
     )
@@ -685,7 +687,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not save')
+        this.msgBox.showErrorMessage('Could not save')
         console.log(error)
       }
     )
@@ -709,7 +711,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load lab tests')
+        this.msgBox.showErrorMessage('Could not load lab tests')
       }
     )
     
@@ -732,7 +734,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load rediologies')
+        this.msgBox.showErrorMessage('Could not load radiologies')
       }
     )
     
@@ -755,7 +757,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load procedures')
+        this.msgBox.showErrorMessage('Could not load procedures')
       }
     )
     
@@ -778,7 +780,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load prescriptions')
+        this.msgBox.showErrorMessage('Could not load prescriptions')
       }
     )
     
@@ -800,7 +802,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
     this.loadLabTest(this.id, 0)
@@ -822,7 +824,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
     this.loadRadiologies(this.id, 0)
@@ -844,7 +846,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
     this.loadProcedures(this.id, 0)
@@ -866,7 +868,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
     this.loadPrescriptions(this.id, 0)

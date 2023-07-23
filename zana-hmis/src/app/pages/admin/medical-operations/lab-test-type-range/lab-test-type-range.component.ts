@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -30,7 +31,8 @@ export class LabTestTypeRangeComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -59,14 +61,14 @@ export class LabTestTypeRangeComponent implements OnInit {
           this.id           = data?.id
           this.name = data!.name
           this.active       = data!.active
-          alert('Range created successifully')
+          this.msgBox.showSuccessMessage('Range created successifully')
           this.loadLabTestTypeRanges()
           
         }
       )
       .catch(
         error => {
-          alert('Could not create range')
+          this.msgBox.showErrorMessage('Could not create range')
         }
       )
 
@@ -81,13 +83,13 @@ export class LabTestTypeRangeComponent implements OnInit {
           this.id           = data?.id
           this.name = data!.name
           this.active       = data!.active
-          alert('Range updated successifully')
+          this.msgBox.showSuccessMessage('Range updated successifully')
           this.loadLabTestTypeRanges()
         }
       )
       .catch(
         error => {
-          alert('Could not update range')
+          this.msgBox.showErrorMessage('Could not update range')
         }
       )
     }
@@ -112,7 +114,7 @@ export class LabTestTypeRangeComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load insurance plans')
+        this.msgBox.showErrorMessage('Could not load insurance plans')
       }
     )
   }
@@ -146,7 +148,7 @@ export class LabTestTypeRangeComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not find range')
+        this.msgBox.showErrorMessage('Could not find range')
       }
     )
   }
@@ -169,7 +171,7 @@ export class LabTestTypeRangeComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load lab tests')
+        this.msgBox.showErrorMessage('Could not load lab tests')
       }
     )
   }

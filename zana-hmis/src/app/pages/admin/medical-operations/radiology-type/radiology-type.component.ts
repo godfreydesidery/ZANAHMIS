@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -30,7 +31,8 @@ export class RadiologyTypeComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -65,14 +67,14 @@ export class RadiologyTypeComponent implements OnInit {
           this.price = data!.price
           this.uom = data!.uom
           this.active       = data!.active
-          alert('Radiology Type created successifully')
+          this.msgBox.showSuccessMessage('Radiology Type created successifully')
           this.loadRadiologyTypes()
           
         }
       )
       .catch(
         error => {
-          alert('Could not create radiology type')
+          this.msgBox.showErrorMessage('Could not create radiology type')
         }
       )
 
@@ -91,13 +93,13 @@ export class RadiologyTypeComponent implements OnInit {
           this.price = data!.price
           this.uom = data!.uom
           this.active       = data!.active
-          alert('Radiology Type updated successifully')
+          this.msgBox.showSuccessMessage('Radiology Type updated successifully')
           this.loadRadiologyTypes()
         }
       )
       .catch(
         error => {
-          alert('Could not update radiology type')
+          this.msgBox.showErrorMessage('Could not update radiology type')
         }
       )
     }
@@ -122,7 +124,7 @@ export class RadiologyTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load radiology types')
+        this.msgBox.showErrorMessage('Could not load radiology types')
       }
     )
   }
@@ -162,7 +164,7 @@ export class RadiologyTypeComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not find radiology type')
+        this.msgBox.showErrorMessage('Could not find radiology type')
       }
     )
   }

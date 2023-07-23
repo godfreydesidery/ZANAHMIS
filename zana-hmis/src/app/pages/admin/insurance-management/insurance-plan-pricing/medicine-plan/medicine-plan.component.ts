@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -35,7 +36,8 @@ export class MedicinePlanComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -62,7 +64,7 @@ export class MedicinePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Providers')
+        this.msgBox.showErrorMessage('Could not load Providers')
       }
     )
   }
@@ -85,7 +87,7 @@ export class MedicinePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Plans')
+        this.msgBox.showErrorMessage('Could not load Plans')
       }
     )
   }
@@ -108,7 +110,7 @@ export class MedicinePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not loadmedicine plans')
+        this.msgBox.showErrorMessage('Could not loadmedicine plans')
       }
     )
   }
@@ -137,14 +139,14 @@ export class MedicinePlanComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          alert('Medicine plan created successifully')
+          this.msgBox.showSuccessMessage('Medicine plan created successifully')
           this.loadMedicinePlans()
           
         }
       )
       .catch(
         error => {
-          alert('Could not createmedicine plan')
+          this.msgBox.showErrorMessage('Could not createmedicine plan')
         }
       )
 
@@ -158,13 +160,13 @@ export class MedicinePlanComponent implements OnInit {
         data => {
           this.id           = data?.id
           
-          alert('Medicine plan updated successifully')
+          this.msgBox.showSuccessMessage('Medicine plan updated successifully')
           this.loadMedicinePlans()
         }
       )
       .catch(
         error => {
-          alert('Could not updatemedicine plan')
+          this.msgBox.showErrorMessage('Could not updatemedicine plan')
         }
       )
     }
@@ -203,7 +205,7 @@ export class MedicinePlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not findmedicine plan')
+        this.msgBox.showErrorMessage('Could not findmedicine plan')
       }
     )
   }
@@ -228,7 +230,7 @@ export class MedicinePlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not deletemedicine plan')
+        this.msgBox.showErrorMessage('Could not deletemedicine plan')
       }
     )
   }
@@ -251,7 +253,7 @@ export class MedicinePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load medicines')
+        this.msgBox.showErrorMessage('Could not load medicines')
       }
     )
   }

@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -30,7 +31,8 @@ export class DiagnosisTypeComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -65,14 +67,14 @@ export class DiagnosisTypeComponent implements OnInit {
           this.price = data!.price
           this.uom = data!.uom
           this.active       = data!.active
-          alert('Diagnosis Type created successifully')
+          this.msgBox.showSuccessMessage('Diagnosis Type created successifully')
           this.loadDiagnosisTypes()
           
         }
       )
       .catch(
         error => {
-          alert('Could not create diagnosis type')
+          this.msgBox.showErrorMessage('Could not create diagnosis type')
         }
       )
 
@@ -91,13 +93,13 @@ export class DiagnosisTypeComponent implements OnInit {
           this.price = data!.price
           this.uom = data!.uom
           this.active       = data!.active
-          alert('Diagnosis Type updated successifully')
+          this.msgBox.showSuccessMessage('Diagnosis Type updated successifully')
           this.loadDiagnosisTypes()
         }
       )
       .catch(
         error => {
-          alert('Could not update diagnosis type')
+          this.msgBox.showErrorMessage('Could not update diagnosis type')
         }
       )
     }
@@ -122,7 +124,7 @@ export class DiagnosisTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load diagnosis types')
+        this.msgBox.showErrorMessage('Could not load diagnosis types')
       }
     )
   }
@@ -162,7 +164,7 @@ export class DiagnosisTypeComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not find diagnosis type')
+        this.msgBox.showErrorMessage('Could not find diagnosis type')
       }
     )
   }

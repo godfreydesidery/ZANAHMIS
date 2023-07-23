@@ -5,6 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { environment } from 'src/environments/environment';
+import swal from 'sweetalert2';
 
 const API_URL = environment.apiUrl;
 @Component({

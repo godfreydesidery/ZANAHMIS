@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { first } from 'rxjs';
 import { AuthService } from '../auth.service';
+import { MsgBoxService } from '../services/msg-box.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,7 @@ export class LoginComponent implements OnInit {
   /**Checks the login status */
   status : string = ''
 
-  /**User alert message */
+  /**User this.msgBox message */
   message : any = ''
 
   /**For modal display */
@@ -28,7 +29,8 @@ export class LoginComponent implements OnInit {
     private http :HttpClient,
     private auth : AuthService, 
     private router: Router, 
-    private authService: AuthService) {  
+    private authService: AuthService,
+    private msgBox : MsgBoxService) {  
     
     this.username = ''
     this.password = ''  
@@ -47,7 +49,7 @@ export class LoginComponent implements OnInit {
     localStorage.removeItem('system-date')
 
     if(this.username == '' || this.password == ''){ 
-      alert('Please fill in your username and password')
+      this.msgBox.showErrorMessage('Please fill in your username and password')
       return
     }
     this.status = 'Loading... Please wait.'
@@ -65,7 +67,7 @@ export class LoginComponent implements OnInit {
       .catch(error => {
         this.status = ''
         localStorage.removeItem('current-user')
-        alert('Invalid username and password')
+        this.msgBox.showErrorMessage('Invalid username and password')
         console.log(error)
         return
       })    
@@ -79,7 +81,7 @@ export class LoginComponent implements OnInit {
 
   /** */
   contactAdministrator(){
-    alert('Please contact System Administrator for password recovery')
+    this.msgBox.showSuccessMessage('Please contact System Administrator for password recovery')
   }
 
   clearCredentials(event : any){

@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -59,7 +60,8 @@ export class MedicationPaymentComponent implements OnInit {
   constructor(
               private auth : AuthService,
               private http : HttpClient,
-              private spinner: NgxSpinnerService) 
+              private spinner: NgxSpinnerService,
+              private msgBox : MsgBoxService) 
               { }
   
 
@@ -85,7 +87,7 @@ export class MedicationPaymentComponent implements OnInit {
       },
       error => {
         console.log(error)
-        alert('Could not load patients')
+        this.msgBox.showErrorMessage('Could not load patients')
       }
     )
   }
@@ -133,7 +135,7 @@ export class MedicationPaymentComponent implements OnInit {
       error => {
         console.log(error)
         this.clear()
-        alert('Could not find patient')
+        this.msgBox.showErrorMessage('Could not find patient')
         return
       }
     )
@@ -189,7 +191,7 @@ export class MedicationPaymentComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        alert('Could not load registration bill')
+        this.msgBox.showErrorMessage('Could not load registration bill')
       }
     )
   }
@@ -219,7 +221,7 @@ export class MedicationPaymentComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        alert('Could not load prescription bill')
+        this.msgBox.showErrorMessage('Could not load prescription bill')
       }
     )
   }
@@ -255,7 +257,7 @@ export class MedicationPaymentComponent implements OnInit {
     .then(
       data => {
         console.log(data)
-        alert('Payment successiful')
+        this.msgBox.showSuccessMessage('Payment successiful')
         var temp = this.searchKey
         this.clear()
         this.searchKey = temp
@@ -266,7 +268,7 @@ export class MedicationPaymentComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        alert('Could not confirm payment')
+        this.msgBox.showErrorMessage('Could not confirm payment')
       }
     )
   }

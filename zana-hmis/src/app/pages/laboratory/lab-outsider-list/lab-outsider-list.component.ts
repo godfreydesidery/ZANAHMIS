@@ -5,6 +5,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -20,7 +21,8 @@ export class LabOutsiderListComponent implements OnInit {
     private http :HttpClient,
     private modalService: NgbModal,
     private spinner : NgxSpinnerService,
-    private router : Router) { }
+    private router : Router,
+    private msgBox : MsgBoxService) { }
 
   ngOnInit(): void {
   }

@@ -1,12 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { disableDebugTools } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
-//import { IClinician } from '../../admin/personnel/clinician/clinician.component';
 
 const API_URL = environment.apiUrl;
 
@@ -73,7 +72,8 @@ export class PatientRegisterComponent implements OnInit {
               private auth : AuthService,
               private http : HttpClient,
               private modalService: NgbModal,
-              private spinner: NgxSpinnerService
+              private spinner: NgxSpinnerService,
+              private msgBox : MsgBoxService
   ) {
     this.id = null
     this.no = ''
@@ -211,7 +211,8 @@ export class PatientRegisterComponent implements OnInit {
       .toPromise()
       .then(
         data => {
-          alert('Patient Registered successifully. Please note patients File No')
+          //swal.fire()
+          this.msgBox.showSuccessMessage('Patient Registered successifully. Please note patients File No')
 
           this.id = data!['id']
           this.no = data!['no']
@@ -244,7 +245,7 @@ export class PatientRegisterComponent implements OnInit {
       )
       .catch(
         error => {
-          alert(error['error'])
+          this.msgBox.showErrorMessage(error['error'])
         }
       )
 
@@ -289,7 +290,7 @@ export class PatientRegisterComponent implements OnInit {
     .toPromise()
     .then(
       data => {
-        alert('Patient updated successifully. Please note patients File No')
+        this.msgBox.showSuccessMessage('Patient updated successifully. Please note patients File No')
 
         this.id = data!['id']
         this.no = data!['no']
@@ -323,7 +324,7 @@ export class PatientRegisterComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
         updated = false
       }
       
@@ -350,7 +351,7 @@ export class PatientRegisterComponent implements OnInit {
       },
       error => {
         console.log(error)
-        alert('Could not load patients')
+        this.msgBox.showErrorMessage('Could not load patients')
       }
     )
   }
@@ -366,7 +367,7 @@ export class PatientRegisterComponent implements OnInit {
       if (opts[i] === val) {
         // An item was selected from the list!
         // yourCallbackHere()
-        alert(opts[i]);
+        //alert(opts[i]);
         break;
       }
     }
@@ -429,7 +430,7 @@ export class PatientRegisterComponent implements OnInit {
       error => {
         console.log(error)
         this.clear()
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
   }
@@ -453,7 +454,7 @@ export class PatientRegisterComponent implements OnInit {
       },
       error => {
         console.log(error)
-        alert('Could not load clinics')
+        this.msgBox.showErrorMessage('Could not load clinics')
       }
     )
   }
@@ -480,7 +481,7 @@ export class PatientRegisterComponent implements OnInit {
       },
       error => {
         console.log(error)
-        alert('Could not get consultation fee')
+        this.msgBox.showErrorMessage('Could not get consultation fee')
       }
     )
   }
@@ -502,7 +503,7 @@ export class PatientRegisterComponent implements OnInit {
       },
       error => {
         console.log(error)
-        alert('Could not load active consultations')
+        this.msgBox.showErrorMessage('Could not load active consultations')
       }
     )
   }
@@ -534,7 +535,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load doctors')
+        this.msgBox.showErrorMessage('Could not load doctors')
       }
     )
   }
@@ -557,7 +558,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load insurance Plans')
+        this.msgBox.showErrorMessage('Could not load insurance Plans')
       }
     )
   }
@@ -580,7 +581,7 @@ export class PatientRegisterComponent implements OnInit {
     .toPromise()
     .then(
       data => {
-        alert('Patient sent to doctor successifuly')
+        this.msgBox.showSuccessMessage('Patient sent to doctor successifuly')
         var temp = this.searchKey
         this.clear()
         this.searchKey = temp
@@ -589,7 +590,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
 
@@ -609,7 +610,7 @@ export class PatientRegisterComponent implements OnInit {
     .toPromise()
     .then(
       data => {
-        alert('Consultation canceled successifully')
+        this.msgBox.showSuccessMessage('Consultation canceled successifully')
         var temp = this.searchKey
         this.clear()
         this.searchKey = temp
@@ -618,7 +619,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
 

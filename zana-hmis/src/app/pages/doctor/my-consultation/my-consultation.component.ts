@@ -5,6 +5,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -23,7 +24,8 @@ export class MyConsultationComponent implements OnInit {
     private http :HttpClient,
     private modalService: NgbModal,
     private spinner : NgxSpinnerService,
-    private router : Router) { }
+    private router : Router,
+    private msgBox : MsgBoxService) { }
 
   async ngOnInit(): Promise<void> {
     await this.loadClinician()
@@ -46,7 +48,7 @@ export class MyConsultationComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load clinician')
+        this.msgBox.showErrorMessage('Could not load clinician')
       }
     )
   }
@@ -66,7 +68,7 @@ export class MyConsultationComponent implements OnInit {
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
         console.log(error)
       }
     )

@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -29,7 +30,8 @@ export class MedicineComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -66,14 +68,14 @@ export class MedicineComponent implements OnInit {
           this.uom = data!.uom
           this.category = data!.category
           this.active       = data!.active
-          alert('Procedure Type created successifully')
+          this.msgBox.showSuccessMessage('Procedure Type created successifully')
           this.loadMedicines()
           
         }
       )
       .catch(
         error => {
-          alert('Could not create procedure type')
+          this.msgBox.showErrorMessage('Could not create procedure type')
         }
       )
 
@@ -93,13 +95,13 @@ export class MedicineComponent implements OnInit {
           this.uom = data!.uom
           this.category = data!.category
           this.active       = data!.active
-          alert('Procedure Type updated successifully')
+          this.msgBox.showSuccessMessage('Procedure Type updated successifully')
           this.loadMedicines()
         }
       )
       .catch(
         error => {
-          alert('Could not update procedure type')
+          this.msgBox.showErrorMessage('Could not update procedure type')
         }
       )
     }
@@ -124,7 +126,7 @@ export class MedicineComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load procedure types')
+        this.msgBox.showErrorMessage('Could not load procedure types')
       }
     )
   }
@@ -166,7 +168,7 @@ export class MedicineComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not find medicine')
+        this.msgBox.showErrorMessage('Could not find medicine')
       }
     )
   }

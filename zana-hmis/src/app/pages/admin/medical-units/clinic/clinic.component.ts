@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -29,7 +30,8 @@ export class ClinicComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -62,14 +64,14 @@ export class ClinicComponent implements OnInit {
           this.description = data!.description
           this.consultationFee = data!.consultationFee
           this.active       = data!.active
-          alert('Clinic created successifully')
+          this.msgBox.showSuccessMessage('Clinic created successifully')
           this.loadClinics()
           this.clear()
         }
       )
       .catch(
         error => {
-          alert('Could not create clinic')
+          this.msgBox.showErrorMessage('Could not create clinic')
         }
       )
 
@@ -87,13 +89,13 @@ export class ClinicComponent implements OnInit {
           this.description = data!.description
           this.consultationFee = data!.consultationFee
           this.active       = data!.active
-          alert('Clinic updated successifully')
+          this.msgBox.showSuccessMessage('Clinic updated successifully')
           this.loadClinics()
         }
       )
       .catch(
         error => {
-          alert('Could not update clinic')
+          this.msgBox.showErrorMessage('Could not update clinic')
         }
       )
     }
@@ -117,7 +119,7 @@ export class ClinicComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load clinics')
+        this.msgBox.showErrorMessage('Could not load clinics')
       }
     )
   }
@@ -154,7 +156,7 @@ export class ClinicComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not find clinic')
+        this.msgBox.showErrorMessage('Could not find clinic')
       }
     )
   }

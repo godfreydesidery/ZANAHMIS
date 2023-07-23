@@ -5,6 +5,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -30,7 +31,8 @@ export class LabTestComponent implements OnInit {
     private http :HttpClient,
     private modalService: NgbModal,
     private spinner : NgxSpinnerService,
-    private router : Router) { }
+    private router : Router,
+    private msgBox : MsgBoxService) { }
 
   ngOnInit(): void {
     this.id = localStorage.getItem('lab-test-patient-id')
@@ -56,7 +58,7 @@ export class LabTestComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load patient')
+        this.msgBox.showErrorMessage('Could not load patient')
         console.log(error)
       }
     )
@@ -80,7 +82,7 @@ export class LabTestComponent implements OnInit {
     .catch(
       error => {
         this.labTests = []
-        alert('Could not load lab tests')
+        this.msgBox.showErrorMessage('Could not load lab tests')
       }
     )
   }
@@ -102,12 +104,12 @@ export class LabTestComponent implements OnInit {
     .toPromise()
     .then(
       data => {
-        alert('Status changed : ACCEPTED')
+        this.msgBox.showSuccessMessage('Status changed : ACCEPTED')
       }
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
     this.loadLabTestsByPatient(this.id)
@@ -130,12 +132,12 @@ export class LabTestComponent implements OnInit {
     .toPromise()
     .then(
       data => {
-        alert('Status changed : REJECTED')
+        this.msgBox.showSuccessMessage('Status changed : REJECTED')
       }
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
     this.loadLabTestsByPatient(this.id)
@@ -158,12 +160,12 @@ export class LabTestComponent implements OnInit {
     .toPromise()
     .then(
       data => {
-        alert('Status changed : PENDING')
+        this.msgBox.showSuccessMessage('Status changed : PENDING')
       }
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
     this.loadLabTestsByPatient(this.id)
@@ -186,12 +188,12 @@ export class LabTestComponent implements OnInit {
     .toPromise()
     .then(
       data => {
-        alert('Status changed : COLLECTED')
+        this.msgBox.showSuccessMessage('Status changed : COLLECTED')
       }
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
     this.loadLabTestsByPatient(this.id)
@@ -214,12 +216,12 @@ export class LabTestComponent implements OnInit {
     .toPromise()
     .then(
       data => {
-        alert('Status changed : VERIFIED, Saved successifully')
+        this.msgBox.showSuccessMessage('Status changed : VERIFIED, Saved successifully')
       }
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
     this.loadLabTestsByPatient(this.id)

@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -35,7 +36,8 @@ export class ProcedurePlanComponent implements OnInit {
     private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
-    private spinner : NgxSpinnerService
+    private spinner : NgxSpinnerService,
+    private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
@@ -62,7 +64,7 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Providers')
+        this.msgBox.showErrorMessage('Could not load Providers')
       }
     )
   }
@@ -85,7 +87,7 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load Plans')
+        this.msgBox.showErrorMessage('Could not load Plans')
       }
     )
   }
@@ -108,7 +110,7 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not loadprocedureType plans')
+        this.msgBox.showErrorMessage('Could not loadprocedureType plans')
       }
     )
   }
@@ -137,14 +139,14 @@ export class ProcedurePlanComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          alert('ProcedureType plan created successifully')
+          this.msgBox.showSuccessMessage('ProcedureType plan created successifully')
           this.loadProcedureTypePlans()
           
         }
       )
       .catch(
         error => {
-          alert('Could not createprocedureType plan')
+          this.msgBox.showErrorMessage('Could not createprocedureType plan')
         }
       )
 
@@ -158,13 +160,13 @@ export class ProcedurePlanComponent implements OnInit {
         data => {
           this.id           = data?.id
           
-          alert('ProcedureType plan updated successifully')
+          this.msgBox.showSuccessMessage('ProcedureType plan updated successifully')
           this.loadProcedureTypePlans()
         }
       )
       .catch(
         error => {
-          alert('Could not updateprocedureType plan')
+          this.msgBox.showErrorMessage('Could not updateprocedureType plan')
         }
       )
     }
@@ -203,7 +205,7 @@ export class ProcedurePlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not findprocedureType plan')
+        this.msgBox.showErrorMessage('Could not findprocedureType plan')
       }
     )
   }
@@ -228,7 +230,7 @@ export class ProcedurePlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        alert('Could not deleteprocedureType plan')
+        this.msgBox.showErrorMessage('Could not deleteprocedureType plan')
       }
     )
   }
@@ -251,7 +253,7 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        alert('Could not load procedure_types')
+        this.msgBox.showErrorMessage('Could not load procedure_types')
       }
     )
   }
