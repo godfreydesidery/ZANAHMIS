@@ -179,7 +179,7 @@
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <div class="table-responsive">
-                                                <h4 class="text-primary"><b>Patient Details</b>   <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#edit-modal" style="margin-bottom: 2mm;">Edit Patient</button></h4>
+                                                <h4 class="text-primary"><b>Patient Details</b>   <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#edit-modal" style="margin-bottom: 2mm;">Edit Patient</button></h4>
                                                 <table class="table table-bordered table-small table-striped" style="text-align: center;">
                                                     <tbody>
                                                         <tr><td>Full Name</td><td>{{firstName}}</td></tr>
@@ -214,10 +214,18 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <span class="label label-primary label-lg m-r-15">Patient Type: {{type}}</span><span class="label label-success label-lg m-r-15" (click)="clearEditType()" data-toggle="modal" data-target="#change-patient-type-modal">Change Patient Type</span><br><br>
+                                            <span class="label label-primary m-r-15">Payment Type: {{paymentType}}</span><span class="label label-success label-lg m-r-15" (click)="clearEditPaymentType()" (click)="clearEditMembershipNo()" (click)="clearEditInsurancePlanName()" data-toggle="modal" data-target="#change-payment-type-modal">Change Payment Type</span><br><br>
+                                            <div *ngIf="paymentType === 'INSURANCE'">
+                                                <span class="label label-primary m-r-15">Insurance: {{insurancePlanName}}</span><br><br>
+                                                <span class="label label-primary m-r-15">Membership No: {{membershipNo}}</span><br><br>
+                                            </div>
                                         </div>
                                         <div class="col-sm-4">
                                             <br>
-                                            <div class="row" *ngIf="consultations.length === 0 && id != null">
+                                            
+                                            
+                                            <!--<div class="row" *ngIf="consultations.length === 0 && id != null">
                                                 <div class="col-sm-12 form-group">
                                                     <h4 class="text-primary"><b>Payment Type</b></h4>
                                                     <select class="form-control" [(ngModel)]="paymentType" (ngModelChange)="changePaymentType(paymentType)">
@@ -239,7 +247,7 @@
                                                         <input type="text" class="form-control" [(ngModel)]="membershipNo" placeholder="Insurance Membership No">
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>-->
                                             <div>
                                                 <div *ngIf="type != 'OUTSIDER' && id != null && paymentType != ''">
                                                     <div *ngIf="consultations.length === 0">
@@ -352,14 +360,14 @@
                                     <option>Female</option>
                                 </select>
                             </div>
-                            <div class="col-sm-4 form-group">
+                            <!--<div class="col-sm-4 form-group">
                                 <h4 class="text-primary">Select Patient Type*</h4>
                                 <select class="form-control" [(ngModel)]="type">
                                     <option></option>
                                     <option>OUTPATIENT</option>
                                     <option>OUTSIDER</option>
                                 </select>
-                            </div>
+                            </div>-->
                             <div class="col-sm-4 form-group">
                                 <h4 class="text-primary">Nationality</h4>
                                 <select class="form-control" [(ngModel)]="nationality">
@@ -409,7 +417,7 @@
                             </div>
                         </div>                        
                     </div>
-                    <div class="col-sm-12">
+                    <!--<div class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-4 form-group">
                                 <h4 class="text-primary"><b>Select Payment Type</b></h4>
@@ -431,7 +439,7 @@
                                 <input type="text" class="form-control" [(ngModel)]="membershipNo" placeholder="Insurance Membership No">
                             </div>
                         </div>
-                    </div>
+                    </div>-->
                 </div>
             </div>
             <div class="modal-footer">
@@ -441,3 +449,74 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+
+<!-- Modal success -->
+<div class="modal fade modal-success" id="change-patient-type-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">Change Patient Type</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="text-primary">Select Patient Type</h4>
+                        <select class="form-control" [(ngModel)]="editType">
+                            <option></option>
+                            <option>OUTPATIENT</option>
+                            <option>OUTSIDER</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success pull-right" *ngIf="editType != ''" data-dismiss="modal">Save Change</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Modal success -->
+<div class="modal fade modal-success" id="change-payment-type-modal" tabindex="-1" role="dialog" >
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">Change Payment Type</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12 form-group">
+                        <h4 class="text-primary"><b>Select Payment Type</b></h4>
+                        <select class="form-control" [(ngModel)]="editPaymentType" (ngModelChange)="changeEditPaymentType(editPaymentType)" (change)="clearEditMembershipNo()" (change)="clearEditInsurancePlanName()">
+                            <option></option>
+                            <option>CASH</option>
+                            <option>INSURANCE</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-12 form-group" *ngIf="editPaymentType === 'INSURANCE'">
+                        <h4 class="text-primary">Select Insurance Plan</h4>
+                        <select class="form-control" [(ngModel)]="editInsurancePlanName" (change)="clearEditMembershipNo()">
+                            <option></option>
+                            <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-12 form-group" *ngIf="editInsurancePlanName != '' && editPaymentType === 'INSURANCE'">
+                        <h4 class="text-primary">Membership No</h4>
+                        <input type="text" class="form-control" [(ngModel)]="editMembershipNo" placeholder="Insurance Membership No">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success pull-right" *ngIf="(editPaymentType === 'CASH') || (editPaymentType === 'INSURANCE' && editMembershipNo != '')" data-dismiss="modal">Save Changes</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+

@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { disableDebugTools } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
@@ -58,6 +59,14 @@ export class PatientRegisterComponent implements OnInit {
   consultations : IConsultation[] = []
 
   lastVisitDate! : Date
+
+
+  editType : string = ''
+
+  editPaymentType : string = ''
+  editInsurancePlanName : string = ''
+  editMembershipNo : string = ''
+
 
   constructor(
     //private shortcut : ShortCutHandlerService,
@@ -130,8 +139,28 @@ export class PatientRegisterComponent implements OnInit {
     this.clear()
   }
 
+  clearEditType(){
+    this.editType = ''
+  }
+
   changePaymentType(paymentType : string){
     this.paymentType = paymentType
+  }
+
+  changeEditPaymentType(paymentType : string){
+    this.editPaymentType = paymentType
+  }
+
+  clearEditPaymentType(){
+    this.editPaymentType = ''
+  }
+
+  clearEditInsurancePlanName(){
+    this.editInsurancePlanName = ''
+  }
+
+  clearEditMembershipNo(){
+    this.editMembershipNo = ''
   }
 
   searchPatient(regNo : string){
@@ -609,6 +638,7 @@ export class PatientRegisterComponent implements OnInit {
     .then(
       data => {
         this.lastVisitDate = data!
+        
       }
     )
     .catch(
