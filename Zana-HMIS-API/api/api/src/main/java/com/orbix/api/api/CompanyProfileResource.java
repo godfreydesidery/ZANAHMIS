@@ -9,6 +9,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
@@ -27,6 +28,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.CompanyProfile;
 import com.orbix.api.service.CompanyProfileService;
+import com.orbix.api.service.DayService;
+import com.orbix.api.service.UserService;
+
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -42,15 +46,20 @@ public class CompanyProfileResource {
 	
 	private final 	CompanyProfileService companyProfileService;
 	
+
+	private final UserService userService;
+	private final DayService dayService;
+	
 	@GetMapping("/company_profile/get")
-	public ResponseEntity<CompanyProfile> getCompanyProfile(){		
-		return ResponseEntity.ok().body(companyProfileService.getCompanyProfile());
+	public ResponseEntity<CompanyProfile> getCompanyProfile(HttpServletRequest request){		
+		return ResponseEntity.ok().body(companyProfileService.getCompanyProfile(request));
 	}
 	
 	@PostMapping("/company_profile/save")
 	@PreAuthorize("hasAnyAuthority('COMPANY_PROFILE-CREATE','COMPANY_PROFILE-UPDATE')")
 	public ResponseEntity<CompanyProfile>saveCompanyProfile(
-			@RequestBody CompanyProfile profile){
+			@RequestBody CompanyProfile profile,
+			HttpServletRequest request){
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/company_profile/save").toUriString());
 		return ResponseEntity.created(uri).body(companyProfileService.saveCompanyProfile(profile));
 	}
@@ -58,16 +67,17 @@ public class CompanyProfileResource {
 	@PostMapping("/company_profile/save_logo")
 	@PreAuthorize("hasAnyAuthority('COMPANY_PROFILE-CREATE','COMPANY_PROFILE-UPDATE')")
 	public ResponseEntity<CompanyProfile> saveCompanyLogo(
-			@RequestParam("logo") MultipartFile logo) throws IOException{
-		CompanyProfile profile = companyProfileService.getCompanyProfile();
+			@RequestParam("logo") MultipartFile logo,
+			HttpServletRequest request) throws IOException{
+		CompanyProfile profile = companyProfileService.getCompanyProfile(request);
 		profile.setLogo(compressBytes(logo.getBytes()));		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/company_profile/save_logo").toUriString());
 		return ResponseEntity.created(uri).body(companyProfileService.saveCompanyProfile(profile));
 	}
 	
 	@GetMapping("/company_profile/get_logo")
-	public ResponseEntity<CompanyProfile> getLogo() {
-		CompanyProfile profile = companyProfileService.getCompanyProfile();
+	public ResponseEntity<CompanyProfile> getLogo(HttpServletRequest request) {
+		CompanyProfile profile = companyProfileService.getCompanyProfile(request);
 		profile.setLogo(decompressBytes(profile.getLogo()));
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/company_profile/get_logo").toUriString());
 		return ResponseEntity.created(uri).body(profile);

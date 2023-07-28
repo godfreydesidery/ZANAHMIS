@@ -4,6 +4,8 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
+import { ILabTestTypeInsurancePlan } from 'src/app/domain/lab-test-type-insurance-plan';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -28,7 +30,7 @@ export class LabTestPlanComponent implements OnInit {
   labTestTypeName : string = ''
   labTestTypeNames : string[] = []
 
-  labTestTypePlans : ILabTestTypePlan[] = []
+  labTestTypeInsurancePlans : ILabTestTypeInsurancePlan[] = []
 
 
 
@@ -41,7 +43,7 @@ export class LabTestPlanComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadLabTestTypePlans()
+    this.loadLabTestTypeInsurancePlans()
     this.loadInsuranceProviderNames()
     this.loadLabTestTypeNames()
   }
@@ -92,19 +94,19 @@ export class LabTestPlanComponent implements OnInit {
     )
   }
 
-  async loadLabTestTypePlans(){
-    this.labTestTypePlans = []
+  async loadLabTestTypeInsurancePlans(){
+    this.labTestTypeInsurancePlans = []
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<ILabTestTypePlan[]>(API_URL+'/lab_test_type_plan_prices', options)
+    await this.http.get<ILabTestTypeInsurancePlan[]>(API_URL+'/lab_test_type_insurance_plans', options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
         data?.forEach(element => {
-          this.labTestTypePlans.push(element)
+          this.labTestTypeInsurancePlans.push(element)
         })
       }
     )
@@ -116,11 +118,11 @@ export class LabTestPlanComponent implements OnInit {
   }
 
 
-  public async saveLabTestTypePlan(){
+  public async saveLabTestTypeInsurancePlan(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    var labTestTypePlan = {
+    var labTestTypeInsurancePlan = {
       id          : this.id,
       labTestType : {
         name : this.labTestTypeName
@@ -133,14 +135,14 @@ export class LabTestPlanComponent implements OnInit {
     if(this.id == null || this.id == ''){
       //save a new diagnosisType
       this.spinner.show()
-      await this.http.post<ILabTestTypePlan>(API_URL+'/lab_test_type_plan_prices/save', labTestTypePlan, options)
+      await this.http.post<ILabTestTypeInsurancePlan>(API_URL+'/lab_test_type_insurance_plans/save', labTestTypeInsurancePlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
           this.id           = data?.id
           this.msgBox.showSuccessMessage('LabTestType plan created successifully')
-          this.loadLabTestTypePlans()
+          this.loadLabTestTypeInsurancePlans()
           
         }
       )
@@ -153,7 +155,7 @@ export class LabTestPlanComponent implements OnInit {
     }else{
       //update an existing labTestType
       this.spinner.show()
-      await this.http.post<ILabTestTypePlan>(API_URL+'/lab_test_type_plan_prices/save', labTestTypePlan, options)
+      await this.http.post<ILabTestTypeInsurancePlan>(API_URL+'/lab_test_type_insurance_plans/save', labTestTypeInsurancePlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
@@ -161,7 +163,7 @@ export class LabTestPlanComponent implements OnInit {
           this.id           = data?.id
           
           this.msgBox.showSuccessMessage('LabTestType plan updated successifully')
-          this.loadLabTestTypePlans()
+          this.loadLabTestTypeInsurancePlans()
         }
       )
       .catch(
@@ -181,7 +183,7 @@ export class LabTestPlanComponent implements OnInit {
     this.price = 0
   }
 
-  async getLabTestTypePlan(key: string) {
+  async getLabTestTypeInsurancePlan(key: string) {
     if(key == ''){
       return
     }
@@ -189,7 +191,7 @@ export class LabTestPlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<ILabTestTypePlan>(API_URL+'/lab_test_type_plan_prices/get?id='+key, options)
+    await this.http.get<ILabTestTypeInsurancePlan>(API_URL+'/lab_test_type_insurance_plans/get?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -210,7 +212,7 @@ export class LabTestPlanComponent implements OnInit {
     )
   }
 
-  async deleteLabTestTypePlan(key: string) {
+  async deleteLabTestTypeInsurancePlan(key: string) {
     if(key == ''){
       return
     }
@@ -218,13 +220,13 @@ export class LabTestPlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.post<ILabTestTypePlan>(API_URL+'/lab_test_type_plan_prices/delete?id='+key, options)
+    await this.http.post<ILabTestTypeInsurancePlan>(API_URL+'/lab_test_type_insurance_plans/delete?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data=>{
         console.log(data)
-        this.loadLabTestTypePlans()
+        this.loadLabTestTypeInsurancePlans()
       }
     )
     .catch(
@@ -260,21 +262,5 @@ export class LabTestPlanComponent implements OnInit {
 
 }
 
-export interface ILabTestTypePlan{
-  id : any
-  labTestType : ILabTestType
-  insurancePlan : IInsurancePlan
-  price : number 
-}
 
-export interface IInsurancePlan{
-  name : string
-  insuranceProvider : IInsuranceProvider 
-}
-export interface IInsuranceProvider{
-  name : string
-}
 
-export interface ILabTestType{
-  name : string
-}

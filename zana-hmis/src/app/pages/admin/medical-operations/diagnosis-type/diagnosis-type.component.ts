@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IDiagnosisType } from 'src/app/domain/diagnosis-type';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -21,8 +22,6 @@ export class DiagnosisTypeComponent implements OnInit {
   code        : string = ''
   name        : string = ''
   description : string = ''
-  uom         : string = ''
-  price       : number = 0
   active      : boolean = true
 
   diagnosisTypes : IDiagnosisType[] = []
@@ -30,7 +29,6 @@ export class DiagnosisTypeComponent implements OnInit {
   constructor(
     private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) { }
@@ -45,11 +43,9 @@ export class DiagnosisTypeComponent implements OnInit {
     }
     var diagnosisType = {
       id          : this.id,
-      code          : this.code,
+      code        : this.code,
       name        : this.name,
       description : this.description,
-      uom       : this.uom,
-      price       : this.price,
       active      : true
     }
     if(this.id == null || this.id == ''){
@@ -61,11 +57,9 @@ export class DiagnosisTypeComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Diagnosis Type created successifully')
           this.loadDiagnosisTypes()
@@ -74,7 +68,7 @@ export class DiagnosisTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create diagnosis type')
+          this.msgBox.showErrorMessage('Could not create Diagnosis Type')
         }
       )
 
@@ -87,11 +81,9 @@ export class DiagnosisTypeComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Diagnosis Type updated successifully')
           this.loadDiagnosisTypes()
@@ -99,7 +91,7 @@ export class DiagnosisTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update diagnosis type')
+          this.msgBox.showErrorMessage('Could not update Diagnosis Type')
         }
       )
     }
@@ -124,19 +116,17 @@ export class DiagnosisTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load diagnosis types')
+        this.msgBox.showErrorMessage('Could not load Diagnosis Types')
       }
     )
   }
 
   clear(){
-    this.id = null
-    this.code = ''
-    this.name = ''
-    this.description = ''
-    this.uom = ''
-    this.price = 0
-    this.active = false
+    this.id           = null
+    this.code         = ''
+    this.name         = ''
+    this.description  = ''
+    this.active       = false
   }
 
   async getDiagnosisType(key: string) {
@@ -152,12 +142,10 @@ export class DiagnosisTypeComponent implements OnInit {
     .toPromise()
     .then(
       data=>{
-        this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
+        this.id             = data?.id
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
           this.active       = data!.active
       }
     )
@@ -169,14 +157,4 @@ export class DiagnosisTypeComponent implements OnInit {
     )
   }
 
-}
-
-export interface IDiagnosisType{
-  id     : any
-  code   : string
-  name        : string
-  description : string
-  uom    : string
-  price  : number
-  active : boolean
 }

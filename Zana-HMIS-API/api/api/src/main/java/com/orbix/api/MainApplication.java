@@ -1,6 +1,7 @@
 package com.orbix.api;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -119,13 +120,13 @@ protected ConfigurableApplicationContext springContext;
 				dayService.saveDay(new Day());
 			}
 			try {
-				userService.saveRole(new Role(null, "ROOT", null));
+				userService.saveRole(new Role(null, "ROOT", null), null);
 			}catch(Exception e) {}	
 			try {
-				userService.saveUser(new User(null, "root", "r00tpA55", null, null, "root@NAN", "Root", "Root", "Root", "Root @ Root", true, null,new ArrayList<>()));
+				userService.saveUser(new User(null, "ROOT", "Root", "Root", "Root", "Root@Root", "root", "r00tpA55", true, new ArrayList<>(), null, null, LocalDateTime.now()), null);
 			}catch(Exception e) {}		
 			try {
-				userService.addRoleToUser("root", "ROOT");
+				userService.addRoleToUser("root", "ROOT", null);
 			}catch(Exception e) {}		
 			
 			Field[] objectFields = Object_.class.getDeclaredFields();
@@ -159,7 +160,7 @@ protected ConfigurableApplicationContext springContext;
 					if(!prohibitedOperations.contains(operationFields[j].getName().toString())) {
 						privilege.setName(object+"-"+operationFields[j].getName());
 						try {
-							userService.savePrivilege(privilege);
+							userService.savePrivilege(privilege, null);
 						}catch(Exception e) {
 							System.out.println("Could not save privilege");
 						}
@@ -167,11 +168,12 @@ protected ConfigurableApplicationContext springContext;
 				}
 			}
 			try {
-				userService.addPrivilegeToRole("ROOT", "USER-CREATE");
-				userService.addPrivilegeToRole("ROOT", "USER-READ");
-				userService.addPrivilegeToRole("ROOT", "USER-UPDATE");
-				userService.addPrivilegeToRole("ROOT", "USER-DELETE");
-				userService.addPrivilegeToRole("ROOT", "USER-ACTIVATE");			
+				userService.addPrivilegeToRole("ROOT", "USER-A");
+				userService.addPrivilegeToRole("ROOT", "USER-C");
+				userService.addPrivilegeToRole("ROOT", "USER-R");
+				userService.addPrivilegeToRole("ROOT", "USER-U");
+				userService.addPrivilegeToRole("ROOT", "USER-D");
+							
 			}catch(Exception e) {}			
 		};
 	}

@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IMedicine } from 'src/app/domain/medicine';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -20,7 +21,7 @@ export class MedicineComponent implements OnInit {
   name        : string = ''
   description : string = ''
   uom         : string = ''
-  category    : string = ''
+  type        : string = ''
   price       : number = 0
   active      : boolean = true
 
@@ -29,7 +30,6 @@ export class MedicineComponent implements OnInit {
   constructor(
     private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) { }
@@ -44,11 +44,11 @@ export class MedicineComponent implements OnInit {
     }
     var medicine = {
       id          : this.id,
-      code          : this.code,
+      code        : this.code,
       name        : this.name,
       description : this.description,
-      uom       : this.uom,
-      category   : this.category,
+      uom         : this.uom,
+      type        : this.type,
       price       : this.price,
       active      : true
     }
@@ -61,21 +61,21 @@ export class MedicineComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
-          this.category = data!.category
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
+          this.price        = data!.price
+          this.uom          = data!.uom
+          this.type         = data!.type
           this.active       = data!.active
-          this.msgBox.showSuccessMessage('Procedure Type created successifully')
+          this.msgBox.showSuccessMessage('Medicine created successifully')
           this.loadMedicines()
           
         }
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create procedure type')
+          this.msgBox.showErrorMessage('Could not create Medicine')
         }
       )
 
@@ -88,20 +88,20 @@ export class MedicineComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
-          this.category = data!.category
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
+          this.price        = data!.price
+          this.uom          = data!.uom
+          this.type         = data!.type
           this.active       = data!.active
-          this.msgBox.showSuccessMessage('Procedure Type updated successifully')
+          this.msgBox.showSuccessMessage('Medicine updated successifully')
           this.loadMedicines()
         }
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update procedure type')
+          this.msgBox.showErrorMessage('Could not update Medicine')
         }
       )
     }
@@ -126,20 +126,20 @@ export class MedicineComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load procedure types')
+        this.msgBox.showErrorMessage('Could not load Medicines')
       }
     )
   }
 
   clear(){
-    this.id = null
-    this.code = ''
-    this.name = ''
-    this.description = ''
-    this.uom = ''
-    this.category = ''
-    this.price = 0
-    this.active = false
+    this.id           = null
+    this.code         = ''
+    this.name         = ''
+    this.description  = ''
+    this.uom          = ''
+    this.type         = ''
+    this.price        = 0
+    this.active       = false
   }
 
   async getMedicine(key: string) {
@@ -156,32 +156,20 @@ export class MedicineComponent implements OnInit {
     .then(
       data=>{
         this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
-          this.category = data!.category
-          this.active       = data!.active
+        this.code         = data!.code
+        this.name         = data!.name
+        this.description  = data!.description
+        this.price        = data!.price
+        this.uom          = data!.uom
+        this.type         = data!.type
+        this.active       = data!.active
       }
     )
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find medicine')
+        this.msgBox.showErrorMessage('Could not find Medicine')
       }
     )
   }
-
-}
-
-export interface IMedicine{
-  id     : any
-  code   : string
-  name        : string
-  description : string
-  uom    : string
-  category : string
-  price  : number
-  active : boolean
 }

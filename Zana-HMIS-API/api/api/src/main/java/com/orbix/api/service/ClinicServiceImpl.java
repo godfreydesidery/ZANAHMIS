@@ -6,10 +6,12 @@ package com.orbix.api.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.exceptions.InvalidOperationException;
@@ -39,29 +41,38 @@ public class ClinicServiceImpl implements ClinicService{
 	private final ClinicianRepository clinicianRepository;
 	
 	@Override
-	public Clinic save(Clinic clinic) {
+	public Clinic save(Clinic clinic, HttpServletRequest request) {
+		
+		clinic.setName(Sanitizer.sanitizeString(clinic.getName()));
+		
+		clinic.setCreatedby(userService.getUser(request));
+		clinic.setCreatedOn(dayService.getDay());
+		clinic.setCreatedAt(dayService.getTimeStamp());
+		
+		clinic.setActive(true);
+		
 		log.info("Saving new clinic to the database");
 		return clinicRepository.save(clinic);
 	}
 
 	@Override
-	public List<Clinic> getClinics() {
+	public List<Clinic> getClinics(HttpServletRequest request) {
 		log.info("Fetching all clinics");
 		return clinicRepository.findAll();
 	}
 
 	@Override
-	public Clinic getClinicByName(String name) {
+	public Clinic getClinicByName(String name, HttpServletRequest request) {
 		return clinicRepository.findByName(name).get();
 	}
 
 	@Override
-	public Clinic getClinicById(Long id) {
+	public Clinic getClinicById(Long id, HttpServletRequest request) {
 		return clinicRepository.findById(id).get();
 	}
 
 	@Override
-	public boolean deleteClinic(Clinic clinic) {
+	public boolean deleteClinic(Clinic clinic, HttpServletRequest request) {
 		/**
 		 * Delete a clinic if a clinic is deletable
 		 */
@@ -81,18 +92,18 @@ public class ClinicServiceImpl implements ClinicService{
 	}
 	
 	@Override
-	public List<String> getNames() {
+	public List<String> getNames(HttpServletRequest request) {
 		return clinicRepository.getNames();	
 	}
 
 	@Override
-	public Clinic getByName(String clinicName) {
+	public Clinic getByName(String clinicName, HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		return clinicRepository.findByName(clinicName).get();
 	}
 
 	@Override
-	public List<Clinician> getClinicians() {
+	public List<Clinician> getClinicians(HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		return clinicianRepository.findAll();
 	}

@@ -7,7 +7,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
+import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.Radiology;
 
@@ -25,10 +27,17 @@ public interface RadiologyRepository extends JpaRepository<Radiology, Long> {
 	List<Radiology> findAllByConsultationAndStatusIn(Consultation consultation, List<String> statuses);
 
 	/**
-	 * @param consultation
+	 * @param nonConsultation
 	 * @param statuses
 	 * @return
 	 */
-	List<Radiology> findAllByNonConsultationAndStatusIn(Consultation consultation, List<String> statuses);
+	List<Radiology> findAllByNonConsultationAndStatusIn(NonConsultation nonConsultation, List<String> statuses);
+
+	/**
+	 * @param admission
+	 * @param statuses
+	 * @return
+	 */
+	List<Radiology> findAllByAdmissionAndStatusIn(Admission admission, List<String> statuses);
 
 }

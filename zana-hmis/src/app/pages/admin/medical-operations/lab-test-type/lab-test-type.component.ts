@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { ILabTestType } from 'src/app/domain/lab-test-type';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -30,7 +31,6 @@ export class LabTestTypeComponent implements OnInit {
   constructor(
     private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) { }
@@ -45,10 +45,10 @@ export class LabTestTypeComponent implements OnInit {
     }
     var labTestType = {
       id          : this.id,
-      code          : this.code,
+      code        : this.code,
       name        : this.name,
       description : this.description,
-      uom       : this.uom,
+      uom         : this.uom,
       price       : this.price,
       active      : true
     }
@@ -61,11 +61,11 @@ export class LabTestTypeComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
+          this.price        = data!.price
+          this.uom          = data!.uom
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Lab Test Type created successifully')
           this.loadLabTestTypes()
@@ -74,12 +74,11 @@ export class LabTestTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create lab test type')
+          this.msgBox.showErrorMessage('Could not create Lab Test Type')
         }
       )
 
     }else{
-      //update an existing clinic
       this.spinner.show()
       await this.http.post<ILabTestType>(API_URL+'/lab_test_types/save', labTestType, options)
       .pipe(finalize(() => this.spinner.hide()))
@@ -87,11 +86,11 @@ export class LabTestTypeComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
+          this.price        = data!.price
+          this.uom          = data!.uom
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Lab Test Type updated successifully')
           this.loadLabTestTypes()
@@ -99,7 +98,7 @@ export class LabTestTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update lab test type')
+          this.msgBox.showErrorMessage('Could not update Lab Test Type')
         }
       )
     }
@@ -124,19 +123,19 @@ export class LabTestTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load lab test types')
+        this.msgBox.showErrorMessage('Could not load Lab Test Types')
       }
     )
   }
 
   clear(){
-    this.id = null
-    this.code = ''
-    this.name = ''
-    this.description = ''
-    this.uom = ''
-    this.price = 0
-    this.active = false
+    this.id           = null
+    this.code         = ''
+    this.name         = ''
+    this.description  = ''
+    this.uom          = ''
+    this.price        = 0
+    this.active       = false
   }
 
   async getLabTestType(key: string) {
@@ -153,30 +152,19 @@ export class LabTestTypeComponent implements OnInit {
     .then(
       data=>{
         this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
-          this.active       = data!.active
+        this.code         = data!.code
+        this.name         = data!.name
+        this.description  = data!.description
+        this.price        = data!.price
+        this.uom          = data!.uom
+        this.active       = data!.active
       }
     )
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find lab test type')
+        this.msgBox.showErrorMessage('Could not find Lab Test Type')
       }
     )
   }
-
-}
-
-export interface ILabTestType{
-  id     : any
-  code   : string
-  name        : string
-  description : string
-  uom    : string
-  price  : number
-  active : boolean
 }

@@ -1,9 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
+import { IMedicineInsurancePlan } from 'src/app/domain/medicine-insurance-plan';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -14,7 +15,7 @@ const API_URL = environment.apiUrl;
   templateUrl: './medicine-plan.component.html',
   styleUrls: ['./medicine-plan.component.scss']
 })
-export class MedicinePlanComponent implements OnInit {
+export class MedicineInsurancePlanComponent implements OnInit {
   id : any = null
   insurancePlan! : IInsurancePlan
   price : number = 0
@@ -28,20 +29,19 @@ export class MedicinePlanComponent implements OnInit {
  medicineName : string = ''
  medicineNames : string[] = []
 
- medicinePlans : IMedicinePlan[] = []
+ medicinePlans : IMedicineInsurancePlan[] = []
 
 
 
   constructor(
     private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
-    this.loadMedicinePlans()
+    this.loadMedicineInsurancePlans()
     this.loadInsuranceProviderNames()
     this.loadMedicineNames()
   }
@@ -92,13 +92,13 @@ export class MedicinePlanComponent implements OnInit {
     )
   }
 
-  async loadMedicinePlans(){
+  async loadMedicineInsurancePlans(){
     this.medicinePlans = []
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IMedicinePlan[]>(API_URL+'/medicine_plan_prices', options)
+    await this.http.get<IMedicineInsurancePlan[]>(API_URL+'/medicine_insurance_plans', options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -110,13 +110,13 @@ export class MedicinePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not loadmedicine plans')
+        this.msgBox.showErrorMessage('Could not load Medicines')
       }
     )
   }
 
 
-  public async saveMedicinePlan(){
+  public async saveMedicineInsurancePlan(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -133,14 +133,14 @@ export class MedicinePlanComponent implements OnInit {
     if(this.id == null || this.id == ''){
       //save a new diagnosisType
       this.spinner.show()
-      await this.http.post<IMedicinePlan>(API_URL+'/medicine_plan_prices/save',medicinePlan, options)
+      await this.http.post<IMedicineInsurancePlan>(API_URL+'/medicine_insurance_plans/save',medicinePlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
           this.id           = data?.id
           this.msgBox.showSuccessMessage('Medicine plan created successifully')
-          this.loadMedicinePlans()
+          this.loadMedicineInsurancePlans()
           
         }
       )
@@ -153,7 +153,7 @@ export class MedicinePlanComponent implements OnInit {
     }else{
       //update an existingmedicine
       this.spinner.show()
-      await this.http.post<IMedicinePlan>(API_URL+'/medicine_plan_prices/save',medicinePlan, options)
+      await this.http.post<IMedicineInsurancePlan>(API_URL+'/medicine_insurance_plans/save',medicinePlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
@@ -161,7 +161,7 @@ export class MedicinePlanComponent implements OnInit {
           this.id           = data?.id
           
           this.msgBox.showSuccessMessage('Medicine plan updated successifully')
-          this.loadMedicinePlans()
+          this.loadMedicineInsurancePlans()
         }
       )
       .catch(
@@ -181,7 +181,7 @@ export class MedicinePlanComponent implements OnInit {
     this.price = 0
   }
 
-  async getMedicinePlan(key: string) {
+  async getMedicineInsurancePlan(key: string) {
     if(key == ''){
       return
     }
@@ -189,7 +189,7 @@ export class MedicinePlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IMedicinePlan>(API_URL+'/medicine_plan_prices/get?id='+key, options)
+    await this.http.get<IMedicineInsurancePlan>(API_URL+'/medicine_insurance_plans/get?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -210,7 +210,7 @@ export class MedicinePlanComponent implements OnInit {
     )
   }
 
-  async deleteMedicinePlan(key: string) {
+  async deleteMedicineInsurancePlan(key: string) {
     if(key == ''){
       return
     }
@@ -218,13 +218,13 @@ export class MedicinePlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.post<IMedicinePlan>(API_URL+'/medicine_plan_prices/delete?id='+key, options)
+    await this.http.post<IMedicineInsurancePlan>(API_URL+'/medicine_insurance_plans/delete?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data=>{
         console.log(data)
-        this.loadMedicinePlans()
+        this.loadMedicineInsurancePlans()
       }
     )
     .catch(
@@ -260,21 +260,3 @@ export class MedicinePlanComponent implements OnInit {
 
 }
 
-export interface IMedicinePlan{
-  id : any
- medicine : IMedicine
-  insurancePlan : IInsurancePlan
-  price : number 
-}
-
-export interface IInsurancePlan{
-  name : string
-  insuranceProvider : IInsuranceProvider 
-}
-export interface IInsuranceProvider{
-  name : string
-}
-
-export interface IMedicine{
-  name : string
-}

@@ -4,6 +4,8 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { ILabTestType } from 'src/app/domain/lab-test-type';
+import { ILabTestTypeRange } from 'src/app/domain/lab-test-type-range';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -30,7 +32,6 @@ export class LabTestTypeRangeComponent implements OnInit {
   constructor(
     private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) { }
@@ -58,9 +59,9 @@ export class LabTestTypeRangeComponent implements OnInit {
       .toPromise()
       .then(
         data => {
-          this.id           = data?.id
-          this.name = data!.name
-          this.active       = data!.active
+          this.id     = data?.id
+          this.name   = data!.name
+          this.active = data!.active
           this.msgBox.showSuccessMessage('Range created successifully')
           this.loadLabTestTypeRanges()
           
@@ -73,7 +74,6 @@ export class LabTestTypeRangeComponent implements OnInit {
       )
 
     }else{
-      //update an existing clinic
       this.spinner.show()
       await this.http.post<ILabTestTypeRange>(API_URL+'/lab_test_type_ranges/save', labTestTypeRange, options)
       .pipe(finalize(() => this.spinner.hide()))
@@ -114,16 +114,16 @@ export class LabTestTypeRangeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load insurance plans')
+        this.msgBox.showErrorMessage('Could not load ranges')
       }
     )
   }
 
   clear(){
-    this.id = null
-    this.name = ''
-    this.labTestTypeName = ''
-    this.active = false
+    this.id               = null
+    this.name             = ''
+    this.labTestTypeName  = ''
+    this.active           = false
   }
 
   async getLabTestTypeRange(key: string) {
@@ -139,10 +139,10 @@ export class LabTestTypeRangeComponent implements OnInit {
     .toPromise()
     .then(
       data=>{
-        this.id           = data?.id
-          this.name = data!.name
-          this.labTestTypeName = data!.labTestType.name
-          this.active       = data!.active
+        this.id                 = data?.id
+          this.name             = data!.name
+          this.labTestTypeName  = data!.labTestType.name
+          this.active           = data!.active
       }
     )
     .catch(
@@ -171,24 +171,8 @@ export class LabTestTypeRangeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load lab tests')
+        this.msgBox.showErrorMessage('Could not load Lab Tests Types')
       }
     )
   }
-
-}
-
-export interface ILabTestTypeRange{
-  id     : any
-  name        : string
-  labTestType : ILabTestType
-  active : boolean
-}
-
-export interface ILabTestType{
-  id     : any
-  code   : string
-  name        : string
-  description : string
-  active : boolean
 }

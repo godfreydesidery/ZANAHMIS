@@ -6,6 +6,7 @@ export interface IInsurancePlan {
     id      : any
     code    : string
     name    : string
+    description : string
     status  : string
     active  : boolean
 

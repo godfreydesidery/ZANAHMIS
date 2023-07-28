@@ -30,7 +30,7 @@ import { ConsultationPlanComponent } from './pages/admin/insurance-management/in
 import { LabTestPlanComponent } from './pages/admin/insurance-management/insurance-plan-pricing/lab-test-plan/lab-test-plan.component';
 import { ProcedurePlanComponent } from './pages/admin/insurance-management/insurance-plan-pricing/procedure-plan/procedure-plan.component';
 import { RadiologyPlanComponent } from './pages/admin/insurance-management/insurance-plan-pricing/radiology-plan/radiology-plan.component';
-import { MedicinePlanComponent } from './pages/admin/insurance-management/insurance-plan-pricing/medicine-plan/medicine-plan.component';
+//import { MedicinePlanComponent } from './pages/admin/insurance-management/insurance-plan-pricing/medicine-plan/medicine-plan.component';
 import { UserProfileComponent } from './pages/admin/user-and-access/user-profile/user-profile.component';
 import { RoleComponent } from './pages/admin/user-and-access/role/role.component';
 import { AccessManagementComponent } from './pages/admin/user-and-access/access-management/access-management.component';
@@ -74,7 +74,7 @@ import { ProcedurePaymentComponent } from './pages/payments/procedure-payment/pr
     LabTestPlanComponent,
     ProcedurePlanComponent,
     RadiologyPlanComponent,
-    MedicinePlanComponent,
+    //MedicinePlanComponent,
     UserProfileComponent,
     RoleComponent,
     AccessManagementComponent,
@@ -124,7 +124,7 @@ import { ProcedurePaymentComponent } from './pages/payments/procedure-payment/pr
     {path : 'lab-test-plan', component : LabTestPlanComponent},
     {path : 'procedure-plan', component : ProcedurePlanComponent},
     {path : 'radiology-plan', component : RadiologyPlanComponent},
-    {path : 'medicine-plan', component : MedicinePlanComponent},
+    //{path : 'medicine-plan', component : MedicinePlanComponent},
     {path : 'user-profile', component : UserProfileComponent},
     {path : 'role', component : RoleComponent},
     {path : 'access-management', component : AccessManagementComponent},

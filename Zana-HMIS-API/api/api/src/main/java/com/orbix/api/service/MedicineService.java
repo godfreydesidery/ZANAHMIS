@@ -5,6 +5,8 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.orbix.api.domain.Medicine;
 
 /**
@@ -12,9 +14,9 @@ import com.orbix.api.domain.Medicine;
  *
  */
 public interface MedicineService {
-	Medicine save(Medicine medicine);	
-	List<Medicine>getMedicines(); // return all the medicines
-	Medicine getMedicineByName(String name);
-	Medicine getMedicineById(Long id);
-	boolean deleteMedicine(Medicine medicine);
+	Medicine save(Medicine medicine, HttpServletRequest request);	
+	List<Medicine>getMedicines(HttpServletRequest request); // return all the medicines
+	Medicine getMedicineByName(String name, HttpServletRequest request);
+	Medicine getMedicineById(Long id, HttpServletRequest request);
+	boolean deleteMedicine(Medicine medicine, HttpServletRequest request);
 }

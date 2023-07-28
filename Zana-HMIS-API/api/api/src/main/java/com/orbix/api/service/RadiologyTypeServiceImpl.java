@@ -5,10 +5,12 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
@@ -34,29 +36,41 @@ public class RadiologyTypeServiceImpl implements RadiologyTypeService{
 	private final RadiologyTypeRepository radiologyTypeRepository;
 	
 	@Override
-	public RadiologyType save(RadiologyType radiologyType) {
+	public RadiologyType save(RadiologyType radiologyType, HttpServletRequest request) {
+		
+
+		radiologyType.setName(Sanitizer.sanitizeString(radiologyType.getName()));
+		
+		if(radiologyType.getId() == null) {
+			radiologyType.setCreatedby(userService.getUser(request));
+			radiologyType.setCreatedOn(dayService.getDay());
+			radiologyType.setCreatedAt(dayService.getTimeStamp());
+			
+			radiologyType.setActive(true);
+		}
+		
 		log.info("Saving new radiologyType to the database");
 		return radiologyTypeRepository.save(radiologyType);
 	}
 
 	@Override
-	public List<RadiologyType> getRadiologyTypes() {
+	public List<RadiologyType> getRadiologyTypes(HttpServletRequest request) {
 		log.info("Fetching all radiologyTypes");
 		return radiologyTypeRepository.findAll();
 	}
 
 	@Override
-	public RadiologyType getRadiologyTypeByName(String name) {
+	public RadiologyType getRadiologyTypeByName(String name, HttpServletRequest request) {
 		return radiologyTypeRepository.findByName(name).get();
 	}
 
 	@Override
-	public RadiologyType getRadiologyTypeById(Long id) {
+	public RadiologyType getRadiologyTypeById(Long id, HttpServletRequest request) {
 		return radiologyTypeRepository.findById(id).get();
 	}
 
 	@Override
-	public boolean deleteRadiologyType(RadiologyType radiologyType) {
+	public boolean deleteRadiologyType(RadiologyType radiologyType, HttpServletRequest request) {
 		/**
 		 * Delete a radiologyType if a radiologyType is deletable
 		 */

@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,9 @@ import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.InsuranceProviderRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
+import com.orbix.api.service.DayService;
 import com.orbix.api.service.InsurancePlanService;
+import com.orbix.api.service.UserService;
 import com.orbix.api.service.InsurancePlanService;
 
 import lombok.RequiredArgsConstructor;
@@ -44,20 +47,24 @@ public class InsurancePlanResource {
 	private final InsuranceProviderRepository insuranceProviderRepository;
 	private final InsurancePlanRepository insurancePlanRepository;
 	private final InsurancePlanService insurancePlanService;
+	private final UserService userService;
+	private final DayService dayService;
+	
 	
 	@GetMapping("/insurance_plans")
-	public ResponseEntity<List<InsurancePlan>>getInsurancePlans(){
-		return ResponseEntity.ok().body(insurancePlanService.getInsurancePlans());
+	public ResponseEntity<List<InsurancePlan>>getInsurancePlans(HttpServletRequest request){
+		return ResponseEntity.ok().body(insurancePlanService.getInsurancePlans(request));
 	}
 	
 	@GetMapping("/insurance_plans/get")
 	public ResponseEntity<InsurancePlan> getInsurancePlan(
-			@RequestParam(name = "id") Long id){
-		return ResponseEntity.ok().body(insurancePlanService.getInsurancePlanById(id));
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(insurancePlanService.getInsurancePlanById(id, request));
 	}
 	
 	@GetMapping("/insurance_plans/get_names")
-	public ResponseEntity<List<String>> getInsurancePlanNames(){
+	public ResponseEntity<List<String>> getInsurancePlanNames(HttpServletRequest request){
 		List<String> names = new ArrayList<String>();
 		names = insurancePlanRepository.getNames();
 		return ResponseEntity.ok().body(names);
@@ -65,7 +72,8 @@ public class InsurancePlanResource {
 	
 	@GetMapping("/insurance_plans/get_names_by_insurance_provider")
 	public ResponseEntity<List<String>> getInsurancePlanNames(
-			@RequestParam(name = "provider_name") String providerName){
+			@RequestParam(name = "provider_name") String providerName,
+			HttpServletRequest request){
 		List<String> names = new ArrayList<String>();
 		InsuranceProvider insuranceProvider = insuranceProviderRepository.findByName(providerName);
 		List<InsurancePlan> plans = insurancePlanRepository.findAllByInsuranceProvider(insuranceProvider);
@@ -78,13 +86,14 @@ public class InsurancePlanResource {
 	@PostMapping("/insurance_plans/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<InsurancePlan>save(
-			@RequestBody InsurancePlan insurancePlan){
+			@RequestBody InsurancePlan insurancePlan,
+			HttpServletRequest request){
 		InsuranceProvider insuranceProvider = insuranceProviderRepository.findByName(insurancePlan.getInsuranceProvider().getName());
 		insurancePlan.setInsuranceProvider(insuranceProvider);
 		insurancePlan.setName(Sanitizer.sanitizeString(insurancePlan.getName()));
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/insurance_plans/save").toUriString());
-		return ResponseEntity.created(uri).body(insurancePlanService.save(insurancePlan));
+		return ResponseEntity.created(uri).body(insurancePlanService.save(insurancePlan, request));
 	}
 }
 

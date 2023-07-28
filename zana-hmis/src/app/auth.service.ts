@@ -155,7 +155,7 @@ export class AuthService {
     } = JSON.parse(localStorage.getItem('current-user')!)
     var privs : {
       privileges : string[]
-    } = this.helper.decodeToken(currentUser.access_token)
+    } = this.helper.decodeToken(currentUser.access_token)!
     privs.privileges.forEach(
       element => {
         if(element == priv){

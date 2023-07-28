@@ -5,10 +5,12 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.LabTestTypeRange;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
@@ -34,29 +36,36 @@ public class LabTestTypeRangeServiceImpl implements LabTestTypeRangeService{
 	private final LabTestTypeRangeRepository labTestTypeRangeRepository;
 	
 	@Override
-	public LabTestTypeRange save(LabTestTypeRange labTestTypeRange) {
+	public LabTestTypeRange save(LabTestTypeRange labTestTypeRange, HttpServletRequest request) {
+		
+		labTestTypeRange.setName(Sanitizer.sanitizeString(labTestTypeRange.getName()));
+		
+		labTestTypeRange.setCreatedby(userService.getUser(request));
+		labTestTypeRange.setCreatedOn(dayService.getDay());
+		labTestTypeRange.setCreatedAt(dayService.getTimeStamp());
+		
 		log.info("Saving new labTestTypeRange to the database");
 		return labTestTypeRangeRepository.save(labTestTypeRange);
 	}
 
 	@Override
-	public List<LabTestTypeRange> getLabTestTypeRanges() {
+	public List<LabTestTypeRange> getLabTestTypeRanges(HttpServletRequest request) {
 		log.info("Fetching all labTestTypeRanges");
 		return labTestTypeRangeRepository.findAll();
 	}
 
 	@Override
-	public LabTestTypeRange getLabTestTypeRangeByName(String name) {
+	public LabTestTypeRange getLabTestTypeRangeByName(String name, HttpServletRequest request) {
 		return labTestTypeRangeRepository.findByName(name).get();
 	}
 
 	@Override
-	public LabTestTypeRange getLabTestTypeRangeById(Long id) {
+	public LabTestTypeRange getLabTestTypeRangeById(Long id, HttpServletRequest request) {
 		return labTestTypeRangeRepository.findById(id).get();
 	}
 
 	@Override
-	public boolean deleteLabTestTypeRange(LabTestTypeRange labTestTypeRange) {
+	public boolean deleteLabTestTypeRange(LabTestTypeRange labTestTypeRange, HttpServletRequest request) {
 		/**
 		 * Delete a labTestTypeRange if a labTestTypeRange is deletable
 		 */

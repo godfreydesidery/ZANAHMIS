@@ -16,11 +16,12 @@ import com.orbix.api.domain.User;
  */
 public interface UserRepository extends JpaRepository<User, Long> {
 	User findByUsername(String username);
-	@Query("SELECT u.alias FROM User u WHERE u.id =:id")
-	String getAlias(Long id);
+	
+	@Query("SELECT u.nickname FROM User u WHERE u.id =:id")
+	String getNickname(Long id);
 	/**
 	 * @param rollNo
 	 * @return
 	 */
-	Optional<User> findByRollNo(String rollNo);
+	Optional<User> findByCode(String c);
 }

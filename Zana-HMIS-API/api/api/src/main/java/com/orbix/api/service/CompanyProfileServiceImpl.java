@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
@@ -101,7 +102,7 @@ public class CompanyProfileServiceImpl implements CompanyProfileService {
 	}
 
 	@Override
-	public CompanyProfile getCompanyProfile() {
+	public CompanyProfile getCompanyProfile(HttpServletRequest request) {
 		List<CompanyProfile> profiles = companyProfileRepository.findAll();
 		CompanyProfile profile = new CompanyProfile();
 		for(CompanyProfile p : profiles) {

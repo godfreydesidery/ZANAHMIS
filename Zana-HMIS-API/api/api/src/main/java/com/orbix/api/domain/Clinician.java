@@ -3,6 +3,7 @@
  */
 package com.orbix.api.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
@@ -16,9 +17,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -46,27 +49,35 @@ public class Clinician {
 	private Long id;
 	@NotBlank
 	@Column(unique = true)
-	private String no;
+	private String code;
+	private String type;
+	@NotBlank
+	private String firstName;
+	private String middleName;
+	@NotBlank
+	private String lastName;
 	@NotBlank
 	@Column(unique = true)
-	private String name;
-	private String type;
-	private boolean active = true;
+	private String nickname;
+	private boolean active = false;
 	
 	@OneToOne(targetEntity = User.class, fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "user_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private User user;
-		
-	//@ManyToMany
-	//@JoinTable(
-	  //name = "clinician_clinics", 
-	  //joinColumns = @JoinColumn(name = "clinician_id"), 
-	  //inverseJoinColumns = @JoinColumn(name = "clinic_id"))
-	//@JsonIgnoreProperties("clinicians")
-	//Set<Clinic> clinics;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	private Collection<Clinic> clinics = new ArrayList<>();	
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User createdby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
 }

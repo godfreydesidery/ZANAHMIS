@@ -3,6 +3,8 @@
  */
 package com.orbix.api.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,6 +17,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,8 +37,11 @@ public class Radiology {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String result = "";
-	private String status = "";
+	private String result;
+	private String diagnosis;
+	private String description;
+	private Byte attachment;
+	private String status;
 	
 	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "consultation_id", nullable = true , updatable = true)
@@ -46,18 +53,79 @@ public class Radiology {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private NonConsultation nonConsultation;
 	
+	@ManyToOne(targetEntity = Admission.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "admission_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private Admission admission;
+	
 	@ManyToOne(targetEntity = RadiologyType.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "radiology_type_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private RadiologyType radiologyType;
 	
-	@OneToOne(targetEntity = Bill.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "bill_id", nullable = true , updatable = true)
+	@OneToOne(targetEntity = PatientBill.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "patient_bill_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
-    private Bill bill;
+    private PatientBill patientBill;
 	
 	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = true)
 	@JoinColumn(name = "patient_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User createdby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "ordered_by_user_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User orderedby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "ordered_on_day_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day orderedOn;
+	private LocalDateTime orderedAt = LocalDateTime.now();
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "accepted_by_user_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User acceptedby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "accepted_on_day_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day acceptedOn;
+	private LocalDateTime acceptedAt;
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "rejected_by_user_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User rejectedby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "rejected_on_day_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day rejectedOn;
+	private LocalDateTime rejectedAt;
+	private String rejectComment;
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "verified_by_user_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User verifiedby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "verified_on_day_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day verifiedOn;
+	private LocalDateTime verifiedAt;
 }

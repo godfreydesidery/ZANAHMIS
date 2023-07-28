@@ -3,8 +3,7 @@
  */
 package com.orbix.api.domain;
 
-import java.util.List;
-
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,14 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.Valid;
-
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,8 +34,8 @@ public class WorkingDiagnosis {
 	private Long id;
 	private String description;
 	
-	@ManyToOne(targetEntity = DiagnosisType.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "diagnosis_type_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = DiagnosisType.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "diagnosis_type_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private DiagnosisType diagnosisType;
 	
@@ -50,10 +44,19 @@ public class WorkingDiagnosis {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Consultation consultation;
 	
-	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "patient_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "patient_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
 	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User createdby;
 	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();	
 }

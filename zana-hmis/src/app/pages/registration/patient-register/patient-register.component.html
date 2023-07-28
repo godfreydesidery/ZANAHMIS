@@ -4,21 +4,19 @@
             <h1>Patient Register</h1>
         </div>
     </section>
-    <!-- Main content -->
     <section class="content">
         <div class="row">
-            <!-- Form controls -->
             <div class="col-sm-12">
                 <div class="panel panel-bd lobidrag">
                     <div class="panel-heading">
                         <div class="btn"> 
-                            <a class="btn btn-primary" (click)="newPatientPrompt()">New</a>  
+                            <a class="btn btn-primary" (click)="newPatientPrompt()">New Patient</a>  
                         </div>
                         <div class="btn"> 
-                            <a class="btn btn-primary" (click)="existingPatientPrompt()">Existing</a>  
+                            <a class="btn btn-primary" (click)="existingPatientPrompt()">Existing Patient</a>  
                         </div>
-                        <div class="btn-group"> 
-                            <a class="btn btn-primary" routerLink="/patient-list"> <i class="fa fa-list"></i>List</a>  
+                        <div class="btn"> 
+                            <a class="btn btn-primary" routerLink="/patient-list"> <i class="fa fa-list"></i>Today List</a>  
                         </div>
                     </div>
                     <div class="panel-body">
@@ -225,29 +223,7 @@
                                             <br>
                                             
                                             
-                                            <!--<div class="row" *ngIf="consultations.length === 0 && id != null">
-                                                <div class="col-sm-12 form-group">
-                                                    <h4 class="text-primary"><b>Payment Type</b></h4>
-                                                    <select class="form-control" [(ngModel)]="paymentType" (ngModelChange)="changePaymentType(paymentType)">
-                                                        <option></option>
-                                                        <option>CASH</option>
-                                                        <option>INSURANCE</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-12 form-group" *ngIf="paymentType === 'INSURANCE'">
-                                                    <h4 class="text-primary">Insurance Plan</h4>
-                                                    <select class="form-control" [(ngModel)]="insurancePlanName">
-                                                        <option></option>
-                                                        <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-12 form-group" *ngIf="paymentType === 'INSURANCE' && insurancePlanName != null">
-                                                    <div *ngIf="insurancePlanName != ''">
-                                                        <h4 class="text-primary">Membership No</h4>
-                                                        <input type="text" class="form-control" [(ngModel)]="membershipNo" placeholder="Insurance Membership No">
-                                                    </div>
-                                                </div>
-                                            </div>-->
+                                            
                                             <div>
                                                 <div *ngIf="type != 'OUTSIDER' && id != null && paymentType != ''">
                                                     <div *ngIf="consultations.length === 0">
@@ -297,7 +273,7 @@
                                                         <tbody>
                                                             <tr  *ngFor="let consultation of consultations">
                                                                 <td>{{consultation.clinic.name}}</td>
-                                                                <td>{{consultation.clinician.name}}</td>
+                                                                <td>{{consultation.clinician.nickname}}</td>
                                                                 <td>{{consultation.status}}</td>
                                                                 <td><button class="btn btn-danger" *ngIf="consultation.status === 'PENDING'" (click)="cancelConsultation(consultation.id)">Cancel Consultation</button><span  *ngIf="consultation.status != 'PENDING'">No Action Required</span></td>
                                                             </tr>
@@ -360,14 +336,7 @@
                                     <option>Female</option>
                                 </select>
                             </div>
-                            <!--<div class="col-sm-4 form-group">
-                                <h4 class="text-primary">Select Patient Type*</h4>
-                                <select class="form-control" [(ngModel)]="type">
-                                    <option></option>
-                                    <option>OUTPATIENT</option>
-                                    <option>OUTSIDER</option>
-                                </select>
-                            </div>-->
+                            
                             <div class="col-sm-4 form-group">
                                 <h4 class="text-primary">Nationality</h4>
                                 <select class="form-control" [(ngModel)]="nationality">

@@ -6,6 +6,7 @@ package com.orbix.api.api;
 import java.net.URI;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
@@ -20,16 +21,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.RadiologyType;
-import com.orbix.api.domain.RadiologyTypePlanPrice;
+import com.orbix.api.domain.RadiologyTypeInsurancePlan;
 import com.orbix.api.exceptions.InvalidOperationException;
-import com.orbix.api.domain.RadiologyType;
-import com.orbix.api.domain.RadiologyTypePlanPrice;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.InsuranceProviderRepository;
-import com.orbix.api.repositories.RadiologyTypePlanPriceRepository;
+import com.orbix.api.repositories.RadiologyTypeInsurancePlanRepository;
 import com.orbix.api.repositories.RadiologyTypeRepository;
+import com.orbix.api.service.DayService;
 import com.orbix.api.service.InsuranceProviderService;
-import com.orbix.api.service.RadiologyTypePlanService;
+import com.orbix.api.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,28 +43,32 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Transactional
 public class RadiologyPlanResource {
-	private final InsuranceProviderService insuranceProviderService;
-	private final InsuranceProviderRepository insuranceProviderRepository;
-	private final RadiologyTypePlanPriceRepository radiologyTypePlanPriceRepository;
+	private final RadiologyTypeInsurancePlanRepository radiologyTypeInsurancePlanRepository;
 	private final InsurancePlanRepository insurancePlanRepository;
 	private final RadiologyTypeRepository radiologyTypeRepository;
+	private final UserService userService;
+	private final DayService dayService;
 	
-	@GetMapping("/radiology_type_plan_prices")
-	public ResponseEntity<List<RadiologyTypePlanPrice>>getRadiologyTypePlanPrices(){
-		return ResponseEntity.ok().body(radiologyTypePlanPriceRepository.findAll());
+	
+	@GetMapping("/radiology_type_insurance_plans")
+	public ResponseEntity<List<RadiologyTypeInsurancePlan>>getRadiologyTypeInsurancePlans(
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(radiologyTypeInsurancePlanRepository.findAll());
 	}
 	
-	@GetMapping("/radiology_type_plan_prices/get")
-	public ResponseEntity<RadiologyTypePlanPrice> getRadiologyTypePlanPrice(
-			@RequestParam(name = "id") Long id){
-		return ResponseEntity.ok().body(radiologyTypePlanPriceRepository.findById(id).get());
+	@GetMapping("/radiology_type_insurance_plans/get")
+	public ResponseEntity<RadiologyTypeInsurancePlan> getRadiologyTypeInsurancePlan(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(radiologyTypeInsurancePlanRepository.findById(id).get());
 	}
 	
-	@PostMapping("/radiology_type_plan_prices/save")
+	@PostMapping("/radiology_type_insurance_plans/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
-	public ResponseEntity<RadiologyTypePlanPrice>save(
-			@RequestBody RadiologyTypePlanPrice radiologyTypePlan){
-		RadiologyTypePlanPrice conPlan = new RadiologyTypePlanPrice();
+	public ResponseEntity<RadiologyTypeInsurancePlan>save(
+			@RequestBody RadiologyTypeInsurancePlan radiologyTypePlan,
+			HttpServletRequest request){
+		RadiologyTypeInsurancePlan conPlan = new RadiologyTypeInsurancePlan();
 		conPlan.setId(radiologyTypePlan.getId());
 		
 		InsurancePlan plan = insurancePlanRepository.findByName(radiologyTypePlan.getInsurancePlan().getName()).get();
@@ -74,25 +78,34 @@ public class RadiologyPlanResource {
 		conPlan.setPrice(radiologyTypePlan.getPrice());
 		
 		if(radiologyTypePlan.getId() == null) {
-			if(radiologyTypePlanPriceRepository.findByInsurancePlanAndRadiologyType(plan, radiologyType).isPresent()) {
+			if(radiologyTypeInsurancePlanRepository.findByInsurancePlanAndRadiologyType(plan, radiologyType).isPresent()) {
 				throw new InvalidOperationException("Could not create plan, a similar plan already exist. Please consider ediiting the existing plan");
 			}
 		}
+		
+		if(conPlan.getId() == null) {
+			conPlan.setCreatedby(userService.getUser(request));
+			conPlan.setCreatedOn(dayService.getDay());
+			conPlan.setCreatedAt(dayService.getTimeStamp());
+			
+			conPlan.setActive(true);
+		}
 				
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/radiology_type_plan_prices/save").toUriString());
-		return ResponseEntity.created(uri).body(radiologyTypePlanPriceRepository.saveAndFlush(conPlan));
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/radiology_type_insurance_plans/save").toUriString());
+		return ResponseEntity.created(uri).body(radiologyTypeInsurancePlanRepository.saveAndFlush(conPlan));
 	}
 	
-	@PostMapping("/radiology_type_plan_prices/delete")
+	@PostMapping("/radiology_type_insurance_plans/delete")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<Boolean>delete(
-			@RequestParam Long id){
+			@RequestParam Long id,
+			HttpServletRequest request){
 		
 		
-		RadiologyTypePlanPrice plan = radiologyTypePlanPriceRepository.findById(id).get();
+		RadiologyTypeInsurancePlan plan = radiologyTypeInsurancePlanRepository.findById(id).get();
 		
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/radiologyType_plan_prices/delete").toUriString());
-		radiologyTypePlanPriceRepository.delete(plan);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/radiologyType_insurance_plans/delete").toUriString());
+		radiologyTypeInsurancePlanRepository.delete(plan);
 		return ResponseEntity.created(uri).body(true);
 		
 	}

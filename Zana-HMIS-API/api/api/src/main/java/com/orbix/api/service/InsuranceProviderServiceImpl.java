@@ -5,10 +5,12 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.InsuranceProvider;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.InsuranceProviderRepository;
@@ -34,29 +36,40 @@ public class InsuranceProviderServiceImpl implements InsuranceProviderService{
 	private final InsuranceProviderRepository insuranceProviderRepository;
 	
 	@Override
-	public InsuranceProvider save(InsuranceProvider insuranceProvider) {
-		log.info("Saving new insuranceProvider to the database");
+	public InsuranceProvider save(InsuranceProvider insuranceProvider, HttpServletRequest request) {
+		
+		insuranceProvider.setName(Sanitizer.sanitizeString(insuranceProvider.getName()));
+		
+		if(insuranceProvider.getId() == null) {
+			insuranceProvider.setCreatedby(userService.getUser(request));
+			insuranceProvider.setCreatedOn(dayService.getDay());
+			insuranceProvider.setCreatedAt(dayService.getTimeStamp());
+			
+			insuranceProvider.setActive(true);
+		}
+		
+		
 		return insuranceProviderRepository.save(insuranceProvider);
 	}
 
 	@Override
-	public List<InsuranceProvider> getInsuranceProviders() {
+	public List<InsuranceProvider> getInsuranceProviders(HttpServletRequest request) {
 		log.info("Fetching all insuranceProviders");
 		return insuranceProviderRepository.findAll();
 	}
 
 	@Override
-	public InsuranceProvider getInsuranceProviderByName(String name) {
+	public InsuranceProvider getInsuranceProviderByName(String name, HttpServletRequest request) {
 		return insuranceProviderRepository.findByName(name);
 	}
 
 	@Override
-	public InsuranceProvider getInsuranceProviderById(Long id) {
+	public InsuranceProvider getInsuranceProviderById(Long id, HttpServletRequest request) {
 		return insuranceProviderRepository.findById(id).get();
 	}
 
 	@Override
-	public boolean deleteInsuranceProvider(InsuranceProvider insuranceProvider) {
+	public boolean deleteInsuranceProvider(InsuranceProvider insuranceProvider, HttpServletRequest request) {
 		/**
 		 * Delete a insuranceProvider if a insuranceProvider is deletable
 		 */

@@ -4,14 +4,13 @@
 package com.orbix.api.api;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,15 +19,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.orbix.api.domain.RegistrationPlanPrice;
+import com.orbix.api.domain.RegistrationInsurancePlan;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.domain.InsurancePlan;
-import com.orbix.api.domain.InsuranceProvider;
-import com.orbix.api.repositories.RegistrationPlanPriceRepository;
+import com.orbix.api.repositories.RegistrationInsurancePlanRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.InsuranceProviderRepository;
+import com.orbix.api.service.DayService;
 import com.orbix.api.service.InsuranceProviderService;
 import com.orbix.api.service.RegistrationPlanService;
+import com.orbix.api.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,28 +42,31 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Transactional
 public class RegistrationPlanResource {
-	private final InsuranceProviderService insuranceProviderService;
-	private final RegistrationPlanService registrationPlanService;
-	private final InsuranceProviderRepository insuranceProviderRepository;
-	private final RegistrationPlanPriceRepository registrationPlanPriceRepository;
+	private final RegistrationInsurancePlanRepository registrationInsurancePlanRepository;
 	private final InsurancePlanRepository insurancePlanRepository;
+	private final UserService userService;
+	private final DayService dayService;
 	
-	@GetMapping("/registration_plan_prices")
-	public ResponseEntity<List<RegistrationPlanPrice>>getRegistrationPlanPrices(){
-		return ResponseEntity.ok().body(registrationPlanPriceRepository.findAll());
+	
+	@GetMapping("/registration_insurance_plans")
+	public ResponseEntity<List<RegistrationInsurancePlan>>getRegistrationInsurancePlans(
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(registrationInsurancePlanRepository.findAll());
 	}
 	
-	@GetMapping("/registration_plan_prices/get")
-	public ResponseEntity<RegistrationPlanPrice> getRegistrationPlanPrice(
-			@RequestParam(name = "id") Long id){
-		return ResponseEntity.ok().body(registrationPlanPriceRepository.findById(id).get());
+	@GetMapping("/registration_insurance_plans/get")
+	public ResponseEntity<RegistrationInsurancePlan> getRegistrationInsurancePlan(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(registrationInsurancePlanRepository.findById(id).get());
 	}
 	
-	@PostMapping("/registration_plan_prices/save")
+	@PostMapping("/registration_insurance_plans/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
-	public ResponseEntity<RegistrationPlanPrice>save(
-			@RequestBody RegistrationPlanPrice registrationPlan){
-		RegistrationPlanPrice regPlan = new RegistrationPlanPrice();
+	public ResponseEntity<RegistrationInsurancePlan>save(
+			@RequestBody RegistrationInsurancePlan registrationPlan,
+			HttpServletRequest request){
+		RegistrationInsurancePlan regPlan = new RegistrationInsurancePlan();
 		regPlan.setId(registrationPlan.getId());
 		
 		InsurancePlan plan = insurancePlanRepository.findByName(registrationPlan.getInsurancePlan().getName()).get();
@@ -71,25 +74,36 @@ public class RegistrationPlanResource {
 		regPlan.setRegistrationFee(registrationPlan.getRegistrationFee());
 		
 		if(registrationPlan.getId() == null) {
-			if(registrationPlanPriceRepository.findByInsurancePlan(plan).isPresent()) {
+			if(registrationInsurancePlanRepository.findByInsurancePlan(plan).isPresent()) {
 				throw new InvalidOperationException("Could not create plan, a similar plan already exist. Please consider ediiting the existing plan");
 			}
 		}
+		
+		
+		
+		if(regPlan.getId() == null) {
+			regPlan.setCreatedby(userService.getUser(request));
+			regPlan.setCreatedOn(dayService.getDay());
+			regPlan.setCreatedAt(dayService.getTimeStamp());
+			
+			regPlan.setActive(true);
+		}
 				
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/registration_plan_prices/save").toUriString());
-		return ResponseEntity.created(uri).body(registrationPlanPriceRepository.saveAndFlush(regPlan));
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/registration_insurance_plans/save").toUriString());
+		return ResponseEntity.created(uri).body(registrationInsurancePlanRepository.saveAndFlush(regPlan));
 	}
 	
-	@PostMapping("/registration_plan_prices/delete")
+	@PostMapping("/registration_insurance_plans/delete")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<Boolean>delete(
-			@RequestParam Long id){
+			@RequestParam Long id,
+			HttpServletRequest request){
 		
 		
-		RegistrationPlanPrice plan = registrationPlanPriceRepository.findById(id).get();
+		RegistrationInsurancePlan plan = registrationInsurancePlanRepository.findById(id).get();
 		
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/registration_plan_prices/delete").toUriString());
-		registrationPlanPriceRepository.delete(plan);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/registration_insurance_plans/delete").toUriString());
+		registrationInsurancePlanRepository.delete(plan);
 		return ResponseEntity.created(uri).body(true);
 		
 	}

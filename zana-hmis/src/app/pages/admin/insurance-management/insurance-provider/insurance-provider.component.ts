@@ -4,6 +4,8 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
+import { IInsuranceProvider } from 'src/app/domain/insurance-provider';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -19,9 +21,12 @@ export class InsuranceProviderComponent implements OnInit {
   id          : any = null
   code        : string = ''
   name        : string = ''
-  address : string = ''
-  phone         : string = ''
-  active      : boolean = true
+  address     : string = ''
+  telephone   : string = '' 
+  fax         : string = ''
+  email       : string = ''
+  website     : string = ''
+  active      : boolean = false
 
   insuranceProviders : IInsuranceProvider[] = []
 
@@ -43,13 +48,16 @@ export class InsuranceProviderComponent implements OnInit {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    var insuranceProvider = {
-      id          : this.id,
-      code          : this.code,
-      name        : this.name,
-      address : this.address,
-      phone       : this.phone,
-      active      : true
+    var insuranceProvider  = {
+      id        : this.id,
+      code      : this.code,
+      name      : this.name,
+      address   : this.address,
+      telephone : this.telephone,
+      fax       : this.fax,
+      email     : this.email,
+      website   : this.website,
+      active    : false
     }
     if(this.id == null || this.id == ''){
       //save a new insuranceProvider
@@ -59,44 +67,48 @@ export class InsuranceProviderComponent implements OnInit {
       .toPromise()
       .then(
         data => {
-          this.id           = data?.id
+          this.id         = data?.id
           this.code       = data!.code
-          this.name = data!.name
-          this.address = data!.address
-          this.phone = data!.phone
-          this.active       = data!.active
-          this.msgBox.showSuccessMessage('Radiology Type created successifully')
+          this.name       = data!.name
+          this.address    = data!.address
+          this.telephone  = data!.telephone
+          this.fax        = data!.fax
+          this.email      = data!.email
+          this.website    = data!.website
+          this.active     = data!.active
+          this.msgBox.showSuccessMessage('Insurance provider created successifully')
           this.loadInsuranceProviders()
-          
         }
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create radiology type')
+          this.msgBox.showErrorMessage('Could not create insurance provider')
         }
       )
 
     }else{
-      //update an existing clinic
       this.spinner.show()
       await this.http.post<IInsuranceProvider>(API_URL+'/insurance_providers/save', insuranceProvider, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
-          this.id           = data?.id
+          this.id         = data?.id
           this.code       = data!.code
-          this.name = data!.name
-          this.address = data!.address
-          this.phone = data!.phone
-          this.active       = data!.active
-          this.msgBox.showSuccessMessage('Radiology Type updated successifully')
+          this.name       = data!.name
+          this.address    = data!.address
+          this.telephone  = data!.telephone
+          this.fax        = data!.fax
+          this.email      = data!.email
+          this.website    = data!.website
+          this.active     = data!.active
+          this.msgBox.showSuccessMessage('Insurance provider updated successifully')
           this.loadInsuranceProviders()
         }
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update radiology type')
+          this.msgBox.showErrorMessage('Could not update insurance provider')
         }
       )
     }
@@ -121,18 +133,21 @@ export class InsuranceProviderComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load radiology types')
+        this.msgBox.showErrorMessage('Could not load insurance providers')
       }
     )
   }
 
   clear(){
-    this.id = null
-    this.code = ''
-    this.name = ''
-    this.address = ''
-    this.phone = ''
-    this.active = false
+    this.id         = null
+    this.code       = ''
+    this.name       = ''
+    this.address    = ''
+    this.telephone  = ''
+    this.fax        = ''
+    this.email      = ''
+    this.website    = ''
+    this.active     = false
   }
 
   async getInsuranceProvider(key: string) {
@@ -148,29 +163,23 @@ export class InsuranceProviderComponent implements OnInit {
     .toPromise()
     .then(
       data=>{
-        this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.address = data!.address
-          this.phone = data!.phone
-          this.active       = data!.active
+        this.id         = data?.id
+        this.code       = data!.code
+        this.name       = data!.name
+        this.address    = data!.address
+        this.telephone  = data!.telephone
+        this.fax        = data!.fax
+        this.email      = data!.email
+        this.website    = data!.website
+        this.active     = data!.active
       }
     )
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find radiology type')
+        this.msgBox.showErrorMessage('Could not find insurance provider')
       }
     )
   }
 
-}
-
-export interface IInsuranceProvider{
-  id     : any
-  code   : string
-  name        : string
-  address : string
-  phone    : string
-  active : boolean
 }

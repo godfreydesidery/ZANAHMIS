@@ -5,15 +5,16 @@ package com.orbix.api.service;
 
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.ProcedureType;
-import com.orbix.api.domain.ProcedureTypePlanPrice;
+import com.orbix.api.domain.ProcedureTypeInsurancePlan;
 import com.orbix.api.repositories.DayRepository;
-import com.orbix.api.repositories.ProcedureTypePlanPriceRepository;
+import com.orbix.api.repositories.ProcedureTypeInsurancePlanRepository;
 import com.orbix.api.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,12 @@ public class ProcedureTypePlanServiceImpl implements ProcedureTypePlanService{
 	private final UserService userService;
 	private final DayRepository dayRepository;
 	private final DayService dayService;
-	private final ProcedureTypePlanPriceRepository procedureTypePlanPriceRepository;
+	private final ProcedureTypeInsurancePlanRepository procedureTypeInsurancePlanRepository;
 	
 	@Override
-	public ProcedureTypePlanPrice save(InsurancePlan insurancePlan, ProcedureType procedureType, double price) {
-		Optional<ProcedureTypePlanPrice> p = procedureTypePlanPriceRepository.findByInsurancePlanAndProcedureType(insurancePlan, procedureType);
-		ProcedureTypePlanPrice plan = new ProcedureTypePlanPrice();
+	public ProcedureTypeInsurancePlan save(InsurancePlan insurancePlan, ProcedureType procedureType, double price, HttpServletRequest request) {
+		Optional<ProcedureTypeInsurancePlan> p = procedureTypeInsurancePlanRepository.findByInsurancePlanAndProcedureType(insurancePlan, procedureType);
+		ProcedureTypeInsurancePlan plan = new ProcedureTypeInsurancePlan();
 		if(p.isPresent()) {
 			//save existing
 			p.get().setPrice(price);
@@ -47,7 +48,7 @@ public class ProcedureTypePlanServiceImpl implements ProcedureTypePlanService{
 			plan.setProcedureType(procedureType);
 			plan.setPrice(price);
 		}
-		return procedureTypePlanPriceRepository.save(plan);
+		return procedureTypeInsurancePlanRepository.save(plan);
 	}
 
 	//@Override
@@ -59,13 +60,13 @@ public class ProcedureTypePlanServiceImpl implements ProcedureTypePlanService{
 	
 
 	@Override
-	public boolean deleteProcedureTypePlanPrice(InsurancePlan insurancePlan, ProcedureType procedureType) {
+	public boolean deleteProcedureTypeInsurancePlan(InsurancePlan insurancePlan, ProcedureType procedureType, HttpServletRequest request) {
 		/**
 		 * Delete a procedureType if a procedureType is deletable
 		 */
-		Optional<ProcedureTypePlanPrice> p = procedureTypePlanPriceRepository.findByInsurancePlanAndProcedureType(insurancePlan, procedureType);
+		Optional<ProcedureTypeInsurancePlan> p = procedureTypeInsurancePlanRepository.findByInsurancePlanAndProcedureType(insurancePlan, procedureType);
 		
-		procedureTypePlanPriceRepository.delete(p.get());
+		procedureTypeInsurancePlanRepository.delete(p.get());
 		return true;
 	}
 	

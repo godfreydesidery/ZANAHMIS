@@ -4,6 +4,8 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
+import { IInsuranceProvider } from 'src/app/domain/insurance-provider';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -31,7 +33,6 @@ export class InsurancePlanComponent implements OnInit {
   constructor(
     private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) { }
@@ -62,9 +63,9 @@ export class InsurancePlanComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Insurance Plan created successifully')
           this.loadInsurancePlans()
@@ -86,9 +87,9 @@ export class InsurancePlanComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Insurance Plan updated successifully')
           this.loadInsurancePlans()
@@ -127,12 +128,12 @@ export class InsurancePlanComponent implements OnInit {
   }
 
   clear(){
-    this.id = null
-    this.code = ''
-    this.name = ''
-    this.insuranceProviderName = ''
-    this.description = ''
-    this.active = false
+    this.id                     = null
+    this.code                   = ''
+    this.name                   = ''
+    this.insuranceProviderName  = ''
+    this.description            = ''
+    this.active                 = false
   }
 
   async getInsurancePlan(key: string) {
@@ -148,12 +149,12 @@ export class InsurancePlanComponent implements OnInit {
     .toPromise()
     .then(
       data=>{
-        this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.insuranceProviderName = data!.insuranceProvider.name
-          this.description = data!.description
-          this.active       = data!.active
+        this.id                     = data?.id
+        this.code                   = data!.code
+        this.name                   = data!.name
+        this.insuranceProviderName  = data!.insuranceProvider.name
+        this.description            = data!.description
+        this.active                 = data!.active
       }
     )
     .catch(
@@ -189,20 +190,5 @@ export class InsurancePlanComponent implements OnInit {
 
 }
 
-export interface IInsurancePlan{
-  id     : any
-  code   : string
-  name        : string
-  description : string
-  insuranceProvider : IInsuranceProvider
-  active : boolean
-}
 
-export interface IInsuranceProvider{
-  id     : any
-  code   : string
-  name        : string
-  description : string
-  phone    : string
-  active : boolean
-}
+

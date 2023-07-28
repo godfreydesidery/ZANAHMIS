@@ -3,6 +3,7 @@
  */
 package com.orbix.api.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,11 +14,17 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -41,33 +48,33 @@ public class User {
 	private Long id;
 	@NotBlank
 	@Column(unique = true)
-	private String username;
-	@Column
-	private String password;
-	@Column(unique=true, nullable=true)
-	private String accessToken;
-	@Column(unique=true, nullable=true)
-	private String refreshToken;	
-	@NotBlank
-	@Column(unique = true)
-	private String rollNo;
+	private String code;
 	@NotBlank
 	private String firstName;
-	private String secondName;
+	private String middleName;
 	@NotBlank
 	private String lastName;
 	@NotBlank
+	private String nickname;
+	@NotBlank
 	@Column(unique = true)
-	private String alias;
-	private boolean active = true;
-	private byte[] fingerPrint;
-	
-//    private boolean accountVerified;
-//    private int failedLoginAttempts;
-//    private boolean loginDisabled;
-
+	private String username;
+	@NotBlank
+	private String password;	
+	private boolean active = false;	
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Collection<Role> roles = new ArrayList<>();	
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "created_by_user_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User createdby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "created_on_day_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
 		
 }

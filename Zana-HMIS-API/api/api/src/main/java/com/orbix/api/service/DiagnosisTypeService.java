@@ -5,6 +5,8 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.orbix.api.domain.DiagnosisType;
 
 /**
@@ -12,9 +14,9 @@ import com.orbix.api.domain.DiagnosisType;
  *
  */
 public interface DiagnosisTypeService {
-	DiagnosisType save(DiagnosisType diagnosisType);	
-	List<DiagnosisType>getDiagnosisTypes(); // return all the diagnosisTypes
-	DiagnosisType getDiagnosisTypeByName(String name);
-	DiagnosisType getDiagnosisTypeById(Long id);
-	boolean deleteDiagnosisType(DiagnosisType diagnosisType);
+	DiagnosisType save(DiagnosisType diagnosisType, HttpServletRequest request);	
+	List<DiagnosisType>getDiagnosisTypes(HttpServletRequest request); // return all the diagnosisTypes
+	DiagnosisType getDiagnosisTypeByName(String name, HttpServletRequest request);
+	DiagnosisType getDiagnosisTypeById(Long id, HttpServletRequest request);
+	boolean deleteDiagnosisType(DiagnosisType diagnosisType, HttpServletRequest request);
 }

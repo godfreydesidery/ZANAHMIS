@@ -1,9 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IConsultationInsurancePlan } from 'src/app/domain/consultation-insurance-plan';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -16,8 +18,9 @@ const API_URL = environment.apiUrl;
 export class ConsultationPlanComponent implements OnInit {
 
   id : any = null
-  insurancePlan! : IInsurancePlan
   consultationFee : number = 0
+  insurancePlan! : IInsurancePlan
+  
 
   insuranceProviderName : string = ''
   insurancePlanName : string = ''
@@ -28,14 +31,11 @@ export class ConsultationPlanComponent implements OnInit {
   clinicName : string = ''
   clinicNames : string[] = []
 
-  consultationPlans : IConsultationPlan[] = []
-
-
+  consultationPlans : IConsultationInsurancePlan[] = []
 
   constructor(
     private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) { }
@@ -64,7 +64,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Providers')
+        this.msgBox.showErrorMessage('Could not load Insurance Providers')
       }
     )
   }
@@ -87,7 +87,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Plans')
+        this.msgBox.showErrorMessage('Could not load Insurance Plans')
       }
     )
   }
@@ -98,7 +98,7 @@ export class ConsultationPlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IConsultationPlan[]>(API_URL+'/consultation_plan_prices', options)
+    await this.http.get<IConsultationInsurancePlan[]>(API_URL+'/consultation_insurance_plans', options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -110,7 +110,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load consultation plans')
+        this.msgBox.showErrorMessage('Could not load Consultation Plans')
       }
     )
   }
@@ -121,19 +121,19 @@ export class ConsultationPlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var consultationPlan = {
-      id          : this.id,
-      clinic : {
-        name : this.clinicName
+      id: this.id,
+      clinic: {
+        name: this.clinicName
       },
-      insurancePlan          : {
-        name : this.insurancePlanName
+      insurancePlan: {
+        name: this.insurancePlanName
       },
-      consultationFee        : this.consultationFee,
+      consultationFee: this.consultationFee,
     }
     if(this.id == null || this.id == ''){
       //save a new diagnosisType
       this.spinner.show()
-      await this.http.post<IConsultationPlan>(API_URL+'/consultation_plan_prices/save', consultationPlan, options)
+      await this.http.post<IConsultationInsurancePlan>(API_URL+'/consultation_insurance_plans/save', consultationPlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
@@ -146,27 +146,27 @@ export class ConsultationPlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create consultation plan')
+          this.msgBox.showErrorMessage('Could not create Consultation Plan')
         }
       )
 
     }else{
       //update an existing clinic
       this.spinner.show()
-      await this.http.post<IConsultationPlan>(API_URL+'/consultation_plan_prices/save', consultationPlan, options)
+      await this.http.post<IConsultationInsurancePlan>(API_URL+'/consultation_insurance_plans/save', consultationPlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
           this.id           = data?.id
           
-          this.msgBox.showSuccessMessage('Consultation plan updated successifully')
+          this.msgBox.showSuccessMessage('Consultation Plan updated successifully')
           this.loadConsultationPlans()
         }
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update consultation plan')
+          this.msgBox.showErrorMessage('Could not update Consultation Plan')
         }
       )
     }
@@ -189,7 +189,7 @@ export class ConsultationPlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IConsultationPlan>(API_URL+'/consultation_plan_prices/get?id='+key, options)
+    await this.http.get<IConsultationInsurancePlan>(API_URL+'/consultation_insurance_plans/get?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -205,7 +205,7 @@ export class ConsultationPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find consultation plan')
+        this.msgBox.showErrorMessage('Could not find Consultation Plan')
       }
     )
   }
@@ -214,11 +214,14 @@ export class ConsultationPlanComponent implements OnInit {
     if(key == ''){
       return
     }
+    if(!window.confirm('Delete this plan? Plan ID: '+key)){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.post<IConsultationPlan>(API_URL+'/consultation_plan_prices/delete?id='+key, options)
+    await this.http.post<IConsultationInsurancePlan>(API_URL+'/consultation_insurance_plans/delete?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -230,7 +233,7 @@ export class ConsultationPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not delete consultation plan')
+        this.msgBox.showErrorMessage('Could not delete Consultation Plan')
       }
     )
   }
@@ -258,23 +261,4 @@ export class ConsultationPlanComponent implements OnInit {
     )
   }
 
-}
-
-export interface IConsultationPlan{
-  id : any
-  clinic : IClinic
-  insurancePlan : IInsurancePlan
-  consultationFee : number 
-}
-
-export interface IInsurancePlan{
-  name : string
-  insuranceProvider : IInsuranceProvider 
-}
-export interface IInsuranceProvider{
-  name : string
-}
-
-export interface IClinic{
-  name : string
 }

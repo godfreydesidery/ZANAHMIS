@@ -6,6 +6,8 @@ package com.orbix.api.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
 
@@ -14,20 +16,20 @@ import com.orbix.api.domain.Clinician;
  *
  */
 public interface ClinicService {
-	Clinic save(Clinic clinic);	
-	List<Clinic>getClinics(); // return all the clinics
-	Clinic getClinicByName(String name);
-	Clinic getClinicById(Long id);
-	boolean deleteClinic(Clinic clinic);
-	List<String> getNames();
+	Clinic save(Clinic clinic, HttpServletRequest request);	
+	List<Clinic>getClinics(HttpServletRequest request); // return all the clinics
+	Clinic getClinicByName(String name, HttpServletRequest request);
+	Clinic getClinicById(Long id, HttpServletRequest request);
+	boolean deleteClinic(Clinic clinic, HttpServletRequest request);
+	List<String> getNames(HttpServletRequest request);
 	/**
 	 * @param clinicName
 	 * @return
 	 */
-	Clinic getByName(String clinicName);
+	Clinic getByName(String clinicName, HttpServletRequest request);
 	/**
 	 * @return
 	 */
-	List<Clinician> getClinicians();
+	List<Clinician> getClinicians( HttpServletRequest request);
 	
 }

@@ -15,11 +15,11 @@ import javax.persistence.OneToOne;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import com.orbix.api.domain.Bill;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
+import com.orbix.api.domain.PatientBill;
 
 import lombok.Data;
 
@@ -39,7 +39,7 @@ public class LabTestModel {
 	private Consultation consultation = null;
 	private NonConsultation nonConsultation = null;
 	private LabTestType labTestType = null;
-	private Bill bill = null;
+	private PatientBill patientBill = null;
 	private Patient patient = null;
 	
 	String verified = "";	

@@ -4,6 +4,8 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
+import { IRegistrationInsurancePlan } from 'src/app/domain/registration-insurance-plan';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -25,7 +27,7 @@ export class RegistrationPlanComponent implements OnInit {
   insuranceProviderNames : string[] = []
   insurancePlanNames : string[] = []
 
-  registrationPlans : IRegistrationPlan[] = []
+  registrationPlans : IRegistrationInsurancePlan[] = []
 
 
 
@@ -94,7 +96,7 @@ export class RegistrationPlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IRegistrationPlan[]>(API_URL+'/registration_plan_prices', options)
+    await this.http.get<IRegistrationInsurancePlan[]>(API_URL+'/registration_insurance_plans', options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -126,7 +128,7 @@ export class RegistrationPlanComponent implements OnInit {
     if(this.id == null || this.id == ''){
       //save a new diagnosisType
       this.spinner.show()
-      await this.http.post<IRegistrationPlan>(API_URL+'/registration_plan_prices/save', registrationPlan, options)
+      await this.http.post<IRegistrationInsurancePlan>(API_URL+'/registration_insurance_plans/save', registrationPlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
@@ -146,7 +148,7 @@ export class RegistrationPlanComponent implements OnInit {
     }else{
       //update an existing clinic
       this.spinner.show()
-      await this.http.post<IRegistrationPlan>(API_URL+'/registration_plan_prices/save', registrationPlan, options)
+      await this.http.post<IRegistrationInsurancePlan>(API_URL+'/registration_insurance_plans/save', registrationPlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
@@ -181,7 +183,7 @@ export class RegistrationPlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IRegistrationPlan>(API_URL+'/registration_plan_prices/get?id='+key, options)
+    await this.http.get<IRegistrationInsurancePlan>(API_URL+'/registration_insurance_plans/get?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -205,11 +207,14 @@ export class RegistrationPlanComponent implements OnInit {
     if(key == ''){
       return
     }
+    if(!window.confirm('Delete this plan? Plan ID: '+key)){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.post<IRegistrationPlan>(API_URL+'/registration_plan_prices/delete?id='+key, options)
+    await this.http.post<IRegistrationInsurancePlan>(API_URL+'/registration_insurance_plans/delete?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -228,17 +233,3 @@ export class RegistrationPlanComponent implements OnInit {
 
 }
 
-export interface IRegistrationPlan{
-  id : any
-  insurancePlan : IInsurancePlan
-  registrationFee : number 
-  insuranceProvider : IInsuranceProvider
-}
-
-export interface IInsurancePlan{
-  name : string
-  insuranceProvider : IInsuranceProvider 
-}
-export interface IInsuranceProvider{
-  name : string
-}

@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IClinic } from 'src/app/domain/clinic';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -17,19 +18,18 @@ const API_URL = environment.apiUrl;
 export class ClinicComponent implements OnInit {
 
 
-  id : any
-  no : string = ''
-  name : string = ''
-  description : string = ''
+  id              : any
+  code            : string = ''
+  name            : string = ''
+  description     : string = ''
   consultationFee : number = 0
-  active : boolean = true
+  active          : boolean = true
 
-  clinics : IClinic[] = []
+  clinics         : IClinic[] = []
 
   constructor(
     private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) { }
@@ -43,12 +43,12 @@ export class ClinicComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var clinic = {
-      id          : this.id,
-      no          : this.no,
-      name        : this.name,
-      description : this.description,
-      consultationFee       : this.consultationFee,
-      active      : true
+      id              : this.id,
+      code            : this.code,
+      name            : this.name,
+      description     : this.description,
+      consultationFee : this.consultationFee,
+      active          : true
     }
     if(this.id == null || this.id == ''){
       //save a new clinic
@@ -59,9 +59,9 @@ export class ClinicComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.no       = data!.no
-          this.name = data!.name
-          this.description = data!.description
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
           this.consultationFee = data!.consultationFee
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Clinic created successifully')
@@ -84,9 +84,9 @@ export class ClinicComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.no       = data!.no
-          this.name = data!.name
-          this.description = data!.description
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
           this.consultationFee = data!.consultationFee
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Clinic updated successifully')
@@ -125,10 +125,10 @@ export class ClinicComponent implements OnInit {
   }
 
   clear(){
-    this.id = null
-    this.no = ''
-    this.name = ''
-    this.description = ''
+    this.id           = null
+    this.code         = ''
+    this.name         = ''
+    this.description  = ''
     this.consultationFee = 0
   }
 
@@ -145,12 +145,12 @@ export class ClinicComponent implements OnInit {
     .toPromise()
     .then(
       data=>{
-        this.id = data?.id
-        this.no = data!.no
-        this.name = data!.name
-        this.description = data!.description
+        this.id           = data?.id
+        this.code         = data!.code
+        this.name         = data!.name
+        this.description  = data!.description
         this.consultationFee = data!.consultationFee
-        this.active = data!.active
+        this.active       = data!.active
       }
     )
     .catch(
@@ -163,7 +163,7 @@ export class ClinicComponent implements OnInit {
 
 }
 
-export  interface IClinic{
+export  interface IClinic111{
   id : any
   no : string
   name : string

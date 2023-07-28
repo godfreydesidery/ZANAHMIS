@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IRadiologyType } from 'src/app/domain/radiology-type';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -30,7 +31,6 @@ export class RadiologyTypeComponent implements OnInit {
   constructor(
     private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) { }
@@ -45,10 +45,10 @@ export class RadiologyTypeComponent implements OnInit {
     }
     var radiologyType = {
       id          : this.id,
-      code          : this.code,
+      code        : this.code,
       name        : this.name,
       description : this.description,
-      uom       : this.uom,
+      uom         : this.uom,
       price       : this.price,
       active      : true
     }
@@ -61,11 +61,11 @@ export class RadiologyTypeComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
+          this.price        = data!.price
+          this.uom          = data!.uom
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Radiology Type created successifully')
           this.loadRadiologyTypes()
@@ -74,7 +74,7 @@ export class RadiologyTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create radiology type')
+          this.msgBox.showErrorMessage('Could not create Radiology Type')
         }
       )
 
@@ -87,11 +87,11 @@ export class RadiologyTypeComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
+          this.price        = data!.price
+          this.uom          = data!.uom
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Radiology Type updated successifully')
           this.loadRadiologyTypes()
@@ -99,7 +99,7 @@ export class RadiologyTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update radiology type')
+          this.msgBox.showErrorMessage('Could not update Radiology Type')
         }
       )
     }
@@ -124,19 +124,19 @@ export class RadiologyTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load radiology types')
+        this.msgBox.showErrorMessage('Could not load Radiology Types')
       }
     )
   }
 
   clear(){
-    this.id = null
-    this.code = ''
-    this.name = ''
-    this.description = ''
-    this.uom = ''
-    this.price = 0
-    this.active = false
+    this.id           = null
+    this.code         = ''
+    this.name         = ''
+    this.description  = ''
+    this.uom          = ''
+    this.price        = 0
+    this.active       = false
   }
 
   async getRadiologyType(key: string) {
@@ -152,31 +152,21 @@ export class RadiologyTypeComponent implements OnInit {
     .toPromise()
     .then(
       data=>{
-        this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
+        this.id             = data?.id
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
+          this.price        = data!.price
+          this.uom          = data!.uom
           this.active       = data!.active
       }
     )
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find radiology type')
+        this.msgBox.showErrorMessage('Could not find Radiology Type')
       }
     )
   }
 
-}
-
-export interface IRadiologyType{
-  id     : any
-  code   : string
-  name        : string
-  description : string
-  uom    : string
-  price  : number
-  active : boolean
 }

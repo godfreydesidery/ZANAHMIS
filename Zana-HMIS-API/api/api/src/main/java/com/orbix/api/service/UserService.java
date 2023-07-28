@@ -17,10 +17,10 @@ import com.orbix.api.domain.User;
  *
  */
 public interface UserService {
-	User saveUser(User user);
-	Role saveRole(Role role);
-	Privilege savePrivilege(Privilege privilege);
-	void addRoleToUser(String username, String roleName);
+	User saveUser(User user, HttpServletRequest request);
+	Role saveRole(Role role, HttpServletRequest request);
+	Privilege savePrivilege(Privilege privilege, HttpServletRequest request);
+	void addRoleToUser(String username, String roleName, HttpServletRequest request);
 	User getUser(String username);
 	User getUserById(Long id);
 	boolean deleteUser(User user);
@@ -34,10 +34,11 @@ public interface UserService {
 	List<String>getOperations();
 	List<String>getObjects();
 	List<String>getPrivileges(String roleName);
-	boolean createShortcut(String username, String name, String link);
+	boolean createShortcut(String username, String name, String link, HttpServletRequest request);
 	boolean removeShortcut(String username, String name);
 	List<Shortcut> loadShortcuts(String username);
 	
 	Long getUserId(HttpServletRequest request);
+	User getUser(HttpServletRequest request);
 	
 }

@@ -3,16 +3,18 @@
  */
 package com.orbix.api.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.RadiologyType;
-import com.orbix.api.domain.RadiologyTypePlanPrice;
+import com.orbix.api.domain.RadiologyTypeInsurancePlan;
 
 /**
  * @author Godfrey
  *
  */
 public interface RadiologyTypePlanService {
-	RadiologyTypePlanPrice save(InsurancePlan insurancePlan, RadiologyType radiologyType, double price);	
-	//List<RadiologyTypePlanPrice>getRadiologyTypePlans(); // return all the insuranceProviders	
-	boolean deleteRadiologyTypePlanPrice(InsurancePlan insurancePlan, RadiologyType radiologyType);
+	RadiologyTypeInsurancePlan save(InsurancePlan insurancePlan, RadiologyType radiologyType, double price, HttpServletRequest request);	
+	//List<RadiologyTypeInsurancePlan>getRadiologyTypePlans(); // return all the insuranceProviders	
+	boolean deleteRadiologyTypeInsurancePlan(InsurancePlan insurancePlan, RadiologyType radiologyType, HttpServletRequest request);
 }

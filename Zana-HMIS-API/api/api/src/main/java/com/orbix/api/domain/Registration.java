@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -38,18 +39,27 @@ public class Registration {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	private Long createdBy;
-	private Long createdOn;
-	private LocalDateTime createdAt = LocalDateTime.now();
-	
-	@OneToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "patient_id", nullable = true , updatable = true)
+	@NotBlank
+	private String status;
+		
+	@OneToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "patient_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
 	
-	@OneToOne(targetEntity = Bill.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "bill_id", nullable = true , updatable = true)
+	@OneToOne(targetEntity = PatientBill.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "patient_bill_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
-    private Bill bill;
+    private PatientBill patientBill;
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User createdby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -3,6 +3,8 @@
  */
 package com.orbix.api.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,6 +18,8 @@ import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,8 +41,19 @@ public class LabTestTypeRange {
 	@NotBlank
 	private String name = "";
 	
-	@ManyToOne(targetEntity = LabTestType.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "lab_test_type_id", nullable = true , updatable = true)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+	@ManyToOne(targetEntity = LabTestType.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "lab_test_type_id", nullable = false , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private LabTestType labTestType;
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User createdby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
 }

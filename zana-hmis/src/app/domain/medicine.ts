@@ -7,7 +7,7 @@ export interface IMedicine {
     name        : string
     description : string
     type        : string
-    price       : string
+    price       : number
     uom         : string
     active      : boolean
     

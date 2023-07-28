@@ -20,18 +20,18 @@
                         <table class="table table-bordered table-small">
                             <thead>
                                 <tr>
+                                    <td>ID</td>
                                     <td>Name</td>
                                     <td>Lab Test Type</td>
-                                    <td>Name</td>
                                     <td>Action</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let labTestTypeRange of labTestTypeRanges">
+                                    <td>{{labTestTypeRange.id}}</td>
                                     <td>{{labTestTypeRange.name}}</td>
                                     <td>{{labTestTypeRange.labTestType.name}}</td>
-                                    <td></td>
-                                    <td><button class="" (click)="getLabTestTypeRange(labTestTypeRange.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</button></td>
+                                    <td><a (click)="getLabTestTypeRange(labTestTypeRange.id)" data-toggle="modal" data-target="#add-edit-modal"><i class="glyphicon glyphicon-pencil"></i>Edit</a></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -69,12 +69,6 @@
                                 <option></option>
                                 <option *ngFor="let labTestTypeName of labTestTypeNames">{{labTestTypeName}}</option>
                             </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label>Active</label>
-                            <input type="checkbox" [(ngModel)]="active" style="text-align: right;">
                         </div>
                     </div>
                 </div>

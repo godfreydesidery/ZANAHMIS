@@ -18,9 +18,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,12 +56,16 @@ public class Patient {
 	private String middleName;
 	@NotBlank
 	private String lastName;
+	@NotNull
 	private LocalDate dateOfBirth;
+	@NotBlank
 	private String gender;
+	@NotBlank
 	private String type;
 	/**
 	 * Payment method
 	 */
+	@NotBlank
 	private String paymentType = "";
 	private String membershipNo = "";
 	/**
@@ -83,12 +90,24 @@ public class Patient {
 	/**
 	 * 
 	 */
-	private Long createdBy;
-	private Long createdOn;
-	private LocalDateTime createdAt = LocalDateTime.now();
+	//private Long createdBy;
+	//private Long createdOn;
+	
 	
 	@OneToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private InsurancePlan insurancePlan;
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JsonIgnoreProperties({"code", "username", "firstName", "middleName", "lastName", "roles", "password"})
+    private User createdby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
 }

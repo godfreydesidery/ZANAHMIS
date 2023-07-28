@@ -20,6 +20,7 @@
                         <table class="table table-bordered table-small">
                             <thead>
                                 <tr>
+                                    <td>ID</td>
                                     <td>Provider</td>
                                     <td>Plan</td>
                                     <td>Registration Fee</td>
@@ -28,11 +29,12 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let registrationPlan of registrationPlans">
+                                    <td>{{registrationPlan.id}}</td>
                                     <td>{{registrationPlan.insurancePlan.insuranceProvider.name}}</td>
                                     <td>{{registrationPlan.insurancePlan.name}}</td>
                                     <td style="text-align: right;">{{registrationPlan.registrationFee | currency:'':''}}</td>
-                                    <td><button class="" (click)="getRegistrationPlan(registrationPlan.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</button>
-                                        <button class="" (click)="deleteRegistrationPlan(registrationPlan.id)">Delete</button>
+                                    <td>[<a (click)="getRegistrationPlan(registrationPlan.id)" data-toggle="modal" data-target="#add-edit-modal"><i class="glyphicon glyphicon-pencil"></i>Edit</a>]
+                                        [<a (click)="deleteRegistrationPlan(registrationPlan.id)"><i class="glyphicon glyphicon-trash"></i>Delete</a>]
                                     </td>
                                 </tr>
                             </tbody>

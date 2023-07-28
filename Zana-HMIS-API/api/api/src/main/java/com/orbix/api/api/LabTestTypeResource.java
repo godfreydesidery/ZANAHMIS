@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,9 @@ import com.orbix.api.domain.LabTestType;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.service.ClinicService;
+import com.orbix.api.service.DayService;
 import com.orbix.api.service.LabTestTypeService;
+import com.orbix.api.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,20 +43,26 @@ import lombok.RequiredArgsConstructor;
 public class LabTestTypeResource {
 	private final LabTestTypeRepository labTestTypeRepository;
 	private final LabTestTypeService labTestTypeService;
+	private final UserService userService;
+	private final DayService dayService;
+	
 	
 	@GetMapping("/lab_test_types")
-	public ResponseEntity<List<LabTestType>>getLabTestTypes(){
-		return ResponseEntity.ok().body(labTestTypeService.getLabTestTypes());
+	public ResponseEntity<List<LabTestType>>getLabTestTypes(
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(labTestTypeService.getLabTestTypes(request));
 	}
 	
 	@GetMapping("/lab_test_types/get")
 	public ResponseEntity<LabTestType> getLabTestType(
-			@RequestParam(name = "id") Long id){
-		return ResponseEntity.ok().body(labTestTypeService.getLabTestTypeById(id));
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(labTestTypeService.getLabTestTypeById(id, request));
 	}
 	
 	@GetMapping("/lab_test_types/get_names")
-	public ResponseEntity<List<String>> getLabTestTypeNames(){
+	public ResponseEntity<List<String>> getLabTestTypeNames(
+			HttpServletRequest request){
 		List<String> names = new ArrayList<String>();
 		names = labTestTypeRepository.getNames();
 		return ResponseEntity.ok().body(names);
@@ -62,9 +71,10 @@ public class LabTestTypeResource {
 	@PostMapping("/lab_test_types/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<LabTestType>save(
-			@RequestBody LabTestType labTestType){
+			@RequestBody LabTestType labTestType,
+			HttpServletRequest request){
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/lab_test_types/save").toUriString());
-		return ResponseEntity.created(uri).body(labTestTypeService.save(labTestType));
+		return ResponseEntity.created(uri).body(labTestTypeService.save(labTestType, request));
 	}	
 }

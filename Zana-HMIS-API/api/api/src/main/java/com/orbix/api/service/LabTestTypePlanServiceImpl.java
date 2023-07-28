@@ -6,16 +6,17 @@ package com.orbix.api.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.LabTestType;
-import com.orbix.api.domain.LabTestTypePlanPrice;
+import com.orbix.api.domain.LabTestTypeInsurancePlan;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
-import com.orbix.api.repositories.LabTestTypePlanPriceRepository;
+import com.orbix.api.repositories.LabTestTypeInsurancePlanRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.repositories.UserRepository;
 
@@ -35,12 +36,12 @@ public class LabTestTypePlanServiceImpl implements LabTestTypePlanService{
 	private final UserService userService;
 	private final DayRepository dayRepository;
 	private final DayService dayService;
-	private final LabTestTypePlanPriceRepository labTestTypePlanPriceRepository;
+	private final LabTestTypeInsurancePlanRepository labTestTypeInsurancePlanRepository;
 	
 	@Override
-	public LabTestTypePlanPrice save(InsurancePlan insurancePlan, LabTestType labTestType, double price) {
-		Optional<LabTestTypePlanPrice> p = labTestTypePlanPriceRepository.findByInsurancePlanAndLabTestType(insurancePlan, labTestType);
-		LabTestTypePlanPrice plan = new LabTestTypePlanPrice();
+	public LabTestTypeInsurancePlan save(InsurancePlan insurancePlan, LabTestType labTestType, double price, HttpServletRequest request) {
+		Optional<LabTestTypeInsurancePlan> p = labTestTypeInsurancePlanRepository.findByInsurancePlanAndLabTestType(insurancePlan, labTestType);
+		LabTestTypeInsurancePlan plan = new LabTestTypeInsurancePlan();
 		if(p.isPresent()) {
 			//save existing
 			p.get().setPrice(price);
@@ -50,7 +51,7 @@ public class LabTestTypePlanServiceImpl implements LabTestTypePlanService{
 			plan.setLabTestType(labTestType);
 			plan.setPrice(price);
 		}
-		return labTestTypePlanPriceRepository.save(plan);
+		return labTestTypeInsurancePlanRepository.save(plan);
 	}
 
 	//@Override
@@ -62,13 +63,13 @@ public class LabTestTypePlanServiceImpl implements LabTestTypePlanService{
 	
 
 	@Override
-	public boolean deleteLabTestTypePlanPrice(InsurancePlan insurancePlan, LabTestType labTestType) {
+	public boolean deleteLabTestTypeInsurancePlan(InsurancePlan insurancePlan, LabTestType labTestType, HttpServletRequest request) {
 		/**
 		 * Delete a labTestType if a labTestType is deletable
 		 */
-		Optional<LabTestTypePlanPrice> p = labTestTypePlanPriceRepository.findByInsurancePlanAndLabTestType(insurancePlan, labTestType);
+		Optional<LabTestTypeInsurancePlan> p = labTestTypeInsurancePlanRepository.findByInsurancePlanAndLabTestType(insurancePlan, labTestType);
 		
-		labTestTypePlanPriceRepository.delete(p.get());
+		labTestTypeInsurancePlanRepository.delete(p.get());
 		return true;
 	}
 	

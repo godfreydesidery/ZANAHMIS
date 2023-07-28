@@ -6,7 +6,6 @@ package com.orbix.api.service;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +30,6 @@ import com.orbix.api.exceptions.InvalidEntryException;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
 import com.orbix.api.exceptions.NotFoundException;
-import com.orbix.api.exceptions.ResourceNotFoundException;
 import com.orbix.api.repositories.PrivilegeRepository;
 import com.orbix.api.repositories.RoleRepository;
 import com.orbix.api.repositories.ShortcutRepository;
@@ -78,7 +76,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 	
 	@Override
-	public User saveUser(User user) {
+	public User saveUser(User user, HttpServletRequest request) {
 		validateUser(user);
 		log.info("Saving user to the database");
 		if(user.getId() == null) {
@@ -125,20 +123,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		 * Validate alias, alias field should be present
 		 * Alias is a unique flag name that visually identifies a user in the system, also identified as Nickname
 		 */
-		if(user.getAlias().equals("")) {
+		if(user.getNickname().equals("")) {
 			throw new MissingInformationException("The nickname field is missing");
 		}		
 		return true;
 	}
 
 	@Override
-	public Role saveRole(Role role) {
+	public Role saveRole(Role role, HttpServletRequest request) {
 		log.info("Saving new role to the database");
 		return roleRepository.save(role);
 	}
 
 	@Override
-	public void addRoleToUser(String username, String rolename) {
+	public void addRoleToUser(String username, String rolename, HttpServletRequest request) {
 		User user = userRepository.findByUsername(username);
 		Role role = roleRepository.findByName(rolename);
 		try {
@@ -160,7 +158,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public Privilege savePrivilege(Privilege privilege) {
+	public Privilege savePrivilege(Privilege privilege, HttpServletRequest request) {
 		log.info("Saving new privilege to the database");
 		return privilegeRepository.save(privilege);
 	}
@@ -310,7 +308,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public boolean createShortcut(String username, String name, String link) {	
+	public boolean createShortcut(String username, String name, String link, HttpServletRequest request) {	
 		Shortcut shortcut = new Shortcut();
 		
 		try {
@@ -360,5 +358,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public Long getUserId(HttpServletRequest request) {
 		return userRepository.findByUsername(request.getUserPrincipal().getName()).getId();
-	}	
+	}
+	
+	@Override
+	public User getUser(HttpServletRequest request) {
+		return userRepository.findByUsername(request.getUserPrincipal().getName());
+	}
 }

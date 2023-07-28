@@ -15,56 +15,55 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.api.accessories.Sanitizer;
-import com.orbix.api.domain.Bill;
+import com.orbix.api.domain.PatientBill;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
-import com.orbix.api.domain.ConsultationPlanPrice;
+import com.orbix.api.domain.ConsultationInsurancePlan;
 import com.orbix.api.domain.InsurancePlan;
-import com.orbix.api.domain.Invoice;
-import com.orbix.api.domain.InvoiceDetail;
+import com.orbix.api.domain.PatientInvoice;
+import com.orbix.api.domain.PatientInvoiceDetail;
 import com.orbix.api.domain.LabTest;
-import com.orbix.api.domain.LabTestPlanPrice;
 import com.orbix.api.domain.LabTestType;
-import com.orbix.api.domain.LabTestTypePlanPrice;
+import com.orbix.api.domain.LabTestTypeInsurancePlan;
 import com.orbix.api.domain.Medicine;
-import com.orbix.api.domain.MedicinePlanPrice;
+import com.orbix.api.domain.MedicineInsurancePlan;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PaymentType;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.ProcedureType;
-import com.orbix.api.domain.ProcedureTypePlanPrice;
+import com.orbix.api.domain.ProcedureTypeInsurancePlan;
 import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
-import com.orbix.api.domain.RadiologyTypePlanPrice;
+import com.orbix.api.domain.RadiologyTypeInsurancePlan;
 import com.orbix.api.domain.Registration;
-import com.orbix.api.domain.RegistrationPlanPrice;
+import com.orbix.api.domain.RegistrationInsurancePlan;
 import com.orbix.api.domain.Visit;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
-import com.orbix.api.repositories.BillRepository;
-import com.orbix.api.repositories.ConsultationPlanPriceRepository;
+import com.orbix.api.repositories.ConsultationInsurancePlanRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
-import com.orbix.api.repositories.InvoiceDetailRepository;
-import com.orbix.api.repositories.InvoiceRepository;
+import com.orbix.api.repositories.PatientInvoiceDetailRepository;
+import com.orbix.api.repositories.PatientInvoiceRepository;
 import com.orbix.api.repositories.LabTestRepository;
-import com.orbix.api.repositories.LabTestTypePlanPriceRepository;
+import com.orbix.api.repositories.LabTestTypeInsurancePlanRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
-import com.orbix.api.repositories.MedicinePlanPriceRepository;
+import com.orbix.api.repositories.MedicineInsurancePlanRepository;
 import com.orbix.api.repositories.MedicineRepository;
+import com.orbix.api.repositories.PatientBillRepository;
 import com.orbix.api.repositories.PatientRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.ProcedureRepository;
-import com.orbix.api.repositories.ProcedureTypePlanPriceRepository;
+import com.orbix.api.repositories.ProcedureTypeInsurancePlanRepository;
 import com.orbix.api.repositories.ProcedureTypeRepository;
 import com.orbix.api.repositories.RadiologyRepository;
-import com.orbix.api.repositories.RadiologyTypePlanPriceRepository;
+import com.orbix.api.repositories.RadiologyTypeInsurancePlanRepository;
 import com.orbix.api.repositories.RadiologyTypeRepository;
-import com.orbix.api.repositories.RegistrationPlanPriceRepository;
+import com.orbix.api.repositories.RegistrationInsurancePlanRepository;
 import com.orbix.api.repositories.RegistrationRepository;
 import com.orbix.api.repositories.VisitRepository;
 
@@ -82,22 +81,22 @@ import lombok.extern.slf4j.Slf4j;
 public class PatientServiceImpl implements PatientService {
 	
 	private final PatientRepository patientRepository;
-	private final BillRepository billRepository;
+	private final PatientBillRepository patientBillRepository;
 	private final ConsultationRepository consultationRepository;
-	private final InvoiceRepository invoiceRepository;
-	private final InvoiceDetailRepository invoiceDetailRepository;
+	private final PatientInvoiceRepository patientInvoiceRepository;
+	private final PatientInvoiceDetailRepository patientInvoiceDetailRepository;
 	private final DayRepository dayRepository;
 	private final UserService userService;
 	private final DayService dayService;
-	private final ConsultationPlanPriceRepository consultationPlanPriceRepository;
-	private final LabTestTypePlanPriceRepository labTestTypePlanPriceRepository;
-	private final MedicinePlanPriceRepository medicinePlanPriceRepository;
-	private final RadiologyTypePlanPriceRepository radiologyTypePlanPriceRepository;
-	private final ProcedureTypePlanPriceRepository procedureTypePlanPriceRepository;
+	private final ConsultationInsurancePlanRepository consultationInsurancePlanRepository;
+	private final LabTestTypeInsurancePlanRepository labTestTypeInsurancePlanRepository;
+	private final MedicineInsurancePlanRepository medicineInsurancePlanRepository;
+	private final RadiologyTypeInsurancePlanRepository radiologyTypeInsurancePlanRepository;
+	private final ProcedureTypeInsurancePlanRepository procedureTypeInsurancePlanRepository;
 	private final LabTestTypeRepository labTestTypeRepository;
 	private final LabTestRepository labTestRepository;
 	private final InsurancePlanRepository insurancePlanRepository;
-	private final RegistrationPlanPriceRepository registrationPlanPriceRepository;
+	private final RegistrationInsurancePlanRepository registrationInsurancePlanRepository;
 	private final VisitRepository visitRepository;
 	private final RadiologyTypeRepository radiologyTypeRepository;
 	private final ProcedureTypeRepository procedureTypeRepository;
@@ -106,6 +105,9 @@ public class PatientServiceImpl implements PatientService {
 	private final MedicineRepository medicineRepository;
 	private final PrescriptionRepository prescriptionRepository;
 	private final RegistrationRepository registrationRepository;
+	
+	
+	
 	
 	@Override
 	public List<Patient> getAll() {
@@ -127,6 +129,9 @@ public class PatientServiceImpl implements PatientService {
 		/**
 		 * Save patient after validating credentials
 		 */
+		p.setCreatedby(userService.getUser(request));
+		p.setCreatedOn(dayService.getDay());
+		p.setCreatedAt(dayService.getTimeStamp());
 		Patient patient = patientRepository.save(p);
 		
 		/*
@@ -146,14 +151,13 @@ public class PatientServiceImpl implements PatientService {
 		/**
 		 * Add forensic data to patient
 		 */
-		patient.setCreatedBy(userService.getUserId(request));
-		patient.setCreatedOn(dayService.getDayId());
+		
 		patient = patientRepository.save(patient);
 		
 		/**
-		 * Create registration bill and assign it to patient
+		 * Create registration patientBill and assign it to patient
 		 */
-		Bill regBill = new Bill();
+		PatientBill regBill = new PatientBill();
 		double am = 2000;//fetch this value from database, later
 		regBill.setAmount(am);
 		regBill.setQty(1);
@@ -162,23 +166,26 @@ public class PatientServiceImpl implements PatientService {
 		regBill.setStatus("UNPAID");
 		regBill.setPatient(patient);
 		/**
-		 * Add forensic data to registration bill
+		 * Add forensic data to registration patientBill
 		 */
-		regBill.setCreatedBy(userService.getUserId(request));
-		regBill.setCreatedOn(dayService.getDayId());
+		regBill.setCreatedby(userService.getUser(request));
+		regBill.setCreatedOn(dayService.getDay());
+		regBill.setCreatedAt(dayService.getTimeStamp());
 		/**
-		 * Save Registration bill
+		 * Save Registration patientBill
 		 */
-		regBill = billRepository.save(regBill);
+		regBill = patientBillRepository.save(regBill);
 		/**
-		 * Assign registration bill to patient
+		 * Assign registration patientBill to patient
 		 */
 		
 		Registration reg = new Registration();
 		reg.setPatient(patient);
-		reg.setCreatedBy(userService.getUserId(request));
-		reg.setCreatedOn(dayService.getDayId());
-		reg.setBill(regBill);
+		reg.setCreatedby(userService.getUser(request));
+		reg.setCreatedOn(dayService.getDay());
+		reg.setCreatedAt(dayService.getTimeStamp());
+		reg.setPatientBill(regBill);
+		reg.setStatus("ACTIVE");
 		registrationRepository.save(reg);
 		
 		//patient.setRegistrationBillId(regBill.getId());
@@ -199,64 +206,64 @@ public class PatientServiceImpl implements PatientService {
 			/**
 			 * Load Registration plan
 			 */
-			Optional<RegistrationPlanPrice> plan = registrationPlanPriceRepository.findByInsurancePlan(patient.getInsurancePlan());
+			Optional<RegistrationInsurancePlan> plan = registrationInsurancePlanRepository.findByInsurancePlan(patient.getInsurancePlan());
 			if(!plan.isPresent()) {
 				throw new NotFoundException("There is no registration plan for this insurance plan. Please change payment method");
 			}
 			/**
-			 * If plan is present, edit registration bill to reflect plan price
+			 * If plan is present, edit registration patientBill to reflect plan price
 			 */
 			regBill.setAmount(plan.get().getRegistrationFee());
 			regBill.setPaid(plan.get().getRegistrationFee());
 			regBill.setBalance(0);
-			regBill = billRepository.save(regBill);
+			regBill = patientBillRepository.save(regBill);
 			/**
-			 * Find a pending invoice to register claims, if there is no pending invoice, create one
+			 * Find a pending patientInvoice to register claims, if there is no pending patientInvoice, create one
 			 */
-			Optional<Invoice> inv = invoiceRepository.findByPatientAndStatus(patient, "PENDING");
+			Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
 			if(!inv.isPresent()) {
 				/**
-				 * If no pending invoice
+				 * If no pending patientInvoice
 				 */
-				Invoice invoice = new Invoice();
-				invoice.setNo("NA");
-				invoice.setPatient(patient);
-				invoice.setInsurancePlan(patient.getInsurancePlan());
-				invoice.setStatus("PENDING");
-				invoice = invoiceRepository.save(invoice);
-				invoice.setNo(invoice.getId().toString());
-				invoice = invoiceRepository.save(invoice);
+				PatientInvoice patientInvoice = new PatientInvoice();
+				patientInvoice.setNo("NA");
+				patientInvoice.setPatient(patient);
+				patientInvoice.setInsurancePlan(patient.getInsurancePlan());
+				patientInvoice.setStatus("PENDING");
+				patientInvoice = patientInvoiceRepository.save(patientInvoice);
+				patientInvoice.setNo(patientInvoice.getId().toString());
+				patientInvoice = patientInvoiceRepository.save(patientInvoice);
 				/**
-				 * Add registration bill claim to invoice
+				 * Add registration patientBill claim to patientInvoice
 				 */
-				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setInvoice(invoice);
-				invoiceDetail.setBill(regBill);
-				invoiceDetail.setPrice(regBill.getAmount());
-				invoiceDetail.setDescription("Registration Fee");
-				invoiceDetail.setQty(1);
-				invoiceDetailRepository.saveAndFlush(invoiceDetail);
+				PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+				patientInvoiceDetail.setPatientInvoice(patientInvoice);
+				patientInvoiceDetail.setPatientBill(regBill);
+				patientInvoiceDetail.setAmount(regBill.getAmount());
+				patientInvoiceDetail.setDescription("Registration Fee");
+				patientInvoiceDetail.setQty(1);
+				patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
 			}else {
 				/**
-				 * If there is a .pending invoice
+				 * If there is a .pending patientInvoice
 				 */
-				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setInvoice(inv.get());
-				invoiceDetail.setBill(regBill);
-				invoiceDetail.setPrice(regBill.getAmount());
-				invoiceDetail.setDescription("Registration");
-				invoiceDetail.setQty(1);
-				invoiceDetailRepository.saveAndFlush(invoiceDetail);
+				PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+				patientInvoiceDetail.setPatientInvoice(inv.get());
+				patientInvoiceDetail.setPatientBill(regBill);
+				patientInvoiceDetail.setAmount(regBill.getAmount());
+				patientInvoiceDetail.setDescription("Registration Fee");
+				patientInvoiceDetail.setQty(1);
+				patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
 			}
 			
 			/**
-			 * Set registration bill to COVERED status, after assigning it to insurance cover
+			 * Set registration patientBill to COVERED status, after assigning it to insurance cover
 			 */
 			regBill.setStatus("COVERED");
 			/**
-			 * Save registration bill
+			 * Save registration patientBill
 			 */
-			regBill = billRepository.save(regBill);
+			regBill = patientBillRepository.save(regBill);
 			/**
 			 * Set patient Registration fee status to PAID
 			 */
@@ -270,9 +277,12 @@ public class PatientServiceImpl implements PatientService {
 		 */
 		Visit visit = new Visit();
 		visit.setPatient(patient);
-		visit.setVisitSequence("FIRST");
+		visit.setSequence("FIRST");
 		visit.setStatus("PENDING");
-		visit.setVisitedOn(dayService.getDayId());
+		visit.setType(patient.getType());
+		visit.setCreatedby(userService.getUser(request));
+		visit.setCreatedOn(dayService.getDay());
+		visit.setCreatedAt(dayService.getTimeStamp());
 		visitRepository.save(visit);
 		
 		return patient;
@@ -296,9 +306,9 @@ public class PatientServiceImpl implements PatientService {
 			throw new InvalidOperationException("Patient has an active consultation, please wait for the patient to be released");
 		}
 		/**
-		 * Create a consultation bill and assign it to patient and consultation
+		 * Create a consultation patientBill and assign it to patient and consultation
 		 */
-		Bill conBill = new Bill();
+		PatientBill conBill = new PatientBill();
 		conBill.setAmount(c.getConsultationFee());
 		conBill.setPaid(0);
 		conBill.setBalance(c.getConsultationFee());
@@ -306,18 +316,19 @@ public class PatientServiceImpl implements PatientService {
 		conBill.setDescription("Consultation");
 		conBill.setStatus("UNPAID");
 		/**
-		 * Add forensic data to registration bill
+		 * Add forensic data to registration patientBill
 		 */
-		conBill.setCreatedBy(userService.getUserId(request));
-		conBill.setCreatedOn(dayService.getDayId());
+		conBill.setCreatedby(userService.getUser(request));
+		conBill.setCreatedOn(dayService.getDay());
+		conBill.setCreatedAt(dayService.getTimeStamp());
 		/**
-		 * Assign patient to consultation bill
+		 * Assign patient to consultation patientBill
 		 */
 		conBill.setPatient(p);
 		/**
-		 * Save Registration bill
+		 * Save Registration patientBill
 		 */
-		conBill = billRepository.save(conBill);
+		conBill = patientBillRepository.save(conBill);
 		/**
 		 * Create consultation
 		 */
@@ -326,12 +337,13 @@ public class PatientServiceImpl implements PatientService {
 		consultation.setClinic(c);
 		consultation.setClinician(cn);
 		consultation.setStatus("PENDING");
-		consultation.setBill(conBill);
+		consultation.setPatientBill(conBill);
 		/**
 		 * Add forensic data
 		 */
-		consultation.setCreatedBy(userService.getUserId(request));
-		consultation.setCreatedOn(dayService.getDayId());
+		consultation.setCreatedby(userService.getUser(request));
+		consultation.setCreatedOn(dayService.getDay());
+		consultation.setCreatedAt(dayService.getTimeStamp());
 		/**
 		 * Save consultation
 		 */
@@ -349,11 +361,11 @@ public class PatientServiceImpl implements PatientService {
 			/**
 			 * If plan has changed, check if previous transactions involving the plan have been signed
 			 */
-			Optional<Invoice> pendingInv = invoiceRepository.findByPatientAndStatus(p, "PENDING");
+			Optional<PatientInvoice> pendingInv = patientInvoiceRepository.findByPatientAndStatus(p, "PENDING");
 			if(p.getPaymentType().equals("INSURANCE")) {
 				if(plan.get().getId() != p.getInsurancePlan().getId()) {
 					if(pendingInv.isPresent()) {
-						throw new InvalidOperationException("Use of two or more insurance plan. The patient should sign of the initial invoice before proceeding with another plan");
+						throw new InvalidOperationException("Use of two or more insurance plan. The patient should sign of the initial patientInvoice before proceeding with another plan");
 					}
 				}
 				if(!paymentType.getInsuranceMembershipNo().equals(p.getMembershipNo())) {
@@ -361,7 +373,7 @@ public class PatientServiceImpl implements PatientService {
 				}
 			}else if(p.getPaymentType().equals("CASH")){
 				if(pendingInv.isPresent()) {
-					throw new InvalidOperationException("Use of two or more insurance plan. The patient should sign of the iniitial invoice before proceeding with another plan");
+					throw new InvalidOperationException("Use of two or more insurance plan. The patient should sign of the iniitial patientInvoice before proceeding with another plan");
 				}
 			}
 			p.setPaymentType("INSURANCE");
@@ -394,7 +406,7 @@ public class PatientServiceImpl implements PatientService {
 		if(p.getPaymentType().equals("INSURANCE")) {
 			
 			
-			Optional<ConsultationPlanPrice> consultationPricePlan = consultationPlanPriceRepository.findByClinicAndInsurancePlan(c, p.getInsurancePlan());
+			Optional<ConsultationInsurancePlan> consultationPricePlan = consultationInsurancePlanRepository.findByClinicAndInsurancePlan(c, p.getInsurancePlan());
 			
 			if(!consultationPricePlan.isPresent()) {
 				throw new InvalidOperationException("Plan not available for this clinic. Please change payment method");
@@ -403,45 +415,45 @@ public class PatientServiceImpl implements PatientService {
 			conBill.setPaid(consultationPricePlan.get().getConsultationFee());
 			conBill.setBalance(0);
 			conBill.setStatus("COVERED");
-			conBill = billRepository.save(conBill);
+			conBill = patientBillRepository.save(conBill);
 			
 			/**
-			 * Find a pending invoice to register claims, if there is no pending invoice, create one
+			 * Find a pending patientInvoice to register claims, if there is no pending patientInvoice, create one
 			 */
-			Optional<Invoice> inv = invoiceRepository.findByPatientAndStatus(p, "PENDING");
+			Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(p, "PENDING");
 			if(!inv.isPresent()) {
 				/**
-				 * If no pending invoice
+				 * If no pending patientInvoice
 				 */
-				Invoice invoice = new Invoice();
-				invoice.setNo("NA");
-				invoice.setPatient(p);
-				invoice.setInsurancePlan(p.getInsurancePlan());
-				invoice.setStatus("PENDING");
-				invoice = invoiceRepository.save(invoice);
-				invoice.setNo(invoice.getId().toString());
-				invoice = invoiceRepository.save(invoice);
+				PatientInvoice patientInvoice = new PatientInvoice();
+				patientInvoice.setNo("NA");
+				patientInvoice.setPatient(p);
+				patientInvoice.setInsurancePlan(p.getInsurancePlan());
+				patientInvoice.setStatus("PENDING");
+				patientInvoice = patientInvoiceRepository.save(patientInvoice);
+				patientInvoice.setNo(patientInvoice.getId().toString());
+				patientInvoice = patientInvoiceRepository.save(patientInvoice);
 				/**
-				 * Add registration bill claim to invoice
+				 * Add registration patientBill claim to patientInvoice
 				 */
-				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setInvoice(invoice);
-				invoiceDetail.setBill(conBill);
-				invoiceDetail.setPrice(conBill.getAmount());
-				invoiceDetail.setDescription("Consultation");
-				invoiceDetail.setQty(1);
-				invoiceDetailRepository.saveAndFlush(invoiceDetail);
+				PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+				patientInvoiceDetail.setPatientInvoice(patientInvoice);
+				patientInvoiceDetail.setPatientBill(conBill);
+				patientInvoiceDetail.setAmount(conBill.getAmount());
+				patientInvoiceDetail.setDescription("Consultation");
+				patientInvoiceDetail.setQty(1);
+				patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
 			}else {
 				/**
-				 * If there is a .pending invoice
+				 * If there is a .pending patientInvoice
 				 */
-				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setInvoice(inv.get());
-				invoiceDetail.setBill(conBill);
-				invoiceDetail.setPrice(conBill.getAmount());
-				invoiceDetail.setDescription("Consultation");
-				invoiceDetail.setQty(1);
-				invoiceDetailRepository.saveAndFlush(invoiceDetail);
+				PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+				patientInvoiceDetail.setPatientInvoice(inv.get());
+				patientInvoiceDetail.setPatientBill(conBill);
+				patientInvoiceDetail.setAmount(conBill.getAmount());
+				patientInvoiceDetail.setDescription("Consultation");
+				patientInvoiceDetail.setQty(1);
+				patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
 			}
 		}
 		/**
@@ -452,12 +464,14 @@ public class PatientServiceImpl implements PatientService {
 		if(!v.isPresent() || !v.get().getStatus().equals("PENDING")) {			
 			visit.setPatient(p);
 			if(!v.isPresent()) {
-				visit.setVisitSequence("FIRST");
+				visit.setSequence("FIRST");
 			}else {
-				visit.setVisitSequence("SUBSEQUENT");
+				visit.setSequence("SUBSEQUENT");
 			}
 			
-			visit.setVisitedOn(dayService.getDayId());
+			visit.setCreatedby(userService.getUser(request));
+			visit.setCreatedOn(dayService.getDay());
+			visit.setCreatedAt(dayService.getTimeStamp());
 			visitRepository.save(visit);
 		}else {
 			visit = v.get();
@@ -485,7 +499,6 @@ public class PatientServiceImpl implements PatientService {
 		pt.get().setLastName(patient.getLastName());
 		pt.get().setDateOfBirth(patient.getDateOfBirth());
 		pt.get().setGender(patient.getGender());
-		//pt.get().setType(patient.getType());
 		pt.get().setNationality(patient.getNationality());
 		pt.get().setNationalId(patient.getNationalId());
 		pt.get().setPassportNo(patient.getPassportNo());
@@ -495,9 +508,7 @@ public class PatientServiceImpl implements PatientService {
 		pt.get().setKinFullName(patient.getKinFullName());
 		pt.get().setKinRelationship(patient.getKinRelationship());
 		pt.get().setKinPhoneNo(patient.getKinPhoneNo());
-		//pt.get().setPaymentType(patient.getPaymentType());
-		//pt.get().setInsurancePlan(patient.getInsurancePlan());
-		//pt.get().setMembershipNo(patient.getMembershipNo());
+		
 		
 		return patientRepository.save(pt.get());
 		
@@ -546,69 +557,70 @@ public class PatientServiceImpl implements PatientService {
 		
 		test.setLabTestType(ltt.get());
 		test.setStatus("PENDING");
-		Bill bill = new Bill();
-		bill.setAmount(test.getLabTestType().getPrice());
-		bill.setPaid(0);
-		bill.setBalance(test.getLabTestType().getPrice());
-		bill.setQty(1);
-		bill.setDescription("Lab Test: "+test.getLabTestType().getName());
-		bill.setStatus("UNPAID");		
-		bill.setCreatedBy(userService.getUserId(request));
-		bill.setCreatedOn(dayService.getDayId());
-		bill.setPatient(patient);
-		bill = billRepository.save(bill);
+		PatientBill patientBill = new PatientBill();
+		patientBill.setAmount(test.getLabTestType().getPrice());
+		patientBill.setPaid(0);
+		patientBill.setBalance(test.getLabTestType().getPrice());
+		patientBill.setQty(1);
+		patientBill.setDescription("Lab Test: "+test.getLabTestType().getName());
+		patientBill.setStatus("UNPAID");		
+		patientBill.setCreatedby(userService.getUser(request));
+		patientBill.setCreatedOn(dayService.getDay());
+		patientBill.setCreatedAt(dayService.getTimeStamp());
+		patientBill.setPatient(patient);
+		patientBill = patientBillRepository.save(patientBill);
 		
 		if(patient.getPaymentType().equals("INSURANCE")) {
 			
-			Optional<LabTestTypePlanPrice> labTestTypePricePlan = labTestTypePlanPriceRepository.findByLabTestTypeAndInsurancePlan(ltt.get(), patient.getInsurancePlan());
+			Optional<LabTestTypeInsurancePlan> labTestTypePricePlan = labTestTypeInsurancePlanRepository.findByLabTestTypeAndInsurancePlan(ltt.get(), patient.getInsurancePlan());
 			
 			if(labTestTypePricePlan.isPresent()) {
-				bill.setAmount(labTestTypePricePlan.get().getPrice());
-				bill.setPaid(labTestTypePricePlan.get().getPrice());
-				bill.setBalance(0);
-				bill.setStatus("COVERED");
-				bill = billRepository.save(bill);
+				patientBill.setAmount(labTestTypePricePlan.get().getPrice());
+				patientBill.setPaid(labTestTypePricePlan.get().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("COVERED");
+				patientBill = patientBillRepository.save(patientBill);
 				
-				Optional<Invoice> inv = invoiceRepository.findByPatientAndStatus(patient, "PENDING");
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
 				if(!inv.isPresent()) {
 					/**
-					 * If no pending invoice
+					 * If no pending patientInvoice
 					 */
-					Invoice invoice = new Invoice();
-					invoice.setNo("NA");
-					invoice.setPatient(patient);
-					invoice.setInsurancePlan(patient.getInsurancePlan());
-					invoice.setStatus("PENDING");
-					invoice = invoiceRepository.save(invoice);
-					invoice.setNo(invoice.getId().toString());
-					invoice = invoiceRepository.save(invoice);
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
+					patientInvoice.setStatus("PENDING");
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
 					/**
-					 * Add lab test bill claim to invoice
+					 * Add lab test patientBill claim to patientInvoice
 					 */
-					InvoiceDetail invoiceDetail = new InvoiceDetail();
-					invoiceDetail.setInvoice(invoice);
-					invoiceDetail.setBill(bill);
-					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Lab Test: "+test.getLabTestType().getName());
-					invoiceDetail.setQty(1);
-					invoiceDetailRepository.save(invoiceDetail);
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Lab Test: "+test.getLabTestType().getName());
+					patientInvoiceDetail.setQty(1);
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}else {
 					/**
-					 * If there is a .pending invoice
+					 * If there is a .pending patientInvoice
 					 */
-					InvoiceDetail invoiceDetail = new InvoiceDetail();
-					invoiceDetail.setInvoice(inv.get());
-					invoiceDetail.setBill(bill);
-					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Lab Test: "+test.getLabTestType().getName());
-					invoiceDetail.setQty(1);
-					invoiceDetailRepository.save(invoiceDetail);
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Lab Test: "+test.getLabTestType().getName());
+					patientInvoiceDetail.setQty(1);
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}
 			}
 			
 		}
 		test.setPatient(patient);
-		test.setBill(bill);
+		test.setPatientBill(patientBill);
 		return labTestRepository.save(test);		
 	}
 	
@@ -636,69 +648,70 @@ public class PatientServiceImpl implements PatientService {
 		}
 		radio.setRadiologyType(rt.get());
 		radio.setStatus("PENDING");
-		Bill bill = new Bill();
-		bill.setAmount(radio.getRadiologyType().getPrice());
-		bill.setPaid(0);
-		bill.setBalance(radio.getRadiologyType().getPrice());
-		bill.setQty(1);
-		bill.setDescription("Radiology: "+radio.getRadiologyType().getName());
-		bill.setStatus("UNPAID");		
-		bill.setCreatedBy(userService.getUserId(request));
-		bill.setCreatedOn(dayService.getDayId());
-		bill.setPatient(patient);
-		bill = billRepository.save(bill);
+		PatientBill patientBill = new PatientBill();
+		patientBill.setAmount(radio.getRadiologyType().getPrice());
+		patientBill.setPaid(0);
+		patientBill.setBalance(radio.getRadiologyType().getPrice());
+		patientBill.setQty(1);
+		patientBill.setDescription("Radiology: "+radio.getRadiologyType().getName());
+		patientBill.setStatus("UNPAID");		
+		patientBill.setCreatedby(userService.getUser(request));
+		patientBill.setCreatedOn(dayService.getDay());
+		patientBill.setCreatedAt(dayService.getTimeStamp());
+		patientBill.setPatient(patient);
+		patientBill = patientBillRepository.save(patientBill);
 		
 		if(patient.getPaymentType().equals("INSURANCE")) {
 			
-			Optional<RadiologyTypePlanPrice> radiologyTypePricePlan = radiologyTypePlanPriceRepository.findByRadiologyTypeAndInsurancePlan(rt.get(), patient.getInsurancePlan());
+			Optional<RadiologyTypeInsurancePlan> radiologyTypePricePlan = radiologyTypeInsurancePlanRepository.findByRadiologyTypeAndInsurancePlan(rt.get(), patient.getInsurancePlan());
 			
 			if(radiologyTypePricePlan.isPresent()) {
-				bill.setAmount(radiologyTypePricePlan.get().getPrice());
-				bill.setPaid(radiologyTypePricePlan.get().getPrice());
-				bill.setBalance(0);
-				bill.setStatus("COVERED");
-				bill = billRepository.save(bill);
+				patientBill.setAmount(radiologyTypePricePlan.get().getPrice());
+				patientBill.setPaid(radiologyTypePricePlan.get().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("COVERED");
+				patientBill = patientBillRepository.save(patientBill);
 				
-				Optional<Invoice> inv = invoiceRepository.findByPatientAndStatus(patient, "PENDING");
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
 				if(!inv.isPresent()) {
 					/**
-					 * If no pending invoice
+					 * If no pending patientInvoice
 					 */
-					Invoice invoice = new Invoice();
-					invoice.setNo("NA");
-					invoice.setPatient(patient);
-					invoice.setInsurancePlan(patient.getInsurancePlan());
-					invoice.setStatus("PENDING");
-					invoice = invoiceRepository.save(invoice);
-					invoice.setNo(invoice.getId().toString());
-					invoice = invoiceRepository.save(invoice);
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
+					patientInvoice.setStatus("PENDING");
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
 					/**
-					 * Add lab test bill claim to invoice
+					 * Add lab test patientBill claim to patientInvoice
 					 */
-					InvoiceDetail invoiceDetail = new InvoiceDetail();
-					invoiceDetail.setInvoice(invoice);
-					invoiceDetail.setBill(bill);
-					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Radiology: "+radio.getRadiologyType().getName());
-					invoiceDetail.setQty(1);
-					invoiceDetailRepository.save(invoiceDetail);
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Radiology: "+radio.getRadiologyType().getName());
+					patientInvoiceDetail.setQty(1);
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}else {
 					/**
-					 * If there is a .pending invoice
+					 * If there is a .pending patientInvoice
 					 */
-					InvoiceDetail invoiceDetail = new InvoiceDetail();
-					invoiceDetail.setInvoice(inv.get());
-					invoiceDetail.setBill(bill);
-					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Radiology: "+radio.getRadiologyType().getName());
-					invoiceDetail.setQty(1);
-					invoiceDetailRepository.save(invoiceDetail);
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Radiology: "+radio.getRadiologyType().getName());
+					patientInvoiceDetail.setQty(1);
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}
 			}
 			
 		}
 		radio.setPatient(patient);
-		radio.setBill(bill);
+		radio.setPatientBill(patientBill);
 		return radiologyRepository.save(radio);		
 	}
 	
@@ -727,69 +740,70 @@ public class PatientServiceImpl implements PatientService {
 		}
 		procedure.setProcedureType(pr.get());
 		procedure.setStatus("PENDING");
-		Bill bill = new Bill();
-		bill.setAmount(procedure.getProcedureType().getPrice());
-		bill.setPaid(0);
-		bill.setBalance(procedure.getProcedureType().getPrice());
-		bill.setQty(1);
-		bill.setDescription("Procedure: "+procedure.getProcedureType().getName());
-		bill.setStatus("UNPAID");		
-		bill.setCreatedBy(userService.getUserId(request));
-		bill.setCreatedOn(dayService.getDayId());
-		bill.setPatient(patient);
-		bill = billRepository.save(bill);
+		PatientBill patientBill = new PatientBill();
+		patientBill.setAmount(procedure.getProcedureType().getPrice());
+		patientBill.setPaid(0);
+		patientBill.setBalance(procedure.getProcedureType().getPrice());
+		patientBill.setQty(1);
+		patientBill.setDescription("Procedure: "+procedure.getProcedureType().getName());
+		patientBill.setStatus("UNPAID");		
+		patientBill.setCreatedby(userService.getUser(request));
+		patientBill.setCreatedOn(dayService.getDay());
+		patientBill.setCreatedAt(dayService.getTimeStamp());
+		patientBill.setPatient(patient);
+		patientBill = patientBillRepository.save(patientBill);
 		
 		if(patient.getPaymentType().equals("INSURANCE")) {
 			
-			Optional<ProcedureTypePlanPrice> procedureTypePricePlan = procedureTypePlanPriceRepository.findByProcedureTypeAndInsurancePlan(pr.get(), patient.getInsurancePlan());
+			Optional<ProcedureTypeInsurancePlan> procedureTypePricePlan = procedureTypeInsurancePlanRepository.findByProcedureTypeAndInsurancePlan(pr.get(), patient.getInsurancePlan());
 			
 			if(procedureTypePricePlan.isPresent()) {
-				bill.setAmount(procedureTypePricePlan.get().getPrice());
-				bill.setPaid(procedureTypePricePlan.get().getPrice());
-				bill.setBalance(0);
-				bill.setStatus("COVERED");
-				bill = billRepository.save(bill);
+				patientBill.setAmount(procedureTypePricePlan.get().getPrice());
+				patientBill.setPaid(procedureTypePricePlan.get().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("COVERED");
+				patientBill = patientBillRepository.save(patientBill);
 				
-				Optional<Invoice> inv = invoiceRepository.findByPatientAndStatus(patient, "PENDING");
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
 				if(!inv.isPresent()) {
 					/**
-					 * If no pending invoice
+					 * If no pending patientInvoice
 					 */
-					Invoice invoice = new Invoice();
-					invoice.setNo("NA");
-					invoice.setPatient(patient);
-					invoice.setInsurancePlan(patient.getInsurancePlan());
-					invoice.setStatus("PENDING");
-					invoice = invoiceRepository.save(invoice);
-					invoice.setNo(invoice.getId().toString());
-					invoice = invoiceRepository.save(invoice);
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
+					patientInvoice.setStatus("PENDING");
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
 					/**
-					 * Add lab test bill claim to invoice
+					 * Add lab test patientBill claim to patientInvoice
 					 */
-					InvoiceDetail invoiceDetail = new InvoiceDetail();
-					invoiceDetail.setInvoice(invoice);
-					invoiceDetail.setBill(bill);
-					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Procedure: "+procedure.getProcedureType().getName());
-					invoiceDetail.setQty(1);
-					invoiceDetailRepository.save(invoiceDetail);
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Procedure: "+procedure.getProcedureType().getName());
+					patientInvoiceDetail.setQty(1);
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}else {
 					/**
-					 * If there is a .pending invoice
+					 * If there is a .pending patientInvoice
 					 */
-					InvoiceDetail invoiceDetail = new InvoiceDetail();
-					invoiceDetail.setInvoice(inv.get());
-					invoiceDetail.setBill(bill);
-					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Procedure: "+procedure.getProcedureType().getName());
-					invoiceDetail.setQty(1);
-					invoiceDetailRepository.save(invoiceDetail);
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Procedure: "+procedure.getProcedureType().getName());
+					patientInvoiceDetail.setQty(1);
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}
 			}
 			
 		}
 		procedure.setPatient(patient);
-		procedure.setBill(bill);
+		procedure.setPatientBill(patientBill);
 		return procedureRepository.save(procedure);		
 	}
 	
@@ -819,69 +833,70 @@ public class PatientServiceImpl implements PatientService {
 		}
 		prescription.setMedicine(md.get());
 		prescription.setStatus("PENDING");
-		Bill bill = new Bill();
-		bill.setAmount(prescription.getMedicine().getPrice());
-		bill.setPaid(0);
-		bill.setBalance(prescription.getMedicine().getPrice());
-		bill.setQty(1);
-		bill.setDescription("Medicine: "+prescription.getMedicine().getName());
-		bill.setStatus("UNPAID");		
-		bill.setCreatedBy(userService.getUserId(request));
-		bill.setCreatedOn(dayService.getDayId());
-		bill.setPatient(patient);
-		bill = billRepository.save(bill);
+		PatientBill patientBill = new PatientBill();
+		patientBill.setAmount(prescription.getMedicine().getPrice());
+		patientBill.setPaid(0);
+		patientBill.setBalance(prescription.getMedicine().getPrice());
+		patientBill.setQty(1);
+		patientBill.setDescription("Medicine: "+prescription.getMedicine().getName());
+		patientBill.setStatus("UNPAID");		
+		patientBill.setCreatedby(userService.getUser(request));
+		patientBill.setCreatedOn(dayService.getDay());
+		patientBill.setCreatedAt(dayService.getTimeStamp());
+		patientBill.setPatient(patient);
+		patientBill = patientBillRepository.save(patientBill);
 		
 		if(patient.getPaymentType().equals("INSURANCE")) {
 			
-			Optional<MedicinePlanPrice> medicinePricePlan = medicinePlanPriceRepository.findByMedicineAndInsurancePlan(md.get(), patient.getInsurancePlan());
+			Optional<MedicineInsurancePlan> medicinePricePlan = medicineInsurancePlanRepository.findByMedicineAndInsurancePlan(md.get(), patient.getInsurancePlan());
 			
 			if(medicinePricePlan.isPresent()) {
-				bill.setAmount(medicinePricePlan.get().getPrice());
-				bill.setPaid(medicinePricePlan.get().getPrice());
-				bill.setBalance(0);
-				bill.setStatus("COVERED");
-				bill = billRepository.save(bill);
+				patientBill.setAmount(medicinePricePlan.get().getPrice());
+				patientBill.setPaid(medicinePricePlan.get().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("COVERED");
+				patientBill = patientBillRepository.save(patientBill);
 				
-				Optional<Invoice> inv = invoiceRepository.findByPatientAndStatus(patient, "PENDING");
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
 				if(!inv.isPresent()) {
 					/**
-					 * If no pending invoice
+					 * If no pending patientInvoice
 					 */
-					Invoice invoice = new Invoice();
-					invoice.setNo("NA");
-					invoice.setPatient(patient);
-					invoice.setInsurancePlan(patient.getInsurancePlan());
-					invoice.setStatus("PENDING");
-					invoice = invoiceRepository.save(invoice);
-					invoice.setNo(invoice.getId().toString());
-					invoice = invoiceRepository.save(invoice);
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
+					patientInvoice.setStatus("PENDING");
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
 					/**
-					 * Add lab test bill claim to invoice
+					 * Add lab test patientBill claim to patientInvoice
 					 */
-					InvoiceDetail invoiceDetail = new InvoiceDetail();
-					invoiceDetail.setInvoice(invoice);
-					invoiceDetail.setBill(bill);
-					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Medicine: "+prescription.getMedicine().getName());
-					invoiceDetail.setQty(1);
-					invoiceDetailRepository.save(invoiceDetail);
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Medicine: "+prescription.getMedicine().getName());
+					patientInvoiceDetail.setQty(1);
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}else {
 					/**
-					 * If there is a .pending invoice
+					 * If there is a .pending patientInvoice
 					 */
-					InvoiceDetail invoiceDetail = new InvoiceDetail();
-					invoiceDetail.setInvoice(inv.get());
-					invoiceDetail.setBill(bill);
-					invoiceDetail.setPrice(bill.getAmount());
-					invoiceDetail.setDescription("Medicine: "+prescription.getMedicine().getName());
-					invoiceDetail.setQty(1);
-					invoiceDetailRepository.save(invoiceDetail);
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Medicine: "+prescription.getMedicine().getName());
+					patientInvoiceDetail.setQty(1);
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}
 			}
 			
 		}
 		prescription.setPatient(patient);
-		prescription.setBill(bill);
+		prescription.setPatientBill(patientBill);
 		return prescriptionRepository.save(prescription);		
 	}
 }

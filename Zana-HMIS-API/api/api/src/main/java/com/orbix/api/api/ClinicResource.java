@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,9 @@ import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.service.ClinicService;
+import com.orbix.api.service.DayService;
 import com.orbix.api.service.PatientService;
+import com.orbix.api.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,40 +46,45 @@ public class ClinicResource {
 	private final ClinicRepository clinicRepository;
 	private final ClinicService clinicService;
 	
+
+	private final UserService userService;
+	private final DayService dayService;
+	
 	@GetMapping("/clinics")
-	public ResponseEntity<List<Clinic>>getClinics(){
-		return ResponseEntity.ok().body(clinicService.getClinics());
+	public ResponseEntity<List<Clinic>>getClinics(HttpServletRequest request){
+		return ResponseEntity.ok().body(clinicService.getClinics(request));
 	}
 	
 	@GetMapping("/clinics/get")
 	public ResponseEntity<Clinic> getClinic(
-			@RequestParam(name = "id") Long id){
-		return ResponseEntity.ok().body(clinicService.getClinicById(id));
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(clinicService.getClinicById(id, request));
 	}
 	
 	@GetMapping("/clinics/get_names")
-	public ResponseEntity<List<String>> getClinicNames(){
+	public ResponseEntity<List<String>> getClinicNames(HttpServletRequest request){
 		List<String> names = new ArrayList<String>();
-		names = clinicService.getNames();
+		names = clinicService.getNames(request);
 		return ResponseEntity.ok().body(names);
 	}
 	
 	@PostMapping("/clinics/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<Clinic>save(
-			@RequestBody Clinic clinic){
+			@RequestBody Clinic clinic,
+			HttpServletRequest request){
 		clinic.setName(Sanitizer.sanitizeString(clinic.getName()));
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/clinics/save").toUriString());
-		return ResponseEntity.created(uri).body(clinicService.save(clinic));
+		return ResponseEntity.created(uri).body(clinicService.save(clinic, request));
 	}
 	
 	@GetMapping("/clinics/get_consultation_fee")
 	public ResponseEntity<Double> getConsultationFee(
-			@RequestParam(name = "clinic_name") String clinicName){
+			@RequestParam(name = "clinic_name") String clinicName,
+			HttpServletRequest request){
 		Clinic d = clinicRepository.findByName(clinicName).get();
-		
-		
 		
 		return ResponseEntity.ok().body(d.getConsultationFee());
 	}

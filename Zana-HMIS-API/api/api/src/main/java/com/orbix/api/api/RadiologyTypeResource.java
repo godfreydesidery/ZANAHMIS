@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,9 @@ import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.repositories.RadiologyTypeRepository;
 import com.orbix.api.repositories.RadiologyTypeRepository;
+import com.orbix.api.service.DayService;
 import com.orbix.api.service.RadiologyTypeService;
+import com.orbix.api.service.UserService;
 import com.orbix.api.service.RadiologyTypeService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,20 +43,26 @@ import lombok.RequiredArgsConstructor;
 public class RadiologyTypeResource {
 	private final RadiologyTypeRepository radiologyTypeRepository;
 	private final RadiologyTypeService radiologyTypeService;
+	private final UserService userService;
+	private final DayService dayService;
+	
 	
 	@GetMapping("/radiology_types")
-	public ResponseEntity<List<RadiologyType>>getRadiologyTypes(){
-		return ResponseEntity.ok().body(radiologyTypeService.getRadiologyTypes());
+	public ResponseEntity<List<RadiologyType>>getRadiologyTypes(
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(radiologyTypeService.getRadiologyTypes(request));
 	}
 	
 	@GetMapping("/radiology_types/get")
 	public ResponseEntity<RadiologyType> getRadiologyType(
-			@RequestParam(name = "id") Long id){
-		return ResponseEntity.ok().body(radiologyTypeService.getRadiologyTypeById(id));
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(radiologyTypeService.getRadiologyTypeById(id, request));
 	}
 	
 	@GetMapping("/radiology_types/get_names")
-	public ResponseEntity<List<String>> getRadiologyTypeNames(){
+	public ResponseEntity<List<String>> getRadiologyTypeNames(
+			HttpServletRequest request){
 		List<String> names = new ArrayList<String>();
 		names = radiologyTypeRepository.getNames();
 		return ResponseEntity.ok().body(names);
@@ -62,9 +71,10 @@ public class RadiologyTypeResource {
 	@PostMapping("/radiology_types/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<RadiologyType>save(
-			@RequestBody RadiologyType radiologyType){
+			@RequestBody RadiologyType radiologyType,
+			HttpServletRequest request){
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/radiology_types/save").toUriString());
-		return ResponseEntity.created(uri).body(radiologyTypeService.save(radiologyType));
+		return ResponseEntity.created(uri).body(radiologyTypeService.save(radiologyType, request));
 	}
 }

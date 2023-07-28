@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.orbix.api.service.DayService;
+import com.orbix.api.service.UserService;
+
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -36,25 +39,9 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Transactional
 public class UnitResource {
-	
-	
-	
-	
-	
-	
-	
-	
-	
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	private final UserService userService;
+	private final DayService dayService;
 	
 	
 	

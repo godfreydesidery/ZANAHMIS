@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -42,36 +43,25 @@ public class NonConsultation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+	@NotBlank
 	private String paymentType = "";//CASH,DEBIT CARD, CREDIT CARD, MOBILE, INSURANCE
 	private String membershipNo = "";
-	
-	private String status = "";
-	
-	private Long createdBy;
-	private Long createdOn;
-	private LocalDateTime createdAt = LocalDateTime.now();
+	@NotBlank
+	private String status;
 	
 	/**
 	 * A patient can have one or more non consultations
 	 */
-	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.LAZY,  optional = true)
-    @JoinColumn(name = "patient_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "patient_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
-	/**
-	 * One can only have one bill, i.e. A single consultation can only be
-	 * billed once
-	 */
-	@OneToOne(targetEntity = Bill.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "bill_id", nullable = true , updatable = true)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
-    private Bill bill;
+	
 	/**
 	 * One patient visit can have one or more consultation i.e. 
 	 */
-	@ManyToOne(targetEntity = Visit.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "visit_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = Visit.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "visit_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Visit visit;
 	
@@ -99,9 +89,20 @@ public class NonConsultation {
 	@Fetch(value = FetchMode.SUBSELECT)
     private List<Procedure> procedures;
 	
-	@OneToMany(targetEntity = Prescription.class, mappedBy = "consultation", fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(targetEntity = Prescription.class, mappedBy = "nonConsultation", fetch = FetchType.EAGER, orphanRemoval = true)
     @Valid
-    @JsonIgnoreProperties("consultation")
+    @JsonIgnoreProperties("nonConsultation")
 	@Fetch(value = FetchMode.SUBSELECT)
     private List<Prescription> prescriptions;
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User createdby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
 }

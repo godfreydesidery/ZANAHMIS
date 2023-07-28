@@ -4,6 +4,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IClinician } from 'src/app/domain/clinician';
+import { IConsultation } from 'src/app/domain/consultation';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
+import { IPatient } from 'src/app/domain/patient';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -529,7 +533,7 @@ export class PatientRegisterComponent implements OnInit {
     .then(
       data => {
         data?.forEach(element => {
-          this.clinicianNames.push(element.name)
+          this.clinicianNames.push(element.nickname)
         })
       }
     )
@@ -651,59 +655,6 @@ export class PatientRegisterComponent implements OnInit {
 
 }
 
-export interface IPatient {
-  id : any
-  no : string
-  firstName : string
-  middleName : string
-  lastName : string
-  dateOfBirth :Date
-  gender : string
-  type : string
-  paymentType : string
-  membershipNo : string
-  phoneNo : string		
-	address : string
-	email : string
-	nationality : string
-	nationalId : string	
-	passportNo : string
-  kinFullName : string
-	kinRelationship : string
-	kinPhoneNo : string
-  patientRecordMode : string
-  paymentMode : string
-  insurancePlan : IInsurancePlan 
-
-}
-
-export interface IInsurancePlan{
-  code : string
-  name : string
-}
-
-interface IConsultation{
-  id : any
-  status : string
-  clinic : IClinic
-  clinician : IClinician
-}
-
-
-export  interface IClinician{
-  id : any
-  no : string
-  name : string
-  type : string
-  active : boolean
-  clinics : IClinic[]
-}
-
-export interface IClinic{
-  id       : any
-  name     : string
-  assigned : boolean
-}
 export interface IPaymentType{
   name : string
   insurancePlanName : string

@@ -14,9 +14,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,16 +38,27 @@ public class Visit {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String visitSequence = ""; //FIRST or SUBSEQUENT visit
-	private String visitType = ""; //INPATIENT or OUTPATIENT
-	
-	private Long visitedOn;
-	private LocalDateTime visitedAt = LocalDateTime.now();
-	private String status = "";
-	
+	@NotBlank
+	private String sequence = ""; //FIRST or SUBSEQUENT visit
+	@NotBlank
+	private String type = ""; //INPATIENT or OUTPATIENT
+	@NotBlank
+	private String status;
+		
 	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "patient_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User createdby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
 	
 }

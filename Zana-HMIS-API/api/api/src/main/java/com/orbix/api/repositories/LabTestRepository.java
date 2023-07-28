@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
@@ -26,11 +27,11 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
 	List<LabTest> findAllByConsultationAndStatusIn(Consultation consultation, List<String> statuses);
 
 	/**
-	 * @param consultation
+	 * @param nonConsultation
 	 * @param statuses
 	 * @return
 	 */
-	List<LabTest> findAllByNonConsultationAndStatusIn(Consultation consultation, List<String> statuses);
+	List<LabTest> findAllByNonConsultationAndStatusIn(NonConsultation nonConsultation, List<String> statuses);
 
 	/**
 	 * @param statusToView
@@ -50,6 +51,13 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
 	 * @return
 	 */
 	List<LabTest> findAllByConsultationIn(List<Consultation> cs);
+
+	/**
+	 * @param admission
+	 * @param statuses
+	 * @return
+	 */
+	List<LabTest> findAllByAdmissionAndStatusIn(Admission admission, List<String> statuses);
 
 	
 	

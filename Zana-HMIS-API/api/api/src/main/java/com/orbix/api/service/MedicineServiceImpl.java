@@ -5,10 +5,12 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
@@ -34,29 +36,40 @@ public class MedicineServiceImpl implements MedicineService{
 	private final MedicineRepository medicineRepository;
 	
 	@Override
-	public Medicine save(Medicine medicine) {
+	public Medicine save(Medicine medicine, HttpServletRequest request) {
+		
+		medicine.setName(Sanitizer.sanitizeString(medicine.getName()));
+		
+		if(medicine.getId() == null) {
+			medicine.setCreatedby(userService.getUser(request));
+			medicine.setCreatedOn(dayService.getDay());
+			medicine.setCreatedAt(dayService.getTimeStamp());
+			
+			medicine.setActive(true);
+		}
+		
 		log.info("Saving new medicine to the database");
 		return medicineRepository.save(medicine);
 	}
 
 	@Override
-	public List<Medicine> getMedicines() {
+	public List<Medicine> getMedicines(HttpServletRequest request) {
 		log.info("Fetching all medicines");
 		return medicineRepository.findAll();
 	}
 
 	@Override
-	public Medicine getMedicineByName(String name) {
+	public Medicine getMedicineByName(String name, HttpServletRequest request) {
 		return medicineRepository.findByName(name).get();
 	}
 
 	@Override
-	public Medicine getMedicineById(Long id) {
+	public Medicine getMedicineById(Long id, HttpServletRequest request) {
 		return medicineRepository.findById(id).get();
 	}
 
 	@Override
-	public boolean deleteMedicine(Medicine medicine) {
+	public boolean deleteMedicine(Medicine medicine, HttpServletRequest request) {
 		/**
 		 * Delete a medicine if a medicine is deletable
 		 */

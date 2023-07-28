@@ -6,6 +6,7 @@ package com.orbix.api.api;
 import java.net.URI;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
@@ -18,21 +19,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.orbix.api.domain.Clinic;
-import com.orbix.api.domain.LabTestTypePlanPrice;
+import com.orbix.api.domain.LabTestTypeInsurancePlan;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.domain.InsurancePlan;
-import com.orbix.api.domain.InsuranceProvider;
 import com.orbix.api.domain.LabTestType;
-import com.orbix.api.domain.LabTestTypePlanPrice;
-import com.orbix.api.repositories.ClinicRepository;
-import com.orbix.api.repositories.LabTestTypePlanPriceRepository;
+import com.orbix.api.repositories.LabTestTypeInsurancePlanRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.InsuranceProviderRepository;
-import com.orbix.api.repositories.LabTestTypePlanPriceRepository;
+import com.orbix.api.service.DayService;
 import com.orbix.api.service.InsuranceProviderService;
-import com.orbix.api.service.LabTestTypePlanService;
+import com.orbix.api.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,26 +45,31 @@ import lombok.RequiredArgsConstructor;
 public class LabTestTypePlanResource {
 	private final InsuranceProviderService insuranceProviderService;
 	private final InsuranceProviderRepository insuranceProviderRepository;
-	private final LabTestTypePlanPriceRepository labTestTypePlanPriceRepository;
+	private final LabTestTypeInsurancePlanRepository labTestTypeInsurancePlanRepository;
 	private final InsurancePlanRepository insurancePlanRepository;
 	private final LabTestTypeRepository labTestTypeRepository;
+	private final UserService userService;
+	private final DayService dayService;
 	
-	@GetMapping("/lab_test_type_plan_prices")
-	public ResponseEntity<List<LabTestTypePlanPrice>>getLabTestTypePlanPrices(){
-		return ResponseEntity.ok().body(labTestTypePlanPriceRepository.findAll());
+	
+	@GetMapping("/lab_test_type_insurance_plans")
+	public ResponseEntity<List<LabTestTypeInsurancePlan>>getLabTestTypeInsurancePlans(HttpServletRequest request){
+		return ResponseEntity.ok().body(labTestTypeInsurancePlanRepository.findAll());
 	}
 	
-	@GetMapping("/lab_test_type_plan_prices/get")
-	public ResponseEntity<LabTestTypePlanPrice> getLabTestTypePlanPrice(
-			@RequestParam(name = "id") Long id){
-		return ResponseEntity.ok().body(labTestTypePlanPriceRepository.findById(id).get());
+	@GetMapping("/lab_test_type_insurance_plans/get")
+	public ResponseEntity<LabTestTypeInsurancePlan> getLabTestTypeInsurancePlan(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(labTestTypeInsurancePlanRepository.findById(id).get());
 	}
 	
-	@PostMapping("/lab_test_type_plan_prices/save")
+	@PostMapping("/lab_test_type_insurance_plans/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
-	public ResponseEntity<LabTestTypePlanPrice>save(
-			@RequestBody LabTestTypePlanPrice labTestTypePlan){
-		LabTestTypePlanPrice conPlan = new LabTestTypePlanPrice();
+	public ResponseEntity<LabTestTypeInsurancePlan>save(
+			@RequestBody LabTestTypeInsurancePlan labTestTypePlan,
+			HttpServletRequest request){
+		LabTestTypeInsurancePlan conPlan = new LabTestTypeInsurancePlan();
 		conPlan.setId(labTestTypePlan.getId());
 		
 		InsurancePlan plan = insurancePlanRepository.findByName(labTestTypePlan.getInsurancePlan().getName()).get();
@@ -77,25 +79,36 @@ public class LabTestTypePlanResource {
 		conPlan.setPrice(labTestTypePlan.getPrice());
 		
 		if(labTestTypePlan.getId() == null) {
-			if(labTestTypePlanPriceRepository.findByInsurancePlanAndLabTestType(plan, labTestType).isPresent()) {
+			if(labTestTypeInsurancePlanRepository.findByInsurancePlanAndLabTestType(plan, labTestType).isPresent()) {
 				throw new InvalidOperationException("Could not create plan, a similar plan already exist. Please consider ediiting the existing plan");
 			}
 		}
+		
+		
+		
+		if(conPlan.getId() == null) {
+			conPlan.setCreatedby(userService.getUser(request));
+			conPlan.setCreatedOn(dayService.getDay());
+			conPlan.setCreatedAt(dayService.getTimeStamp());
+			
+			conPlan.setActive(true);
+		}
 				
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/lab_test_type_plan_prices/save").toUriString());
-		return ResponseEntity.created(uri).body(labTestTypePlanPriceRepository.saveAndFlush(conPlan));
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/lab_test_type_insurance_plans/save").toUriString());
+		return ResponseEntity.created(uri).body(labTestTypeInsurancePlanRepository.saveAndFlush(conPlan));
 	}
 	
-	@PostMapping("/lab_test_type_plan_prices/delete")
+	@PostMapping("/lab_test_type_insurance_plans/delete")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<Boolean>delete(
-			@RequestParam Long id){
+			@RequestParam Long id,
+			HttpServletRequest request){
 		
 		
-		LabTestTypePlanPrice plan = labTestTypePlanPriceRepository.findById(id).get();
+		LabTestTypeInsurancePlan plan = labTestTypeInsurancePlanRepository.findById(id).get();
 		
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/labTestType_plan_prices/delete").toUriString());
-		labTestTypePlanPriceRepository.delete(plan);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/labTest_type_insurance_plans/delete").toUriString());
+		labTestTypeInsurancePlanRepository.delete(plan);
 		return ResponseEntity.created(uri).body(true);
 		
 	}

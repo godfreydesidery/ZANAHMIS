@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IPatient } from 'src/app/domain/patient';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -39,16 +40,8 @@ export class PatientListComponent implements OnInit {
     .toPromise()
     .then(data => {
       data?.forEach(element => {
-        var patient = {
-          id                  : element!.id,
-          no                  : element!.no,
-          firstName         : element!.firstName,
-          middleName         : element!.middleName,
-          lastName         : element!.lastName,
-          dateOfBirth      : element!.dateOfBirth,
-          gender          : element!.gender
-        }
-        this.patients.push(patient)
+        console.log(element)
+        this.patients.push(element)
       })     
     })
     .catch(error => {
@@ -57,33 +50,4 @@ export class PatientListComponent implements OnInit {
     })
 
   }
-
-}
-
-export interface IPatient {
-  id : any
-  no : string
-  firstName : string
-  middleName : string
-  lastName : string
-  dateOfBirth :Date
-  gender : string
-  /*paymentType : string
-  memberShipNo : string
-  phoneNo : string		
-	address : string
-	email : string
-	nationality : string
-	nationalId : string	
-	passportNo : string
-  kinFullName : string
-	kinRelationship : string
-	kinPhoneNo : string
-  patientRecordMode : string
-  paymentMode : string
-  insurancePlan : string 
-
-  registrationFee : number
-  registrationFeeStatus : string
-  cardValidationStatus : string*/
 }

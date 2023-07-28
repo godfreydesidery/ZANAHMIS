@@ -7,7 +7,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
+import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.Procedure;
 
@@ -25,10 +27,17 @@ public interface ProcedureRepository extends JpaRepository<Procedure, Long> {
 	List<Procedure> findAllByConsultationAndStatusIn(Consultation consultation, List<String> statuses);
 
 	/**
-	 * @param consultation
+	 * @param nonConsultation
 	 * @param statuses
 	 * @return
 	 */
-	List<Procedure> findAllByNonConsultationAndStatusIn(Consultation consultation, List<String> statuses);
+	List<Procedure> findAllByNonConsultationAndStatusIn(NonConsultation nonConsultation, List<String> statuses);
+
+	/**
+	 * @param admission
+	 * @param statuses
+	 * @return
+	 */
+	List<Procedure> findAllByAdmissionAndStatusIn(Admission admission, List<String> statuses);
 
 }

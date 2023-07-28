@@ -5,10 +5,12 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.ProcedureType;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
@@ -34,29 +36,40 @@ public class ProcedureTypeServiceImpl implements ProcedureTypeService{
 	private final ProcedureTypeRepository procedureTypeRepository;
 	
 	@Override
-	public ProcedureType save(ProcedureType procedureType) {
+	public ProcedureType save(ProcedureType procedureType, HttpServletRequest request) {
+		
+		procedureType.setName(Sanitizer.sanitizeString(procedureType.getName()));
+		
+		if(procedureType.getId() == null) {
+			procedureType.setCreatedby(userService.getUser(request));
+			procedureType.setCreatedOn(dayService.getDay());
+			procedureType.setCreatedAt(dayService.getTimeStamp());
+			
+			procedureType.setActive(true);
+		}
+		
 		log.info("Saving new procedureType to the database");
 		return procedureTypeRepository.save(procedureType);
 	}
 
 	@Override
-	public List<ProcedureType> getProcedureTypes() {
+	public List<ProcedureType> getProcedureTypes(HttpServletRequest request) {
 		log.info("Fetching all procedureTypes");
 		return procedureTypeRepository.findAll();
 	}
 
 	@Override
-	public ProcedureType getProcedureTypeByName(String name) {
+	public ProcedureType getProcedureTypeByName(String name, HttpServletRequest request) {
 		return procedureTypeRepository.findByName(name).get();
 	}
 
 	@Override
-	public ProcedureType getProcedureTypeById(Long id) {
+	public ProcedureType getProcedureTypeById(Long id, HttpServletRequest request) {
 		return procedureTypeRepository.findById(id).get();
 	}
 
 	@Override
-	public boolean deleteProcedureType(ProcedureType procedureType) {
+	public boolean deleteProcedureType(ProcedureType procedureType, HttpServletRequest request) {
 		/**
 		 * Delete a procedureType if a procedureType is deletable
 		 */

@@ -5,6 +5,8 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.orbix.api.domain.LabTestTypeRange;
 
 /**
@@ -12,9 +14,9 @@ import com.orbix.api.domain.LabTestTypeRange;
  *
  */
 public interface LabTestTypeRangeService {
-	LabTestTypeRange save(LabTestTypeRange labTestTypeRange);	
-	List<LabTestTypeRange>getLabTestTypeRanges(); // return all the labTestTypeRanges
-	LabTestTypeRange getLabTestTypeRangeByName(String name);
-	LabTestTypeRange getLabTestTypeRangeById(Long id);
-	boolean deleteLabTestTypeRange(LabTestTypeRange labTestTypeRange);
+	LabTestTypeRange save(LabTestTypeRange labTestTypeRange, HttpServletRequest request);	
+	List<LabTestTypeRange>getLabTestTypeRanges(HttpServletRequest request); // return all the labTestTypeRanges
+	LabTestTypeRange getLabTestTypeRangeByName(String name, HttpServletRequest request);
+	LabTestTypeRange getLabTestTypeRangeById(Long id, HttpServletRequest request);
+	boolean deleteLabTestTypeRange(LabTestTypeRange labTestTypeRange, HttpServletRequest request);
 }

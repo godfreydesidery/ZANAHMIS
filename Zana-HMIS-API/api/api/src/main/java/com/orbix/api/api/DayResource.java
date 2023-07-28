@@ -5,6 +5,7 @@ package com.orbix.api.api;
 
 import java.time.LocalDate;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
@@ -35,10 +36,13 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 public class DayResource {
 	
+
+	private final UserService userService;
 	private final DayService dayService;
 	
+	
 	@GetMapping("/days/get_bussiness_date")
-	public DayData getBussinessDate(){
+	public DayData getBussinessDate(HttpServletRequest request){
 		DayData dayData = new DayData();
 		dayData.setBussinessDate(dayService.getBussinessDate());
 		return dayData;
@@ -46,7 +50,7 @@ public class DayResource {
 	
 	@GetMapping("/days/end_day")
 	@PreAuthorize("hasAnyAuthority('DAY-CREATE','DAY-UPDATE')")
-	public boolean endDay(){		
+	public boolean endDay(HttpServletRequest request){		
 		return dayService.endDay();
 	}
 }

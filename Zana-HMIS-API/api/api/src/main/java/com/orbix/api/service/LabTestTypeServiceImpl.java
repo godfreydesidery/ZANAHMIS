@@ -3,13 +3,17 @@
  */
 package com.orbix.api.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.LabTestType;
+import com.orbix.api.domain.LabTestTypeRange;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.repositories.DayRepository;
@@ -34,29 +38,51 @@ public class LabTestTypeServiceImpl implements LabTestTypeService{
 	private final LabTestTypeRepository labTestTypeRepository;
 	
 	@Override
-	public LabTestType save(LabTestType labTestType) {
+	public LabTestType save(LabTestType labTestType, HttpServletRequest request) {
+		LabTestType testType = new LabTestType();
+		
+		if(labTestType.getId() != null) {
+			testType = labTestTypeRepository.findById(labTestType.getId()).get();
+			testType.setCode(labTestType.getCode());
+			testType.setName(labTestType.getName());
+			testType.setDescription(labTestType.getDescription());
+			testType.setPrice(labTestType.getPrice());
+			testType.setUom(labTestType.getUom());
+		}else {
+			testType = labTestType;
+			testType.setCreatedby(userService.getUser(request));
+			testType.setCreatedOn(dayService.getDay());
+			testType.setCreatedAt(dayService.getTimeStamp());
+			
+			testType.setActive(true);
+		}
+		
+		testType.setName(Sanitizer.sanitizeString(labTestType.getName()));
+		
+		
+		
 		log.info("Saving new labTestType to the database");
-		return labTestTypeRepository.save(labTestType);
+		return labTestTypeRepository.save(testType);
 	}
 
 	@Override
-	public List<LabTestType> getLabTestTypes() {
+	public List<LabTestType> getLabTestTypes(HttpServletRequest request) {
 		log.info("Fetching all labTestTypes");
 		return labTestTypeRepository.findAll();
 	}
 
 	@Override
-	public LabTestType getLabTestTypeByName(String name) {
+	public LabTestType getLabTestTypeByName(String name, HttpServletRequest request) {
 		return labTestTypeRepository.findByName(name).get();
 	}
 
 	@Override
-	public LabTestType getLabTestTypeById(Long id) {
+	public LabTestType getLabTestTypeById(Long id, HttpServletRequest request) {
 		return labTestTypeRepository.findById(id).get();
 	}
 
 	@Override
-	public boolean deleteLabTestType(LabTestType labTestType) {
+	public boolean deleteLabTestType(LabTestType labTestType, HttpServletRequest request) {
 		/**
 		 * Delete a labTestType if a labTestType is deletable
 		 */

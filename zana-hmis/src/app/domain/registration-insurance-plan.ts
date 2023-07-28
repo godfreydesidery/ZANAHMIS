@@ -4,9 +4,9 @@ import { IUser } from "./user"
 
 export interface IRegistrationInsurancePlan {
     id      : any
-    price   : number
+    registrationFee : number
 
-    insurancePlan : IInsurancePlan
+    insurancePlan   : IInsurancePlan
     
     createdBy       : IUser
     createdOn       : IDay

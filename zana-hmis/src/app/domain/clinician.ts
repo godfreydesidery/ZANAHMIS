@@ -8,6 +8,7 @@ export interface IClinician {
     firstName   : string
     middleName  : string
     lastName    : string
+    nickname    : string
     active      : boolean
 
     user : IUser

@@ -20,6 +20,7 @@
                         <table class="table table-bordered table-small">
                             <thead>
                                 <tr>
+                                    <td>ID</td>
                                     <td>Provider</td>
                                     <td>Plan</td>
                                     <td>Lab Test Type</td>
@@ -28,13 +29,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let labTestTypePlan of labTestTypePlans">
-                                    <td>{{labTestTypePlan.insurancePlan.insuranceProvider.name}}</td>
-                                    <td>{{labTestTypePlan.insurancePlan.name}}</td>
-                                    <td>{{labTestTypePlan.labTestType.name}}</td>
-                                    <td style="text-align: right;">{{labTestTypePlan.price | currency:'':''}}</td>
-                                    <td><button class="" (click)="getLabTestTypePlan(labTestTypePlan.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</button>
-                                        <button class="" (click)="deleteLabTestTypePlan(labTestTypePlan.id)">Delete</button>
+                                <tr *ngFor="let labTestTypeInsurancePlan of labTestTypeInsurancePlans">
+                                    <td>{{labTestTypeInsurancePlan.id}}</td>
+                                    <td>{{labTestTypeInsurancePlan.insurancePlan.insuranceProvider.name}}</td>
+                                    <td>{{labTestTypeInsurancePlan.insurancePlan.name}}</td>
+                                    <td>{{labTestTypeInsurancePlan.labTestType.name}}</td>
+                                    <td style="text-align: right;">{{labTestTypeInsurancePlan.price | currency:'':''}}</td>
+                                    <td><a (click)="getLabTestTypeInsurancePlan(labTestTypeInsurancePlan.id)" data-toggle="modal" data-target="#add-edit-modal"><i class="glyphicon glyphicon-pencil"></i>Edit</a>
+                                        <a (click)="deleteLabTestTypeInsurancePlan(labTestTypeInsurancePlan.id)"><i class="glyphicon glyphicon-trash"></i>Delete</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -95,7 +97,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" (click)="saveLabTestTypePlan()" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-success" (click)="saveLabTestTypeInsurancePlan()" data-dismiss="modal">Save</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

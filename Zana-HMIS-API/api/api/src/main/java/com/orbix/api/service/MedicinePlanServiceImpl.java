@@ -5,16 +5,17 @@ package com.orbix.api.service;
 
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.Medicine;
-import com.orbix.api.domain.MedicinePlanPrice;
+import com.orbix.api.domain.MedicineInsurancePlan;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.MedicineRepository;
-import com.orbix.api.repositories.MedicinePlanPriceRepository;
+import com.orbix.api.repositories.MedicineInsurancePlanRepository;
 import com.orbix.api.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -33,12 +34,12 @@ public class MedicinePlanServiceImpl implements MedicinePlanService{
 	private final UserService userService;
 	private final DayRepository dayRepository;
 	private final DayService dayService;
-	private final MedicinePlanPriceRepository medicinePlanPriceRepository;
+	private final MedicineInsurancePlanRepository medicineInsurancePlanRepository;
 	
 	@Override
-	public MedicinePlanPrice save(InsurancePlan insurancePlan, Medicine medicine, double price) {
-		Optional<MedicinePlanPrice> p = medicinePlanPriceRepository.findByInsurancePlanAndMedicine(insurancePlan, medicine);
-		MedicinePlanPrice plan = new MedicinePlanPrice();
+	public MedicineInsurancePlan save(InsurancePlan insurancePlan, Medicine medicine, double price, HttpServletRequest request) {
+		Optional<MedicineInsurancePlan> p = medicineInsurancePlanRepository.findByInsurancePlanAndMedicine(insurancePlan, medicine);
+		MedicineInsurancePlan plan = new MedicineInsurancePlan();
 		if(p.isPresent()) {
 			//save existing
 			p.get().setPrice(price);
@@ -48,7 +49,7 @@ public class MedicinePlanServiceImpl implements MedicinePlanService{
 			plan.setMedicine(medicine);
 			plan.setPrice(price);
 		}
-		return medicinePlanPriceRepository.save(plan);
+		return medicineInsurancePlanRepository.save(plan);
 	}
 
 	//@Override
@@ -60,13 +61,13 @@ public class MedicinePlanServiceImpl implements MedicinePlanService{
 	
 
 	@Override
-	public boolean deleteMedicinePlanPrice(InsurancePlan insurancePlan, Medicine medicine) {
+	public boolean deleteMedicineInsurancePlan(InsurancePlan insurancePlan, Medicine medicine, HttpServletRequest request) {
 		/**
 		 * Delete a medicine if a medicine is deletable
 		 */
-		Optional<MedicinePlanPrice> p = medicinePlanPriceRepository.findByInsurancePlanAndMedicine(insurancePlan, medicine);
+		Optional<MedicineInsurancePlan> p = medicineInsurancePlanRepository.findByInsurancePlanAndMedicine(insurancePlan, medicine);
 		
-		medicinePlanPriceRepository.delete(p.get());
+		medicineInsurancePlanRepository.delete(p.get());
 		return true;
 	}
 	

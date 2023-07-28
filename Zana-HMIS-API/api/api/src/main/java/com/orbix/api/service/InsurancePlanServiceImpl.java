@@ -5,10 +5,12 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
@@ -34,29 +36,41 @@ public class InsurancePlanServiceImpl implements InsurancePlanService{
 	private final InsurancePlanRepository insurancePlanRepository;
 	
 	@Override
-	public InsurancePlan save(InsurancePlan insurancePlan) {
+	public InsurancePlan save(InsurancePlan insurancePlan, HttpServletRequest request) {
+		insurancePlan.setName(Sanitizer.sanitizeString(insurancePlan.getName()));
+		
+		
+		
+		if(insurancePlan.getId() == null) {
+			insurancePlan.setCreatedby(userService.getUser(request));
+			insurancePlan.setCreatedOn(dayService.getDay());
+			insurancePlan.setCreatedAt(dayService.getTimeStamp());
+			
+			insurancePlan.setActive(true);
+		}
+		
 		log.info("Saving new insurancePlan to the database");
 		return insurancePlanRepository.save(insurancePlan);
 	}
 
 	@Override
-	public List<InsurancePlan> getInsurancePlans() {
+	public List<InsurancePlan> getInsurancePlans(HttpServletRequest request) {
 		log.info("Fetching all insurancePlans");
 		return insurancePlanRepository.findAll();
 	}
 
 	@Override
-	public InsurancePlan getInsurancePlanByName(String name) {
+	public InsurancePlan getInsurancePlanByName(String name, HttpServletRequest request) {
 		return insurancePlanRepository.findByName(name).get();
 	}
 
 	@Override
-	public InsurancePlan getInsurancePlanById(Long id) {
+	public InsurancePlan getInsurancePlanById(Long id, HttpServletRequest request) {
 		return insurancePlanRepository.findById(id).get();
 	}
 
 	@Override
-	public boolean deleteInsurancePlan(InsurancePlan insurancePlan) {
+	public boolean deleteInsurancePlan(InsurancePlan insurancePlan, HttpServletRequest request) {
 		/**
 		 * Delete a insurancePlan if a insurancePlan is deletable
 		 */

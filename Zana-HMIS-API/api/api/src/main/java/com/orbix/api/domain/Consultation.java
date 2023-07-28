@@ -21,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -47,53 +48,50 @@ public class Consultation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private String paymentType = "";//CASH,DEBIT CARD, CREDIT CARD, MOBILE, INSURANCE
-	private String membershipNo = "";
-	
-	private String status = "";
-	
-	private Long createdBy;
-	private Long createdOn;
-	private LocalDateTime createdAt = LocalDateTime.now();
+	@NotBlank
+	private String paymentType;//CASH,DEBIT CARD, CREDIT CARD, MOBILE, INSURANCE
+	private String membershipNo;
+	@NotBlank
+	private String status;
 	
 	/**
 	 * A patient can have one or more consultations
 	 */
-	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.LAZY,  optional = true)
-    @JoinColumn(name = "patient_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "patient_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
 	/**
 	 * One can only have one bill, i.e. A single consultation can only be
 	 * billed once
 	 */
-	@OneToOne(targetEntity = Bill.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "bill_id", nullable = true , updatable = true)
+	@OneToOne(targetEntity = PatientBill.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "patient_bill_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
-    private Bill bill;
-	/**
-	 * One patient visit can have one or more consultation i.e. 
-	 */
-	@ManyToOne(targetEntity = Visit.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "visit_id", nullable = true , updatable = true)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
-    private Visit visit;
+    private PatientBill patientBill;
 	/**
 	 * One consultation has one clinic, i.e. a patient is sent to one clinic in a single consultation
 	 */
-	@OneToOne(targetEntity = Clinic.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "clinic_id", nullable = true , updatable = true)
+	@OneToOne(targetEntity = Clinic.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "clinic_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
-    private Clinic clinic;	
+    private Clinic clinic;
 	/**
 	 * One consultation has one clinician, i.e. a patient is sent to one clinician in a single consultation
 	 * However, a patient can be reasigned to another clinician
 	 */
-	@OneToOne(targetEntity = Clinician.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "clinician_id", nullable = true , updatable = true)
+	@OneToOne(targetEntity = Clinician.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "clinician_id", nullable = false , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Clinician clinician;
 	
+	/**
+	 * One patient visit can have one or more consultation i.e. 
+	 */
+	@ManyToOne(targetEntity = Visit.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "visit_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private Visit visit;
 	
 	@OneToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)
@@ -136,4 +134,16 @@ public class Consultation {
     @JsonIgnoreProperties("consultation")
 	@Fetch(value = FetchMode.SUBSELECT)
     private List<Prescription> prescriptions;
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User createdby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
+	
 }

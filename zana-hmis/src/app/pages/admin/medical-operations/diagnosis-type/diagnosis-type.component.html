@@ -20,24 +20,22 @@
                         <table class="table table-bordered table-small">
                             <thead>
                                 <tr>
+                                    <td>ID</td>
                                     <td>Code</td>
                                     <td>Name</td>
                                     <td>Description</td>
-                                    <td>Uom</td>
-                                    <td>Price</td>
-                                    <td>Active</td>
+                                    <td>Status</td>
                                     <td>Action</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let diagnosisType of diagnosisTypes">
+                                    <td>{{diagnosisType.id}}</td>
                                     <td>{{diagnosisType.code}}</td>
                                     <td>{{diagnosisType.name}}</td>
                                     <td>{{diagnosisType.description}}</td>
-                                    <td>{{diagnosisType.uom}}</td>
-                                    <td style="text-align: right;">{{diagnosisType.price | currency:'':''}}</td>
-                                    <td></td>
-                                    <td><button class="" (click)="getDiagnosisType(diagnosisType.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</button></td>
+                                    <td><span class="label label-info" *ngIf="diagnosisType.active === true">Active</span><span class="label label-danger" *ngIf="diagnosisType.active === false">Inactive</span></td>
+                                    <td><a (click)="getDiagnosisType(diagnosisType.id)" data-toggle="modal" data-target="#add-edit-modal"><i class="glyphicon glyphicon-pencil"></i>Edit</a></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -76,19 +74,7 @@
                             <label>Description</label>
                             <input type="text" class="form-control" [(ngModel)]="description">
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label>UOM</label>
-                            <input type="text" class="form-control" [(ngModel)]="uom">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label>Price</label>
-                            <input type="text" class="form-control" [(ngModel)]="price" style="text-align: center;">
-                        </div>
-                    </div>
+                    </div>                                     
                     <div class="row">
                         <div class="col-xs-12">
                             <label>Active</label>

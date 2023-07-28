@@ -5,6 +5,7 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -22,9 +23,9 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 public interface RadiologyTypeService {
-	RadiologyType save(RadiologyType radiologyType);	
-	List<RadiologyType>getRadiologyTypes(); // return all the radiologyTypes
-	RadiologyType getRadiologyTypeByName(String name);
-	RadiologyType getRadiologyTypeById(Long id);
-	boolean deleteRadiologyType(RadiologyType radiologyType);
+	RadiologyType save(RadiologyType radiologyType, HttpServletRequest request);	
+	List<RadiologyType>getRadiologyTypes(HttpServletRequest request); // return all the radiologyTypes
+	RadiologyType getRadiologyTypeByName(String name, HttpServletRequest request);
+	RadiologyType getRadiologyTypeById(Long id, HttpServletRequest request);
+	boolean deleteRadiologyType(RadiologyType radiologyType, HttpServletRequest request);
 }

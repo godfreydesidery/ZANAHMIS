@@ -5,7 +5,7 @@ import { IUser } from "./user"
 
 export interface IConsultationInsurancePlan {
     id      : any
-    price   : number
+    consultationFee   : number
 
     clinic : IClinic
     insurancePlan : IInsurancePlan

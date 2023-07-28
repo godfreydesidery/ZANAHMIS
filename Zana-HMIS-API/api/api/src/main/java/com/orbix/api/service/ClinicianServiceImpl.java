@@ -5,6 +5,7 @@ package com.orbix.api.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -37,29 +38,29 @@ public class ClinicianServiceImpl implements ClinicianService{
 	private final ClinicianRepository clinicianRepository;
 	
 	@Override
-	public Clinician save(Clinician clinician) {
+	public Clinician save(Clinician clinician, HttpServletRequest request) {
 		log.info("Saving new clinic to the database");
 		return clinicianRepository.save(clinician);
 	}
 
 	@Override
-	public List<Clinician> getClinicians() {
+	public List<Clinician> getClinicians(HttpServletRequest request) {
 		log.info("Fetching all clinicians");
 		return clinicianRepository.findAll();
 	}
 
 	@Override
-	public Clinician getClinicianByName(String name) {
-		return clinicianRepository.findByName(name).get();
+	public Clinician getClinicianByName(String name, HttpServletRequest request) {
+		return clinicianRepository.findByNickname(name).get();
 	}
 
 	@Override
-	public Clinician getClinicianById(Long id) {
+	public Clinician getClinicianById(Long id, HttpServletRequest request) {
 		return clinicianRepository.findById(id).get();
 	}
 
 	@Override
-	public boolean deleteClinician(Clinician clinician) {
+	public boolean deleteClinician(Clinician clinician, HttpServletRequest request) {
 		/**
 		 * Delete a clinician if a clinician is deletable
 		 */

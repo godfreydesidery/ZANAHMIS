@@ -1,13 +1,12 @@
-<!-- Content Header (Page header) -->
+<!-- Content Header (Page header) 
 <section class="content-header">
     <div class="header-title">
         <h1>Medicine Plan</h1>
     </div>
 </section>
-<!-- Main content -->
+ Main content 
 <section class="content">
     <div class="row">
-        <!-- Form controls -->
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
@@ -20,6 +19,7 @@
                         <table class="table table-bordered table-small">
                             <thead>
                                 <tr>
+                                    <td>ID</td>
                                     <td>Provider</td>
                                     <td>Plan</td>
                                     <td>Medicine</td>
@@ -29,12 +29,13 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let medicinePlan of medicinePlans">
+                                    <td>{{medicinePlan.id}}</td>
                                     <td>{{medicinePlan.insurancePlan.insuranceProvider.name}}</td>
                                     <td>{{medicinePlan.insurancePlan.name}}</td>
                                     <td>{{medicinePlan.medicine.name}}</td>
                                     <td style="text-align: right;">{{medicinePlan.price | currency:'':''}}</td>
-                                    <td><button class="" (click)="getMedicinePlan(medicinePlan.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</button>
-                                        <button class="" (click)="deleteMedicinePlan(medicinePlan.id)">Delete</button>
+                                    <td><a (click)="getMedicinePlan(medicinePlan.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</a>
+                                        <a (click)="deleteMedicinePlan(medicinePlan.id)">Delete</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -44,10 +45,10 @@
              </div>
          </div>
      </div>     
- </section> <!-- /.content -->
+ </section> content -->
 
  <!-- Modal success -->
-<div class="modal fade modal-success" id="add-edit-modal" tabindex="-1" role="dialog">
+<!--<div class="modal fade modal-success" id="add-edit-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -97,6 +98,6 @@
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-success" (click)="saveMedicinePlan()" data-dismiss="modal">Save</button>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div> -->

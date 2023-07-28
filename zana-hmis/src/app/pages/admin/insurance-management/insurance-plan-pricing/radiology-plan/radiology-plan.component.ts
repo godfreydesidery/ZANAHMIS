@@ -1,9 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
+import { IRadiologyTypeInsurancePlan } from 'src/app/domain/radiology-type-insurance-plan';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -28,7 +30,7 @@ export class RadiologyPlanComponent implements OnInit {
  radiologyTypeName : string = ''
  radiologyTypeNames : string[] = []
 
- radiologyTypePlans : IRadiologyTypePlan[] = []
+ radiologyTypeInsurancePlans : IRadiologyTypeInsurancePlan[] = []
 
 
 
@@ -41,7 +43,7 @@ export class RadiologyPlanComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadRadiologyTypePlans()
+    this.loadRadiologyTypeInsurancePlans()
     this.loadInsuranceProviderNames()
     this.loadRadiologyTypeNames()
   }
@@ -92,19 +94,19 @@ export class RadiologyPlanComponent implements OnInit {
     )
   }
 
-  async loadRadiologyTypePlans(){
-    this.radiologyTypePlans = []
+  async loadRadiologyTypeInsurancePlans(){
+    this.radiologyTypeInsurancePlans = []
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IRadiologyTypePlan[]>(API_URL+'/radiology_type_plan_prices', options)
+    await this.http.get<IRadiologyTypeInsurancePlan[]>(API_URL+'/radiology_type_insurance_plans', options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
         data?.forEach(element => {
-          this.radiologyTypePlans.push(element)
+          this.radiologyTypeInsurancePlans.push(element)
         })
       }
     )
@@ -116,11 +118,11 @@ export class RadiologyPlanComponent implements OnInit {
   }
 
 
-  public async saveRadiologyTypePlan(){
+  public async saveRadiologyTypeInsurancePlan(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    var radiologyTypePlan = {
+    var radiologyTypeInsurancePlan = {
       id          : this.id,
      radiologyType : {
         name : this.radiologyTypeName
@@ -133,14 +135,14 @@ export class RadiologyPlanComponent implements OnInit {
     if(this.id == null || this.id == ''){
       //save a new diagnosisType
       this.spinner.show()
-      await this.http.post<IRadiologyTypePlan>(API_URL+'/radiology_type_plan_prices/save',radiologyTypePlan, options)
+      await this.http.post<IRadiologyTypeInsurancePlan>(API_URL+'/radiology_type_insurance_plans/save',radiologyTypeInsurancePlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
           this.id           = data?.id
           this.msgBox.showSuccessMessage('RadiologyType plan created successifully')
-          this.loadRadiologyTypePlans()
+          this.loadRadiologyTypeInsurancePlans()
           
         }
       )
@@ -153,7 +155,7 @@ export class RadiologyPlanComponent implements OnInit {
     }else{
       //update an existingradiologyType
       this.spinner.show()
-      await this.http.post<IRadiologyTypePlan>(API_URL+'/radiology_type_plan_prices/save',radiologyTypePlan, options)
+      await this.http.post<IRadiologyTypeInsurancePlan>(API_URL+'/radiology_type_insurance_plans/save',radiologyTypeInsurancePlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
@@ -161,7 +163,7 @@ export class RadiologyPlanComponent implements OnInit {
           this.id           = data?.id
           
           this.msgBox.showSuccessMessage('RadiologyType plan updated successifully')
-          this.loadRadiologyTypePlans()
+          this.loadRadiologyTypeInsurancePlans()
         }
       )
       .catch(
@@ -181,7 +183,7 @@ export class RadiologyPlanComponent implements OnInit {
     this.price = 0
   }
 
-  async getRadiologyTypePlan(key: string) {
+  async getRadiologyTypeInsurancePlan(key: string) {
     if(key == ''){
       return
     }
@@ -189,7 +191,7 @@ export class RadiologyPlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IRadiologyTypePlan>(API_URL+'/radiology_type_plan_prices/get?id='+key, options)
+    await this.http.get<IRadiologyTypeInsurancePlan>(API_URL+'/radiology_type_insurance_plans/get?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -210,7 +212,7 @@ export class RadiologyPlanComponent implements OnInit {
     )
   }
 
-  async deleteRadiologyTypePlan(key: string) {
+  async deleteRadiologyTypeInsurancePlan(key: string) {
     if(key == ''){
       return
     }
@@ -218,13 +220,13 @@ export class RadiologyPlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.post<IRadiologyTypePlan>(API_URL+'/radiology_type_plan_prices/delete?id='+key, options)
+    await this.http.post<IRadiologyTypeInsurancePlan>(API_URL+'/radiology_type_insurance_plans/delete?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data=>{
         console.log(data)
-        this.loadRadiologyTypePlans()
+        this.loadRadiologyTypeInsurancePlans()
       }
     )
     .catch(
@@ -258,23 +260,4 @@ export class RadiologyPlanComponent implements OnInit {
     )
   }
 
-}
-
-export interface IRadiologyTypePlan{
-  id : any
- radiologyType : IRadiologyType
-  insurancePlan : IInsurancePlan
-  price : number 
-}
-
-export interface IInsurancePlan{
-  name : string
-  insuranceProvider : IInsuranceProvider 
-}
-export interface IInsuranceProvider{
-  name : string
-}
-
-export interface IRadiologyType{
-  name : string
 }

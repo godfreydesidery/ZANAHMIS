@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,8 @@ import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.UserRepository;
 import com.orbix.api.service.ClinicService;
 import com.orbix.api.service.ClinicianService;
+import com.orbix.api.service.DayService;
+import com.orbix.api.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,30 +54,38 @@ public class ClinicianResource {
 	private final ClinicService clinicService;
 	private final UserRepository userRepository;
 	
+	private final UserService userService;
+	private final DayService dayService;
+	
 	@GetMapping("/clinicians")
-	public ResponseEntity<List<Clinician>>getClinicians(){
-		return ResponseEntity.ok().body(clinicianService.getClinicians());
+	public ResponseEntity<List<Clinician>>getClinicians(HttpServletRequest request){
+		return ResponseEntity.ok().body(clinicianService.getClinicians(request));
 	}
 	
 	@GetMapping("/clinicians/get")
 	public ResponseEntity<Clinician> getClinician(
-			@RequestParam(name = "id") Long id){
-		return ResponseEntity.ok().body(clinicianService.getClinicianById(id));
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(clinicianService.getClinicianById(id, request));
 	}
 	
 	@PostMapping("/clinicians/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<Clinician>save(
-			@RequestBody Clinician clinician){
-		clinician.setName(Sanitizer.sanitizeString(clinician.getName()));
+			@RequestBody Clinician clinician,
+			HttpServletRequest request){
+		clinician.setFirstName(Sanitizer.sanitizeString(clinician.getFirstName()));
+		clinician.setMiddleName(Sanitizer.sanitizeString(clinician.getMiddleName()));
+		clinician.setLastName(Sanitizer.sanitizeString(clinician.getLastName()));
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/clinicians/save").toUriString());
-		return ResponseEntity.created(uri).body(clinicianService.save(clinician));
+		return ResponseEntity.created(uri).body(clinicianService.save(clinician, request));
 	}
 	
 	@GetMapping("/clinicians/get_by_clinic_name")    // to do later
 	public ResponseEntity<List<Clinician>> getClinicianByClinicName(
-			@RequestParam(name = "clinic_name") String clinicName){
+			@RequestParam(name = "clinic_name") String clinicName,
+			HttpServletRequest request){
 		Clinic d = clinicRepository.findByName(clinicName).get();
 		List<Clinician> cs = clinicianRepository.findAll();
 		List<Clinician> cst = new ArrayList<>();
@@ -93,7 +104,8 @@ public class ClinicianResource {
 	
 	@GetMapping("/clinicians/load_clinician_by_username")    // to do later
 	public ResponseEntity<Long> loadClinicianByUsername(
-			@RequestParam(name = "username") String username){
+			@RequestParam(name = "username") String username,
+			HttpServletRequest request){
 		User user = userRepository.findByUsername(username);
 		Optional<Clinician> c = clinicianRepository.findByUser(user);
 		if(!c.isPresent()) {
@@ -105,12 +117,13 @@ public class ClinicianResource {
 	@PostMapping("/clinicians/assign_user_profile")    // to do later
 	public ResponseEntity<Clinician> assignUserProfile(
 			@RequestParam(name = "id") Long id,
-			@RequestParam(name = "roll_no") String rollNo){
+			@RequestParam(name = "code") String code,
+			HttpServletRequest request){
 		Optional<Clinician> c = clinicianRepository.findById(id);
 		if(!c.isPresent()) {
 			throw new NotFoundException("Clinician not found in database");
 		}
-		Optional<User> u = userRepository.findByRollNo(rollNo);
+		Optional<User> u = userRepository.findByCode(code);
 		if(!u.isPresent()) {
 			throw new NotFoundException("User not found in database");
 		}

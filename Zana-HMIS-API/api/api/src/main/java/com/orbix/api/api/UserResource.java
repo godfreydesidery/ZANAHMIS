@@ -53,6 +53,7 @@ import com.orbix.api.repositories.PrivilegeRepository;
 import com.orbix.api.repositories.RoleRepository;
 import com.orbix.api.security.Object_;
 import com.orbix.api.security.Operation;
+import com.orbix.api.service.DayService;
 import com.orbix.api.service.UserService;
 
 import lombok.AllArgsConstructor;
@@ -72,31 +73,38 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class UserResource {
 	
+
+	private final UserService userService;
+	private final DayService dayService;
+	
+	
 	private final RoleRepository roleRepository;
 	private final PrivilegeRepository privilegeRepository;
-	private final UserService userService;
 	
 	@GetMapping("/users")
-	public ResponseEntity<List<User>>getUsers(){
+	public ResponseEntity<List<User>>getUsers(
+			HttpServletRequest request){
 		return ResponseEntity.ok().body(userService.getUsers());
 	}
 	
 	@GetMapping("/users/get_user")
 	public ResponseEntity<User> getUser(
-			@RequestParam(name = "username") String username){
+			@RequestParam(name = "username") String username,
+			HttpServletRequest request){
 		return ResponseEntity.ok().body(userService.getUser(username));
 	}
 	
 	@GetMapping("/users/load_user")
 	public ResponseEntity<UserModel> loadUser(
-			@RequestParam(name = "username") String username){
+			@RequestParam(name = "username") String username,
+			HttpServletRequest request){
 		User user = userService.getUser(username);
 		if(!user.isActive()) {
 			throw new InvalidOperationException("Could not load user, user not active");
 		}
 		UserModel userModel = new UserModel();
 		userModel.setId(user.getId());
-		userModel.setAlias(user.getAlias());
+		userModel.setAlias(user.getNickname());
 		return ResponseEntity.ok().body(userModel);
 	}
 	
@@ -104,12 +112,13 @@ public class UserResource {
 	@PostMapping("/users/create")
 	@PreAuthorize("hasAnyAuthority('USER-CREATE')")
 	public ResponseEntity<User>createUser(
-			@RequestBody User user){
+			@RequestBody User user,
+			HttpServletRequest request){
 		if(user.getUsername().equals("root")) {
 			throw new InvalidOperationException("Username not available");
 		}
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/create").toUriString());
-		return ResponseEntity.created(uri).body(userService.saveUser(user));
+		return ResponseEntity.created(uri).body(userService.saveUser(user, request));
 	}
 		
 	@PutMapping("/users/update")
@@ -144,13 +153,14 @@ public class UserResource {
 			throw new InvalidOperationException("Updating the ROOT profile is not allowed");
 		}
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/update").toUriString());
-		return ResponseEntity.created(uri).body(userService.saveUser(user));
+		return ResponseEntity.created(uri).body(userService.saveUser(user, request));
 	}
 	
 	@DeleteMapping("/users/delete")
 	@PreAuthorize("hasAnyAuthority('USER-DELETE')")
 	public ResponseEntity<Boolean> deleteUser(
-			@RequestParam(name = "id") Long id){
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
 		User user = userService.getUserById(id);
 		if(user.getUsername().equalsIgnoreCase("root")) {
 			throw new InvalidOperationException("Deleting the ROOT profile is not allowed");
@@ -161,37 +171,41 @@ public class UserResource {
 	
 	@GetMapping("/roles/get_role")
 	public ResponseEntity<Role> getRole(
-			@RequestParam(name = "name") String name){
+			@RequestParam(name = "name") String name,
+			HttpServletRequest request){
 		return ResponseEntity.ok().body(userService.getRole(name));
 	}
 	
 	@PostMapping("/roles/create")
 	@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<Role>saveRole(
-			@RequestBody Role role){
+			@RequestBody Role role,
+			HttpServletRequest request){
 		if(role.getName().equalsIgnoreCase("ROOT")) {
 			throw new InvalidOperationException("Role name not available");
 		}
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/roles/save").toUriString());
-		return ResponseEntity.created(uri).body(userService.saveRole(role));
+		return ResponseEntity.created(uri).body(userService.saveRole(role, request));
 	}
 	
 	@PutMapping("/roles/update")
 	@PreAuthorize("hasAnyAuthority('ROLE-CREATE','ROLE-UPDATE')")
 	public ResponseEntity<Role>updateRole(
-			@RequestBody Role role){
+			@RequestBody Role role,
+			HttpServletRequest request){
 		Role roleToUpdate = userService.getRoleById(role.getId());		
 		if(roleToUpdate.getName().equalsIgnoreCase("ROOT")) {
 			throw new InvalidOperationException("Editing the ROOT role is not allowed");
 		}
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/roles/update").toUriString());
-		return ResponseEntity.created(uri).body(userService.saveRole(role));
+		return ResponseEntity.created(uri).body(userService.saveRole(role, request));
 	}
 	
 	@DeleteMapping("/roles/delete")
 	@PreAuthorize("hasAnyAuthority('ROLE-DELETE')")
 	public ResponseEntity<Boolean> deleteRole(
-			@RequestParam(name = "id") Long id){
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
 		Role role = userService.getRoleById(id);
 		if(role.getName().equalsIgnoreCase("ROOT")) {
 			throw new InvalidOperationException("Deleting the ROOT role is not allowed");
@@ -203,8 +217,9 @@ public class UserResource {
 	@PostMapping("/roles/addtouser")
 	@PreAuthorize("hasAnyAuthority('USER-UPDATE')")
 	public ResponseEntity<Role>addRoleToUser(
-			@RequestBody RoleToUserForm form){
-		userService.addRoleToUser(form.getUsername(), form.getRoleName());
+			@RequestBody RoleToUserForm form,
+			HttpServletRequest request){
+		userService.addRoleToUser(form.getUsername(), form.getRoleName(), request);
 		return ResponseEntity.ok().build();
 	}
 		
@@ -251,23 +266,27 @@ public class UserResource {
 	}
 	
 	@GetMapping("/roles")
-	public ResponseEntity<List<Role>>getRoles(){
+	public ResponseEntity<List<Role>>getRoles(
+			HttpServletRequest request){
 		return ResponseEntity.ok().body(userService.getRoles());
 	}
 	
 	@GetMapping("/operations")
-	public ResponseEntity<List<String>>getOperations(){
+	public ResponseEntity<List<String>>getOperations(
+			HttpServletRequest request){
 		return ResponseEntity.ok().body(userService.getOperations());
 	}
 	
 	@GetMapping("/objects")
-	public ResponseEntity<List<String>>getObjects(){
+	public ResponseEntity<List<String>>getObjects(
+			HttpServletRequest request){
 		return ResponseEntity.ok().body(userService.getObjects());
 	}
 	
 	@GetMapping("/privileges")
 	public ResponseEntity<List<PrivilegeModel>>getPrivileges(
-			@RequestParam(name = "role") String roleName){
+			@RequestParam(name = "role") String roleName,
+			HttpServletRequest request){
 		List<String> privileges = userService.getPrivileges(roleName);
 		List<PrivilegeModel> modelList = new ArrayList<PrivilegeModel>();
 		for(String privilege : privileges) {
@@ -283,7 +302,8 @@ public class UserResource {
 	@GetMapping("/check_op_valid")
 	public boolean checkOpValid(
 			@RequestParam(name = "object") String obj,
-			@RequestParam(name = "operation") String op){
+			@RequestParam(name = "operation") String op,
+			HttpServletRequest request){
 		String privilege = obj + "-" + op;
 		Optional<Privilege> p = privilegeRepository.findByName(privilege);
 		if(p.isPresent()) {
@@ -296,7 +316,8 @@ public class UserResource {
 	@PostMapping("/privileges/addtorole")
 	@PreAuthorize("hasAnyAuthority('ROLE-UPDATE')")
 	public boolean addPrivilegeToRole(
-			@RequestBody AccessModel form){	
+			@RequestBody AccessModel form,
+			HttpServletRequest request){	
 		Role role = roleRepository.findByName(form.getRole());
 		Collection<Privilege> privileges = new ArrayList<>(role.getPrivileges());
 		
@@ -326,22 +347,25 @@ public class UserResource {
 	public ResponseEntity<Boolean> createShortcut(
 			@RequestParam String username,
 			@RequestParam String name,
-			@RequestParam String link){
+			@RequestParam String link,
+			HttpServletRequest request){
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/shortcuts/create").toUriString());
-		return ResponseEntity.created(uri).body(userService.createShortcut(username, name, link));
+		return ResponseEntity.created(uri).body(userService.createShortcut(username, name, link, request));
 	}
 	
 	@PostMapping("/shortcuts/remove")	
 	public ResponseEntity<Boolean> removeShortcut(
 			@RequestParam String username,
-			@RequestParam String name){
+			@RequestParam String name,
+			HttpServletRequest request){
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/shortcuts/remove").toUriString());		
 		return ResponseEntity.created(uri).body(userService.removeShortcut(username, name));
 	}
 	
 	@GetMapping("/shortcuts/load")
 	public ResponseEntity<List<Shortcut>> loadShortcuts(
-			@RequestParam String username){		
+			@RequestParam String username,
+			HttpServletRequest request){		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/shortcuts/create").toUriString());
 		return ResponseEntity.created(uri).body(userService.loadShortcuts(username));
 	}
@@ -356,7 +380,8 @@ public class UserResource {
 	}
 	
 	@GetMapping("/load_privilege_model")
-	public List<AuthorityModel> loadAuthModels() {
+	public List<AuthorityModel> loadAuthModels(
+			HttpServletRequest request) {
 		List<AuthorityModel> models = new ArrayList<>();
 		
 		List<String> objects = new ArrayList<String>();

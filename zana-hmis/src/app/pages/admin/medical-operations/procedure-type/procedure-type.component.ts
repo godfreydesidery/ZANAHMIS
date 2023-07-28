@@ -4,6 +4,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IProcedureType } from 'src/app/domain/procedure-type';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -45,10 +46,10 @@ export class ProcedureTypeComponent implements OnInit {
     }
     var procedureType = {
       id          : this.id,
-      code          : this.code,
+      code        : this.code,
       name        : this.name,
       description : this.description,
-      uom       : this.uom,
+      uom         : this.uom,
       price       : this.price,
       active      : true
     }
@@ -61,11 +62,11 @@ export class ProcedureTypeComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
+          this.price        = data!.price
+          this.uom          = data!.uom
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Procedure Type created successifully')
           this.loadProcedureTypes()
@@ -74,7 +75,7 @@ export class ProcedureTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create procedure type')
+          this.msgBox.showErrorMessage('Could not create Procedure Type')
         }
       )
 
@@ -87,11 +88,11 @@ export class ProcedureTypeComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
+          this.price        = data!.price
+          this.uom          = data!.uom
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Procedure Type updated successifully')
           this.loadProcedureTypes()
@@ -99,7 +100,7 @@ export class ProcedureTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update procedure type')
+          this.msgBox.showErrorMessage('Could not update Procedure Type')
         }
       )
     }
@@ -124,19 +125,19 @@ export class ProcedureTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load procedure types')
+        this.msgBox.showErrorMessage('Could not load Procedure Types')
       }
     )
   }
 
   clear(){
-    this.id = null
-    this.code = ''
-    this.name = ''
-    this.description = ''
-    this.uom = ''
-    this.price = 0
-    this.active = false
+    this.id           = null
+    this.code         = ''
+    this.name         = ''
+    this.description  = ''
+    this.uom          = ''
+    this.price        = 0
+    this.active       = false
   }
 
   async getProcedureType(key: string) {
@@ -152,31 +153,21 @@ export class ProcedureTypeComponent implements OnInit {
     .toPromise()
     .then(
       data=>{
-        this.id           = data?.id
-          this.code       = data!.code
-          this.name = data!.name
-          this.description = data!.description
-          this.price = data!.price
-          this.uom = data!.uom
+        this.id             = data?.id
+          this.code         = data!.code
+          this.name         = data!.name
+          this.description  = data!.description
+          this.price        = data!.price
+          this.uom          = data!.uom
           this.active       = data!.active
       }
     )
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find procedure type')
+        this.msgBox.showErrorMessage('Could not find Procedure Type')
       }
     )
   }
 
-}
-
-export interface IProcedureType{
-  id     : any
-  code   : string
-  name        : string
-  description : string
-  uom    : string
-  price  : number
-  active : boolean
 }

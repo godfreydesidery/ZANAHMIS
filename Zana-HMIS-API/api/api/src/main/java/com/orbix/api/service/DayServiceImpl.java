@@ -4,6 +4,7 @@
 package com.orbix.api.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -71,6 +72,16 @@ public class DayServiceImpl implements DayService{
 	@Override
 	public Long getDayId() {
 		return dayRepository.getLastId();
+	}
+	
+	@Override
+	public Day getDay() {
+		return dayRepository.findById(dayRepository.getLastId()).get();
+	}
+	
+	@Override
+	public LocalDateTime getTimeStamp() {
+		return LocalDateTime.now();
 	}
 
 }

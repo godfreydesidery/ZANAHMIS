@@ -10,6 +10,10 @@ import javax.transaction.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.orbix.api.service.DayService;
+import com.orbix.api.service.UserService;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +29,9 @@ import lombok.RequiredArgsConstructor;
 public class ReportResource {
 	
 
+	private final UserService userService;
+	private final DayService dayService;
+	
 }
 
 @Data

@@ -5,14 +5,15 @@ package com.orbix.api.service;
 
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.domain.InsurancePlan;
-import com.orbix.api.domain.RegistrationPlanPrice;
+import com.orbix.api.domain.RegistrationInsurancePlan;
 import com.orbix.api.repositories.DayRepository;
-import com.orbix.api.repositories.RegistrationPlanPriceRepository;
+import com.orbix.api.repositories.RegistrationInsurancePlanRepository;
 import com.orbix.api.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -31,12 +32,12 @@ public class RegistrationPlanServiceImpl implements RegistrationPlanService{
 	private final UserService userService;
 	private final DayRepository dayRepository;
 	private final DayService dayService;
-	private final RegistrationPlanPriceRepository registrationPlanPriceRepository;
+	private final RegistrationInsurancePlanRepository registrationInsurancePlanRepository;
 	
 	@Override
-	public RegistrationPlanPrice save(InsurancePlan insurancePlan, double price) {
-		Optional<RegistrationPlanPrice> p = registrationPlanPriceRepository.findByInsurancePlan(insurancePlan);
-		RegistrationPlanPrice plan = new RegistrationPlanPrice();
+	public RegistrationInsurancePlan save(InsurancePlan insurancePlan, double price, HttpServletRequest request) {
+		Optional<RegistrationInsurancePlan> p = registrationInsurancePlanRepository.findByInsurancePlan(insurancePlan);
+		RegistrationInsurancePlan plan = new RegistrationInsurancePlan();
 		if(p.isPresent()) {
 			//save existing
 			p.get().setRegistrationFee(price);
@@ -45,7 +46,7 @@ public class RegistrationPlanServiceImpl implements RegistrationPlanService{
 			plan.setInsurancePlan(insurancePlan);
 			plan.setRegistrationFee(price);
 		}
-		return registrationPlanPriceRepository.save(plan);
+		return registrationInsurancePlanRepository.save(plan);
 	}
 
 	//@Override
@@ -57,13 +58,13 @@ public class RegistrationPlanServiceImpl implements RegistrationPlanService{
 	
 
 	@Override
-	public boolean deleteRegistrationPlanPrice(InsurancePlan insurancePlan) {
+	public boolean deleteRegistrationInsurancePlan(InsurancePlan insurancePlan, HttpServletRequest request) {
 		/**
 		 * Delete a registration if a registration is deletable
 		 */
-		Optional<RegistrationPlanPrice> p = registrationPlanPriceRepository.findByInsurancePlan(insurancePlan);
+		Optional<RegistrationInsurancePlan> p = registrationInsurancePlanRepository.findByInsurancePlan(insurancePlan);
 		
-		registrationPlanPriceRepository.delete(p.get());
+		registrationInsurancePlanRepository.delete(p.get());
 		return true;
 	}
 	

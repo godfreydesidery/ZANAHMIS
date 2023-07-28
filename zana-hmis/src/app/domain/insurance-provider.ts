@@ -6,10 +6,11 @@ export interface IInsuranceProvider {
     code    : string
     name    : string
     address : string
-    phone   : string
+    telephone   : string
     fax     : string
     email   : string
     website : string
+    active  : boolean
 
     
     createdBy       : IUser

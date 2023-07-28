@@ -3,16 +3,18 @@
  */
 package com.orbix.api.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.Medicine;
-import com.orbix.api.domain.MedicinePlanPrice;
+import com.orbix.api.domain.MedicineInsurancePlan;
 
 /**
  * @author Godfrey
  *
  */
 public interface MedicinePlanService {
-	MedicinePlanPrice save(InsurancePlan insurancePlan, Medicine medicine, double price);	
+	MedicineInsurancePlan save(InsurancePlan insurancePlan, Medicine medicine, double price, HttpServletRequest request);	
 	//List<MedicinePlanPrice>getMedicinePlans(); // return all the insuranceProviders	
-	boolean deleteMedicinePlanPrice(InsurancePlan insurancePlan, Medicine medicine);
+	boolean deleteMedicineInsurancePlan(InsurancePlan insurancePlan, Medicine medicine, HttpServletRequest request);
 }

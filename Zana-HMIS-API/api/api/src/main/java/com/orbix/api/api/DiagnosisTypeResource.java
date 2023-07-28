@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,8 @@ import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
 import com.orbix.api.service.InsurancePlanService;
+import com.orbix.api.service.UserService;
+import com.orbix.api.service.DayService;
 import com.orbix.api.service.DiagnosisTypeService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,20 +43,24 @@ import lombok.RequiredArgsConstructor;
 public class DiagnosisTypeResource {
 	private final DiagnosisTypeRepository diagnosisTypeRepository;
 	private final DiagnosisTypeService diagnosisTypeService;
+	private final UserService userService;
+	private final DayService dayService;
+	
 	
 	@GetMapping("/diagnosis_types")
-	public ResponseEntity<List<DiagnosisType>>getDiagnosisTypes(){
-		return ResponseEntity.ok().body(diagnosisTypeService.getDiagnosisTypes());
+	public ResponseEntity<List<DiagnosisType>>getDiagnosisTypes(HttpServletRequest request){
+		return ResponseEntity.ok().body(diagnosisTypeService.getDiagnosisTypes(request));
 	}
 	
 	@GetMapping("/diagnosis_types/get")
 	public ResponseEntity<DiagnosisType> getDiagnosisType(
-			@RequestParam(name = "id") Long id){
-		return ResponseEntity.ok().body(diagnosisTypeService.getDiagnosisTypeById(id));
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(diagnosisTypeService.getDiagnosisTypeById(id, request));
 	}
 	
 	@GetMapping("/diagnosis_types/get_names")
-	public ResponseEntity<List<String>> getDiagnosisTypeNames(){
+	public ResponseEntity<List<String>> getDiagnosisTypeNames(HttpServletRequest request){
 		List<String> names = new ArrayList<String>();
 		names = diagnosisTypeRepository.getNames();
 		return ResponseEntity.ok().body(names);
@@ -62,11 +69,12 @@ public class DiagnosisTypeResource {
 	@PostMapping("/diagnosis_types/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<DiagnosisType>save(
-			@RequestBody DiagnosisType diagnosisType){
+			@RequestBody DiagnosisType diagnosisType,
+			HttpServletRequest request){
 		diagnosisType.setName(Sanitizer.sanitizeString(diagnosisType.getName()));
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/diagnosis_types/save").toUriString());
-		return ResponseEntity.created(uri).body(diagnosisTypeService.save(diagnosisType));
+		return ResponseEntity.created(uri).body(diagnosisTypeService.save(diagnosisType, request));
 	}
 }
 

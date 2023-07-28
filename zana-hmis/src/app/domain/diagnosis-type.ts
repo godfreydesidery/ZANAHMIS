@@ -5,6 +5,7 @@ export interface IDiagnosisType {
     id      : any
     code    : string
     name    : string
+    description : string
     active  : boolean
     
     createdBy       : IUser

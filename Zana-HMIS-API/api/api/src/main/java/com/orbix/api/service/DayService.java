@@ -4,6 +4,7 @@
 package com.orbix.api.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,5 +22,7 @@ public interface DayService {
 	boolean endDay();
 	
 	Long getDayId();
+	Day getDay();
+	LocalDateTime getTimeStamp();
 	
 }

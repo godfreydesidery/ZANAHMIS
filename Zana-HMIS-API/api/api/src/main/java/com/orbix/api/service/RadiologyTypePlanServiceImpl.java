@@ -5,15 +5,16 @@ package com.orbix.api.service;
 
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.RadiologyType;
-import com.orbix.api.domain.RadiologyTypePlanPrice;
+import com.orbix.api.domain.RadiologyTypeInsurancePlan;
 import com.orbix.api.repositories.DayRepository;
-import com.orbix.api.repositories.RadiologyTypePlanPriceRepository;
+import com.orbix.api.repositories.RadiologyTypeInsurancePlanRepository;
 import com.orbix.api.repositories.RadiologyTypeRepository;
 import com.orbix.api.repositories.UserRepository;
 
@@ -33,12 +34,12 @@ public class RadiologyTypePlanServiceImpl implements RadiologyTypePlanService{
 	private final UserService userService;
 	private final DayRepository dayRepository;
 	private final DayService dayService;
-	private final RadiologyTypePlanPriceRepository radiologyTypePlanPriceRepository;
+	private final RadiologyTypeInsurancePlanRepository radiologyTypeInsurancePlanRepository;
 	
 	@Override
-	public RadiologyTypePlanPrice save(InsurancePlan insurancePlan, RadiologyType radiologyType, double price) {
-		Optional<RadiologyTypePlanPrice> p = radiologyTypePlanPriceRepository.findByInsurancePlanAndRadiologyType(insurancePlan, radiologyType);
-		RadiologyTypePlanPrice plan = new RadiologyTypePlanPrice();
+	public RadiologyTypeInsurancePlan save(InsurancePlan insurancePlan, RadiologyType radiologyType, double price, HttpServletRequest request) {
+		Optional<RadiologyTypeInsurancePlan> p = radiologyTypeInsurancePlanRepository.findByInsurancePlanAndRadiologyType(insurancePlan, radiologyType);
+		RadiologyTypeInsurancePlan plan = new RadiologyTypeInsurancePlan();
 		if(p.isPresent()) {
 			//save existing
 			p.get().setPrice(price);
@@ -48,7 +49,7 @@ public class RadiologyTypePlanServiceImpl implements RadiologyTypePlanService{
 			plan.setRadiologyType(radiologyType);
 			plan.setPrice(price);
 		}
-		return radiologyTypePlanPriceRepository.save(plan);
+		return radiologyTypeInsurancePlanRepository.save(plan);
 	}
 
 	//@Override
@@ -60,13 +61,13 @@ public class RadiologyTypePlanServiceImpl implements RadiologyTypePlanService{
 	
 
 	@Override
-	public boolean deleteRadiologyTypePlanPrice(InsurancePlan insurancePlan, RadiologyType radiologyType) {
+	public boolean deleteRadiologyTypeInsurancePlan(InsurancePlan insurancePlan, RadiologyType radiologyType, HttpServletRequest request) {
 		/**
 		 * Delete a radiologyType if a radiologyType is deletable
 		 */
-		Optional<RadiologyTypePlanPrice> p = radiologyTypePlanPriceRepository.findByInsurancePlanAndRadiologyType(insurancePlan, radiologyType);
+		Optional<RadiologyTypeInsurancePlan> p = radiologyTypeInsurancePlanRepository.findByInsurancePlanAndRadiologyType(insurancePlan, radiologyType);
 		
-		radiologyTypePlanPriceRepository.delete(p.get());
+		radiologyTypeInsurancePlanRepository.delete(p.get());
 		return true;
 	}
 	
