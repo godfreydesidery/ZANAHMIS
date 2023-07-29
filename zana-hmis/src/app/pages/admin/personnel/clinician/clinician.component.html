@@ -22,19 +22,23 @@
                             <thead>
                                 <tr>
                                     <td>Code</td>
-                                    <td>Name</td>
+                                    <td>First Name</td>
+                                    <td>Middle Name</td>
+                                    <td>Last Name</td>
                                     <td>Type</td>
                                     <td>Action</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let clinician of clinicians">
-                                    <td>{{clinician.no}}</td>
-                                    <td>{{clinician.name}}</td>
+                                    <td>{{clinician.code}}</td>
+                                    <td>{{clinician.firstName}}</td>
+                                    <td>{{clinician.middleName}}</td>
+                                    <td>{{clinician.lastName}}</td>
                                     <td>{{clinician.type}}</td>
                                     <td>
                                         <button class="btn btn-primary" (click)="getClinician(clinician.id)" data-toggle="modal" data-target="#add-edit-modal" style="margin: 1px;">Edit</button>
-                                        <button class="btn btn-primary" (click)="getClinician(clinician.id)" data-toggle="modal" data-target="#assign-user-profile" style="margin: 1px;">Assign User Profile</button>
+                                        <button class="btn btn-primary" (click)="getClinician(clinician.id)" (click)="clearUser()" data-toggle="modal" data-target="#assign-user-profile" style="margin: 1px;">Assign User Profile</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -59,14 +63,26 @@
                     <div class="row">
                         <input type="hidden" [(ngModel)]="id">
                         <div class="col-xs-12">
-                            <label>Doctor Code*</label>
-                            <input type="text" class="form-control" [(ngModel)]="no">
+                            <label>Code*</label>
+                            <input type="text" class="form-control" [(ngModel)]="code">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
-                            <label>Doctor Name*</label>
-                            <input type="text" class="form-control" [(ngModel)]="name">
+                            <label>First Name*</label>
+                            <input type="text" class="form-control" [(ngModel)]="firstName">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Middle Name</label>
+                            <input type="text" class="form-control" [(ngModel)]="middleName">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Last Name*</label>
+                            <input type="text" class="form-control" [(ngModel)]="lastName">
                         </div>
                     </div>
                     <div class="row">
@@ -124,19 +140,31 @@
                         <input type="hidden" [(ngModel)]="id">
                         <div class="col-xs-12">
                             <label>Doctor Code*</label>
-                            <input type="text" class="form-control" [(ngModel)]="no" readonly>
+                            <input type="text" class="form-control" [(ngModel)]="code" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
-                            <label>Doctor Name*</label>
-                            <input type="text" class="form-control" [(ngModel)]="name" readonly>
+                            <label>First Name*</label>
+                            <input type="text" class="form-control" [(ngModel)]="firstName">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
-                            <label>Role No</label>
-                            <input type="text" class="form-control" [(ngModel)]="rollNo">
+                            <label>Middle Name</label>
+                            <input type="text" class="form-control" [(ngModel)]="middleName">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Last Name*</label>
+                            <input type="text" class="form-control" [(ngModel)]="lastName">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>User Code</label>
+                            <input type="text" class="form-control" [(ngModel)]="userCode">
                         </div>
                     </div>
                     

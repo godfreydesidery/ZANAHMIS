@@ -15,7 +15,7 @@ const API_URL = environment.apiUrl;
   templateUrl: './medicine-plan.component.html',
   styleUrls: ['./medicine-plan.component.scss']
 })
-export class MedicineInsurancePlanComponent implements OnInit {
+export class MedicinePlanComponent implements OnInit {
   id : any = null
   insurancePlan! : IInsurancePlan
   price : number = 0
@@ -29,9 +29,7 @@ export class MedicineInsurancePlanComponent implements OnInit {
  medicineName : string = ''
  medicineNames : string[] = []
 
- medicinePlans : IMedicineInsurancePlan[] = []
-
-
+ medicineInsurancePlans : IMedicineInsurancePlan[] = []
 
   constructor(
     private auth : AuthService,
@@ -64,7 +62,7 @@ export class MedicineInsurancePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Providers')
+        this.msgBox.showErrorMessage('Could not load Insurance Providers')
       }
     )
   }
@@ -87,13 +85,13 @@ export class MedicineInsurancePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Plans')
+        this.msgBox.showErrorMessage('Could not load Insurance Plans')
       }
     )
   }
 
   async loadMedicineInsurancePlans(){
-    this.medicinePlans = []
+    this.medicineInsurancePlans = []
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -104,7 +102,7 @@ export class MedicineInsurancePlanComponent implements OnInit {
     .then(
       data => {
         data?.forEach(element => {
-          this.medicinePlans.push(element)
+          this.medicineInsurancePlans.push(element)
         })
       }
     )
@@ -131,7 +129,6 @@ export class MedicineInsurancePlanComponent implements OnInit {
       price        : this.price
     }
     if(this.id == null || this.id == ''){
-      //save a new diagnosisType
       this.spinner.show()
       await this.http.post<IMedicineInsurancePlan>(API_URL+'/medicine_insurance_plans/save',medicinePlan, options)
       .pipe(finalize(() => this.spinner.hide()))
@@ -139,14 +136,14 @@ export class MedicineInsurancePlanComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.msgBox.showSuccessMessage('Medicine plan created successifully')
+          this.msgBox.showSuccessMessage('Medicine Insurance Plan created successifully')
           this.loadMedicineInsurancePlans()
           
         }
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not createmedicine plan')
+          this.msgBox.showErrorMessage('Could not create Medicine Insurance Plan')
         }
       )
 
@@ -160,13 +157,13 @@ export class MedicineInsurancePlanComponent implements OnInit {
         data => {
           this.id           = data?.id
           
-          this.msgBox.showSuccessMessage('Medicine plan updated successifully')
+          this.msgBox.showSuccessMessage('Medicine Insurance Plan updated successifully')
           this.loadMedicineInsurancePlans()
         }
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not updatemedicine plan')
+          this.msgBox.showErrorMessage('Could not update Medicine Insurance Plan')
         }
       )
     }
@@ -174,11 +171,11 @@ export class MedicineInsurancePlanComponent implements OnInit {
   }
 
   clear(){
-    this.id = null
-    this.medicineName = ''
-    this.insuranceProviderName = ''
-    this.insurancePlanName = ''
-    this.price = 0
+    this.id                     = null
+    this.medicineName           = ''
+    this.insuranceProviderName  = ''
+    this.insurancePlanName      = ''
+    this.price                  = 0
   }
 
   async getMedicineInsurancePlan(key: string) {
@@ -195,23 +192,26 @@ export class MedicineInsurancePlanComponent implements OnInit {
     .then(
       data=>{
         console.log(data)
-        this.id                    = data?.id
-        this.medicineName            = data!.medicine.name
-        this.insuranceProviderName = data!.insurancePlan.insuranceProvider.name
-        this.insurancePlanName     = data!.insurancePlan.name
-        this.price       = data!.price
+        this.id                     = data?.id
+        this.medicineName           = data!.medicine.name
+        this.insuranceProviderName  = data!.insurancePlan.insuranceProvider.name
+        this.insurancePlanName      = data!.insurancePlan.name
+        this.price                  = data!.price
       }
     )
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not findmedicine plan')
+        this.msgBox.showErrorMessage('Could not find Medicine Insurance Plan')
       }
     )
   }
 
   async deleteMedicineInsurancePlan(key: string) {
     if(key == ''){
+      return
+    }
+    if(!window.confirm('Delete this plan? Plan ID: '+key)){
       return
     }
     let options = {
@@ -230,7 +230,7 @@ export class MedicineInsurancePlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not deletemedicine plan')
+        this.msgBox.showErrorMessage('Could not delete Medicine Insurance Plan')
       }
     )
   }
@@ -253,7 +253,7 @@ export class MedicineInsurancePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load medicines')
+        this.msgBox.showErrorMessage('Could not load Medicines')
       }
     )
   }

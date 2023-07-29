@@ -51,12 +51,12 @@ public class Admission {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
 	
-	@ManyToOne(targetEntity = Visit.class, fetch = FetchType.EAGER,  optional = false)
+	@OneToOne(targetEntity = Visit.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "visit_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Visit visit;
 	
-	@OneToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER, optional = true)
+	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private InsurancePlan insurancePlan;

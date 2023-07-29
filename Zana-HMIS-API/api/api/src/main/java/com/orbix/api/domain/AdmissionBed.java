@@ -43,7 +43,7 @@ public class AdmissionBed {
 	private String no;
 	private String status;
 	
-	@OneToOne(targetEntity = Ward.class, fetch = FetchType.EAGER,  optional = false)
+	@ManyToOne(targetEntity = Ward.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "ward_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Ward ward;
@@ -53,12 +53,12 @@ public class AdmissionBed {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private PatientBill patientBill;
 	
-	@OneToOne(targetEntity = Admission.class, fetch = FetchType.EAGER,  optional = false)
+	@ManyToOne(targetEntity = Admission.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "admission_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Admission admission;
 	
-	@OneToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
+	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "patient_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;

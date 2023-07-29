@@ -44,6 +44,7 @@ public class GeneralExamination {
 	private String weight;
 	private String height;
 	private String bodyMassIndex;
+	private String bodyMassIndexComment;
 	private String bodySurfaceArea;
 	private String saturationOxygen;
 	private String respiratoryRate;

@@ -25,7 +25,7 @@ import com.orbix.api.domain.Radiology;
  */
 public interface PatientService {
 	Patient doRegister(Patient patient, HttpServletRequest request);
-	Patient doConsultation(Patient p, Clinic c, Clinician cn, PaymentType pt, HttpServletRequest request);
+	Patient doConsultation(Patient p, Clinic c, Clinician cn, HttpServletRequest request);
 	Patient update(Patient patient, HttpServletRequest request);
 	List<Patient>getBySearchKey(String searchKey);
 	List<Patient>getAll();

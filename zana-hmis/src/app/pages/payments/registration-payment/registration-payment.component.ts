@@ -233,7 +233,7 @@ export class RegistrationPaymentComponent implements OnInit {
     }
 
     this.spinner.show()
-    await this.http.post<IBill>(API_URL+'/bills/confirm_registration_and_consultation_payment?patient_id='+this.id+'&total_amount='+this.total, options)
+    await this.http.post<IBill>(API_URL+'/bills/confirm_registration_and_consultation_payment?patient_id='+this.id+'&total_amount='+this.total, null, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(

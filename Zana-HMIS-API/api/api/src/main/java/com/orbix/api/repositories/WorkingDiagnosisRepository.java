@@ -6,6 +6,7 @@ package com.orbix.api.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.orbix.api.domain.Consultation;
+import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.WorkingDiagnosis;
 
@@ -20,5 +21,12 @@ public interface WorkingDiagnosisRepository extends JpaRepository<WorkingDiagnos
 	 * @return
 	 */
 	Object findAllByConsultation(Consultation consultation);
+
+	/**
+	 * @param consultation
+	 * @param diagnosisType
+	 * @return
+	 */
+	boolean existsByConsultationAndDiagnosisType(Consultation consultation, DiagnosisType diagnosisType);
 
 }

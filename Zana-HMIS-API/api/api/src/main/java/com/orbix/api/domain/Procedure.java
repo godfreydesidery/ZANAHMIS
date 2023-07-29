@@ -55,8 +55,8 @@ public class Procedure {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Admission admission;
 	
-	@ManyToOne(targetEntity = ProcedureType.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "procedure_type_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = ProcedureType.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "procedure_type_id", nullable = false , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private ProcedureType procedureType;
 	

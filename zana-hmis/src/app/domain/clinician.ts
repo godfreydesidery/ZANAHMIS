@@ -1,3 +1,4 @@
+import { IClinic } from "./clinic"
 import { IDay } from "./day"
 import { IUser } from "./user"
 
@@ -10,6 +11,8 @@ export interface IClinician {
     lastName    : string
     nickname    : string
     active      : boolean
+
+    clinics : IClinic[]
 
     user : IUser
     

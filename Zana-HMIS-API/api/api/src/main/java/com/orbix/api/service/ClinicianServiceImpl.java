@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.exceptions.InvalidOperationException;
@@ -39,6 +40,16 @@ public class ClinicianServiceImpl implements ClinicianService{
 	
 	@Override
 	public Clinician save(Clinician clinician, HttpServletRequest request) {
+
+		clinician.setNickname(Sanitizer.sanitizeString(clinician.getFirstName()+ " "+clinician.getMiddleName()+ " "+clinician.getLastName()+" "+clinician.getCode()));
+		
+		if(clinician.getId() == null) {
+			clinician.setCreatedby(userService.getUser(request));
+			clinician.setCreatedOn(dayService.getDay());
+			clinician.setCreatedAt(dayService.getTimeStamp());
+			
+			clinician.setActive(true);
+		}
 		log.info("Saving new clinic to the database");
 		return clinicianRepository.save(clinician);
 	}

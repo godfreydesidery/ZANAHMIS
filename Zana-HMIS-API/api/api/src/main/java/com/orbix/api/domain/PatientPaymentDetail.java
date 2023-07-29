@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
@@ -39,7 +40,7 @@ public class PatientPaymentDetail {
 	private String description;
 	private String status;
 	
-	@ManyToOne(targetEntity = PatientBill.class, fetch = FetchType.EAGER,  optional = false)
+	@OneToOne(targetEntity = PatientBill.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "patient_bill_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private PatientBill patientBill;

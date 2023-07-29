@@ -137,9 +137,11 @@ public class PatientBillResource {
 		
 		PatientPayment payment = new PatientPayment();
 		payment.setAmount(totalAmount);
+		
 		payment.setCreatedby(userService.getUser(request));
 		payment.setCreatedOn(dayService.getDay());
 		payment.setCreatedAt(LocalDateTime.now());
+		
 		payment.setStatus("RECEIVED");
 		payment = patientPaymentRepository.save(payment);
 				

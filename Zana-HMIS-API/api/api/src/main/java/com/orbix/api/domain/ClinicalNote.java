@@ -44,7 +44,7 @@ public class ClinicalNote {
 	private String pastMedicalHistory;
 	private String familyAndSocialHistory;
 	private String drugsAndAllergyHistory;
-	private String reviewOfOtherSystem;
+	private String reviewOfOtherSystems;
 	private String physicalExamination;
 	private String managementPlan;
 	

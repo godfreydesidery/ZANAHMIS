@@ -132,6 +132,7 @@ public class PatientServiceImpl implements PatientService {
 		p.setCreatedby(userService.getUser(request));
 		p.setCreatedOn(dayService.getDay());
 		p.setCreatedAt(dayService.getTimeStamp());
+		
 		Patient patient = patientRepository.save(p);
 		
 		/*
@@ -181,9 +182,11 @@ public class PatientServiceImpl implements PatientService {
 		
 		Registration reg = new Registration();
 		reg.setPatient(patient);
+		
 		reg.setCreatedby(userService.getUser(request));
 		reg.setCreatedOn(dayService.getDay());
 		reg.setCreatedAt(dayService.getTimeStamp());
+		
 		reg.setPatientBill(regBill);
 		reg.setStatus("ACTIVE");
 		registrationRepository.save(reg);
@@ -230,8 +233,16 @@ public class PatientServiceImpl implements PatientService {
 				patientInvoice.setPatient(patient);
 				patientInvoice.setInsurancePlan(patient.getInsurancePlan());
 				patientInvoice.setStatus("PENDING");
+				
+				patientInvoice.setCreatedby(userService.getUser(request));
+				patientInvoice.setCreatedOn(dayService.getDay());
+				patientInvoice.setCreatedAt(dayService.getTimeStamp());
+				
 				patientInvoice = patientInvoiceRepository.save(patientInvoice);
 				patientInvoice.setNo(patientInvoice.getId().toString());
+				
+				
+				
 				patientInvoice = patientInvoiceRepository.save(patientInvoice);
 				/**
 				 * Add registration patientBill claim to patientInvoice
@@ -242,6 +253,11 @@ public class PatientServiceImpl implements PatientService {
 				patientInvoiceDetail.setAmount(regBill.getAmount());
 				patientInvoiceDetail.setDescription("Registration Fee");
 				patientInvoiceDetail.setQty(1);
+				
+				patientInvoiceDetail.setCreatedby(userService.getUser(request));
+				patientInvoiceDetail.setCreatedOn(dayService.getDay());
+				patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+				
 				patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
 			}else {
 				/**
@@ -253,6 +269,11 @@ public class PatientServiceImpl implements PatientService {
 				patientInvoiceDetail.setAmount(regBill.getAmount());
 				patientInvoiceDetail.setDescription("Registration Fee");
 				patientInvoiceDetail.setQty(1);
+				
+				patientInvoiceDetail.setCreatedby(userService.getUser(request));
+				patientInvoiceDetail.setCreatedOn(dayService.getDay());
+				patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+				
 				patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
 			}
 			
@@ -280,16 +301,18 @@ public class PatientServiceImpl implements PatientService {
 		visit.setSequence("FIRST");
 		visit.setStatus("PENDING");
 		visit.setType(patient.getType());
+		
 		visit.setCreatedby(userService.getUser(request));
 		visit.setCreatedOn(dayService.getDay());
 		visit.setCreatedAt(dayService.getTimeStamp());
+		
 		visitRepository.save(visit);
 		
 		return patient;
 	}
 	
 	@Override
-	public Patient doConsultation(Patient p, Clinic c, Clinician cn, PaymentType paymentType, HttpServletRequest request) {
+	public Patient doConsultation(Patient p, Clinic c, Clinician cn, HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		/**
 		 * Check whether patient is assigned to a consultation, if yes, throws error
@@ -338,6 +361,31 @@ public class PatientServiceImpl implements PatientService {
 		consultation.setClinician(cn);
 		consultation.setStatus("PENDING");
 		consultation.setPatientBill(conBill);
+		consultation.setPaymentType(p.getPaymentType());
+		
+		/**
+		 * Set visit, create one if the last visit is not for today
+		 */
+		Optional<Visit> v = visitRepository.findLastByPatient(p);
+		Visit visit = new Visit();
+		if(!v.isPresent() || !v.get().getStatus().equals("PENDING")) {			
+			visit.setPatient(p);
+			if(!v.isPresent()) {
+				visit.setSequence("FIRST");
+			}else {
+				visit.setSequence("SUBSEQUENT");
+			}
+			
+			visit.setCreatedby(userService.getUser(request));
+			visit.setCreatedOn(dayService.getDay());
+			visit.setCreatedAt(dayService.getTimeStamp());
+			
+			visitRepository.save(visit);
+		}else {
+			visit = v.get();
+		}
+		consultation.setVisit(visit);
+		
 		/**
 		 * Add forensic data
 		 */
@@ -353,8 +401,8 @@ public class PatientServiceImpl implements PatientService {
 		/**
 		 * Check whether, if patient should pay by insurance, if the insurance cover is the same as the on registered for the patient
 		 */
-		if(paymentType.getName().equals("INSURANCE")) {
-			Optional<InsurancePlan> plan = insurancePlanRepository.findByName(paymentType.getInsurancePlanName());
+		if(p.getPaymentType().equals("INSURANCE")) {
+			Optional<InsurancePlan> plan = insurancePlanRepository.findByName(p.getInsurancePlan().getName());
 			if(!plan.isPresent()) {
 				throw new NotFoundException("Insurance plan not found in database");
 			}
@@ -368,9 +416,7 @@ public class PatientServiceImpl implements PatientService {
 						throw new InvalidOperationException("Use of two or more insurance plan. The patient should sign of the initial patientInvoice before proceeding with another plan");
 					}
 				}
-				if(!paymentType.getInsuranceMembershipNo().equals(p.getMembershipNo())) {
-					throw new InvalidOperationException("Membership number do not match. Please cross check membership no for correction");
-				}
+				
 			}else if(p.getPaymentType().equals("CASH")){
 				if(pendingInv.isPresent()) {
 					throw new InvalidOperationException("Use of two or more insurance plan. The patient should sign of the iniitial patientInvoice before proceeding with another plan");
@@ -378,14 +424,19 @@ public class PatientServiceImpl implements PatientService {
 			}
 			p.setPaymentType("INSURANCE");
 			p.setInsurancePlan(plan.get());
-			p.setMembershipNo(paymentType.getInsuranceMembershipNo());
+			p.setMembershipNo(p.getMembershipNo());
 			p = patientRepository.save(p);
 			
 			consultation.setPaymentType("INSURANCE");
-			consultation.setMembershipNo(paymentType.getInsuranceMembershipNo());
+			consultation.setMembershipNo(p.getMembershipNo());
 			consultation.setInsurancePlan(plan.get());
+			
+			consultation.setCreatedby(userService.getUser(request));
+			consultation.setCreatedOn(dayService.getDay());
+			consultation.setCreatedAt(dayService.getTimeStamp());
+			
 			consultation = consultationRepository.save(consultation);
-		}else if(paymentType.getName().equals("CASH")){
+		}else if(p.getPaymentType().equals("CASH")){
 			
 			p.setPaymentType("CASH");
 			p.setInsurancePlan(null);
@@ -395,6 +446,12 @@ public class PatientServiceImpl implements PatientService {
 			consultation.setPaymentType("CASH");
 			consultation.setMembershipNo("");
 			consultation.setInsurancePlan(null);
+			
+			consultation.setCreatedby(userService.getUser(request));
+			consultation.setCreatedOn(dayService.getDay());
+			consultation.setCreatedAt(dayService.getTimeStamp());
+			
+			
 			consultation = consultationRepository.save(consultation);
 		}else {
 			throw new InvalidOperationException("Invalid Payment type selected");
@@ -415,6 +472,11 @@ public class PatientServiceImpl implements PatientService {
 			conBill.setPaid(consultationPricePlan.get().getConsultationFee());
 			conBill.setBalance(0);
 			conBill.setStatus("COVERED");
+			
+			conBill.setCreatedby(userService.getUser(request));
+			conBill.setCreatedOn(dayService.getDay());
+			conBill.setCreatedAt(dayService.getTimeStamp());
+			
 			conBill = patientBillRepository.save(conBill);
 			
 			/**
@@ -432,6 +494,11 @@ public class PatientServiceImpl implements PatientService {
 				patientInvoice.setStatus("PENDING");
 				patientInvoice = patientInvoiceRepository.save(patientInvoice);
 				patientInvoice.setNo(patientInvoice.getId().toString());
+
+				patientInvoice.setCreatedby(userService.getUser(request));
+				patientInvoice.setCreatedOn(dayService.getDay());
+				patientInvoice.setCreatedAt(dayService.getTimeStamp());
+				
 				patientInvoice = patientInvoiceRepository.save(patientInvoice);
 				/**
 				 * Add registration patientBill claim to patientInvoice
@@ -442,6 +509,11 @@ public class PatientServiceImpl implements PatientService {
 				patientInvoiceDetail.setAmount(conBill.getAmount());
 				patientInvoiceDetail.setDescription("Consultation");
 				patientInvoiceDetail.setQty(1);
+				
+				patientInvoiceDetail.setCreatedby(userService.getUser(request));
+				patientInvoiceDetail.setCreatedOn(dayService.getDay());
+				patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+				
 				patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
 			}else {
 				/**
@@ -453,30 +525,15 @@ public class PatientServiceImpl implements PatientService {
 				patientInvoiceDetail.setAmount(conBill.getAmount());
 				patientInvoiceDetail.setDescription("Consultation");
 				patientInvoiceDetail.setQty(1);
+				
+				patientInvoiceDetail.setCreatedby(userService.getUser(request));
+				patientInvoiceDetail.setCreatedOn(dayService.getDay());
+				patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+				
 				patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
 			}
 		}
-		/**
-		 * Set visit, create one if the last visit is not for today
-		 */
-		Optional<Visit> v = visitRepository.findLastByPatient(p);
-		Visit visit = new Visit();
-		if(!v.isPresent() || !v.get().getStatus().equals("PENDING")) {			
-			visit.setPatient(p);
-			if(!v.isPresent()) {
-				visit.setSequence("FIRST");
-			}else {
-				visit.setSequence("SUBSEQUENT");
-			}
-			
-			visit.setCreatedby(userService.getUser(request));
-			visit.setCreatedOn(dayService.getDay());
-			visit.setCreatedAt(dayService.getTimeStamp());
-			visitRepository.save(visit);
-		}else {
-			visit = v.get();
-		}
-		consultation.setVisit(visit);
+		
 		consultation = consultationRepository.save(consultation);
 		return null;
 	}

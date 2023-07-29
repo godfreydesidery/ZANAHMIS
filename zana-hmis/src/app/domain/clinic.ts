@@ -12,4 +12,6 @@ export interface IClinic {
     createdBy       : IUser
     createdOn       : IDay
     createdAt       : Date
+
+    assigned : boolean
 }

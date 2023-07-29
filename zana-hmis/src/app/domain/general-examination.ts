@@ -3,8 +3,10 @@ import { IUser } from "./user"
 import { IConsultation } from "./consultation"
 
 export interface IGeneralExamination {
+    temperature: string
     id                  : any
     bodyMassIndex       : string
+    bodyMassIndexComment  : string
     bodySurfaceArea     :string
     height              : string
     pressure            : string

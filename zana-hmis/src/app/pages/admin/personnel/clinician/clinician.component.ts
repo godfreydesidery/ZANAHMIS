@@ -4,6 +4,8 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IClinic } from 'src/app/domain/clinic';
+import { IClinician } from 'src/app/domain/clinician';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -18,8 +20,10 @@ export class ClinicianComponent implements OnInit {
 
 
   id : any
-  no : string = ''
-  name : string = ''
+  code : string = ''
+  firstName : string = ''
+  middleName : string = ''
+  lastName : string = ''
   type : string = ''
   active : boolean = true
 
@@ -30,12 +34,12 @@ export class ClinicianComponent implements OnInit {
 
   clinicianClinics : IClinic[] = []
 
-  rollNo : string = ''
+  userCode : string = ''
+
 
   constructor(
     private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) {
@@ -57,10 +61,12 @@ export class ClinicianComponent implements OnInit {
         clinicianClinics.push(clinic)
       }
     })
-    var clinic = {
+    var clinician = {
       id          : this.id,
-      no          : this.no,
-      name        : this.name,
+      code        : this.code,
+      firstName   : this.firstName,
+      middleName  : this.middleName,
+      lastName    : this.lastName,
       type        : this.type,
       clinics     : clinicianClinics,
       active      : true
@@ -68,17 +74,19 @@ export class ClinicianComponent implements OnInit {
     if(this.id == null || this.id == ''){
       //save a new clinic
       this.spinner.show()
-      await this.http.post<IClinician>(API_URL+'/clinicians/save', clinic, options)
+      await this.http.post<IClinician>(API_URL+'/clinicians/save', clinician, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
-          this.id           = data?.id
-          this.no       = data!.no
-          this.name = data!.name
-          this.type = data!.type
-          this.clinics = data!.clinics
-          this.active       = data!.active
+          this.id         = data?.id
+          this.code       = data!.code
+          this.firstName  = data!.firstName
+          this.middleName = data!.middleName
+          this.lastName   = data!.lastName
+          this.type       = data!.type
+          this.clinics    = data!.clinics
+          this.active     = data!.active
           this.msgBox.showSuccessMessage('Clinician created successifully')
           this.loadClinicians()
           this.clear()
@@ -93,16 +101,19 @@ export class ClinicianComponent implements OnInit {
     }else{
       //update an existing clinic
       this.spinner.show()
-      await this.http.post<IClinician>(API_URL+'/clinicians/save', clinic, options)
+      await this.http.post<IClinician>(API_URL+'/clinicians/save', clinician, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
-          this.id           = data?.id
-          this.no       = data!.no
-          this.name = data!.name
-          this.type = data!.type
-          this.active       = data!.active
+          this.id         = data?.id
+          this.code       = data!.code
+          this.firstName  = data!.firstName
+          this.middleName = data!.middleName
+          this.lastName   = data!.lastName
+          this.type       = data!.type
+          this.clinics    = data!.clinics
+          this.active     = data!.active
           this.msgBox.showSuccessMessage('Clinician updated successifully')
           this.loadClinicians()
         }
@@ -139,11 +150,13 @@ export class ClinicianComponent implements OnInit {
   }
 
   clear(){
-    this.id = null
-    this.no = ''
-    this.name = ''
-    this.type = ''
-    this.rollNo = ''
+    this.id         = null
+    this.code       = ''
+    this.firstName  = ''
+    this.middleName = ''
+    this.lastName   = ''
+    this.type       = ''
+    this.active     = false
   }
 
   async getClinician(key: string) {
@@ -160,11 +173,13 @@ export class ClinicianComponent implements OnInit {
     .then(
       data=>{
         console.log(data)
-        this.id = data?.id
-        this.no = data!.no
-        this.name = data!.name
-        this.type = data!.type
-        this.active = data!.active
+        this.id         = data?.id
+        this.code       = data!.code
+        this.firstName  = data!.firstName
+        this.middleName = data!.middleName
+        this.lastName   = data!.lastName
+        this.type       = data!.type
+        this.active     = data!.active
 
         this.showUserRoles(this.clinics, data!['clinics'])
         
@@ -173,7 +188,7 @@ export class ClinicianComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find clinic')
+        this.msgBox.showErrorMessage('Could not find Doctor')
       }
     )
   }
@@ -236,6 +251,7 @@ export class ClinicianComponent implements OnInit {
        data => {
          data?.forEach(
            element => {
+             console.log(element)
              this.clinics.push(element)
            }
          )
@@ -246,25 +262,30 @@ export class ClinicianComponent implements OnInit {
      })
    }
 
+   clearUser(){
+     this.userCode = ''
+   }
+
    public async assignUserProfile(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     
-    
     if(this.id != null){
       this.spinner.show()
-      await this.http.post<IClinician>(API_URL+'/clinicians/assign_user_profile?id='+this.id+'&roll_no='+this.rollNo, null, options)
+      await this.http.post<IClinician>(API_URL+'/clinicians/assign_user_profile?id='+this.id+'&code='+this.userCode, null, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
-          this.id           = data?.id
-          this.no       = data!.no
-          this.name = data!.name
-          this.type = data!.type
-          this.clinics = data!.clinics
-          this.active       = data!.active
+          this.id         = data?.id
+          this.code       = data!.code
+          this.firstName  = data!.firstName
+          this.middleName = data!.middleName
+          this.lastName   = data!.lastName
+          this.type       = data!.type
+          this.clinics    = data!.clinics
+          this.active     = data!.active
           this.msgBox.showSuccessMessage('Saved successifully')
           this.loadClinicians()
           this.clear()
@@ -277,21 +298,5 @@ export class ClinicianComponent implements OnInit {
       )
 
     }
-  }
-  
-}
-
-export  interface IClinician{
-  id : any
-  no : string
-  name : string
-  type : string
-  active : boolean
-  clinics : IClinic[]
-}
-
-export interface IClinic{
-  id       : any
-  name     : string
-  assigned : boolean
+  } 
 }

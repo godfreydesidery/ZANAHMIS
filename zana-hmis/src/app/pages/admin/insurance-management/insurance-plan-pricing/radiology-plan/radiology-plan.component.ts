@@ -112,7 +112,7 @@ export class RadiologyPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not loadradiologyType plans')
+        this.msgBox.showErrorMessage('Could not load Radiology Type Plans')
       }
     )
   }
@@ -141,21 +141,21 @@ export class RadiologyPlanComponent implements OnInit {
       .then(
         data => {
           this.id           = data?.id
-          this.msgBox.showSuccessMessage('RadiologyType plan created successifully')
+          this.msgBox.showSuccessMessage('Radiology Type Plan created successifully')
           this.loadRadiologyTypeInsurancePlans()
           
         }
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not createradiologyType plan')
+          this.msgBox.showErrorMessage('Could not create Radiology Type Plan')
         }
       )
 
     }else{
       //update an existingradiologyType
       this.spinner.show()
-      await this.http.post<IRadiologyTypeInsurancePlan>(API_URL+'/radiology_type_insurance_plans/save',radiologyTypeInsurancePlan, options)
+      await this.http.post<IRadiologyTypeInsurancePlan>(API_URL+'/radiology_type_insurance_plans/save', radiologyTypeInsurancePlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
@@ -214,6 +214,9 @@ export class RadiologyPlanComponent implements OnInit {
 
   async deleteRadiologyTypeInsurancePlan(key: string) {
     if(key == ''){
+      return
+    }
+    if(!window.confirm('Delete this plan? Plan ID: '+key)){
       return
     }
     let options = {

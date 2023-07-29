@@ -1,10 +1,10 @@
-<!-- Content Header (Page header) 
+<!-- Content Header (Page header) -->
 <section class="content-header">
     <div class="header-title">
         <h1>Medicine Plan</h1>
     </div>
 </section>
- Main content 
+ <!--Main content -->
 <section class="content">
     <div class="row">
         <div class="col-sm-12">
@@ -28,14 +28,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let medicinePlan of medicinePlans">
-                                    <td>{{medicinePlan.id}}</td>
-                                    <td>{{medicinePlan.insurancePlan.insuranceProvider.name}}</td>
-                                    <td>{{medicinePlan.insurancePlan.name}}</td>
-                                    <td>{{medicinePlan.medicine.name}}</td>
-                                    <td style="text-align: right;">{{medicinePlan.price | currency:'':''}}</td>
-                                    <td><a (click)="getMedicinePlan(medicinePlan.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</a>
-                                        <a (click)="deleteMedicinePlan(medicinePlan.id)">Delete</a>
+                                <tr *ngFor="let medicineInsurancePlan of medicineInsurancePlans">
+                                    <td>{{medicineInsurancePlan.id}}</td>
+                                    <td>{{medicineInsurancePlan.insurancePlan.insuranceProvider.name}}</td>
+                                    <td>{{medicineInsurancePlan.insurancePlan.name}}</td>
+                                    <td>{{medicineInsurancePlan.medicine.name}}</td>
+                                    <td style="text-align: right;">{{medicineInsurancePlan.price | currency:'':''}}</td>
+                                    <td><a (click)="getMedicineInsurancePlan(medicineInsurancePlan.id)" data-toggle="modal" data-target="#add-edit-modal"><i class="glyphicon glyphicon-pencil"></i>Edit</a>
+                                        <a (click)="deleteMedicineInsurancePlan(medicineInsurancePlan.id)"><i class="glyphicon glyphicon-trash"></i>Delete</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -45,10 +45,10 @@
              </div>
          </div>
      </div>     
- </section> content -->
+ </section> <!--content -->
 
  <!-- Modal success -->
-<!--<div class="modal fade modal-success" id="add-edit-modal" tabindex="-1" role="dialog">
+<div class="modal fade modal-success" id="add-edit-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -96,8 +96,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" (click)="saveMedicinePlan()" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-success" (click)="saveMedicineInsurancePlan()" data-dismiss="modal">Save</button>
             </div>
         </div>
     </div>
-</div> -->
+</div>

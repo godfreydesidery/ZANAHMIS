@@ -58,8 +58,8 @@ public class Radiology {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Admission admission;
 	
-	@ManyToOne(targetEntity = RadiologyType.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "radiology_type_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = RadiologyType.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "radiology_type_id", nullable = false , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private RadiologyType radiologyType;
 	

@@ -1,10 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IClinicalNote } from 'src/app/domain/clinical-note';
+import { IGeneralExamination } from 'src/app/domain/general-examination';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -31,6 +33,7 @@ export class DoctorCrackingComponent implements OnInit {
   gEWeight : string = ''
   gEHeight : string = ''
   gEBodyMassIndex : string = ''
+  gEBodyMassIndexComment : string = ''
   gEBodySurfaceArea : string = ''
   gESaturationOxygen : string = ''
   gERespiratoryRate : string = ''
@@ -44,7 +47,7 @@ export class DoctorCrackingComponent implements OnInit {
   cNPastMedicalHistory : string = ''
   cNFamilyAndSocialHistory : string = ''
   cNDrugsAndAllergyHistory : string = ''
-  cNReviewOfOtherSystem : string = ''
+  cNReviewOfOtherSystems : string = ''
   cNPhysicalExamination : string = ''
   cNManagementPlan : string = ''
   /**
@@ -89,9 +92,7 @@ export class DoctorCrackingComponent implements OnInit {
 
   constructor(private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
-    private router : Router,
     private msgBox : MsgBoxService) { }
 
   ngOnInit(): void {
@@ -153,7 +154,7 @@ export class DoctorCrackingComponent implements OnInit {
         this.cNPastMedicalHistory = data!.pastMedicalHistory
         this.cNFamilyAndSocialHistory = data!.familyAndSocialHistory
         this.cNDrugsAndAllergyHistory = data!.drugsAndAllergyHistory
-        this.cNReviewOfOtherSystem = data!.reviewOfOtherSystem
+        this.cNReviewOfOtherSystems = data!.reviewOfOtherSystems
         this.cNPhysicalExamination = data!.physicalExamination
         this.cNManagementPlan = data!.managementPlan
         console.log(data)
@@ -205,7 +206,8 @@ export class DoctorCrackingComponent implements OnInit {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    var cg : ICG = {
+    
+    var cg = {
       clinicalNote : {
         id : this.cNid,
         mainComplain : this.cNMainComplain,
@@ -213,10 +215,10 @@ export class DoctorCrackingComponent implements OnInit {
         pastMedicalHistory : this.cNPastMedicalHistory,
         familyAndSocialHistory : this.cNFamilyAndSocialHistory,
         drugsAndAllergyHistory : this.cNDrugsAndAllergyHistory,
-        reviewOfOtherSystem : this.cNReviewOfOtherSystem,
+        reviewOfOtherSystems : this.cNReviewOfOtherSystems,
         physicalExamination : this.cNPhysicalExamination,
         managementPlan : this.cNManagementPlan,
-        consultation : this.consultation
+        consultation : { id : this.id}
       },
       generalExamination : {
         id : this.gEId,
@@ -226,41 +228,46 @@ export class DoctorCrackingComponent implements OnInit {
         pulseRate : this.gEPulseRate,
         height : this.gEHeight,
         bodyMassIndex : this.gEBodyMassIndex,
+        bodyMassIndexComment : this.gEBodyMassIndexComment,
         bodySurfaceArea : this.gEBodySurfaceArea,
         saturationOxygen : this.gESaturationOxygen,
         respiratoryRate : this.gERespiratoryRate,
         description : this.gEDescription,
-        consultation : this.consultation
+        consultation : { id : this.id}
       }
     }
+    
     this.spinner.show()
     await this.http.post<ICG>(API_URL+'/patients/save_clinical_note_and_general_examination', cg, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
+
         this.cNid = data?.clinicalNote.id
         this.cNMainComplain = data!.clinicalNote.mainComplain
         this.cNPresentIllnessHistory = data!.clinicalNote.presentIllnessHistory
         this.cNPastMedicalHistory = data!.clinicalNote.pastMedicalHistory
         this.cNFamilyAndSocialHistory = data!.clinicalNote.familyAndSocialHistory
         this.cNDrugsAndAllergyHistory = data!.clinicalNote.drugsAndAllergyHistory
-        this.cNReviewOfOtherSystem = data!.clinicalNote.reviewOfOtherSystem
+        this.cNReviewOfOtherSystems = data!.clinicalNote.reviewOfOtherSystems
         this.cNPhysicalExamination = data!.clinicalNote.physicalExamination
         this.cNManagementPlan = data!.clinicalNote.managementPlan
 
         this.gEId = data?.generalExamination.id
         this.gEPressure = data!.generalExamination.pressure
-        this.gETemperature = data!.generalExamination.temperature
+        this.gETemperature = data!.generalExamination.temparature
         this.gEWeight = data!.generalExamination.weight
         this.gEPulseRate = data!.generalExamination.pulseRate
         this.gEHeight = data!.generalExamination.height
         this.gEBodyMassIndex = data!.generalExamination.bodyMassIndex
+        this.gEBodyMassIndexComment = data!.generalExamination.bodyMassIndexComment
         this.gEBodySurfaceArea = data!.generalExamination.bodySurfaceArea
         this.gESaturationOxygen = data!.generalExamination.saturationOxygen
         this.gERespiratoryRate = data!.generalExamination.respiratoryRate
         this.gEDescription = data!.generalExamination.description
         
+        this.msgBox.showSuccessMessage('Saved successifully')
       
         console.log(data)
       }
@@ -293,13 +300,13 @@ export class DoctorCrackingComponent implements OnInit {
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
-      data => {
-        
+      () => {
+        this.msgBox.showSuccessMessage('Working Diagnosis Saved successifully')
       }
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not save')
+        this.msgBox.showErrorMessage('Could not save Working Diagnosis')
         console.log(error)
       }
     )
@@ -326,8 +333,8 @@ export class DoctorCrackingComponent implements OnInit {
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
-      data => {
-        
+      () => {
+        this.msgBox.showSuccessMessage('Saved successifully')
       }
     )
     .catch(
@@ -357,7 +364,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not load diagnosis types names')
       }
     )
@@ -379,7 +386,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not load working diagnosises')
       }
     )
@@ -402,7 +409,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not load final diagnosises')
       }
     )
@@ -424,7 +431,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not delete')
       }
     )
@@ -446,7 +453,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not delete')
       }
     )
@@ -492,7 +499,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not load lab test types names')
       }
     )
@@ -516,7 +523,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not load radiology types names')
       }
     )
@@ -540,7 +547,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not load procedure types names')
       }
     )
@@ -564,7 +571,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not load medicine names')
       }
     )
@@ -586,15 +593,13 @@ export class DoctorCrackingComponent implements OnInit {
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
-      data => {
-        console.log('test')
-        console.log(data)
-        console.log('test')
+      () => {
+        this.msgBox.showSuccessMessage('Lab Test Saved successifully')
       }
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not save')
+        this.msgBox.showErrorMessage('Could not save Lab Test')
         console.log(error)
       }
     )
@@ -617,15 +622,13 @@ export class DoctorCrackingComponent implements OnInit {
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
-      data => {
-        console.log('test')
-        console.log(data)
-        console.log('test')
+      () => {
+        this.msgBox.showSuccessMessage('Radiology Saved successifully')
       }
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not save')
+        this.msgBox.showErrorMessage('Could not save Radiology')
         console.log(error)
       }
     )
@@ -648,15 +651,13 @@ export class DoctorCrackingComponent implements OnInit {
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
-      data => {
-        console.log('test')
-        console.log(data)
-        console.log('test')
+      () => {
+        this.msgBox.showSuccessMessage('Procedure Saved successifully')
       }
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not save')
+        this.msgBox.showErrorMessage('Could not save Procedure')
         console.log(error)
       }
     )
@@ -679,15 +680,13 @@ export class DoctorCrackingComponent implements OnInit {
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
-      data => {
-        console.log('test')
-        console.log(data)
-        console.log('test')
+      () => {
+        this.msgBox.showSuccessMessage('Prescription Saved successifully')
       }
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not save')
+        this.msgBox.showErrorMessage('Could not save Prescription')
         console.log(error)
       }
     )
@@ -710,7 +709,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not load lab tests')
       }
     )
@@ -733,7 +732,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not load radiologies')
       }
     )
@@ -756,7 +755,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not load procedures')
       }
     )
@@ -779,7 +778,7 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      error => {
+      () => {
         this.msgBox.showErrorMessage('Could not load prescriptions')
       }
     )
@@ -933,7 +932,8 @@ export interface IFinalDiagnosis{
   consultation : IConsultation
 }
 
-export interface IClinicalNote{
+export interface IClinicalNote111{
+  managementPlan: string;
   id : any
 
   mainComplain : string
@@ -943,37 +943,6 @@ export interface IClinicalNote{
 	drugsAndAllergyHistory : string
 	reviewOfOtherSystem : string
 	physicalExamination : string
-
-  consultation : IConsultation
-}
-
-export interface IGeneralExamination{
-  id : any
-	
-	pressure : string
-	temperature : string
-	pulseRate : string
-	weight : string
-	height : string
-	bodyMassIndex : string
-	bodySurfaceArea : string
-	saturationOxygen : string
-	respiratoryRate : string
-	description : string
-
-  consultation : IConsultation
-}
-
-export interface IClinicalNote{
-  id : any
-  mainComplain : string
-	presentIllnessHistory : string
-	pastMedicalHistory : string
-	familyAndSocialHistory : string
-	drugsAndAllergyHistory : string
-	reviewOfOtherSystem : string
-	physicalExamination : string
-  managementPlan : string
 
   consultation : IConsultation
 }

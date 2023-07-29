@@ -4,6 +4,8 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
+import { IProcedureTypeInsurancePlan } from 'src/app/domain/procedure-type-insurance-plan';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -15,33 +17,33 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./procedure-plan.component.scss']
 })
 export class ProcedurePlanComponent implements OnInit {
-  id : any = null
-  insurancePlan! : IInsurancePlan
-  price : number = 0
+  id              : any = null
+
+  insurancePlan!  : IInsurancePlan
+  price           : number = 0
 
   insuranceProviderName : string = ''
-  insurancePlanName : string = ''
+  insurancePlanName     : string = ''
 
   insuranceProviderNames : string[] = []
-  insurancePlanNames : string[] = []
+  insurancePlanNames      : string[] = []
 
- procedureTypeName : string = ''
+ procedureTypeName  : string = ''
  procedureTypeNames : string[] = []
 
- procedureTypePlans : IProcedureTypePlan[] = []
+ procedureTypeInsurancePlans : IProcedureTypeInsurancePlan[] = []
 
 
 
   constructor(
     private auth : AuthService,
     private http :HttpClient,
-    private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) { }
 
   ngOnInit(): void {
-    this.loadProcedureTypePlans()
+    this.loadProcedureTypeInsurancePlans()
     this.loadInsuranceProviderNames()
     this.loadProcedureTypeNames()
   }
@@ -64,7 +66,7 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Providers')
+        this.msgBox.showErrorMessage('Could not load Insurance Providers')
       }
     )
   }
@@ -87,40 +89,40 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Plans')
+        this.msgBox.showErrorMessage('Could not load Insurance Plans')
       }
     )
   }
 
-  async loadProcedureTypePlans(){
-    this.procedureTypePlans = []
+  async loadProcedureTypeInsurancePlans(){
+    this.procedureTypeInsurancePlans = []
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IProcedureTypePlan[]>(API_URL+'/procedure_type_plan_prices', options)
+    await this.http.get<IProcedureTypeInsurancePlan[]>(API_URL+'/procedure_type_insurance_plans', options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
         data?.forEach(element => {
-          this.procedureTypePlans.push(element)
+          this.procedureTypeInsurancePlans.push(element)
         })
       }
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not loadprocedureType plans')
+        this.msgBox.showErrorMessage('Could not load Procedure Type Plans')
       }
     )
   }
 
 
-  public async saveProcedureTypePlan(){
+  public async saveProcedureTypeInsurancePlan(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    var procedureTypePlan = {
+    var procedureTypeInsurancePlan = {
       id          : this.id,
      procedureType : {
         name : this.procedureTypeName
@@ -133,40 +135,40 @@ export class ProcedurePlanComponent implements OnInit {
     if(this.id == null || this.id == ''){
       //save a new diagnosisType
       this.spinner.show()
-      await this.http.post<IProcedureTypePlan>(API_URL+'/procedure_type_plan_prices/save',procedureTypePlan, options)
+      await this.http.post<IProcedureTypeInsurancePlan>(API_URL+'/procedure_type_insurance_plans/save',procedureTypeInsurancePlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
           this.id           = data?.id
-          this.msgBox.showSuccessMessage('ProcedureType plan created successifully')
-          this.loadProcedureTypePlans()
+          this.msgBox.showSuccessMessage('Procedure Type Plan created successifully')
+          this.loadProcedureTypeInsurancePlans()
           
         }
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not createprocedureType plan')
+          this.msgBox.showErrorMessage('Could not create Procedure Type Plan')
         }
       )
 
     }else{
       //update an existingprocedureType
       this.spinner.show()
-      await this.http.post<IProcedureTypePlan>(API_URL+'/procedure_type_plan_prices/save',procedureTypePlan, options)
+      await this.http.post<IProcedureTypeInsurancePlan>(API_URL+'/procedure_type_insurance_plans/save',procedureTypeInsurancePlan, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
           this.id           = data?.id
           
-          this.msgBox.showSuccessMessage('ProcedureType plan updated successifully')
-          this.loadProcedureTypePlans()
+          this.msgBox.showSuccessMessage('Procedure Type Plan updated successifully')
+          this.loadProcedureTypeInsurancePlans()
         }
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not updateprocedureType plan')
+          this.msgBox.showErrorMessage('Could not update Procedure Type Plan')
         }
       )
     }
@@ -174,14 +176,14 @@ export class ProcedurePlanComponent implements OnInit {
   }
 
   clear(){
-    this.id = null
-    this.procedureTypeName = ''
-    this.insuranceProviderName = ''
-    this.insurancePlanName = ''
-    this.price = 0
+    this.id                     = null
+    this.procedureTypeName      = ''
+    this.insuranceProviderName  = ''
+    this.insurancePlanName      = ''
+    this.price                  = 0
   }
 
-  async getProcedureTypePlan(key: string) {
+  async getProcedureTypeInsurancePlan(key: string) {
     if(key == ''){
       return
     }
@@ -189,48 +191,51 @@ export class ProcedurePlanComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IProcedureTypePlan>(API_URL+'/procedure_type_plan_prices/get?id='+key, options)
+    await this.http.get<IProcedureTypeInsurancePlan>(API_URL+'/procedure_type_insurance_plans/get?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data=>{
         console.log(data)
-        this.id                    = data?.id
-        this.procedureTypeName            = data!.procedureType.name
-        this.insuranceProviderName = data!.insurancePlan.insuranceProvider.name
-        this.insurancePlanName     = data!.insurancePlan.name
-        this.price       = data!.price
+        this.id                     = data?.id
+        this.procedureTypeName      = data!.procedureType.name
+        this.insuranceProviderName  = data!.insurancePlan.insuranceProvider.name
+        this.insurancePlanName      = data!.insurancePlan.name
+        this.price                  = data!.price
       }
     )
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not findprocedureType plan')
+        this.msgBox.showErrorMessage('Could not find Procedure Type Plan')
       }
     )
   }
 
-  async deleteProcedureTypePlan(key: string) {
+  async deleteProcedureTypeInsurancePlan(key: string) {
     if(key == ''){
+      return
+    }
+    if(!window.confirm('Delete this plan? Plan ID: '+key)){
       return
     }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.post<IProcedureTypePlan>(API_URL+'/procedure_type_plan_prices/delete?id='+key, options)
+    await this.http.post<IProcedureTypeInsurancePlan>(API_URL+'/procedure_type_insurance_plans/delete?id='+key, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data=>{
         console.log(data)
-        this.loadProcedureTypePlans()
+        this.loadProcedureTypeInsurancePlans()
       }
     )
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not deleteprocedureType plan')
+        this.msgBox.showErrorMessage('Could not delete Procedure Type Plan')
       }
     )
   }
@@ -253,28 +258,9 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load procedure_types')
+        this.msgBox.showErrorMessage('Could not load Procedure Types')
       }
     )
   }
 
-}
-
-export interface IProcedureTypePlan{
-  id : any
- procedureType : IProcedureType
-  insurancePlan : IInsurancePlan
-  price : number 
-}
-
-export interface IInsurancePlan{
-  name : string
-  insuranceProvider : IInsuranceProvider 
-}
-export interface IInsuranceProvider{
-  name : string
-}
-
-export interface IProcedureType{
-  name : string
 }

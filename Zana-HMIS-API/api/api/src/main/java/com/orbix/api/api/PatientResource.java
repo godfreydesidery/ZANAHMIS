@@ -215,7 +215,7 @@ public class PatientResource {
 		
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/do_consultation").toUriString());
-		return ResponseEntity.created(uri).body(patientService.doConsultation(p.get(), c.get(), cn.get(), paymentType, request));
+		return ResponseEntity.created(uri).body(patientService.doConsultation(p.get(), c.get(), cn.get(), request));
 	}
 	
 	@PostMapping("/patients/cancel_consultation")
@@ -404,6 +404,11 @@ public class PatientResource {
 				 */
 				ClinicalNote note = new ClinicalNote();
 				note.setConsultation(c.get());
+				
+				note.setCreatedby(userService.getUser(request));
+				note.setCreatedOn(dayService.getDay());
+				note.setCreatedAt(dayService.getTimeStamp());
+				
 				URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_clinical_note_by_consultation_id").toUriString());
 				return ResponseEntity.created(uri).body(clinicalNoteRepository.save(note));
 			}
@@ -429,6 +434,11 @@ public class PatientResource {
 				 */
 				GeneralExamination exam = new GeneralExamination();
 				exam.setConsultation(c.get());
+				
+				exam.setCreatedby(userService.getUser(request));
+				exam.setCreatedOn(dayService.getDay());
+				exam.setCreatedAt(dayService.getTimeStamp());
+				
 				URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_general_examination_by_consultation_id").toUriString());
 				return ResponseEntity.created(uri).body(generalExaminationRepository.save(exam));
 			}
@@ -455,7 +465,7 @@ public class PatientResource {
 			cn.get().setPastMedicalHistory(cg.getClinicalNote().getPastMedicalHistory());
 			cn.get().setPhysicalExamination(cg.getClinicalNote().getPhysicalExamination());
 			cn.get().setPresentIllnessHistory(cg.getClinicalNote().getPresentIllnessHistory());
-			cn.get().setReviewOfOtherSystem(cg.getClinicalNote().getReviewOfOtherSystem());
+			cn.get().setReviewOfOtherSystems(cg.getClinicalNote().getReviewOfOtherSystems());
 			cn.get().setManagementPlan(cg.getClinicalNote().getManagementPlan());
 			
 			note = clinicalNoteRepository.save(cn.get());
@@ -467,9 +477,14 @@ public class PatientResource {
 			note.setPastMedicalHistory(cg.getClinicalNote().getPastMedicalHistory());
 			note.setPhysicalExamination(cg.getClinicalNote().getPhysicalExamination());
 			note.setPresentIllnessHistory(cg.getClinicalNote().getPresentIllnessHistory());
-			note.setReviewOfOtherSystem(cg.getClinicalNote().getReviewOfOtherSystem());
+			note.setReviewOfOtherSystems(cg.getClinicalNote().getReviewOfOtherSystems());
 			note.setManagementPlan(cg.getClinicalNote().getManagementPlan());
 			note.setConsultation(c.get());
+			
+			note.setCreatedby(userService.getUser(request));
+			note.setCreatedOn(dayService.getDay());
+			note.setCreatedAt(dayService.getTimeStamp());
+			
 			note = clinicalNoteRepository.save(note);
 		}
 		
@@ -481,6 +496,7 @@ public class PatientResource {
 		GeneralExamination exam = new GeneralExamination();
 		if(ge.isPresent()) {
 			ge.get().setBodyMassIndex(cg.getGeneralExamination().getBodyMassIndex());
+			ge.get().setBodyMassIndexComment(cg.getGeneralExamination().getBodyMassIndexComment());
 			ge.get().setBodySurfaceArea(cg.getGeneralExamination().getBodySurfaceArea());
 			ge.get().setHeight(cg.getGeneralExamination().getHeight());
 			ge.get().setPressure(cg.getGeneralExamination().getPressure());
@@ -494,6 +510,7 @@ public class PatientResource {
 			exam = generalExaminationRepository.save(ge.get());
 		}else {
 			exam.setBodyMassIndex(cg.getGeneralExamination().getBodyMassIndex());
+			exam.setBodyMassIndexComment(cg.getGeneralExamination().getBodyMassIndexComment());
 			exam.setBodySurfaceArea(cg.getGeneralExamination().getBodySurfaceArea());
 			exam.setHeight(cg.getGeneralExamination().getHeight());
 			exam.setPressure(cg.getGeneralExamination().getPressure());
@@ -504,6 +521,10 @@ public class PatientResource {
 			exam.setWeight(cg.getGeneralExamination().getWeight());
 			exam.setDescription(cg.getGeneralExamination().getDescription());
 			exam.setConsultation(c.get());
+			
+			exam.setCreatedby(userService.getUser(request));
+			exam.setCreatedOn(dayService.getDay());
+			exam.setCreatedAt(dayService.getTimeStamp());
 			
 			exam = generalExaminationRepository.save(exam);
 		}
@@ -528,9 +549,19 @@ public class PatientResource {
 		if(!dt.isPresent()) {
 			throw new NotFoundException("Diagnosis type not found");
 		}
+		if(workingDiagnosisRepository.existsByConsultationAndDiagnosisType(c.get(), dt.get())) {
+			throw new InvalidOperationException("Duplicate Diagnosis Types is not allowed");
+		}
 		diagnosis.setConsultation(c.get());
 		diagnosis.setDiagnosisType(dt.get());
 		diagnosis.setPatient(c.get().getPatient());
+		
+		if(diagnosis.getId() == null) {
+			diagnosis.setCreatedby(userService.getUser(request));
+			diagnosis.setCreatedOn(dayService.getDay());
+			diagnosis.setCreatedAt(dayService.getTimeStamp());
+		}
+		
 		
 				
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_working_diagnosis").toUriString());
@@ -561,10 +592,18 @@ public class PatientResource {
 		if(!dt.isPresent()) {
 			throw new NotFoundException("Diagnosis type not found");
 		}
+		if(finalDiagnosisRepository.existsByConsultationAndDiagnosisType(c.get(), dt.get())) {
+			throw new InvalidOperationException("Duplicate Diagnosis Types is not allowed");
+		}
 		diagnosis.setConsultation(c.get());
 		diagnosis.setDiagnosisType(dt.get());
 		diagnosis.setPatient(c.get().getPatient());
 		
+		if(diagnosis.getId() == null) {
+			diagnosis.setCreatedby(userService.getUser(request));
+			diagnosis.setCreatedOn(dayService.getDay());
+			diagnosis.setCreatedAt(dayService.getTimeStamp());
+		}
 				
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_final_diagnosis").toUriString());
 		return ResponseEntity.created(uri).body(finalDiagnosisRepository.save(diagnosis));
@@ -605,6 +644,12 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
+		if(labTest.getId() == null) {
+			labTest.setCreatedby(userService.getUser(request));
+			labTest.setCreatedOn(dayService.getDay());
+			labTest.setCreatedAt(dayService.getTimeStamp());
+		}
+		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_lab_test").toUriString());
 		return ResponseEntity.created(uri).body(patientService.saveLabTest(labTest, c, nc, request));
 	}
@@ -617,6 +662,12 @@ public class PatientResource {
 			HttpServletRequest request){
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		
+		if(radiology.getId() == null) {
+			radiology.setCreatedby(userService.getUser(request));
+			radiology.setCreatedOn(dayService.getDay());
+			radiology.setCreatedAt(dayService.getTimeStamp());
+		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_radiology").toUriString());
 		return ResponseEntity.created(uri).body(patientService.saveRadiology(radiology, c, nc, request));
@@ -631,6 +682,12 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
+		if(procedure.getId() == null) {
+			procedure.setCreatedby(userService.getUser(request));
+			procedure.setCreatedOn(dayService.getDay());
+			procedure.setCreatedAt(dayService.getTimeStamp());
+		}
+		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_procedure").toUriString());
 		return ResponseEntity.created(uri).body(patientService.saveProcedure(procedure, c, nc, request));
 	}
@@ -643,6 +700,12 @@ public class PatientResource {
 			HttpServletRequest request){
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		
+		if(prescription.getId() == null) {
+			prescription.setCreatedby(userService.getUser(request));
+			prescription.setCreatedOn(dayService.getDay());
+			prescription.setCreatedAt(dayService.getTimeStamp());
+		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_prescription").toUriString());
 		return ResponseEntity.created(uri).body(patientService.savePrescription(prescription, c, nc, request));

@@ -216,6 +216,9 @@ export class LabTestPlanComponent implements OnInit {
     if(key == ''){
       return
     }
+    if(!window.confirm('Delete this plan? Plan ID: '+key)){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }

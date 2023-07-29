@@ -60,8 +60,8 @@ public class Prescription {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Admission admission;
 	
-	@ManyToOne(targetEntity = Medicine.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "medicine_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = Medicine.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "medicine_id", nullable = false , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Medicine medicine;
 	
@@ -70,7 +70,7 @@ public class Prescription {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private PatientBill patientBill;
 	
-	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = true)
+	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
 	@JoinColumn(name = "patient_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;

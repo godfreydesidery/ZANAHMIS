@@ -5,6 +5,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IConsultation } from 'src/app/domain/consultation';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -110,30 +111,4 @@ export class ListFromReceptionComponent implements OnInit {
       this.msgBox.showErrorMessage('Could not open')
     }
   }
-}
-
-export interface IConsultation{  
-  id : any
-  paymentType : string
-  patient : IPatient
-  clinic : IClinic
-  clinician : IClinician
-}
-
-export interface IPatient{
-  id : any
-  no : string
-  firstName : string
-  middleName : string
-  lastName : string
-}
-
-export interface IClinic{
-  id : any
-  name : string
-}
-
-export interface IClinician{
-  id : any
-  name : string
 }

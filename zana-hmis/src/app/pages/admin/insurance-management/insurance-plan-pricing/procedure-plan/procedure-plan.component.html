@@ -28,13 +28,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let procedureTypePlan of procedureTypePlans">
-                                    <td>{{procedureTypePlan.insurancePlan.insuranceProvider.name}}</td>
-                                    <td>{{procedureTypePlan.insurancePlan.name}}</td>
-                                    <td>{{procedureTypePlan.procedureType.name}}</td>
-                                    <td style="text-align: right;">{{procedureTypePlan.price | currency:'':''}}</td>
-                                    <td><button class="" (click)="getProcedureTypePlan(procedureTypePlan.id)" data-toggle="modal" data-target="#add-edit-modal">Edit</button>
-                                        <button class="" (click)="deleteProcedureTypePlan(procedureTypePlan.id)">Delete</button>
+                                <tr *ngFor="let procedureTypeInsurancePlan of procedureTypeInsurancePlans">
+                                    <td>{{procedureTypeInsurancePlan.insurancePlan.insuranceProvider.name}}</td>
+                                    <td>{{procedureTypeInsurancePlan.insurancePlan.name}}</td>
+                                    <td>{{procedureTypeInsurancePlan.procedureType.name}}</td>
+                                    <td style="text-align: right;">{{procedureTypeInsurancePlan.price | currency:'':''}}</td>
+                                    <td><a class="" (click)="getProcedureTypeInsurancePlan(procedureTypeInsurancePlan.id)" data-toggle="modal" data-target="#add-edit-modal"><i class="glyphicon glyphicon-pencil"></i>Edit</a>
+                                        <a class="" (click)="deleteProcedureTypeInsurancePlan(procedureTypeInsurancePlan.id)"><i class="glyphicon glyphicon-trash"></i>Delete</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -95,7 +95,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" (click)="saveProcedureTypePlan()" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-success" (click)="saveProcedureTypeInsurancePlan()" data-dismiss="modal">Save</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

@@ -45,8 +45,8 @@ public class Visit {
 	@NotBlank
 	private String status;
 		
-	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.LAZY,  optional = true)
-    @JoinColumn(name = "patient_id", nullable = true , updatable = true)
+	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "patient_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
 	

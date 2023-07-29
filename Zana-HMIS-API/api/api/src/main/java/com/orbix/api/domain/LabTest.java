@@ -47,17 +47,17 @@ public class LabTest {
 	private String status;
 	
 	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "consultation_id", nullable = true , updatable = true)
+    @JoinColumn(name = "consultation_id", nullable = true , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Consultation consultation;
 	
 	@ManyToOne(targetEntity = NonConsultation.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "non_consultation_id", nullable = true , updatable = true)
+    @JoinColumn(name = "non_consultation_id", nullable = true , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private NonConsultation nonConsultation;
 	
 	@ManyToOne(targetEntity = Admission.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "admission_id", nullable = true , updatable = true)
+    @JoinColumn(name = "admission_id", nullable = true , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Admission admission;
 	

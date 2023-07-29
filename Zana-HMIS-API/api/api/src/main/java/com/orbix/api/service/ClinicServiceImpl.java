@@ -45,11 +45,14 @@ public class ClinicServiceImpl implements ClinicService{
 		
 		clinic.setName(Sanitizer.sanitizeString(clinic.getName()));
 		
-		clinic.setCreatedby(userService.getUser(request));
-		clinic.setCreatedOn(dayService.getDay());
-		clinic.setCreatedAt(dayService.getTimeStamp());
+		if(clinic.getId() == null) {
+			clinic.setCreatedby(userService.getUser(request));
+			clinic.setCreatedOn(dayService.getDay());
+			clinic.setCreatedAt(dayService.getTimeStamp());
+			
+			clinic.setActive(true);
+		}
 		
-		clinic.setActive(true);
 		
 		log.info("Saving new clinic to the database");
 		return clinicRepository.save(clinic);
