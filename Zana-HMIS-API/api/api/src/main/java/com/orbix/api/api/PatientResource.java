@@ -37,6 +37,7 @@ import com.orbix.api.domain.PatientInvoice;
 import com.orbix.api.domain.PatientInvoiceDetail;
 import com.orbix.api.domain.PatientPaymentDetail;
 import com.orbix.api.domain.LabTest;
+import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientCreditNote;
@@ -50,6 +51,7 @@ import com.orbix.api.domain.WorkingDiagnosis;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.models.ConsultationModel;
 import com.orbix.api.models.LabTestModel;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.repositories.ClinicalNoteRepository;
@@ -61,6 +63,7 @@ import com.orbix.api.repositories.FinalDiagnosisRepository;
 import com.orbix.api.repositories.GeneralExaminationRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.LabTestRepository;
+import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
 import com.orbix.api.repositories.PatientBillRepository;
 import com.orbix.api.repositories.PatientCreditNoteRepository;
@@ -118,6 +121,7 @@ public class PatientResource {
 	private final PrescriptionRepository prescriptionRepository;
 	private final UserService userService;
 	private final DayService dayService;
+	private final LabTestTypeRepository labTestTypeRepository;
 	
 	
 	@GetMapping("/patients")
@@ -340,7 +344,7 @@ public class PatientResource {
 			if(cn.getPatientBill().getStatus().equals("PAID") || cn.getPatientBill().getStatus().equals("COVERED")) {
 				consultationsToShow.add(cn);
 			}
-		}
+		}		
 		return ResponseEntity.ok().body(consultationsToShow);
 	}
 	
@@ -349,6 +353,9 @@ public class PatientResource {
 			@RequestParam(name = "clinician_id") Long clinicianId,
 			HttpServletRequest request){
 		Optional<Clinician> c = clinicianRepository.findById(clinicianId);
+		if(!c.isPresent()) {
+			throw new NotFoundException("Clinician not found");
+		}
 		
 		List<String> statuses = new ArrayList<>();
 		statuses.add("IN-PROCESS");
@@ -577,7 +584,10 @@ public class PatientResource {
 			throw new NotFoundException("Consultation not found");
 		}		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_working_diagnosis").toUriString());
-		return ResponseEntity.created(uri).body(c.get().getWorkingDiagnosises());
+		
+		List<WorkingDiagnosis> workingDiagnosises = workingDiagnosisRepository.findAllByConsultation(c.get());
+		
+		return ResponseEntity.created(uri).body(workingDiagnosises);
 	}
 	
 	@PostMapping("/patients/save_final_diagnosis") 
@@ -618,7 +628,11 @@ public class PatientResource {
 			throw new NotFoundException("Consultation not found");
 		}		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_final_diagnosis").toUriString());
-		return ResponseEntity.created(uri).body(c.get().getFinalDiagnosises());
+		//return ResponseEntity.created(uri).body(c.get().getFinalDiagnosises());
+		
+		List<FinalDiagnosis> finalDiagnosises = finalDiagnosisRepository.findAllByConsultation(c.get());
+		
+		return ResponseEntity.created(uri).body(finalDiagnosises);
 	}
 	
 	@GetMapping("/patients/delete_working_diagnosis") 
@@ -644,10 +658,19 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
+		Optional<LabTestType> lt = labTestTypeRepository.findByName(labTest.getLabTestType().getName());
+		if(labTestRepository.existsByConsultationAndLabTestType(c.get(), lt.get())) {
+			throw new InvalidOperationException("Duplicate Lab Test Types is not allowed");
+		}
+		
 		if(labTest.getId() == null) {
 			labTest.setCreatedby(userService.getUser(request));
 			labTest.setCreatedOn(dayService.getDay());
 			labTest.setCreatedAt(dayService.getTimeStamp());
+			
+			labTest.setOrderedby(userService.getUser(request));
+			labTest.setOrderedOn(dayService.getDay());
+			labTest.setOrderedAt(dayService.getTimeStamp());
 		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_lab_test").toUriString());
@@ -667,6 +690,10 @@ public class PatientResource {
 			radiology.setCreatedby(userService.getUser(request));
 			radiology.setCreatedOn(dayService.getDay());
 			radiology.setCreatedAt(dayService.getTimeStamp());
+			
+			radiology.setOrderedby(userService.getUser(request));
+			radiology.setOrderedOn(dayService.getDay());
+			radiology.setOrderedAt(dayService.getTimeStamp());
 		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_radiology").toUriString());
@@ -686,6 +713,10 @@ public class PatientResource {
 			procedure.setCreatedby(userService.getUser(request));
 			procedure.setCreatedOn(dayService.getDay());
 			procedure.setCreatedAt(dayService.getTimeStamp());
+			
+			procedure.setOrderedby(userService.getUser(request));
+			procedure.setOrderedOn(dayService.getDay());
+			procedure.setOrderedAt(dayService.getTimeStamp());
 		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_procedure").toUriString());
@@ -705,6 +736,10 @@ public class PatientResource {
 			prescription.setCreatedby(userService.getUser(request));
 			prescription.setCreatedOn(dayService.getDay());
 			prescription.setCreatedAt(dayService.getTimeStamp());
+			
+			prescription.setOrderedby(userService.getUser(request));
+			prescription.setOrderedOn(dayService.getDay());
+			prescription.setOrderedAt(dayService.getTimeStamp());
 		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_prescription").toUriString());
@@ -726,19 +761,16 @@ public class PatientResource {
 			patient = c.get().getPatient();
 			visit = visitRepository.findLastByPatient(patient).get();
 			if(visit.getStatus().equals("PENDING")) {
-				labTests = c.get().getLabTests();
-			}			
-			return ResponseEntity.created(uri).body(labTests);
+				labTests = labTestRepository.findAllByConsultation(c.get());
+			}						
 		}else if(nc.isPresent()){		
 			patient = nc.get().getPatient();
 			visit = visitRepository.findLastByPatient(patient).get();
 			if(visit.getStatus().equals("PENDING")) {
-				labTests = nc.get().getLabTests();
-			}			
-			return ResponseEntity.created(uri).body(labTests);		
-		}else {
-			return null;
+				labTests = labTestRepository.findAllByNonConsultation(nc.get());
+			}						
 		}
+		return ResponseEntity.created(uri).body(labTests);
 	}
 	
 	@GetMapping("/patients/load_radiologies") 
@@ -749,14 +781,24 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultationId);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_radiologies").toUriString());
+		Patient patient = new Patient();
+		Visit visit = new Visit();
+		List<Radiology> radiologies = new ArrayList<>();
 		if(c.isPresent()) {
-			return ResponseEntity.created(uri).body(c.get().getRadiologies());
-		}else if(nc.isPresent()){		
-			return ResponseEntity.created(uri).body(nc.get().getRadiologies());
-		
-		}else {
-			return null;
+			patient = c.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				radiologies = radiologyRepository.findAllByConsultation(c.get());
+			}
+			
+		}else if(nc.isPresent()){	
+			patient = nc.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				radiologies = radiologyRepository.findAllByNonConsultation(nc.get());
+			}					
 		}
+		return ResponseEntity.created(uri).body(radiologies);
 	}
 	
 	@GetMapping("/patients/load_procedures") 
@@ -767,14 +809,24 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultationId);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_procedures").toUriString());
+		Patient patient = new Patient();
+		Visit visit = new Visit();
+		List<Procedure> procedures = new ArrayList<>();
 		if(c.isPresent()) {
-			return ResponseEntity.created(uri).body(c.get().getProcedures());
-		}else if(nc.isPresent()){		
-			return ResponseEntity.created(uri).body(nc.get().getProcedures());
-		
-		}else {
-			return null;
+			patient = c.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				procedures = procedureRepository.findAllByConsultation(c.get());
+			}
+			
+		}else if(nc.isPresent()){	
+			patient = nc.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				procedures = procedureRepository.findAllByNonConsultation(nc.get());
+			}					
 		}
+		return ResponseEntity.created(uri).body(procedures);
 	}
 	
 	@GetMapping("/patients/load_prescriptions") 
@@ -785,14 +837,24 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultationId);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_prescriptions").toUriString());
+		Patient patient = new Patient();
+		Visit visit = new Visit();
+		List<Prescription> prescriptions = new ArrayList<>();
 		if(c.isPresent()) {
-			return ResponseEntity.created(uri).body(c.get().getPrescriptions());
-		}else if(nc.isPresent()){		
-			return ResponseEntity.created(uri).body(nc.get().getPrescriptions());
-		
-		}else {
-			return null;
+			patient = c.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				prescriptions = prescriptionRepository.findAllByConsultation(c.get());
+			}
+			
+		}else if(nc.isPresent()){	
+			patient = nc.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				prescriptions = prescriptionRepository.findAllByNonConsultation(nc.get());
+			}					
 		}
+		return ResponseEntity.created(uri).body(prescriptions);
 	}
 	
 	@PostMapping("/patients/delete_lab_test")
@@ -844,8 +906,8 @@ public class PatientResource {
 			throw new InvalidOperationException("Can not delete a paid lab test, please contact system administrator");
 			/*patientPaymentDetailRepository.delete(pd.get());*/
 		}
-		patientBillRepository.delete(patientBill);
 		labTestRepository.delete(labTest);
+		patientBillRepository.delete(patientBill);		
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_lab_test").toUriString());
 		return ResponseEntity.created(uri).body(true);

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.LabTest;
+import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 
@@ -58,6 +59,26 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
 	 * @return
 	 */
 	List<LabTest> findAllByAdmissionAndStatusIn(Admission admission, List<String> statuses);
+
+	
+	/**
+	 * @param consultation
+	 * @return
+	 */
+	List<LabTest> findAllByConsultation(Consultation consultation);
+
+	/**
+	 * @param nonConsultation
+	 * @return
+	 */
+	List<LabTest> findAllByNonConsultation(NonConsultation nonConsultation);
+
+	/**
+	 * @param consultation
+	 * @param labTestType
+	 * @return
+	 */
+	boolean existsByConsultationAndLabTestType(Consultation consultation, LabTestType labTestType);
 
 	
 	

@@ -3,6 +3,8 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.orbix.api.domain.Consultation;
@@ -20,7 +22,7 @@ public interface WorkingDiagnosisRepository extends JpaRepository<WorkingDiagnos
 	 * @param consultation
 	 * @return
 	 */
-	Object findAllByConsultation(Consultation consultation);
+	List<WorkingDiagnosis> findAllByConsultation(Consultation consultation);
 
 	/**
 	 * @param consultation
@@ -28,5 +30,11 @@ public interface WorkingDiagnosisRepository extends JpaRepository<WorkingDiagnos
 	 * @return
 	 */
 	boolean existsByConsultationAndDiagnosisType(Consultation consultation, DiagnosisType diagnosisType);
+
+	/**
+	 * @param consultation
+	 * @return
+	 */
+	List<WorkingDiagnosis> findByConsultation(Consultation consultation);
 
 }

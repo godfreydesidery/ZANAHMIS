@@ -171,14 +171,14 @@
                                                 <tbody>
                                                     <tr *ngFor="let labTest of labTests">
                                                         <td>{{labTest.id}}</td>
-                                                        <td>{{labTest.labTestType.name}}</td>
-                                                        <td style="text-align: right;"><span *ngIf="labTest.bill.status != 'COVERED'">{{labTest.bill.amount | currency:'':''}}</span><span *ngIf="labTest.bill.status === 'COVERED'">---</span></td>
+                                                        <td>{{labTest?.labTestType?.name}}</td>
+                                                        <td style="text-align: right;"><span *ngIf="labTest.patientBill.status != 'COVERED'">{{labTest?.patientBill?.amount | currency:'':''}}</span><span *ngIf="labTest?.patientBill?.status === 'COVERED'">---</span></td>
                                                         <td>
-                                                            <span *ngIf="labTest.bill.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest.bill.status}}</span>
-                                                            <span *ngIf="labTest.bill.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{labTest.bill.status}}</span>
-                                                            <span *ngIf="labTest.bill.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest.bill.status}}(NOT COVERED)</span>
+                                                            <span *ngIf="labTest?.patientBill?.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest?.patientBill?.status}}</span>
+                                                            <span *ngIf="labTest?.patientBill?.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{labTest?.patientBill?.status}}</span>
+                                                            <span *ngIf="labTest?.patientBill?.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest?.patientBill?.status}}(NOT COVERED)</span>
                                                         </td>
-                                                        <td>{{labTest.status}}</td>
+                                                        <td>{{labTest?.status}}</td>
                                                         <td><a (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash"></i>Delete</a></td>
                                                     </tr>
                                                 </tbody>
@@ -394,25 +394,43 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-sm-6" *ngFor="let labTest of labTests" style="background-color: rgb(248, 248, 248);">
-                        <h4><b>{{labTest?.labTestType?.name}}</b></h4>
-                        <br>
-                        <span>Results</span>
-                        <textarea class="form-control"  style="height: 5cm;" readonly>{{labTest.result}}</textarea>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <small>Range: <b>{{labTest.range}}</b></small><br>
-                                <small>Level: <b>{{labTest.level}}</b></small><br>
-                                <small>Unit: <b>{{labTest.unit}}</b></small><br>
-                            </div>
-                            <div class="col-sm-6">
-                                <small>Status: <b>{{labTest.status}}</b></small><br>
-                                <small>Comments: level</small><br>
-                                <small>Reject Comment: unit</small><br>
-                           </div>
-                        </div>
+                    <div class="col-sm-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <td>Test</td>
+                                    <td>Result</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let labTest of labTests">
+                                    <td><b>{{labTest?.labTestType?.name}}</b></td>
+                                    <td>{{labTest?.result}}</td>
+                                    <td>
+                                        <table>
+                                            <tbody>
+                                                <tr><td><small>Range: <b>{{labTest?.range}}</b></small></td></tr>
+                                                <tr><td><small>Level: <b>{{labTest?.level}}</b></small> </td></tr>    
+                                                <tr><td><small>Range: <b>{{labTest?.unit}}</b></small></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tbody>
+                                                <tr><td><small>Status: <b>{{labTest?.status}}</b></small></td></tr>
+                                                <tr><td><small>Rejected: <b>{{labTest?.rejectComment}}</b></small></td></tr>    
+                                                <tr><td><small>Ordered: <b>{{labTest?.orderedBy?.nickname}}</b></small></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>                        
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Close</button>
                 </div>
@@ -437,6 +455,20 @@
                            <option></option>
                            <option *ngFor="let name of radiologyTypeNames">{{name}}</option>
                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <br>
+                        <h4>Diagnosis</h4>
+                        <input type="text" class="form-control" placeholder="Diagnosis">
+                    </div>
+                </div>  
+                <div class="row">
+                    <div class="col-sm-12">
+                        <br>
+                        <h4>Description</h4>
+                        <textarea class="form-control" placeholder="Description"></textarea>
                     </div>
                 </div>   
                    

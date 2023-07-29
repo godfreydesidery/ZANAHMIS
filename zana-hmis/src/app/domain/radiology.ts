@@ -15,6 +15,8 @@ export interface IRadiology {
     description : string
     attachment  : Byte[]
 
+    status      : string
+
     patient         : IPatient
     consultation    : IConsultation
     nonConsultation : INonConsultation

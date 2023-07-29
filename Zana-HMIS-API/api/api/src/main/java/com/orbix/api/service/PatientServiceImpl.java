@@ -620,10 +620,12 @@ public class PatientServiceImpl implements PatientService {
 		patientBill.setBalance(test.getLabTestType().getPrice());
 		patientBill.setQty(1);
 		patientBill.setDescription("Lab Test: "+test.getLabTestType().getName());
-		patientBill.setStatus("UNPAID");		
+		patientBill.setStatus("UNPAID");
+		
 		patientBill.setCreatedby(userService.getUser(request));
 		patientBill.setCreatedOn(dayService.getDay());
 		patientBill.setCreatedAt(dayService.getTimeStamp());
+		
 		patientBill.setPatient(patient);
 		patientBill = patientBillRepository.save(patientBill);
 		
@@ -648,6 +650,11 @@ public class PatientServiceImpl implements PatientService {
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
 					patientInvoice.setStatus("PENDING");
+					
+					patientInvoice.setCreatedby(userService.getUser(request));
+					patientInvoice.setCreatedOn(dayService.getDay());
+					patientInvoice.setCreatedAt(dayService.getTimeStamp());
+					
 					patientInvoice = patientInvoiceRepository.save(patientInvoice);
 					patientInvoice.setNo(patientInvoice.getId().toString());
 					patientInvoice = patientInvoiceRepository.save(patientInvoice);
@@ -660,6 +667,11 @@ public class PatientServiceImpl implements PatientService {
 					patientInvoiceDetail.setAmount(patientBill.getAmount());
 					patientInvoiceDetail.setDescription("Lab Test: "+test.getLabTestType().getName());
 					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request));
+					patientInvoiceDetail.setCreatedOn(dayService.getDay());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
 					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}else {
 					/**
@@ -671,6 +683,11 @@ public class PatientServiceImpl implements PatientService {
 					patientInvoiceDetail.setAmount(patientBill.getAmount());
 					patientInvoiceDetail.setDescription("Lab Test: "+test.getLabTestType().getName());
 					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request));
+					patientInvoiceDetail.setCreatedOn(dayService.getDay());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
 					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}
 			}
@@ -678,7 +695,8 @@ public class PatientServiceImpl implements PatientService {
 		}
 		test.setPatient(patient);
 		test.setPatientBill(patientBill);
-		return labTestRepository.save(test);		
+		labTestRepository.save(test);	
+		return null;
 	}
 	
 	@Override

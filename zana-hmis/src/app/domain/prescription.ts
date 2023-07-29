@@ -15,6 +15,7 @@ export interface IPrescription {
     route       : string
     days        : string
     qty         : number
+    status      : string
 
     patient         : IPatient
     consultation    : IConsultation

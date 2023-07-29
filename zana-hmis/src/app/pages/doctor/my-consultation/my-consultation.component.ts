@@ -30,7 +30,7 @@ export class MyConsultationComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.loadClinician()
-    this.loadListFromReception(this.clinicianId)
+    await this.loadOpenedList(this.clinicianId)
   }
 
   async loadClinician(){    
@@ -54,7 +54,7 @@ export class MyConsultationComponent implements OnInit {
     )
   }
 
-  async loadListFromReception(clinicianIid : any){    let options = {
+  async loadOpenedList(clinicianIid : any){    let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
@@ -63,8 +63,12 @@ export class MyConsultationComponent implements OnInit {
     .toPromise()
     .then(
       data => {
-        this.consultations = data!
         console.log(data)
+        data?.forEach(element => {
+          
+          this.consultations.push(element)
+        })
+        
       }
     )
     .catch(

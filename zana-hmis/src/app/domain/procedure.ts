@@ -10,6 +10,7 @@ import { IUser } from "./user"
 export interface IProcedure {
     id      : any
     note    : string
+    status  : string
 
     patient         : IPatient
     consultation    : IConsultation

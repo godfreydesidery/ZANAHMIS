@@ -19,7 +19,7 @@ export interface ILabTest {
     consultation    : IConsultation
     nonConsultation : INonConsultation
     admission       : IAdmission
-    bill            : IPatientBill
+    patientBill     : IPatientBill
     labTestType     : ILabTestType
     
     createdBy       : IUser

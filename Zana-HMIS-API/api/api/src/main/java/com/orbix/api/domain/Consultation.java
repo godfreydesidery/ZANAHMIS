@@ -59,7 +59,8 @@ public class Consultation {
 	 */
 	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "patient_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+	//@JsonIgnoreProperties({"createdBy", "createdOn"})
     private Patient patient;
 	/**
 	 * One can only have one bill, i.e. A single consultation can only be
@@ -67,14 +68,16 @@ public class Consultation {
 	 */
 	@OneToOne(targetEntity = PatientBill.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "patient_bill_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+	//@JsonIgnoreProperties({"createdBy", "createdOn"})
     private PatientBill patientBill;
 	/**
 	 * One consultation has one clinic, i.e. a patient is sent to one clinic in a single consultation
 	 */
 	@ManyToOne(targetEntity = Clinic.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "clinic_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+	//@JsonIgnoreProperties({"createdBy", "createdOn"})
     private Clinic clinic;
 	/**
 	 * One consultation has one clinician, i.e. a patient is sent to one clinician in a single consultation
@@ -82,7 +85,8 @@ public class Consultation {
 	 */
 	@ManyToOne(targetEntity = Clinician.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "clinician_id", nullable = false , updatable = true)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+	//@JsonIgnoreProperties({"createdBy", "createdOn"})
     private Clinician clinician;
 	
 	/**
@@ -90,50 +94,15 @@ public class Consultation {
 	 */
 	@ManyToOne(targetEntity = Visit.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "visit_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JsonIgnoreProperties({"createdBy", "createdOn"})
     private Visit visit;
 	
 	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
+	@JsonIgnoreProperties({"createdBy", "createdOn"})
     private InsurancePlan insurancePlan;
-	
-	
-	@OneToMany(targetEntity = WorkingDiagnosis.class, mappedBy = "consultation", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Valid
-    @JsonIgnoreProperties("consultation")
-	@Fetch(value = FetchMode.SUBSELECT)
-    private List<WorkingDiagnosis> workingDiagnosises;
-	
-	@OneToMany(targetEntity = FinalDiagnosis.class, mappedBy = "consultation", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Valid
-    @JsonIgnoreProperties("consultation")
-	@Fetch(value = FetchMode.SUBSELECT)
-    private List<FinalDiagnosis> finalDiagnosises;
-	
-	@OneToMany(targetEntity = LabTest.class, mappedBy = "consultation", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Valid
-    @JsonIgnoreProperties("consultation")
-	@Fetch(value = FetchMode.SUBSELECT)
-    private List<LabTest> labTests;
-	
-	@OneToMany(targetEntity = Radiology.class, mappedBy = "consultation", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Valid
-    @JsonIgnoreProperties("consultation")
-	@Fetch(value = FetchMode.SUBSELECT)
-    private List<Radiology> radiologies;
-	
-	@OneToMany(targetEntity = Procedure.class, mappedBy = "consultation", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Valid
-    @JsonIgnoreProperties("consultation")
-	@Fetch(value = FetchMode.SUBSELECT)
-    private List<Procedure> procedures;
-	
-	@OneToMany(targetEntity = Prescription.class, mappedBy = "consultation", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Valid
-    @JsonIgnoreProperties("consultation")
-	@Fetch(value = FetchMode.SUBSELECT)
-    private List<Prescription> prescriptions;
 	
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)

@@ -6,7 +6,22 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IClinicalNote } from 'src/app/domain/clinical-note';
+import { IConsultation } from 'src/app/domain/consultation';
+import { IDiagnosisType } from 'src/app/domain/diagnosis-type';
+import { IFinalDiagnosis } from 'src/app/domain/final-diagnosis';
 import { IGeneralExamination } from 'src/app/domain/general-examination';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
+import { ILabTest } from 'src/app/domain/lab-test';
+import { ILabTestType } from 'src/app/domain/lab-test-type';
+import { IMedicine } from 'src/app/domain/medicine';
+import { IPatient } from 'src/app/domain/patient';
+import { IPatientBill } from 'src/app/domain/patient-bill';
+import { IPrescription } from 'src/app/domain/prescription';
+import { IProcedure } from 'src/app/domain/procedure';
+import { IProcedureType } from 'src/app/domain/procedure-type';
+import { IRadiology } from 'src/app/domain/radiology';
+import { IRadiologyType } from 'src/app/domain/radiology-type';
+import { IWorkingDiagnosis } from 'src/app/domain/working-diagnosis';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -98,6 +113,10 @@ export class DoctorCrackingComponent implements OnInit {
   ngOnInit(): void {
     this.id = localStorage.getItem('consultation-id')
     localStorage.removeItem('consultation-id')
+    this.refresh()    
+  }
+
+  refresh(){
     this.loadConsultation(this.id)
     this.loadClinicalNoteByConsultationId(this.id)
     this.loadGeneralExaminationByConsultationId(this.id)
@@ -581,7 +600,7 @@ export class DoctorCrackingComponent implements OnInit {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    var labTest : any = {
+    var labTest  = {
       labTestType : {
         id : null,
         code : '',
@@ -589,21 +608,23 @@ export class DoctorCrackingComponent implements OnInit {
       }
     }
     this.spinner.show()
-    await this.http.post<ILabTest>(API_URL+'/patients/save_lab_test?consultation_id='+this.id+'&non_consultation_id='+0, labTest, options)
+    await this.http.post(API_URL+'/patients/save_lab_test?consultation_id='+this.id+'&non_consultation_id='+0, labTest, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       () => {
+        this.loadLabTest(this.id, 0)
         this.msgBox.showSuccessMessage('Lab Test Saved successifully')
       }
     )
     .catch(
       error => {
+        this.loadLabTest(this.id, 0)
         this.msgBox.showErrorMessage('Could not save Lab Test')
         console.log(error)
       }
     )
-    this.loadLabTest(this.id, 0)
+    
   }
 
   async saveRadiology(){
@@ -698,7 +719,7 @@ export class DoctorCrackingComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.labTests = []
-    this.spinner.show()
+    await this.spinner.show()
     await this.http.get<ILabTest[]>(API_URL+'/patients/load_lab_tests?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
@@ -796,15 +817,17 @@ export class DoctorCrackingComponent implements OnInit {
     .then(
       data => {
         console.log(data)
-        
+        this.loadLabTest(this.id, 0)
       }
     )
     .catch(
       error => {
         this.msgBox.showErrorMessage(error['error'])
+        this.loadLabTest(this.id, 0)
+
       }
     )
-    this.loadLabTest(this.id, 0)
+    
   }
 
   async deleteRadiology(radiologyId : any){
@@ -875,156 +898,7 @@ export class DoctorCrackingComponent implements OnInit {
 
 }
 
-export interface IConsultation{
-  id : any
-  status : string
-  paymentType : string
-  patient : IPatient
-  insurancePlan : IInsurancePlan
-}
 
-export interface IBill{
-  id : any
-
-  description : string
-	qty : number
-	amount : number
-	paid : number
-	balance : number
-	status : string
-}
-
-
-export interface IPatient{
-  id : any
-  no : string
-  firstName : string
-  middleName : string
-  lastName : string
-  dateOfBirth : Date
-  gender : string
-  paymentType : string
-  membershipNo : string
-} 
-
-export interface IInsurancePlan{
-  id : any
-  name : string
-}
-
-export interface IDiagnosisType{
-  id : any
-  code : string
-  name : string
-}
-
-export interface IWorkingDiagnosis{
-  id : any
-  description : string
-  diagnosisType : IDiagnosisType
-  consultation : IConsultation
-}
-
-export interface IFinalDiagnosis{
-  id : any
-  description : string
-  diagnosisType : IDiagnosisType
-  consultation : IConsultation
-}
-
-export interface IClinicalNote111{
-  managementPlan: string;
-  id : any
-
-  mainComplain : string
-	presentIllnessHistory : string
-	pastMedicalHistory : string
-	familyAndSocialHistory : string
-	drugsAndAllergyHistory : string
-	reviewOfOtherSystem : string
-	physicalExamination : string
-
-  consultation : IConsultation
-}
-
-export interface ILabTestType{
-  id : any
-  code : string
-	name : string
-	description : string
-	uom  : string
-	price : number
-	active : boolean
-}
-
-export interface ILabTest{
-  id : any
-  result : string
-  range : string
-  level : string
-  unit : string
-  status : string
-  labTestType : ILabTestType
-  bill : IBill
-  consultation : IConsultation
-}
-
-export interface IRadiologyType{
-  id : any
-  code : string
-	name : string
-	description : string
-	uom  : string
-	price : number
-	active : boolean
-}
-
-export interface IRadiology{
-  id : any
-  result : string
-  status : string
-  radiologyType : IRadiologyType
-  bill : IBill
-  consultation : IConsultation
-}
-
-export interface IMedicine{
-  id : any
-  code : string
-	name : string
-	description : string
-	uom  : string
-	price : number
-	active : boolean
-}
-
-export interface IPrescription{
-  id : any
-  result : string
-  status : string
-  medicine : IMedicine
-  bill : IBill
-  consultation : IConsultation
-}
-
-export interface IProcedureType{
-  id : any
-  code : string
-	name : string
-	description : string
-	uom  : string
-	price : number
-	active : boolean
-}
-
-export interface IProcedure{
-  id : any
-  result : string
-  status : string
-  procedureType : IProcedureType
-  bill : IBill
-  consultation : IConsultation
-}
 
 export interface ICG{
   clinicalNote : IClinicalNote
