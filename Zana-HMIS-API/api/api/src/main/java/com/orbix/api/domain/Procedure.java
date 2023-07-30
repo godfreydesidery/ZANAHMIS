@@ -104,6 +104,17 @@ public class Procedure {
 	private LocalDateTime acceptedAt;
 	
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "held_by_user_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private User heldby;
+	
+	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "held_on_day_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Day heldOn;
+	private LocalDateTime heldAt;
+	
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "rejected_by_user_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private User rejectedby;

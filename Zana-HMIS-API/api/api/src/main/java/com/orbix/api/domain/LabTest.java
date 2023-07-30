@@ -124,7 +124,7 @@ public class LabTest {
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "rejected_by_user_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private User reejctedby;
+    private User rejectedby;
 	
 	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "rejected_on_day_id", nullable = true , updatable = true)

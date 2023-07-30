@@ -16,23 +16,13 @@ export interface IProcedure {
     consultation    : IConsultation
     nonConsultation : INonConsultation
     admission       : IAdmission
-    bill            : IPatientBill
+    patientBill            : IPatientBill
     procedureType   : IProcedureType
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
-
-    acceptedBy       : IUser
-    acceptedOn       : IDay
-    acceptedAt       : Date
-
-    rejectedBy       : IUser
-    rejectedOn       : IDay
-    rejectedAt       : Date
-    rejectComment    : string
-
-    verifiedBy       : IUser
-    verifiedOn       : IDay
-    verifiedAt       : Date
+    created        : string
+    accepted       : string
+    rejected       : string
+    rejectComment  : string
+    verified       : string
+    held           : string
 }

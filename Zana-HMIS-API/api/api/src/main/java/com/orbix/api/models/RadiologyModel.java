@@ -5,7 +5,6 @@ package com.orbix.api.models;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,10 +19,10 @@ import org.hibernate.annotations.OnDeleteAction;
 import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.Day;
-import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientBill;
+import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.User;
 
 import lombok.Data;
@@ -33,27 +32,22 @@ import lombok.Data;
  *
  */
 @Data
-public class LabTestModel {
-
+public class RadiologyModel {
 	private Long id = null;
 	private String result = "";
-	private String range = "";
-	private String level = "";
-	private String unit = "";
-	private String status = "";
-	private Consultation consultation = null;
-	private NonConsultation nonConsultation = null;
-	private Admission admission = null;
-	private LabTestType labTestType = null;
-	private PatientBill patientBill = null;
-	private Patient patient = null;
+	private String diagnosis = "";
+	private String description = "";
+	private Byte attachment = null;
+	private String status = "";	
 	
-	String created = "";
-	String ordered = "";
-	String accepted = "";
-	String held = "";
-	String rejected = "";
-	String rejectComment = "";
-	String collected = "";
-	String verified = "";	
+    private RadiologyType radiologyType;	
+    private PatientBill patientBill;
+		
+    private String created;			
+    private String ordered;			
+    private String accepted;	
+    private String rejected;	
+	private String rejectComment;	
+    private String verified;
+	
 }

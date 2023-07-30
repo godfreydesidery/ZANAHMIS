@@ -17,27 +17,34 @@ export interface IRadiology {
 
     status      : string
 
+    
+
     patient         : IPatient
     consultation    : IConsultation
     nonConsultation : INonConsultation
     admission       : IAdmission
-    bill            : IPatientBill
+    patientBill     : IPatientBill
     radiologyType   : IRadiologyType
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    //createdBy       : IUser
+    //createdOn       : IDay
+    //createdAt       : Date
 
-    acceptedBy       : IUser
-    acceptedOn       : IDay
-    acceptedAt       : Date
+    created : string
+    accepted : string
+    rejected : string
+    verified : string
 
-    rejectedBy       : IUser
-    rejectedOn       : IDay
-    rejectedAt       : Date
+    //acceptedBy       : IUser
+    //acceptedOn       : IDay
+    //acceptedAt       : Date
+
+    //rejectedBy       : IUser
+    //rejectedOn       : IDay
+    //rejectedAt       : Date
     rejectComment    : string
 
-    verifiedBy       : IUser
-    verifiedOn       : IDay
-    verifiedAt       : Date
+    //verifiedBy       : IUser
+    //verifiedOn       : IDay
+    //verifiedAt       : Date
 }

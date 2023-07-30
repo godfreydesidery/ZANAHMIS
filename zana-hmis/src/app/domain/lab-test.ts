@@ -21,8 +21,16 @@ export interface ILabTest {
     admission       : IAdmission
     patientBill     : IPatientBill
     labTestType     : ILabTestType
+
+    created : string
+    ordered : string
+    accepted : string
+    rejected : string
+    rejectComment : string
+    collected : string
+    verified : string
     
-    createdBy       : IUser
+    /*createdBy       : IUser
     createdOn       : IDay
     createdAt       : Date
 
@@ -45,5 +53,5 @@ export interface ILabTest {
 
     verifiedBy       : IUser
     verifiedOn       : IDay
-    verifiedAt       : Date
+    verifiedAt       : Date*/
 }

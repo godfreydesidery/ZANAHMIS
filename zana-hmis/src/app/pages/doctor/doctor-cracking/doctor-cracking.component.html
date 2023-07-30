@@ -212,16 +212,16 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let radiology of radiologies">
-                                                        <td>{{radiology.id}}</td>
-                                                        <td>{{radiology.radiologyType.name}}</td>
-                                                        <td style="text-align: right;"><span *ngIf="radiology.bill.status != 'COVERED'">{{radiology.bill.amount | currency:'':''}}</span><span *ngIf="radiology.bill.status === 'COVERED'">---</span></td>
+                                                        <td>{{radiology?.id}}</td>
+                                                        <td>{{radiology?.radiologyType?.name}}</td>
+                                                        <td style="text-align: right;"><span *ngIf="radiology?.patientBill?.status != 'COVERED'">{{radiology?.patientBill?.amount | currency:'':''}}</span><span *ngIf="radiology?.patientBill?.status === 'COVERED'">---</span></td>
                                                         <td>
-                                                            <span *ngIf="radiology.bill.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{radiology.bill.status}}</span>
-                                                            <span *ngIf="radiology.bill.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{radiology.bill.status}}</span>
-                                                            <span *ngIf="radiology.bill.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{radiology.bill.status}}(NOT COVERED)</span>
+                                                            <span *ngIf="radiology?.patientBill?.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{radiology?.patientBill?.status}}</span>
+                                                            <span *ngIf="radiology?.patientBill?.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{radiology?.patientBill?.status}}</span>
+                                                            <span *ngIf="radiology?.patientBill?.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{radiology?.patientBill?.status}}(NOT COVERED)</span>
                                                         </td>
-                                                        <td>{{radiology.status}}</td>
-                                                        <td><a (click)="deleteRadiology(radiology.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                        <td>{{radiology?.status}}</td>
+                                                        <td><a (click)="deleteRadiology(radiology?.id)"><i class="fa fa-trash"></i>Delete</a></td>
                                                     </tr>
                                                 </tbody>
                                             </table>    
@@ -286,7 +286,7 @@
                                             <thead class="success">
                                             <tr>
                                                 <th>ID</th>
-                                                <th>Radiology</th>
+                                                <th>Procedure</th>
                                                 <th>Price</th>
                                                 <th>Payment Status</th>
                                                 <th>Status</th>
@@ -295,13 +295,13 @@
                                             </thead>
                                             <tbody>
                                                 <tr *ngFor="let procedure of procedures">
-                                                    <td>{{procedure.id}}</td>
-                                                    <td>{{procedure.procedureType.name}}</td>
-                                                    <td style="text-align: right;"><span *ngIf="procedure.bill.status != 'COVERED'">{{procedure.bill.amount | currency:'':''}}</span><span *ngIf="procedure.bill.status === 'COVERED'">---</span></td>
+                                                    <td>{{procedure?.id}}</td>
+                                                    <td>{{procedure?.procedureType?.name}}</td>
+                                                    <td style="text-align: right;"><span *ngIf="procedure?.patientBill?.status != 'COVERED'">{{procedure?.patientBill?.amount | currency:'':''}}</span><span *ngIf="procedure?.patientBill?.status === 'COVERED'">---</span></td>
                                                     <td>
-                                                        <span *ngIf="procedure.bill.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{procedure.bill.status}}</span>
-                                                        <span *ngIf="procedure.bill.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{procedure.bill.status}}</span>
-                                                        <span *ngIf="procedure.bill.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{procedure.bill.status}}(NOT COVERED)</span>
+                                                        <span *ngIf="procedure?.patientBill?.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{procedure?.patientBill?.status}}</span>
+                                                        <span *ngIf="procedure?.patientBill?.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{procedure?.patientBill?.status}}</span>
+                                                        <span *ngIf="procedure?.patientBill?.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{procedure?.patientBill?.status}}(NOT COVERED)</span>
                                                     </td>
                                                     <td>{{procedure.status}}</td>
                                                     <td><a (click)="deleteProcedure(procedure.id)"><i class="fa fa-trash"></i>Delete</a></td>
@@ -411,18 +411,21 @@
                                     <td>
                                         <table>
                                             <tbody>
-                                                <tr><td><small>Range: <b>{{labTest?.range}}</b></small></td></tr>
-                                                <tr><td><small>Level: <b>{{labTest?.level}}</b></small> </td></tr>    
-                                                <tr><td><small>Range: <b>{{labTest?.unit}}</b></small></td></tr>
+                                                <tr><td><small>Range: {{labTest?.range}}</small></td></tr>
+                                                <tr><td><small>Level: {{labTest?.level}}</small> </td></tr>    
+                                                <tr><td><small>Range: {{labTest?.unit}}</small></td></tr>
                                             </tbody>
                                         </table>
                                     </td>
                                     <td>
                                         <table>
                                             <tbody>
-                                                <tr><td><small>Status: <b>{{labTest?.status}}</b></small></td></tr>
-                                                <tr><td><small>Rejected: <b>{{labTest?.rejectComment}}</b></small></td></tr>    
-                                                <tr><td><small>Ordered: <b>{{labTest?.orderedBy?.nickname}}</b></small></td></tr>
+                                                <tr><td><small>Status: {{labTest?.status}}</small></td></tr>
+                                                <tr><td><small>Ordered: {{labTest?.ordered}}</small></td></tr>
+                                                <tr><td><small>Accepted: {{labTest?.accepted}}</small></td></tr>
+                                                <tr><td><small>Rejected: {{labTest?.rejected}}</small></td></tr>
+                                                <tr><td><small>Collected: {{labTest?.collected}}</small></td></tr>
+                                                <tr><td><small>Verified: {{labTest?.verified}}</small></td></tr>
                                             </tbody>
                                         </table>
                                     </td>
@@ -441,7 +444,7 @@
 
     <!-- Modal success -->
 <div class="modal fade modal-success" id="assign-radiology-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -461,14 +464,14 @@
                     <div class="col-sm-12">
                         <br>
                         <h4>Diagnosis</h4>
-                        <input type="text" class="form-control" placeholder="Diagnosis">
+                        <input type="text" class="form-control" [(ngModel)]="radiologyDiagnosis" placeholder="Diagnosis">
                     </div>
                 </div>  
                 <div class="row">
                     <div class="col-sm-12">
                         <br>
                         <h4>Description</h4>
-                        <textarea class="form-control" placeholder="Description"></textarea>
+                        <textarea class="form-control" [(ngModel)]="radiologyDescription" placeholder="Description"></textarea>
                     </div>
                 </div>   
                    
@@ -481,14 +484,58 @@
 </div>
 
 <div class="modal fade modal-success" id="radiology-result-modal" tabindex="-2" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h3 class="modal-title">Radiology Results</h3>
             </div>
             <div class="modal-body">
-                    
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <td>Test</td>
+                                    <td>Result</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let radiology of radiologies">
+                                    <td><b>{{radiology?.radiologyType?.name}}</b></td>
+                                    <td>{{radiology?.result}}</td>
+                                    <td>
+                                        <table>
+                                            <tbody>
+                                                <tr><td><small>Diagnosis: {{radiology?.diagnosis}}</small></td></tr>
+                                                <tr><td><small>Description: {{radiology?.description}}</small> </td></tr>    
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tbody>
+                                                <tr><td><small>Atachment: {{radiology?.attachment}}</small></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tbody>
+                                                <tr><td><small>Status: {{radiology?.status}}</small></td></tr>
+                                                <tr><td><small>Rejected: {{radiology?.rejectComment}}</small></td></tr>    
+                                                <tr><td><small>Ordered: {{radiology?.created}}</small></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>   
                     
                     
                     
@@ -501,7 +548,7 @@
 </div>
 
 <div class="modal fade modal-success" id="assign-procedure-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -528,7 +575,7 @@
 
     <!-- Modal success -->
 <div class="modal fade modal-success" id="assign-drugs-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

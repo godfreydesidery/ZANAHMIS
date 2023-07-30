@@ -10,7 +10,5 @@ export interface IFinalDiagnosis {
     consultation    : IConsultation
     diagnosisType   : IDiagnosisType
 
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created         : string
 }

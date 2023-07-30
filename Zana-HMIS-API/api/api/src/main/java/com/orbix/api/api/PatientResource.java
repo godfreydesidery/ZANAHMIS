@@ -52,7 +52,11 @@ import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.ConsultationModel;
+import com.orbix.api.models.FinalDiagnosisModel;
 import com.orbix.api.models.LabTestModel;
+import com.orbix.api.models.ProcedureModel;
+import com.orbix.api.models.RadiologyModel;
+import com.orbix.api.models.WorkingDiagnosisModel;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.repositories.ClinicalNoteRepository;
 import com.orbix.api.repositories.ClinicianRepository;
@@ -576,7 +580,7 @@ public class PatientResource {
 	}
 	
 	@GetMapping("/patients/load_working_diagnosis") 
-	public ResponseEntity<List<WorkingDiagnosis>> loasWorkingDiagnosises(
+	public ResponseEntity<List<WorkingDiagnosisModel>> loasWorkingDiagnosises(
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){
 		Optional<Consultation> c = consultationRepository.findById(id);
@@ -587,7 +591,21 @@ public class PatientResource {
 		
 		List<WorkingDiagnosis> workingDiagnosises = workingDiagnosisRepository.findAllByConsultation(c.get());
 		
-		return ResponseEntity.created(uri).body(workingDiagnosises);
+		List<WorkingDiagnosisModel> models = new ArrayList<>();
+		for(WorkingDiagnosis l : workingDiagnosises) {
+			WorkingDiagnosisModel model= new WorkingDiagnosisModel();
+			model.setId(l.getId());
+			model.setDescription(l.getDescription());
+			model.setDiagnosisType(l.getDiagnosisType());
+			
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+l.getCreatedby().getNickname());
+			}else {
+				model.setCreated("");
+			}			
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);		
 	}
 	
 	@PostMapping("/patients/save_final_diagnosis") 
@@ -616,11 +634,12 @@ public class PatientResource {
 		}
 				
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_final_diagnosis").toUriString());
+		
 		return ResponseEntity.created(uri).body(finalDiagnosisRepository.save(diagnosis));
 	}
 	
 	@GetMapping("/patients/load_final_diagnosis") 
-	public ResponseEntity<List<FinalDiagnosis>> loadFinalDiagnosises(
+	public ResponseEntity<List<FinalDiagnosisModel>> loadFinalDiagnosises(
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){
 		Optional<Consultation> c = consultationRepository.findById(id);
@@ -632,7 +651,21 @@ public class PatientResource {
 		
 		List<FinalDiagnosis> finalDiagnosises = finalDiagnosisRepository.findAllByConsultation(c.get());
 		
-		return ResponseEntity.created(uri).body(finalDiagnosises);
+		List<FinalDiagnosisModel> models = new ArrayList<>();
+		for(FinalDiagnosis l : finalDiagnosises) {
+			FinalDiagnosisModel model= new FinalDiagnosisModel();
+			model.setId(l.getId());
+			model.setDescription(l.getDescription());
+			model.setDiagnosisType(l.getDiagnosisType());
+			
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+l.getCreatedby().getNickname());
+			}else {
+				model.setCreated("");
+			}			
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);	
 	}
 	
 	@GetMapping("/patients/delete_working_diagnosis") 
@@ -747,7 +780,7 @@ public class PatientResource {
 	}
 	
 	@GetMapping("/patients/load_lab_tests") 
-	public ResponseEntity<List<LabTest>> loadLabTests(
+	public ResponseEntity<List<LabTestModel>> loadLabTests(
 			@RequestParam(name = "consultation_id") Long consultationId,
 			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
 			HttpServletRequest request){
@@ -770,11 +803,63 @@ public class PatientResource {
 				labTests = labTestRepository.findAllByNonConsultation(nc.get());
 			}						
 		}
-		return ResponseEntity.created(uri).body(labTests);
+		List<LabTestModel> models = new ArrayList<>();
+		for(LabTest l : labTests) {
+			LabTestModel model= new LabTestModel();
+			model.setId(l.getId());
+			model.setResult(l.getResult());
+			model.setLabTestType(l.getLabTestType());
+			model.setPatientBill(l.getPatientBill());
+			model.setRange(l.getRange());
+			model.setLevel(l.getLevel());
+			model.setUnit(l.getUnit());
+			model.setStatus(l.getStatus());
+
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+l.getCreatedby().getNickname());
+			}else {
+				model.setCreated("");
+			}
+			if(l.getOrderedAt() != null) {
+				model.setOrdered(l.getOrderedAt().toString()+" | "+l.getOrderedby().getNickname());
+			}else {
+				model.setOrdered("");
+			}
+			if(l.getRejectedAt() != null) {
+				model.setRejected(l.getRejectedAt().toString()+" | "+l.getRejectedby().getNickname() + " | "+l.getRejectComment());
+			}else {
+				model.setRejected("");
+			}
+			model.setRejectComment(l.getRejectComment());			
+			if(l.getAcceptedAt() != null) {
+				model.setAccepted(l.getAcceptedAt().toString()+" | "+l.getAcceptedby().getNickname());
+			}else {
+				model.setAccepted("");
+			}
+			if(l.getHeldAt() != null) {
+				model.setHeld(l.getHeldAt().toString()+" | "+l.getHeldby().getNickname());
+			}else {
+				model.setHeld("");
+			}
+			if(l.getCollectedAt() != null) {
+				model.setCollected(l.getCollectedAt().toString()+" | "+l.getCollectedby().getNickname());
+			}else {
+				model.setCollected("");
+			}
+			
+			if(l.getVerifiedAt() != null) {
+				model.setVerified(l.getVerifiedAt().toString()+" | "+l.getVerifiedby().getNickname());
+			}else {
+				model.setVerified("");
+			}
+			
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
 	}
 	
 	@GetMapping("/patients/load_radiologies") 
-	public ResponseEntity<List<Radiology>> loadRadiologies(
+	public ResponseEntity<List<RadiologyModel>> loadRadiologies(
 			@RequestParam(name = "consultation_id") Long consultationId,
 			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
 			HttpServletRequest request){
@@ -798,11 +883,49 @@ public class PatientResource {
 				radiologies = radiologyRepository.findAllByNonConsultation(nc.get());
 			}					
 		}
-		return ResponseEntity.created(uri).body(radiologies);
+		List<RadiologyModel> models = new ArrayList<>();
+		for(Radiology r : radiologies) {
+			RadiologyModel model= new RadiologyModel();
+			model.setId(r.getId());
+			model.setResult(r.getResult());
+			model.setRadiologyType(r.getRadiologyType());
+			model.setDescription(r.getDescription());
+			model.setDiagnosis(r.getDiagnosis());
+			model.setPatientBill(r.getPatientBill());
+			model.setAttachment(r.getAttachment());
+			if(r.getCreatedAt() != null) {
+				model.setCreated(r.getCreatedAt().toString()+" | "+r.getCreatedby().getNickname());
+			}else {
+				model.setCreated("");
+			}
+			if(r.getRejectedAt() != null) {
+				model.setRejected(r.getRejectedAt().toString()+" | "+r.getRejectedby().getNickname());
+			}else {
+				model.setRejected("");
+			}
+			model.setRejectComment(r.getRejectComment());			
+			if(r.getAcceptedAt() != null) {
+				model.setAccepted(r.getAcceptedAt().toString()+" | "+r.getAcceptedby().getNickname());
+			}else {
+				model.setAccepted("");
+			}
+			if(r.getOrderedAt() != null) {
+				model.setOrdered(r.getOrderedAt().toString()+" | "+r.getOrderedby().getNickname());
+			}else {
+				model.setOrdered("");
+			}
+			if(r.getVerifiedAt() != null) {
+				model.setVerified(r.getVerifiedAt().toString()+" | "+r.getVerifiedby().getNickname());
+			}else {
+				model.setVerified("");
+			}
+			model.setStatus(r.getStatus());models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
 	}
 	
 	@GetMapping("/patients/load_procedures") 
-	public ResponseEntity<List<Procedure>> loadProcedures(
+	public ResponseEntity<List<ProcedureModel>> loadProcedures(
 			@RequestParam(name = "consultation_id") Long consultationId,
 			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
 			HttpServletRequest request){
@@ -826,7 +949,49 @@ public class PatientResource {
 				procedures = procedureRepository.findAllByNonConsultation(nc.get());
 			}					
 		}
-		return ResponseEntity.created(uri).body(procedures);
+		List<ProcedureModel> models = new ArrayList<>();
+		for(Procedure l : procedures) {
+			ProcedureModel model= new ProcedureModel();
+			model.setId(l.getId());
+			model.setProcedureType(l.getProcedureType());
+			model.setPatientBill(l.getPatientBill());
+			model.setStatus(l.getStatus());
+
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+l.getCreatedby().getNickname());
+			}else {
+				model.setCreated("");
+			}
+			if(l.getOrderedAt() != null) {
+				model.setOrdered(l.getOrderedAt().toString()+" | "+l.getOrderedby().getNickname());
+			}else {
+				model.setOrdered("");
+			}
+			if(l.getRejectedAt() != null) {
+				model.setRejected(l.getRejectedAt().toString()+" | "+l.getRejectedby().getNickname() + " | "+l.getRejectComment());
+			}else {
+				model.setRejected("");
+			}
+			model.setRejectComment(l.getRejectComment());			
+			if(l.getAcceptedAt() != null) {
+				model.setAccepted(l.getAcceptedAt().toString()+" | "+l.getAcceptedby().getNickname());
+			}else {
+				model.setAccepted("");
+			}
+			if(l.getHeldAt() != null) {
+				model.setHeld(l.getHeldAt().toString()+" | "+l.getHeldby().getNickname());
+			}else {
+				model.setHeld("");
+			}		
+			if(l.getVerifiedAt() != null) {
+				model.setVerified(l.getVerifiedAt().toString()+" | "+l.getVerifiedby().getNickname());
+			}else {
+				model.setVerified("");
+			}
+			
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
 	}
 	
 	@GetMapping("/patients/load_prescriptions") 
@@ -962,8 +1127,8 @@ public class PatientResource {
 			throw new InvalidOperationException("Can not delete a paid radiology, please contact system administrator");
 			/*patientPaymentDetailRepository.delete(pd.get());*/
 		}
-		patientBillRepository.delete(patientBill);
 		radiologyRepository.delete(radiology);
+		patientBillRepository.delete(patientBill);
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_radiology").toUriString());
 		return ResponseEntity.created(uri).body(true);

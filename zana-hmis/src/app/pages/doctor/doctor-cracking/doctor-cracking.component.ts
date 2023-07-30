@@ -101,7 +101,12 @@ export class DoctorCrackingComponent implements OnInit {
   prescriptions : IPrescription[] = []
 
   labTestTypeName : string = ''
+
   radiologyTypeName : string = ''
+  radiologyDiagnosis : string = ''
+  radiologyDescription : string = ''
+
+
   procedureTypeName : string = ''
   medicineName : string = ''
 
@@ -631,15 +636,17 @@ export class DoctorCrackingComponent implements OnInit {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    var radiology : any = {
+    var radiology  = {
       radiologyType : {
         id : null,
         code : '',
-        name : this.radiologyTypeName
-      }
+        name : this.radiologyTypeName,
+      },
+      diagnosis : this.radiologyDiagnosis,   
+      description : this.radiologyDescription       
     }
     this.spinner.show()
-    await this.http.post<IRadiology>(API_URL+'/patients/save_radiology?consultation_id='+this.id+'&non_consultation_id='+0, radiology, options)
+    await this.http.post(API_URL+'/patients/save_radiology?consultation_id='+this.id+'&non_consultation_id='+0, radiology, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -737,23 +744,27 @@ export class DoctorCrackingComponent implements OnInit {
     
   }
 
-  async loadRadiologies(consultationId : any, nonConsultationId : any){
+  loadRadiologies(consultationId : any, nonConsultationId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.radiologies = []
     this.spinner.show()
-    await this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
-        console.log(data)
-        this.radiologies = data!
+        data?.forEach(element => {
+          this.radiologies.push(element)
+        })
+        console.log(this.radiologies)
+        
       }
     )
     .catch(
-      () => {
+      (error) => {
+        console.log(error['error'])
         this.msgBox.showErrorMessage('Could not load radiologies')
       }
     )
