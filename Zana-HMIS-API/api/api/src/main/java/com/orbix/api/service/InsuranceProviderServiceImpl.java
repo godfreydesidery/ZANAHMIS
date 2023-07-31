@@ -41,8 +41,8 @@ public class InsuranceProviderServiceImpl implements InsuranceProviderService{
 		insuranceProvider.setName(Sanitizer.sanitizeString(insuranceProvider.getName()));
 		
 		if(insuranceProvider.getId() == null) {
-			insuranceProvider.setCreatedby(userService.getUser(request));
-			insuranceProvider.setCreatedOn(dayService.getDay());
+			insuranceProvider.setCreatedby(userService.getUser(request).getId());
+			insuranceProvider.setCreatedOn(dayService.getDay().getId());
 			insuranceProvider.setCreatedAt(dayService.getTimeStamp());
 			
 			insuranceProvider.setActive(true);

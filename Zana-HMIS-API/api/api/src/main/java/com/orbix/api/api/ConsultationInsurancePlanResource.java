@@ -91,8 +91,8 @@ public class ConsultationInsurancePlanResource {
 		
 		
 		if(conPlan.getId() == null) {
-			conPlan.setCreatedby(userService.getUser(request));
-			conPlan.setCreatedOn(dayService.getDay());
+			conPlan.setCreatedby(userService.getUser(request).getId());
+			conPlan.setCreatedOn(dayService.getDay().getId());
 			conPlan.setCreatedAt(dayService.getTimeStamp());
 			
 			conPlan.setActive(true);

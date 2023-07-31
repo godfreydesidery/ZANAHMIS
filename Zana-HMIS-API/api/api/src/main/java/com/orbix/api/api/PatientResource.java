@@ -38,13 +38,16 @@ import com.orbix.api.domain.PatientInvoiceDetail;
 import com.orbix.api.domain.PatientPaymentDetail;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.LabTestType;
+import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientCreditNote;
 import com.orbix.api.domain.PaymentType;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
+import com.orbix.api.domain.ProcedureType;
 import com.orbix.api.domain.Radiology;
+import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.User;
 import com.orbix.api.domain.Visit;
 import com.orbix.api.domain.WorkingDiagnosis;
@@ -68,6 +71,7 @@ import com.orbix.api.repositories.GeneralExaminationRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
+import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
 import com.orbix.api.repositories.PatientBillRepository;
 import com.orbix.api.repositories.PatientCreditNoteRepository;
@@ -78,7 +82,9 @@ import com.orbix.api.repositories.PatientPaymentRepository;
 import com.orbix.api.repositories.PatientRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.ProcedureRepository;
+import com.orbix.api.repositories.ProcedureTypeRepository;
 import com.orbix.api.repositories.RadiologyRepository;
+import com.orbix.api.repositories.RadiologyTypeRepository;
 import com.orbix.api.repositories.VisitRepository;
 import com.orbix.api.repositories.WorkingDiagnosisRepository;
 import com.orbix.api.service.CompanyProfileService;
@@ -126,6 +132,9 @@ public class PatientResource {
 	private final UserService userService;
 	private final DayService dayService;
 	private final LabTestTypeRepository labTestTypeRepository;
+	private final RadiologyTypeRepository radiologyTypeRepository;
+	private final ProcedureTypeRepository procedureTypeRepository;
+	private final MedicineRepository medicineRepository;
 	
 	
 	@GetMapping("/patients")
@@ -416,8 +425,8 @@ public class PatientResource {
 				ClinicalNote note = new ClinicalNote();
 				note.setConsultation(c.get());
 				
-				note.setCreatedby(userService.getUser(request));
-				note.setCreatedOn(dayService.getDay());
+				note.setCreatedby(userService.getUser(request).getId());
+				note.setCreatedOn(dayService.getDay().getId());
 				note.setCreatedAt(dayService.getTimeStamp());
 				
 				URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_clinical_note_by_consultation_id").toUriString());
@@ -446,8 +455,8 @@ public class PatientResource {
 				GeneralExamination exam = new GeneralExamination();
 				exam.setConsultation(c.get());
 				
-				exam.setCreatedby(userService.getUser(request));
-				exam.setCreatedOn(dayService.getDay());
+				exam.setCreatedby(userService.getUser(request).getId());
+				exam.setCreatedOn(dayService.getDay().getId());
 				exam.setCreatedAt(dayService.getTimeStamp());
 				
 				URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_general_examination_by_consultation_id").toUriString());
@@ -492,8 +501,8 @@ public class PatientResource {
 			note.setManagementPlan(cg.getClinicalNote().getManagementPlan());
 			note.setConsultation(c.get());
 			
-			note.setCreatedby(userService.getUser(request));
-			note.setCreatedOn(dayService.getDay());
+			note.setCreatedby(userService.getUser(request).getId());
+			note.setCreatedOn(dayService.getDay().getId());
 			note.setCreatedAt(dayService.getTimeStamp());
 			
 			note = clinicalNoteRepository.save(note);
@@ -533,8 +542,8 @@ public class PatientResource {
 			exam.setDescription(cg.getGeneralExamination().getDescription());
 			exam.setConsultation(c.get());
 			
-			exam.setCreatedby(userService.getUser(request));
-			exam.setCreatedOn(dayService.getDay());
+			exam.setCreatedby(userService.getUser(request).getId());
+			exam.setCreatedOn(dayService.getDay().getId());
 			exam.setCreatedAt(dayService.getTimeStamp());
 			
 			exam = generalExaminationRepository.save(exam);
@@ -568,8 +577,8 @@ public class PatientResource {
 		diagnosis.setPatient(c.get().getPatient());
 		
 		if(diagnosis.getId() == null) {
-			diagnosis.setCreatedby(userService.getUser(request));
-			diagnosis.setCreatedOn(dayService.getDay());
+			diagnosis.setCreatedby(userService.getUser(request).getId());
+			diagnosis.setCreatedOn(dayService.getDay().getId());
 			diagnosis.setCreatedAt(dayService.getTimeStamp());
 		}
 		
@@ -599,7 +608,7 @@ public class PatientResource {
 			model.setDiagnosisType(l.getDiagnosisType());
 			
 			if(l.getCreatedAt() != null) {
-				model.setCreated(l.getCreatedAt().toString()+" | "+l.getCreatedby().getNickname());
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
 			}else {
 				model.setCreated("");
 			}			
@@ -628,8 +637,8 @@ public class PatientResource {
 		diagnosis.setPatient(c.get().getPatient());
 		
 		if(diagnosis.getId() == null) {
-			diagnosis.setCreatedby(userService.getUser(request));
-			diagnosis.setCreatedOn(dayService.getDay());
+			diagnosis.setCreatedby(userService.getUser(request).getId());
+			diagnosis.setCreatedOn(dayService.getDay().getId());
 			diagnosis.setCreatedAt(dayService.getTimeStamp());
 		}
 				
@@ -659,7 +668,7 @@ public class PatientResource {
 			model.setDiagnosisType(l.getDiagnosisType());
 			
 			if(l.getCreatedAt() != null) {
-				model.setCreated(l.getCreatedAt().toString()+" | "+l.getCreatedby().getNickname());
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
 			}else {
 				model.setCreated("");
 			}			
@@ -697,12 +706,12 @@ public class PatientResource {
 		}
 		
 		if(labTest.getId() == null) {
-			labTest.setCreatedby(userService.getUser(request));
-			labTest.setCreatedOn(dayService.getDay());
+			labTest.setCreatedby(userService.getUser(request).getId());
+			labTest.setCreatedOn(dayService.getDay().getId());
 			labTest.setCreatedAt(dayService.getTimeStamp());
 			
-			labTest.setOrderedby(userService.getUser(request));
-			labTest.setOrderedOn(dayService.getDay());
+			labTest.setOrderedby(userService.getUser(request).getId());
+			labTest.setOrderedOn(dayService.getDay().getId());
 			labTest.setOrderedAt(dayService.getTimeStamp());
 		}
 		
@@ -719,13 +728,18 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
+		Optional<RadiologyType> lt = radiologyTypeRepository.findByName(radiology.getRadiologyType().getName());
+		if(radiologyRepository.existsByConsultationAndRadiologyType(c.get(), lt.get())) {
+			throw new InvalidOperationException("Duplicate Radiology Types is not allowed");
+		}
+		
 		if(radiology.getId() == null) {
-			radiology.setCreatedby(userService.getUser(request));
-			radiology.setCreatedOn(dayService.getDay());
+			radiology.setCreatedby(userService.getUser(request).getId());
+			radiology.setCreatedOn(dayService.getDay().getId());
 			radiology.setCreatedAt(dayService.getTimeStamp());
 			
-			radiology.setOrderedby(userService.getUser(request));
-			radiology.setOrderedOn(dayService.getDay());
+			radiology.setOrderedby(userService.getUser(request).getId());
+			radiology.setOrderedOn(dayService.getDay().getId());
 			radiology.setOrderedAt(dayService.getTimeStamp());
 		}
 		
@@ -742,13 +756,18 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
+		Optional<ProcedureType> lt = procedureTypeRepository.findByName(procedure.getProcedureType().getName());
+		if(procedureRepository.existsByConsultationAndProcedureType(c.get(), lt.get())) {
+			throw new InvalidOperationException("Duplicate Procedure Types is not allowed");
+		}
+		
 		if(procedure.getId() == null) {
-			procedure.setCreatedby(userService.getUser(request));
-			procedure.setCreatedOn(dayService.getDay());
+			procedure.setCreatedby(userService.getUser(request).getId());
+			procedure.setCreatedOn(dayService.getDay().getId());
 			procedure.setCreatedAt(dayService.getTimeStamp());
 			
-			procedure.setOrderedby(userService.getUser(request));
-			procedure.setOrderedOn(dayService.getDay());
+			procedure.setOrderedby(userService.getUser(request).getId());
+			procedure.setOrderedOn(dayService.getDay().getId());
 			procedure.setOrderedAt(dayService.getTimeStamp());
 		}
 		
@@ -765,13 +784,18 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
+		Optional<Medicine> lt = medicineRepository.findByName(prescription.getMedicine().getName());
+		if(prescriptionRepository.existsByConsultationAndMedicine(c.get(), lt.get())) {
+			throw new InvalidOperationException("Duplicate Medicine types is not allowed");
+		}
+		
 		if(prescription.getId() == null) {
-			prescription.setCreatedby(userService.getUser(request));
-			prescription.setCreatedOn(dayService.getDay());
+			prescription.setCreatedby(userService.getUser(request).getId());
+			prescription.setCreatedOn(dayService.getDay().getId());
 			prescription.setCreatedAt(dayService.getTimeStamp());
 			
-			prescription.setOrderedby(userService.getUser(request));
-			prescription.setOrderedOn(dayService.getDay());
+			prescription.setOrderedby(userService.getUser(request).getId());
+			prescription.setOrderedOn(dayService.getDay().getId());
 			prescription.setOrderedAt(dayService.getTimeStamp());
 		}
 		
@@ -816,39 +840,39 @@ public class PatientResource {
 			model.setStatus(l.getStatus());
 
 			if(l.getCreatedAt() != null) {
-				model.setCreated(l.getCreatedAt().toString()+" | "+l.getCreatedby().getNickname());
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
 			}else {
 				model.setCreated("");
 			}
 			if(l.getOrderedAt() != null) {
-				model.setOrdered(l.getOrderedAt().toString()+" | "+l.getOrderedby().getNickname());
+				model.setOrdered(l.getOrderedAt().toString()+" | "+userService.getUserById(l.getOrderedby()).getNickname());
 			}else {
 				model.setOrdered("");
 			}
 			if(l.getRejectedAt() != null) {
-				model.setRejected(l.getRejectedAt().toString()+" | "+l.getRejectedby().getNickname() + " | "+l.getRejectComment());
+				model.setRejected(l.getRejectedAt().toString()+" | "+userService.getUserById(l.getRejectedby()).getNickname() + " | "+l.getRejectComment());
 			}else {
 				model.setRejected("");
 			}
 			model.setRejectComment(l.getRejectComment());			
 			if(l.getAcceptedAt() != null) {
-				model.setAccepted(l.getAcceptedAt().toString()+" | "+l.getAcceptedby().getNickname());
+				model.setAccepted(l.getAcceptedAt().toString()+" | "+userService.getUserById(l.getAcceptedby()).getNickname());
 			}else {
 				model.setAccepted("");
 			}
 			if(l.getHeldAt() != null) {
-				model.setHeld(l.getHeldAt().toString()+" | "+l.getHeldby().getNickname());
+				model.setHeld(l.getHeldAt().toString()+" | "+userService.getUserById(l.getHeldby()).getNickname());
 			}else {
 				model.setHeld("");
 			}
 			if(l.getCollectedAt() != null) {
-				model.setCollected(l.getCollectedAt().toString()+" | "+l.getCollectedby().getNickname());
+				model.setCollected(l.getCollectedAt().toString()+" | "+userService.getUserById(l.getCollectedby()).getNickname());
 			}else {
 				model.setCollected("");
 			}
 			
 			if(l.getVerifiedAt() != null) {
-				model.setVerified(l.getVerifiedAt().toString()+" | "+l.getVerifiedby().getNickname());
+				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedby()).getNickname());
 			}else {
 				model.setVerified("");
 			}
@@ -894,28 +918,28 @@ public class PatientResource {
 			model.setPatientBill(r.getPatientBill());
 			model.setAttachment(r.getAttachment());
 			if(r.getCreatedAt() != null) {
-				model.setCreated(r.getCreatedAt().toString()+" | "+r.getCreatedby().getNickname());
+				model.setCreated(r.getCreatedAt().toString()+" | "+userService.getUserById(r.getCreatedby()).getNickname());
 			}else {
 				model.setCreated("");
 			}
 			if(r.getRejectedAt() != null) {
-				model.setRejected(r.getRejectedAt().toString()+" | "+r.getRejectedby().getNickname());
+				model.setRejected(r.getRejectedAt().toString()+" | "+userService.getUserById(r.getRejectedby()).getNickname());
 			}else {
 				model.setRejected("");
 			}
 			model.setRejectComment(r.getRejectComment());			
 			if(r.getAcceptedAt() != null) {
-				model.setAccepted(r.getAcceptedAt().toString()+" | "+r.getAcceptedby().getNickname());
+				model.setAccepted(r.getAcceptedAt().toString()+" | "+userService.getUserById(r.getAcceptedby()).getNickname());
 			}else {
 				model.setAccepted("");
 			}
 			if(r.getOrderedAt() != null) {
-				model.setOrdered(r.getOrderedAt().toString()+" | "+r.getOrderedby().getNickname());
+				model.setOrdered(r.getOrderedAt().toString()+" | "+userService.getUserById(r.getOrderedby()).getNickname());
 			}else {
 				model.setOrdered("");
 			}
 			if(r.getVerifiedAt() != null) {
-				model.setVerified(r.getVerifiedAt().toString()+" | "+r.getVerifiedby().getNickname());
+				model.setVerified(r.getVerifiedAt().toString()+" | "+userService.getUserById(r.getVerifiedby()).getNickname());
 			}else {
 				model.setVerified("");
 			}
@@ -958,33 +982,33 @@ public class PatientResource {
 			model.setStatus(l.getStatus());
 
 			if(l.getCreatedAt() != null) {
-				model.setCreated(l.getCreatedAt().toString()+" | "+l.getCreatedby().getNickname());
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
 			}else {
 				model.setCreated("");
 			}
 			if(l.getOrderedAt() != null) {
-				model.setOrdered(l.getOrderedAt().toString()+" | "+l.getOrderedby().getNickname());
+				model.setOrdered(l.getOrderedAt().toString()+" | "+userService.getUserById(l.getOrderedby()).getNickname());
 			}else {
 				model.setOrdered("");
 			}
 			if(l.getRejectedAt() != null) {
-				model.setRejected(l.getRejectedAt().toString()+" | "+l.getRejectedby().getNickname() + " | "+l.getRejectComment());
+				model.setRejected(l.getRejectedAt().toString()+" | "+userService.getUserById(l.getRejectedby()).getNickname() + " | "+l.getRejectComment());
 			}else {
 				model.setRejected("");
 			}
 			model.setRejectComment(l.getRejectComment());			
 			if(l.getAcceptedAt() != null) {
-				model.setAccepted(l.getAcceptedAt().toString()+" | "+l.getAcceptedby().getNickname());
+				model.setAccepted(l.getAcceptedAt().toString()+" | "+userService.getUserById(l.getAcceptedby()).getNickname());
 			}else {
 				model.setAccepted("");
 			}
 			if(l.getHeldAt() != null) {
-				model.setHeld(l.getHeldAt().toString()+" | "+l.getHeldby().getNickname());
+				model.setHeld(l.getHeldAt().toString()+" | "+userService.getUserById(l.getHeldby()).getNickname());
 			}else {
 				model.setHeld("");
 			}		
 			if(l.getVerifiedAt() != null) {
-				model.setVerified(l.getVerifiedAt().toString()+" | "+l.getVerifiedby().getNickname());
+				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedby()).getNickname());
 			}else {
 				model.setVerified("");
 			}
@@ -1182,9 +1206,9 @@ public class PatientResource {
 			throw new InvalidOperationException("Can not delete a paid procedure, please contact system administrator");
 			/*patientPaymentDetailRepository.delete(pd.get());*/
 		}
-		patientBillRepository.delete(patientBill);
-		procedureRepository.delete(procedure);
 		
+		procedureRepository.delete(procedure);
+		patientBillRepository.delete(patientBill);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_procedure").toUriString());
 		return ResponseEntity.created(uri).body(true);
 	}
@@ -1237,8 +1261,9 @@ public class PatientResource {
 			throw new InvalidOperationException("Can not delete a paid prescription, please contact system administrator");
 			/*patientPaymentDetailRepository.delete(pd.get());*/
 		}
-		patientBillRepository.delete(patientBill);
+		
 		prescriptionRepository.delete(prescription);
+		patientBillRepository.delete(patientBill);
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_prescription").toUriString());
 		return ResponseEntity.created(uri).body(true);

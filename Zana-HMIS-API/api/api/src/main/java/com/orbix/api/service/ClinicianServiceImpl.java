@@ -44,8 +44,8 @@ public class ClinicianServiceImpl implements ClinicianService{
 		clinician.setNickname(Sanitizer.sanitizeString(clinician.getFirstName()+ " "+clinician.getMiddleName()+ " "+clinician.getLastName()+" "+clinician.getCode()));
 		
 		if(clinician.getId() == null) {
-			clinician.setCreatedby(userService.getUser(request));
-			clinician.setCreatedOn(dayService.getDay());
+			clinician.setCreatedby(userService.getUser(request).getId());
+			clinician.setCreatedOn(dayService.getDay().getId());
 			clinician.setCreatedAt(dayService.getTimeStamp());
 			
 			clinician.setActive(true);

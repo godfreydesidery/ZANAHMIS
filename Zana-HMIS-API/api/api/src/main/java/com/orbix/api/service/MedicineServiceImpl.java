@@ -41,8 +41,8 @@ public class MedicineServiceImpl implements MedicineService{
 		medicine.setName(Sanitizer.sanitizeString(medicine.getName()));
 		
 		if(medicine.getId() == null) {
-			medicine.setCreatedby(userService.getUser(request));
-			medicine.setCreatedOn(dayService.getDay());
+			medicine.setCreatedby(userService.getUser(request).getId());
+			medicine.setCreatedOn(dayService.getDay().getId());
 			medicine.setCreatedAt(dayService.getTimeStamp());
 			
 			medicine.setActive(true);

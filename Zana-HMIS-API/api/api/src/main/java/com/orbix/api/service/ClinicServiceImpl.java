@@ -46,8 +46,8 @@ public class ClinicServiceImpl implements ClinicService{
 		clinic.setName(Sanitizer.sanitizeString(clinic.getName()));
 		
 		if(clinic.getId() == null) {
-			clinic.setCreatedby(userService.getUser(request));
-			clinic.setCreatedOn(dayService.getDay());
+			clinic.setCreatedby(userService.getUser(request).getId());
+			clinic.setCreatedOn(dayService.getDay().getId());
 			clinic.setCreatedAt(dayService.getTimeStamp());
 			
 			clinic.setActive(true);

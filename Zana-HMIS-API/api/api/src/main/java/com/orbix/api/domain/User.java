@@ -66,15 +66,11 @@ public class User {
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Collection<Role> roles = new ArrayList<>();	
 	
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "created_by_user_id", nullable = true , updatable = true)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private User createdby;
-	
-	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "created_on_day_id", nullable = true , updatable = true)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private User createdOn;
+
+	@Column(name = "created_by_user_id", nullable = true , updatable = false)
+    private Long createdby;
+	@Column(name = "created_on_day_id", nullable = true , updatable = false)
+    private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
 		
 }

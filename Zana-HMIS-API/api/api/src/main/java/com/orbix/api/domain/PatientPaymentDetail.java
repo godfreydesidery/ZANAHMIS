@@ -5,6 +5,7 @@ package com.orbix.api.domain;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -49,4 +50,10 @@ public class PatientPaymentDetail {
     @JoinColumn(name = "patient_payment_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private PatientPayment patientPayment;
+	
+	@Column(name = "created_by_user_id", nullable = false , updatable = false)
+	private Long createdby;
+	@Column(name = "created_on_day_id", nullable = false , updatable = false)
+    private Long createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
 }

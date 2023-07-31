@@ -13,6 +13,7 @@ import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
+import com.orbix.api.domain.RadiologyType;
 
 /**
  * @author Godfrey

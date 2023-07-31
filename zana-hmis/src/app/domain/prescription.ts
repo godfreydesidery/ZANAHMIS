@@ -21,7 +21,7 @@ export interface IPrescription {
     consultation    : IConsultation
     nonConsultation : INonConsultation
     admission       : IAdmission
-    bill            : IPatientBill
+    patientBill            : IPatientBill
     medicine        : IMedicine
     
     createdBy       : IUser

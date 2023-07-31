@@ -5,6 +5,7 @@ package com.orbix.api.domain;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -45,15 +46,10 @@ public class RegistrationInsurancePlan {
     @JoinColumn(name = "insurance_plan_id", nullable = false , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private InsurancePlan insurancePlan;	
-	
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private User createdby;
-	
-	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Day createdOn;
+
+	@Column(name = "created_by_user_id", nullable = false , updatable = false)
+    private Long createdby;
+	@Column(name = "created_on_day_id", nullable = false , updatable = false)
+    private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
 }

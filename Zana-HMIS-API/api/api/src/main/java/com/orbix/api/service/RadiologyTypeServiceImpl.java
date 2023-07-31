@@ -42,8 +42,8 @@ public class RadiologyTypeServiceImpl implements RadiologyTypeService{
 		radiologyType.setName(Sanitizer.sanitizeString(radiologyType.getName()));
 		
 		if(radiologyType.getId() == null) {
-			radiologyType.setCreatedby(userService.getUser(request));
-			radiologyType.setCreatedOn(dayService.getDay());
+			radiologyType.setCreatedby(userService.getUser(request).getId());
+			radiologyType.setCreatedOn(dayService.getDay().getId());
 			radiologyType.setCreatedAt(dayService.getTimeStamp());
 			
 			radiologyType.setActive(true);

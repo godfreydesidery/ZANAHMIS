@@ -41,8 +41,8 @@ public class ProcedureTypeServiceImpl implements ProcedureTypeService{
 		procedureType.setName(Sanitizer.sanitizeString(procedureType.getName()));
 		
 		if(procedureType.getId() == null) {
-			procedureType.setCreatedby(userService.getUser(request));
-			procedureType.setCreatedOn(dayService.getDay());
+			procedureType.setCreatedby(userService.getUser(request).getId());
+			procedureType.setCreatedOn(dayService.getDay().getId());
 			procedureType.setCreatedAt(dayService.getTimeStamp());
 			
 			procedureType.setActive(true);

@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Patient;
 
@@ -26,5 +27,7 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 	
 	@Query("SELECT m.name FROM Medicine m")
 	List<String> getNames();
+
+	
 
 }

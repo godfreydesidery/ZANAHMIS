@@ -1,4 +1,4 @@
-import { Byte } from '@angular/compiler/src/util';
+///import { Byte } from '@angular/compiler/src/util';
 import { IAdmission } from "./admission"
 import { IPatientBill } from "./patient-bill"
 import { IConsultation } from "./consultation"
@@ -13,7 +13,7 @@ export interface IRadiology {
     result      : string
     diagnosis   : string
     description : string
-    attachment  : Byte[]
+    //attachment  : Byte[]
 
     status      : string
 

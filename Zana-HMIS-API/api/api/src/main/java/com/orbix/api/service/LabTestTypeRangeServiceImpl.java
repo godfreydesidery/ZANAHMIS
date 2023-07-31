@@ -40,8 +40,8 @@ public class LabTestTypeRangeServiceImpl implements LabTestTypeRangeService{
 		
 		labTestTypeRange.setName(Sanitizer.sanitizeString(labTestTypeRange.getName()));
 		
-		labTestTypeRange.setCreatedby(userService.getUser(request));
-		labTestTypeRange.setCreatedOn(dayService.getDay());
+		labTestTypeRange.setCreatedby(userService.getUser(request).getId());
+		labTestTypeRange.setCreatedOn(dayService.getDay().getId());
 		labTestTypeRange.setCreatedAt(dayService.getTimeStamp());
 		
 		log.info("Saving new labTestTypeRange to the database");

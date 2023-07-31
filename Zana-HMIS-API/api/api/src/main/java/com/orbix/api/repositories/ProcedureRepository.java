@@ -9,9 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
+import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.Procedure;
+import com.orbix.api.domain.ProcedureType;
 
 /**
  * @author Godfrey
@@ -51,5 +53,14 @@ public interface ProcedureRepository extends JpaRepository<Procedure, Long> {
 	 * @return
 	 */
 	List<Procedure> findAllByConsultation(Consultation consultation);
+
+	/**
+	 * @param consultation
+	 * @param procedureType
+	 * @return
+	 */
+	boolean existsByConsultationAndProcedureType(Consultation consultation, ProcedureType procedureType);
+
+
 
 }

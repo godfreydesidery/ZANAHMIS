@@ -726,31 +726,33 @@ export class DoctorCrackingComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.labTests = []
-    await this.spinner.show()
+    this.spinner.show()
     await this.http.get<ILabTest[]>(API_URL+'/patients/load_lab_tests?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
+        data?.forEach(element => {
+          this.labTests.push(element)
+        })
         console.log(data)
-        this.labTests = data!
+        
       }
     )
     .catch(
       () => {
         this.msgBox.showErrorMessage('Could not load lab tests')
       }
-    )
-    
+    )   
   }
 
-  loadRadiologies(consultationId : any, nonConsultationId : any){
+  async loadRadiologies(consultationId : any, nonConsultationId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.radiologies = []
     this.spinner.show()
-    this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    await this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(

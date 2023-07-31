@@ -5,6 +5,7 @@ package com.orbix.api.domain;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -66,36 +67,26 @@ public class Admission {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Ward ward;
 	
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private User createdby;
-	
-	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Day createdOn;
+	@Column(name = "created_by_user_id", nullable = false , updatable = false)
+    private Long createdby;
+	@Column(name = "created_on_day_id", nullable = false , updatable = false)
+    private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
 	
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "admitted_by_user_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private User admittedby;
-	
-	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "admitted_on_day_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Day admittedOn;
+	@Column(name = "admitted_by_user_id", nullable = false , updatable = false)
+    private Long admittedby;
+	@Column(name = "admitted_on_day_id", nullable = false , updatable = false)
+    private Long admittedOn;
 	private LocalDateTime admittedAt = LocalDateTime.now();
 	
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "discharged_by_user_id", nullable = true , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private User dischargedby;
 	
-	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "discharged_on_day_id", nullable = true , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Day dischargedOn;
+	///@ManyToOne(targetEntity = User.class, optional = true)
+    ///@JoinColumn(name = "discharged_by_user_id", nullable = true , updatable = true)
+    ///@OnDelete(action = OnDeleteAction.NO_ACTION)
+	
+	@Column(name = "discharged_by_user_id", nullable = true , updatable = true)
+    private Long dischargedby;
+	@Column(name = "discharged_on_day_id", nullable = true , updatable = true)
+    private Long dischargedOn;
 	private LocalDateTime dischargedAt;
 }

@@ -99,15 +99,9 @@ public class Patient {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private InsurancePlan insurancePlan;
 	
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "created_by_user_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-	@JsonIgnoreProperties({"code", "username", "firstName", "middleName", "lastName", "roles", "password"})
-    private User createdby;
-	
-	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "created_on_day_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Day createdOn;
+	@Column(name = "created_by_user_id", nullable = false , updatable = false)
+    private Long createdby;
+	@Column(name = "created_on_day_id", nullable = false , updatable = false)
+    private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
 }

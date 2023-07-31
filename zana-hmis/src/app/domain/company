@@ -1,8 +1,8 @@
-import { Byte } from '@angular/compiler/src/util';
+//import { Byte } from '@angular/compiler/src/util';
 
 export interface ICompany {
     name            : string
-    logo            : Byte[]
+    //logo            : Byte[]
     contactName     : string
     vrn             : string
     tin             : string

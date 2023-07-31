@@ -247,6 +247,12 @@
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Prescription</th>
+                                                <th>Unit</th>
+                                                <th>Dosage</th>
+                                                <th>Frequency</th>
+                                                <th>Route</th>
+                                                <th>Days</th>
+                                                <th>Qty</th>
                                                 <th>Price</th>
                                                 <th>Payment Status</th>
                                                 <th>Status</th>
@@ -257,11 +263,17 @@
                                                 <tr *ngFor="let prescription of prescriptions">
                                                     <td>{{prescription.id}}</td>
                                                     <td>{{prescription.medicine.name}}</td>
-                                                    <td style="text-align: right;"><span *ngIf="prescription.bill.status != 'COVERED'">{{prescription.bill.amount | currency:'':''}}</span><span *ngIf="prescription.bill.status === 'COVERED'">---</span></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td style="text-align: right;"><span *ngIf="prescription?.patientBill?.status != 'COVERED'">{{prescription?.patientBill?.amount | currency:'':''}}</span><span *ngIf="prescription?.patientBill?.status === 'COVERED'">---</span></td>
                                                     <td>
-                                                        <span *ngIf="prescription.bill.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{prescription.bill.status}}</span>
-                                                        <span *ngIf="prescription.bill.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{prescription.bill.status}}</span>
-                                                        <span *ngIf="prescription.bill.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{prescription.bill.status}}(NOT COVERED)</span>
+                                                        <span *ngIf="prescription?.patientBill?.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{prescription?.patientBill?.status}}</span>
+                                                        <span *ngIf="prescription?.patientBill?.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{prescription?.patientBill?.status}}</span>
+                                                        <span *ngIf="prescription?.patientBill?.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{prescription?.patientBill?.status}}(NOT COVERED)</span>
                                                     </td>
                                                     <td>{{prescription.status}}</td>
                                                     <td><a (click)="deletePrescription(prescription.id)"><i class="fa fa-trash"></i>Delete</a></td>
@@ -518,7 +530,7 @@
                                     <td>
                                         <table>
                                             <tbody>
-                                                <tr><td><small>Atachment: {{radiology?.attachment}}</small></td></tr>
+                                                <tr><td><small>Atachment: </small></td></tr>
                                             </tbody>
                                         </table>
                                     </td>
@@ -590,11 +602,58 @@
                            <option *ngFor="let name of medicineNames">{{name}}</option>
                        </select>
                     </div>
-                </div>   
-                   
-               <div class="modal-footer">
-                   <button type="button" class="btn btn-success pull-right" (click)="savePrescription()" data-dismiss="modal">Save</button>
-               </div>
+                </div>  
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label>Unit</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="Unit">
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label>Dosage</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="Dosage">
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label>Frequency</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="Frequency">
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label>Route</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="Route">
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label>Days</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="Days">
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label>Qty</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="Qty">
+                    </div>
+                </div> 
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success pull-right" (click)="savePrescription()" data-dismiss="modal">Save</button>
+                </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->

@@ -6,6 +6,7 @@ package com.orbix.api.domain;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -63,25 +64,15 @@ public class AdmissionBed {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
 	
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "opened_by_user_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private User openedby;
-	
-	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "opened_on_day_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Day openedOn;
+	@Column(name = "opened_by_user_id", nullable = false , updatable = false)
+    private Long openedby;
+	@Column(name = "opened_on_day_id", nullable = false , updatable = false)
+    private Long openedOn;
 	private LocalDateTime openedAt = LocalDateTime.now();
 	
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "closed_by_user_id", nullable = true , updatable = true)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private User closedby;
-	
-	@ManyToOne(targetEntity = Day.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "closed_on_day_id", nullable = true , updatable = true)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Day closedOn;
+	@Column(name = "closed_by_user_id", nullable = true , updatable = true)
+    private Long closedby;
+	@Column(name = "closed_on_day_id", nullable = true , updatable = true)
+    private Long closedOn;
 	private LocalDateTime closedAt;
 }

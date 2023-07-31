@@ -1,9 +1,12 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/compiler';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -48,6 +51,7 @@ import { LabTestPaymentComponent } from './pages/payments/lab-test-payment/lab-t
 import { RadiologyPaymentComponent } from './pages/payments/radiology-payment/radiology-payment.component';
 import { MedicationPaymentComponent } from './pages/payments/medication-payment/medication-payment.component';
 import { ProcedurePaymentComponent } from './pages/payments/procedure-payment/procedure-payment.component';
+
 
 @NgModule({
   declarations: [
@@ -96,8 +100,10 @@ import { ProcedurePaymentComponent } from './pages/payments/procedure-payment/pr
     HttpClientModule,
     BrowserModule,
     NgxSpinnerModule,
+    BrowserModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
       RouterModule.forRoot([
     {path : 'patient-register', component : PatientRegisterComponent},
     {path : 'patient-list', component : PatientListComponent},
@@ -135,7 +141,10 @@ import { ProcedurePaymentComponent } from './pages/payments/procedure-payment/pr
     {path : 'lab-outsider-list', component : LabOutsiderListComponent},
     ])
   ],
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
+  schemas: [ 
+    //CUSTOM_ELEMENTS_SCHEMA
+    NO_ERRORS_SCHEMA
+   ],
   providers: [
     DatePipe,
     JwtHelperService,

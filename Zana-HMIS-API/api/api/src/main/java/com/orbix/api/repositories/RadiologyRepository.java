@@ -13,6 +13,7 @@ import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.Radiology;
+import com.orbix.api.domain.RadiologyType;
 
 /**
  * @author Godfrey
@@ -52,5 +53,12 @@ public interface RadiologyRepository extends JpaRepository<Radiology, Long> {
 	 * @return
 	 */
 	List<Radiology> findAllByNonConsultation(NonConsultation nonConsultation);
+
+	/**
+	 * @param consultation
+	 * @param radiologyType
+	 * @return
+	 */
+	boolean existsByConsultationAndRadiologyType(Consultation consultation, RadiologyType radiologyType);
 
 }

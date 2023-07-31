@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
+import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Prescription;
 
@@ -50,5 +51,12 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
 	 * @return
 	 */
 	List<Prescription> findAllByNonConsultation(NonConsultation nonConsultation);
+
+	/**
+	 * @param consultation
+	 * @param medicine
+	 * @return
+	 */
+	boolean existsByConsultationAndMedicine(Consultation consultation, Medicine medicine);
 
 }

@@ -138,8 +138,8 @@ public class PatientBillResource {
 		PatientPayment payment = new PatientPayment();
 		payment.setAmount(totalAmount);
 		
-		payment.setCreatedby(userService.getUser(request));
-		payment.setCreatedOn(dayService.getDay());
+		payment.setCreatedby(userService.getUser(request).getId());
+		payment.setCreatedOn(dayService.getDay().getId());
 		payment.setCreatedAt(LocalDateTime.now());
 		
 		payment.setStatus("RECEIVED");
@@ -149,12 +149,23 @@ public class PatientBillResource {
 			registrationBill.setBalance(0);
 			registrationBill.setPaid(registrationBill.getAmount());
 			registrationBill.setStatus("PAID");
+			
+			registrationBill.setCreatedby(userService.getUser(request).getId());
+			registrationBill.setCreatedOn(dayService.getDay().getId());
+			registrationBill.setCreatedAt(LocalDateTime.now());
+			
 			registrationBill = patientBillRepository.save(registrationBill);
+			
 			PatientPaymentDetail pd = new PatientPaymentDetail();
 			pd.setPatientBill(registrationBill);
 			pd.setPatientPayment(payment);
 			pd.setDescription("Registration Payment");
 			pd.setStatus("RECEIVED");
+			
+			pd.setCreatedby(userService.getUser(request).getId());
+			pd.setCreatedOn(dayService.getDay().getId());
+			pd.setCreatedAt(LocalDateTime.now());
+			
 			patientPaymentDetailRepository.save(pd);			
 		}
 		
@@ -163,12 +174,22 @@ public class PatientBillResource {
 			bill.setBalance(0);
 			bill.setPaid(bill.getAmount());
 			bill.setStatus("PAID");
+			
+			bill.setCreatedby(userService.getUser(request).getId());
+			bill.setCreatedOn(dayService.getDay().getId());
+			bill.setCreatedAt(LocalDateTime.now());
+			
 			patientBillRepository.save(bill);
 			PatientPaymentDetail pd = new PatientPaymentDetail();
 			pd.setPatientBill(bill);
 			pd.setPatientPayment(payment);
 			pd.setDescription("Consultation Payment");
 			pd.setStatus("RECEIVED");
+			
+			pd.setCreatedby(userService.getUser(request).getId());
+			pd.setCreatedOn(dayService.getDay().getId());
+			pd.setCreatedAt(LocalDateTime.now());
+			
 			patientPaymentDetailRepository.save(pd);	
 			amount = amount + bill.getAmount();
 		}
@@ -190,10 +211,12 @@ public class PatientBillResource {
 		double amount = 0;
 		PatientPayment payment = new PatientPayment();
 		payment.setAmount(totalAmount);
-		payment.setCreatedby(userService.getUser(request));
-		payment.setCreatedOn(dayService.getDay());
+		
+		payment.setCreatedby(userService.getUser(request).getId());
+		payment.setCreatedOn(dayService.getDay().getId());
 		payment.setCreatedAt(LocalDateTime.now());
 		payment.setStatus("RECEIVED");
+		
 		payment = patientPaymentRepository.save(payment);
 		
 		for(PatientBill bill : bills) {
@@ -208,12 +231,18 @@ public class PatientBillResource {
 				b.get().setBalance(0);
 				b.get().setPaid(b.get().getAmount());
 				b.get().setStatus("PAID");
+				
 				patientBillRepository.save(b.get());
 				PatientPaymentDetail pd = new PatientPaymentDetail();
 				pd.setPatientBill(bill);
 				pd.setPatientPayment(payment);
 				pd.setDescription(b.get().getDescription());
 				pd.setStatus("RECEIVED");
+				
+				pd.setCreatedby(userService.getUser(request).getId());
+				pd.setCreatedOn(dayService.getDay().getId());
+				pd.setCreatedAt(LocalDateTime.now());
+				
 				patientPaymentDetailRepository.save(pd);								
 				amount = amount + b.get().getAmount();
 			}
