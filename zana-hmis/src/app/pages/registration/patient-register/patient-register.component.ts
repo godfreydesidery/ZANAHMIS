@@ -7,7 +7,10 @@ import { AuthService } from 'src/app/auth.service';
 import { IClinician } from 'src/app/domain/clinician';
 import { IConsultation } from 'src/app/domain/consultation';
 import { IInsurancePlan } from 'src/app/domain/insurance-plan';
+import { ILabTest } from 'src/app/domain/lab-test';
 import { IPatient } from 'src/app/domain/patient';
+import { IProcedure } from 'src/app/domain/procedure';
+import { IRadiology } from 'src/app/domain/radiology';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -70,7 +73,27 @@ export class PatientRegisterComponent implements OnInit {
   editInsurancePlanName : string = ''
   editMembershipNo : string = ''
 
+  lockSearchKey : boolean = false
 
+  nonConsultationId : number = 0
+
+  labTests : ILabTest[] = []
+  labTestTypeNames : string[] = []
+  labTestTypeName : string = ''
+  
+  radiologies : IRadiology[] = []
+  radiologyTypeNames : string[] = []
+  radiologyTypeName : string = ''
+
+  procedures : IProcedure[] = []
+  procedureTypeNames : string[] = []
+  procedureTypeName : string = ''
+
+
+  labTotal : number = 0
+  radiologyTotal : number = 0
+  procedureTotal : number = 0
+  
   constructor(
     //private shortcut : ShortCutHandlerService,
               private auth : AuthService,
@@ -104,6 +127,10 @@ export class PatientRegisterComponent implements OnInit {
     this.loadSearchKeys()
     this.loadClinicNames()
     this.loadInsurancePlanNames()
+    this.loadLabTestTypeNames()
+    this.loadRadiologyTypeNames()
+    this.loadProcedureTypeNames()
+    
   }
 
   clear(){
@@ -130,6 +157,21 @@ export class PatientRegisterComponent implements OnInit {
     this.clinicName = ''
     this.clinicianName = ''
     this.consultationFee = 0
+    this.lockSearchKey = false
+
+    this.nonConsultationId = 0
+
+    this.labTests = []
+    this.labTestTypeName = ''
+    this.procedures = []
+    this.procedureTypeName = ''
+    this.radiologies = []
+    this.radiologyTypeName = ''
+
+    this.labTotal = 0
+    this.radiologyTotal = 0
+    this.procedureTotal  = 0
+
   }
 
   newPatientPrompt(){
@@ -244,7 +286,12 @@ export class PatientRegisterComponent implements OnInit {
           this.patientRecordMode = ''
 
 
-          this.loadActiveConsultation(this.id)
+          if(this.type === 'OUTPATIENT'){
+            this.loadActiveConsultation(this.id)
+          }else if(this.type === 'OUTSIDER'){
+            this.loadNonConsultationId(this.id)
+          }
+          
         }
       )
       .catch(
@@ -334,6 +381,12 @@ export class PatientRegisterComponent implements OnInit {
       
     )
 
+    if(this.type === 'OUTPATIENT'){
+      this.loadActiveConsultation(this.id)
+    }else if(this.type === 'OUTSIDER'){
+      this.loadNonConsultationId(this.id)
+    }
+
     return updated
   }
 
@@ -401,33 +454,28 @@ export class PatientRegisterComponent implements OnInit {
     .then(
       data => {
         this.id = data!['id']
-          this.no = data!['no']
-          this.firstName = data!['firstName']
-          this.middleName = data!['middleName']
-          this.lastName = data!['lastName']
-          this.gender = data!['gender']
-          this.dateOfBirth =data!['dateOfBirth']
-          this.paymentType = data!['paymentType']
-          this.type = data!['type']
-          this.membershipNo = data!['membershipNo']
-          this.phoneNo = data!['phoneNo']
-          this.address = data!['address']
-          this.email = data!['email']
-          this.nationality = data!['nationality']
-          this.nationalId = data!['nationalId']
-          this.passportNo = data!['passportNo']
-          this.kinFullName = data!['kinFullName']
-          this.kinRelationship = data!['kinRelationship']
-          this.kinPhoneNo = data!['kinPhoneNo']
+        this.no = data!['no']
+        this.firstName = data!['firstName']
+        this.middleName = data!['middleName']
+        this.lastName = data!['lastName']
+        this.gender = data!['gender']
+        this.dateOfBirth =data!['dateOfBirth']
+        this.paymentType = data!['paymentType']
+        this.type = data!['type']
+        this.membershipNo = data!['membershipNo']
+        this.phoneNo = data!['phoneNo']
+        this.address = data!['address']
+        this.email = data!['email']
+        this.nationality = data!['nationality']
+        this.nationalId = data!['nationalId']
+        this.passportNo = data!['passportNo']
+        this.kinFullName = data!['kinFullName']
+        this.kinRelationship = data!['kinRelationship']
+        this.kinPhoneNo = data!['kinPhoneNo']
 
-          
+        this.insurancePlanName = data!['insurancePlan']?.name
 
-          
-          this.insurancePlanName = data!['insurancePlan']?.name
-
-
-          this.loadActiveConsultation(this.id)
-          this.getLastVisitDate()
+        this.lockSearchKey = true
       }
     )
     .catch(
@@ -437,8 +485,142 @@ export class PatientRegisterComponent implements OnInit {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
+    if(this.type === 'OUTPATIENT'){
+      await this.loadActiveConsultation(this.id)
+    }else if(this.type === 'OUTSIDER'){
+      await this.loadNonConsultationId(this.id)
+      await this.loadLabTest(0, this.nonConsultationId)
+      await this.loadRadiologies(0, this.nonConsultationId)
+      await this.loadProcedures(0, this.nonConsultationId)
+    }
+    await this.getLastVisitDate()   
   }
-  
+
+  async deleteLabTest(labTestId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/delete_lab_test?id='+labTestId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.loadLabTest(0, this.nonConsultationId)
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        this.loadLabTest(0, this.nonConsultationId)
+      }
+    )    
+  }
+
+  async deleteRadiology(radiologyId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/delete_radiology?id='+radiologyId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.loadRadiologies(0, this.nonConsultationId)
+      }
+    )
+    .catch(
+      error => {
+        this.loadRadiologies(0, this.nonConsultationId)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    
+  }
+
+  async deleteProcedure(procedureId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/delete_procedure?id='+procedureId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.loadProcedures(0, this.nonConsultationId)
+      }
+    )
+    .catch(
+      error => {
+        this.loadProcedures(0, this.nonConsultationId)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    
+  }
+
+  async loadRadiologies(consultationId : any, nonConsultationId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.radiologies = []
+    this.radiologyTotal = 0
+    this.spinner.show()
+    await this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        data?.forEach(element => {
+          this.radiologyTotal = this.radiologyTotal + element.patientBill.amount
+          this.radiologies.push(element)
+        })
+        console.log(this.radiologies)
+        
+      }
+    )
+    .catch(
+      (error) => {
+        console.log(error['error'])
+        this.msgBox.showErrorMessage('Could not load radiologies')
+      }
+    )
+    
+  }
+
+  async loadProcedures(consultationId : any, nonConsultationId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.procedures = []
+    this.procedureTotal = 0
+    this.spinner.show()
+    await this.http.get<IProcedure[]>(API_URL+'/patients/load_procedures?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        data?.forEach(element => {
+          this.procedureTotal = this.procedureTotal + element.patientBill.amount
+          this.procedures.push(element)
+        })
+        console.log(this.procedures)
+        
+      }
+    )
+    .catch(
+      (error) => {
+        console.log(error['error'])
+        this.msgBox.showErrorMessage('Could not load procedures')
+      }
+    )
+    
+  }
 
   async loadClinicNames(){//for unpaid registration
     let options = {
@@ -649,6 +831,296 @@ export class PatientRegisterComponent implements OnInit {
     .catch(
       error => {
        console.log(error)
+      }
+    )
+  }
+
+  async changeType(type : string){
+  
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var patient = {
+      id : this.id
+    }
+    
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/change_type?type='+type, patient, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {        
+        var temp = this.searchKey
+        this.clear()
+        this.searchKey = temp
+        this.searchBySearchKey(this.searchKey) 
+        this.msgBox.showSuccessMessage('Status changed: '+type)       
+      }
+    )
+    .catch(
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  async loadProcedureTypeNames(){
+    this.procedureTypeNames = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/procedure_types/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        data?.forEach(element => {
+          this.procedureTypeNames.push(element)
+        })
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load procedure types names')
+      }
+    )
+  }
+
+
+  async saveLabTest(){
+    if(this.type != 'OUTSIDER'){
+      this.msgBox.showErrorMessage('Only allowed for outsiders')
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var labTest  = {
+      labTestType : {
+        id : null,
+        code : '',
+        name : this.labTestTypeName
+      }
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/save_lab_test?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId, labTest, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      () => {
+        this.loadLabTest(0, this.nonConsultationId)
+        this.msgBox.showSuccessMessage('Lab Test Saved successifully')
+      }
+    )
+    .catch(
+      error => {
+        this.loadLabTest(0, this.nonConsultationId)
+        this.msgBox.showErrorMessage('Could not save Lab Test')
+        console.log(error)
+      }
+    )
+    
+  }
+
+  async saveProcedure(){
+    if(this.type != 'OUTSIDER'){
+      this.msgBox.showErrorMessage('Only allowed for outsiders')
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var procedure  = {
+      procedureType : {
+        id : null,
+        code : '',
+        name : this.procedureTypeName
+      }
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/save_procedure?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId, procedure, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      () => {
+        this.loadProcedures(0, this.nonConsultationId)
+        this.msgBox.showSuccessMessage('Procedure Saved successifully')
+      }
+    )
+    .catch(
+      error => {
+        this.loadProcedures(0, this.nonConsultationId)
+        this.msgBox.showErrorMessage('Could not save Procedure')
+        console.log(error)
+      }
+    )
+    
+  }
+
+  async loadLabTest(consultationId : any, nonConsultationId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.labTests = []
+    this.labTotal = 0
+    this.spinner.show()
+    await this.http.get<ILabTest[]>(API_URL+'/patients/load_lab_tests?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        data?.forEach(element => {
+          this.labTotal = this.labTotal + element.patientBill.amount
+          this.labTests.push(element)
+        })
+        console.log(data)
+        
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load lab tests')
+      }
+    )   
+  }
+
+  async saveRadiology(){
+    if(this.type != 'OUTSIDER'){
+      this.msgBox.showErrorMessage('Only allowed for outsiders')
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var radiology  = {
+      radiologyType : {
+        id : null,
+        code : '',
+        name : this.radiologyTypeName
+      }
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/save_radiology?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId, radiology, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      () => {
+        this.loadRadiology(0, this.nonConsultationId)
+        this.msgBox.showSuccessMessage('Radiology Saved successifully')
+      }
+    )
+    .catch(
+      error => {
+        this.loadRadiology(0, this.nonConsultationId)
+        this.msgBox.showErrorMessage('Could not save Radiology')
+        console.log(error)
+      }
+    )
+    
+  }
+
+  async loadRadiology(consultationId : any, nonConsultationId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.radiologies = []
+    this.radiologyTotal = 0
+    this.spinner.show()
+    await this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        data?.forEach(element => {
+          this.radiologyTotal = this.radiologyTotal + element.patientBill.amount
+          this.radiologies.push(element)
+        })
+        console.log(data)
+        
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load radiologies')
+      }
+    )   
+  }
+
+  async loadRadiologyTypeNames(){
+    this.radiologyTypeNames = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/radiology_types/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        data?.forEach(element => {
+          this.radiologyTypeNames.push(element)
+        })
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load radiology types names')
+      }
+    )
+  }
+
+  async loadNonConsultationId(patientId : any){
+    if(this.type != 'OUTSIDER'){
+      this.nonConsultationId = 0
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.nonConsultationId = 0
+    this.spinner.show()
+    await this.http.get<number>(API_URL+'/patients/load_non_consultation_id?patient_id='+patientId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.nonConsultationId = data!
+      }
+        
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    ) 
+
+  }
+
+  async loadLabTestTypeNames(){
+    this.labTestTypeNames = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/lab_test_types/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        data?.forEach(element => {
+          this.labTestTypeNames.push(element)
+        })
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load lab test types names')
       }
     )
   }

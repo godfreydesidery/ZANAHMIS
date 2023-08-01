@@ -99,6 +99,12 @@ public class Radiology {
     private Long rejectedOn;
 	private LocalDateTime rejectedAt;
 	private String rejectComment;
+	
+	@Column(name = "held_by_user_id", nullable = true , updatable = true)
+    private Long heldby;
+	@Column(name = "held_on_day_id", nullable = true , updatable = true)
+    private Long heldOn;
+	private LocalDateTime heldAt;
 
 	@Column(name = "verified_by_user_id", nullable = true , updatable = true)
     private Long verifiedby;

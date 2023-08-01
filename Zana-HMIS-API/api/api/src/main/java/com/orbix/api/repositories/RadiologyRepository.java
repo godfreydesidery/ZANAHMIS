@@ -61,4 +61,11 @@ public interface RadiologyRepository extends JpaRepository<Radiology, Long> {
 	 */
 	boolean existsByConsultationAndRadiologyType(Consultation consultation, RadiologyType radiologyType);
 
+	/**
+	 * @param nonConsultation
+	 * @param radiologyType
+	 * @return
+	 */
+	boolean existsByNonConsultationAndRadiologyType(NonConsultation nonConsultation, RadiologyType radiologyType);
+
 }

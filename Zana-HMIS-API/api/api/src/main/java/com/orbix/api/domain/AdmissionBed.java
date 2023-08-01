@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -42,6 +43,8 @@ public class AdmissionBed {
 	private Long id;
 	@NotBlank
 	private String no;
+	@NotNull
+	private double price;
 	private String status;
 	
 	@ManyToOne(targetEntity = Ward.class, fetch = FetchType.EAGER,  optional = false)
@@ -64,15 +67,6 @@ public class AdmissionBed {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
 	
-	@Column(name = "opened_by_user_id", nullable = false , updatable = false)
-    private Long openedby;
-	@Column(name = "opened_on_day_id", nullable = false , updatable = false)
-    private Long openedOn;
-	private LocalDateTime openedAt = LocalDateTime.now();
-	
-	@Column(name = "closed_by_user_id", nullable = true , updatable = true)
-    private Long closedby;
-	@Column(name = "closed_on_day_id", nullable = true , updatable = true)
-    private Long closedOn;
+	private LocalDateTime openedAt;
 	private LocalDateTime closedAt;
 }

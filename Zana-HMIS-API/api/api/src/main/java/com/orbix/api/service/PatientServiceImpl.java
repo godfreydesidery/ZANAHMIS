@@ -30,7 +30,6 @@ import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.MedicineInsurancePlan;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
-import com.orbix.api.domain.PaymentType;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.ProcedureType;
@@ -54,6 +53,7 @@ import com.orbix.api.repositories.LabTestTypeInsurancePlanRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.repositories.MedicineInsurancePlanRepository;
 import com.orbix.api.repositories.MedicineRepository;
+import com.orbix.api.repositories.NonConsultationRepository;
 import com.orbix.api.repositories.PatientBillRepository;
 import com.orbix.api.repositories.PatientRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
@@ -83,6 +83,7 @@ public class PatientServiceImpl implements PatientService {
 	private final PatientRepository patientRepository;
 	private final PatientBillRepository patientBillRepository;
 	private final ConsultationRepository consultationRepository;
+	private final NonConsultationRepository nonConsultationRepository;
 	private final PatientInvoiceRepository patientInvoiceRepository;
 	private final PatientInvoiceDetailRepository patientInvoiceDetailRepository;
 	private final DayRepository dayRepository;
@@ -608,8 +609,17 @@ public class PatientServiceImpl implements PatientService {
 			test.setConsultation(c.get());
 		}
 		if(nc.isPresent()) {
-			patient = nc.get().getPatient();
-			test.setNonConsultation(nc.get());
+			NonConsultation non;// = new NonConsultation();
+			if(nc.get().getStatus().equals("PENDING")) {
+				nc.get().setStatus("IN-PROCESS");
+				non =	nonConsultationRepository.save(nc.get());
+			}else if(nc.get().getStatus().equals("IN-PROCESS")) {
+				non = nc.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			patient = non.getPatient();
+			test.setNonConsultation(non);
 		}
 		
 		test.setLabTestType(ltt.get());
@@ -717,10 +727,22 @@ public class PatientServiceImpl implements PatientService {
 			patient = c.get().getPatient();
 			radio.setConsultation(c.get());
 		}
+		
 		if(nc.isPresent()) {
-			patient = nc.get().getPatient();
-			radio.setNonConsultation(nc.get());
+			NonConsultation non;// = new NonConsultation();
+			if(nc.get().getStatus().equals("PENDING")) {
+				nc.get().setStatus("IN-PROCESS");
+				non =	nonConsultationRepository.save(nc.get());
+			}else if(nc.get().getStatus().equals("IN-PROCESS")) {
+				non = nc.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			patient = non.getPatient();
+			radio.setNonConsultation(non);
 		}
+		
+		
 		radio.setRadiologyType(rt.get());
 		radio.setStatus("PENDING");
 		PatientBill patientBill = new PatientBill();
@@ -809,10 +831,22 @@ public class PatientServiceImpl implements PatientService {
 			patient = c.get().getPatient();
 			procedure.setConsultation(c.get());
 		}
+		
 		if(nc.isPresent()) {
-			patient = nc.get().getPatient();
-			procedure.setNonConsultation(nc.get());
+			NonConsultation non;// = new NonConsultation();
+			if(nc.get().getStatus().equals("PENDING")) {
+				nc.get().setStatus("IN-PROCESS");
+				non =	nonConsultationRepository.save(nc.get());
+			}else if(nc.get().getStatus().equals("IN-PROCESS")) {
+				non = nc.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			patient = non.getPatient();
+			procedure.setNonConsultation(non);
 		}
+		
+		
 		procedure.setProcedureType(pr.get());
 		procedure.setStatus("PENDING");
 		PatientBill patientBill = new PatientBill();

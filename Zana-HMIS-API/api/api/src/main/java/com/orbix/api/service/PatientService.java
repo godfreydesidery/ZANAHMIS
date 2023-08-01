@@ -14,7 +14,6 @@ import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
-import com.orbix.api.domain.PaymentType;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.Radiology;

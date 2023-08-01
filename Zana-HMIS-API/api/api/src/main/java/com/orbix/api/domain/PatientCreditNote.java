@@ -42,10 +42,15 @@ public class PatientCreditNote {
 	private double amount = 0;
 	private String status = "";
 	private String reference = "";		
-	private LocalDateTime createdAt = LocalDateTime.now();
 	
 	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "patient_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
+	
+	@Column(name = "created_by_user_id", nullable = false , updatable = false)
+    private Long createdby;
+	@Column(name = "created_on_day_id", nullable = false , updatable = false)
+    private Long createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
 }

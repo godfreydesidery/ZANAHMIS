@@ -71,31 +71,6 @@ public class NonConsultation {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private InsurancePlan insurancePlan;
 	
-	
-	@OneToMany(targetEntity = LabTest.class, mappedBy = "nonConsultation", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Valid
-    @JsonIgnoreProperties("nonConsultation")
-	@Fetch(value = FetchMode.SUBSELECT)
-    private List<LabTest> labTests;
-	
-	@OneToMany(targetEntity = Radiology.class, mappedBy = "nonConsultation", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Valid
-    @JsonIgnoreProperties("nonConsultation")
-	@Fetch(value = FetchMode.SUBSELECT)
-    private List<Radiology> radiologies;
-	
-	@OneToMany(targetEntity = Procedure.class, mappedBy = "nonConsultation", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Valid
-    @JsonIgnoreProperties("nonConsultation")
-	@Fetch(value = FetchMode.SUBSELECT)
-    private List<Procedure> procedures;
-	
-	@OneToMany(targetEntity = Prescription.class, mappedBy = "nonConsultation", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Valid
-    @JsonIgnoreProperties("nonConsultation")
-	@Fetch(value = FetchMode.SUBSELECT)
-    private List<Prescription> prescriptions;
-	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
     private Long createdby;
 	@Column(name = "created_on_day_id", nullable = false , updatable = false)

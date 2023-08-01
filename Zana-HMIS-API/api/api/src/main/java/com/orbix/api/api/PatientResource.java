@@ -42,7 +42,6 @@ import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientCreditNote;
-import com.orbix.api.domain.PaymentType;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.ProcedureType;
@@ -210,12 +209,47 @@ public class PatientResource {
 	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<Patient>changeType(
 			@RequestBody Patient patient,
+			@RequestParam(name = "type") String type,
 			HttpServletRequest request){
-		Optional p = patientRepository.findById(patient.getId());
+		Optional<Patient> p = patientRepository.findById(patient.getId());
 		if(!p.isPresent()) {
 			throw new NotFoundException("Could not process, patient not available");
 		}
-		
+		if(!(type.equals("OUTPATIENT") || type.equals("OUTSIDER"))){
+			throw new InvalidOperationException("Invalid patient types. Only OUTPATIENT and OUTSIDER types are allowed");
+		}
+		/**
+		 * From OUTPATIENT to OUTSIDER
+		 */
+		if(type.equals("OUTSIDER")) {
+			if(p.get().getType().equals("OUTSIDER")) {
+				throw new InvalidOperationException("Can not transform to the same type");
+			}
+			List<String> statuses = new ArrayList<>();
+			statuses.add("PENDING");
+			statuses.add("IN-PROCESS");
+			statuses.add("TRANSFERED");
+			List<Consultation> cs = consultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
+			if(!cs.isEmpty()) {
+				throw new InvalidOperationException("Can not change patient type, the patient has an active consultation.");
+			}else {
+				p.get().setType("OUTSIDER");
+				patient = patientRepository.save(p.get());
+			}
+		}else if(type.equals("OUTPATIENT")) {
+			if(p.get().getType().equals("OUTPATIENT")) {
+				throw new InvalidOperationException("Can not transform to the same type");
+			}
+			List<String> statuses = new ArrayList<>();
+			statuses.add("IN-PROCESS");
+			List<NonConsultation> ncs = nonConsultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
+			if(!ncs.isEmpty()) {
+				throw new InvalidOperationException("Can not change patient type, the has pending services. Please consider removing the services or clearing with the patient.");
+			}else {
+				p.get().setType("OUTPATIENT");
+				patient = patientRepository.save(p.get());
+			}
+		}				
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/change_type").toUriString());
 		return ResponseEntity.created(uri).body(patient);
 	}
@@ -223,7 +257,7 @@ public class PatientResource {
 	@PostMapping("/patients/do_consultation")
 	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<Patient>consultation(
-			@RequestBody PaymentType paymentType,
+
 			@RequestParam Long patient_id, @RequestParam String clinic_name, @RequestParam String clinician_name, 
 			HttpServletRequest request){
 		Optional<Patient> p = patientRepository.findById(patient_id);
@@ -701,9 +735,17 @@ public class PatientResource {
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
 		Optional<LabTestType> lt = labTestTypeRepository.findByName(labTest.getLabTestType().getName());
-		if(labTestRepository.existsByConsultationAndLabTestType(c.get(), lt.get())) {
-			throw new InvalidOperationException("Duplicate Lab Test Types is not allowed");
+		if(c.isPresent()) {
+			if(labTestRepository.existsByConsultationAndLabTestType(c.get(), lt.get())) {
+				throw new InvalidOperationException("Duplicate Lab Test Types is not allowed");
+			}
+		}else if(nc.isPresent()) {
+			if(labTestRepository.existsByNonConsultationAndLabTestType(nc.get(), lt.get())) {
+				throw new InvalidOperationException("Duplicate Lab Test Types is not allowed");
+			}
 		}
+		
+		
 		
 		if(labTest.getId() == null) {
 			labTest.setCreatedby(userService.getUser(request).getId());
@@ -729,9 +771,16 @@ public class PatientResource {
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
 		Optional<RadiologyType> lt = radiologyTypeRepository.findByName(radiology.getRadiologyType().getName());
-		if(radiologyRepository.existsByConsultationAndRadiologyType(c.get(), lt.get())) {
-			throw new InvalidOperationException("Duplicate Radiology Types is not allowed");
+		if(c.isPresent()) {
+			if(radiologyRepository.existsByConsultationAndRadiologyType(c.get(), lt.get())) {
+				throw new InvalidOperationException("Duplicate Radiology Types is not allowed");
+			}
+		}else if(nc.isPresent()) {
+			if(radiologyRepository.existsByNonConsultationAndRadiologyType(nc.get(), lt.get())) {
+				throw new InvalidOperationException("Duplicate Radiology Types is not allowed");
+			}
 		}
+		
 		
 		if(radiology.getId() == null) {
 			radiology.setCreatedby(userService.getUser(request).getId());
@@ -757,8 +806,15 @@ public class PatientResource {
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
 		Optional<ProcedureType> lt = procedureTypeRepository.findByName(procedure.getProcedureType().getName());
-		if(procedureRepository.existsByConsultationAndProcedureType(c.get(), lt.get())) {
-			throw new InvalidOperationException("Duplicate Procedure Types is not allowed");
+		
+		if(c.isPresent()) {
+			if(procedureRepository.existsByConsultationAndProcedureType(c.get(), lt.get())) {
+				throw new InvalidOperationException("Duplicate Procedure Types is not allowed");
+			}
+		}else if(nc.isPresent()) {
+			if(procedureRepository.existsByNonConsultationAndProcedureType(nc.get(), lt.get())) {
+				throw new InvalidOperationException("Duplicate Procedure Types is not allowed");
+			}
 		}
 		
 		if(procedure.getId() == null) {
@@ -1406,6 +1462,61 @@ public class PatientResource {
 		labTestRepository.save(t.get());
 		return true;
 	}	
+	
+	@GetMapping("/patients/load_non_consultation_id")
+	public ResponseEntity<Long> getNonConsultationId(
+			@RequestParam(name = "patient_id") Long id,
+			HttpServletRequest request){
+		Optional<Patient> p = patientRepository.findById(id);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found");
+		}
+		if(!p.get().getType().equals("OUTSIDER")) {
+			throw new InvalidOperationException("Operation only allowed for outsiders");
+		}
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		statuses.add("IN-PROCESS");
+		Optional<NonConsultation> nc = nonConsultationRepository.findByPatientAndStatusIn(p.get(), statuses);
+		
+		Optional<Visit> v = visitRepository.findLastByPatient(p.get());
+		Visit visit = new Visit();
+		if(!v.isPresent() || !v.get().getStatus().equals("PENDING")) {			
+			visit.setPatient(p.get());
+			visit.setStatus("PENDING");
+			visit.setType("OUTSIDER");
+			if(!v.isPresent()) {
+				visit.setSequence("FIRST");
+			}else {
+				visit.setSequence("SUBSEQUENT");
+			}
+			
+			visit.setCreatedby(userService.getUser(request).getId());
+			visit.setCreatedOn(dayService.getDay().getId());
+			visit.setCreatedAt(dayService.getTimeStamp());
+			
+			visit = visitRepository.save(visit);
+		}else {
+			v.get().setType("OUTSIDER");
+			visit = visitRepository.save(v.get());
+		}
+		NonConsultation nonConsultation = new NonConsultation();
+		if(nc.isEmpty()) {
+			nonConsultation.setCreatedby(userService.getUserId(request));
+			nonConsultation.setCreatedOn(dayService.getDayId());
+			nonConsultation.setCreatedAt(dayService.getTimeStamp());
+			nonConsultation.setVisit(visit);
+			nonConsultation.setPatient(p.get());
+			nonConsultation.setInsurancePlan(p.get().getInsurancePlan());
+			nonConsultation.setMembershipNo(p.get().getMembershipNo());
+			nonConsultation.setPaymentType(p.get().getPaymentType());
+			nonConsultation.setStatus("PENDING");
+			nonConsultation = nonConsultationRepository.save(nonConsultation);
+		}else {
+			nonConsultation = nc.get();
+		}
+		return ResponseEntity.ok().body(nonConsultation.getId());
+	}
 }
 
 @Data

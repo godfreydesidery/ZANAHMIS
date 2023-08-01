@@ -61,6 +61,13 @@ public interface ProcedureRepository extends JpaRepository<Procedure, Long> {
 	 */
 	boolean existsByConsultationAndProcedureType(Consultation consultation, ProcedureType procedureType);
 
+	/**
+	 * @param nonConsultation
+	 * @param procedureType
+	 * @return
+	 */
+	boolean existsByNonConsultationAndProcedureType(NonConsultation nonConsultation, ProcedureType procedureType);
+
 
 
 }

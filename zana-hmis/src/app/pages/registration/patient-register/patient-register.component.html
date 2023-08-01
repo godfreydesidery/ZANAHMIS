@@ -155,7 +155,7 @@
                                         <div class="col-sm-12">
                                             <div class="row">
                                                 <div class="col-xs-6">
-                                                    <input type="text" class="form-control" [(ngModel)]="searchKey" (input)="searchBySearchKey(searchKey)"  list="search_keys" placeholder="Search by File#, name or phone">
+                                                    <input type="text" class="form-control" [(ngModel)]="searchKey" (input)="searchBySearchKey(searchKey)"  list="search_keys" [readonly]="lockSearchKey" placeholder="Search by File#, name or phone">
                                                     <datalist id="search_keys" style="padding: 0px;" >
                                                         <option *ngFor="let s of searchKeys" [ngValue]="s">{{s}}</option>
                                                     </datalist> 
@@ -220,15 +220,10 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
-                                            <br>
-                                            
-                                            
-                                            
                                             <div>
                                                 <div *ngIf="type != 'OUTSIDER' && id != null && paymentType != ''">
                                                     <div *ngIf="consultations.length === 0">
-                                                        <br><br><br>
-                                                        <h4 class="text-primary"><b>Send to Doctor</b></h4>
+                                                        <h4 class="text-primary"><b>Send Outpatient to Doctor</b></h4>
                                                         <div class="row">
                                                             <div class="col-sm-12 form-group" >
                                                                 <h4 class="text-primary">Select Clinic</h4>
@@ -253,10 +248,23 @@
                                                     </div>
                                                 </div>
                                                 <div *ngIf="type === 'OUTSIDER'">
-                                                    for outsider patients
+                                                    <h4 class="text-primary"><b>Add service for Outsider</b></h4>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <button class="btn btn-primary form-control" data-toggle="modal" data-target="#add-lab-test-modal">Add Lab Test</button>
+                                                            <br>
+                                                            <br>
+                                                            <button class="btn btn-primary form-control" data-toggle="modal" data-target="#add-radiology-modal">Add Radiology</button>
+                                                            <br>
+                                                            <br>
+                                                            <button class="btn btn-primary form-control" data-toggle="modal" data-target="#add-procedure-modal">Add Procedure</button>
+                                                            <br>
+                                                            <br>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div *ngIf="consultations.length > 0 && id != null">
+                                            <div *ngIf="consultations.length > 0 && id != null && type ==='OUTPATIENT'">
                                                 <div class="col-sm-12 alert alert-success" role="alert" style="text-align: center;">
                                                     This patient has been assigned to the following clinic(s).
                                                 </div>
@@ -276,6 +284,127 @@
                                                                 <td>{{consultation.clinician.nickname}}</td>
                                                                 <td>{{consultation.status}}</td>
                                                                 <td><button class="btn btn-danger" *ngIf="consultation.status === 'PENDING'" (click)="cancelConsultation(consultation.id)">Cancel Consultation</button><span  *ngIf="consultation.status != 'PENDING'">No Action Required</span></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div *ngIf="type === 'OUTSIDER'">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="table-responsive">
+                                                    <hr>
+                                                    <h4 class="text-primary"><b>Ordered Lab Tests</b></h4>
+                                                    <table class="table table-bordered table-small table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <td><b>ID</b></td>
+                                                                <td><b>Test</b></td>
+                                                                <td><b>Price</b></td>
+                                                                <td><b>Payment Status</b></td>
+                                                                <td><b>Status</b></td>
+                                                                <td><b>Action</b></td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr *ngFor="let labTest of labTests">
+                                                                <td>{{labTest.id}}</td>
+                                                                <td>{{labTest?.labTestType?.name}}</td>
+                                                                <td style="text-align: right;"><span *ngIf="labTest.patientBill.status != 'COVERED'">{{labTest?.patientBill?.amount | currency:'':''}}</span><span *ngIf="labTest?.patientBill?.status === 'COVERED'">---</span></td>
+                                                                <td>
+                                                                    <span *ngIf="labTest?.patientBill?.status === 'COVERED' && labTest?.nonConsultation?.paymentType ==='INSURANCE'">{{labTest?.patientBill?.status}}</span>
+                                                                    <span *ngIf="labTest?.patientBill?.status != 'COVERED' && labTest?.nonConsultation?.paymentType !='INSURANCE'">{{labTest?.patientBill?.status}}</span>
+                                                                    <span *ngIf="labTest?.patientBill?.status != 'COVERED' && labTest?.nonConsultation?.paymentType ==='INSURANCE'">{{labTest?.patientBill?.status}}(NOT COVERED)</span>
+                                                                </td>
+                                                                <td>{{labTest?.status}}</td>
+                                                                <td><a class="text-danger" (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td></td>
+                                                                <td><b>Total</b></td>
+                                                                <td style="text-align: right;"><b>{{labTotal | currency:'':''}}</b></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <hr>
+                                                    <h4 class="text-primary"><b>Ordered Radiologies</b></h4>
+                                                    <table class="table table-bordered table-small table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <td><b>ID</b></td>
+                                                                <td><b>Radiology</b></td>
+                                                                <td><b>Price</b></td>
+                                                                <td><b>Payment Status</b></td>
+                                                                <td><b>Status</b></td>
+                                                                <td><b>Action</b></td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr *ngFor="let radiology of radiologies">
+                                                                <td>{{radiology?.id}}</td>
+                                                                <td>{{radiology?.radiologyType?.name}}</td>
+                                                                <td style="text-align: right;"><span *ngIf="radiology?.patientBill?.status != 'COVERED'">{{radiology?.patientBill?.amount | currency:'':''}}</span><span *ngIf="radiology?.patientBill?.status === 'COVERED'">---</span></td>
+                                                                <td>
+                                                                    <span *ngIf="radiology?.patientBill?.status === 'COVERED' && radiology?.nonConsultation?.paymentType ==='INSURANCE'">{{radiology?.patientBill?.status}}</span>
+                                                                    <span *ngIf="radiology?.patientBill?.status != 'COVERED' && radiology?.nonConsultation?.paymentType !='INSURANCE'">{{radiology?.patientBill?.status}}</span>
+                                                                    <span *ngIf="radiology?.patientBill?.status != 'COVERED' && radiology?.nonConsultation?.paymentType ==='INSURANCE'">{{radiology?.patientBill?.status}}(NOT COVERED)</span>
+                                                                </td>
+                                                                <td>{{radiology?.status}}</td>
+                                                                <td><a class="text-danger" (click)="deleteRadiology(radiology?.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td></td>
+                                                                <td><b>Total</b></td>
+                                                                <td style="text-align: right;"><b>{{radiologyTotal | currency:'':''}}</b></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <hr>
+                                                    <h4 class="text-primary"><b>Ordered Procedures</b></h4>
+                                                    <table class="table table-bordered table-small table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <td><b>ID</b></td>
+                                                                <td><b>Procedure</b></td>
+                                                                <td><b>Price</b></td>
+                                                                <td><b>Payment Status</b></td>
+                                                                <td><b>Status</b></td>
+                                                                <td><b>Action</b></td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr *ngFor="let procedure of procedures">
+                                                                <td>{{procedure?.id}}</td>
+                                                                <td>{{procedure?.procedureType?.name}}</td>
+                                                                <td style="text-align: right;"><span *ngIf="procedure?.patientBill?.status != 'COVERED'">{{procedure?.patientBill?.amount | currency:'':''}}</span><span *ngIf="procedure?.patientBill?.status === 'COVERED'">---</span></td>
+                                                                <td>
+                                                                    <span *ngIf="procedure?.patientBill?.status === 'COVERED' && procedure?.nonConsultation?.paymentType ==='INSURANCE'">{{procedure?.patientBill?.status}}</span>
+                                                                    <span *ngIf="procedure?.patientBill?.status != 'COVERED' && procedure?.nonConsultation?.paymentType !='INSURANCE'">{{procedure?.patientBill?.status}}</span>
+                                                                    <span *ngIf="procedure?.patientBill?.status != 'COVERED' && procedure?.nonConsultation?.paymentType ==='INSURANCE'">{{procedure?.patientBill?.status}}(NOT COVERED)</span>
+                                                                </td>
+                                                                <td>{{procedure.status}}</td>
+                                                                <td><a class="text-danger" (click)="deleteProcedure(procedure.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td></td>
+                                                                <td><b>Total</b></td>
+                                                                <td style="text-align: right;"><b>{{procedureTotal | currency:'':''}}</b></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -386,29 +515,7 @@
                             </div>
                         </div>                        
                     </div>
-                    <!--<div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-4 form-group">
-                                <h4 class="text-primary"><b>Select Payment Type</b></h4>
-                                <select class="form-control" [(ngModel)]="paymentType" (ngModelChange)="changePaymentType(paymentType)">
-                                    <option></option>
-                                    <option>CASH</option>
-                                    <option>INSURANCE</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-4 form-group" *ngIf="paymentType === 'INSURANCE'">
-                                <h4 class="text-primary">Select Insurance Plan</h4>
-                                <select class="form-control" [(ngModel)]="insurancePlanName">
-                                    <option></option>
-                                    <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-4 form-group" *ngIf="insurancePlanName != '' && paymentType === 'INSURANCE'">
-                                <h4 class="text-primary">Membership No</h4>
-                                <input type="text" class="form-control" [(ngModel)]="membershipNo" placeholder="Insurance Membership No">
-                            </div>
-                        </div>
-                    </div>-->
+                    
                 </div>
             </div>
             <div class="modal-footer">
@@ -442,7 +549,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success pull-right" *ngIf="editType != ''" data-dismiss="modal">Save Change</button>
+                <button type="button" class="btn btn-success pull-right" *ngIf="editType != ''" (click)="changeType(editType)" data-dismiss="modal">Save Change</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -482,6 +589,87 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-success pull-right" *ngIf="(editPaymentType === 'CASH') || (editPaymentType === 'INSURANCE' && editMembershipNo != '')" data-dismiss="modal">Save Changes</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Modal success -->
+<div class="modal fade modal-success" id="add-lab-test-modal" tabindex="-1" role="dialog" >
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">Add Lab Test</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h5>Select Lab Test</h5>
+                        <select class="form-control" [(ngModel)]="labTestTypeName">
+                            <option>--Select Lab Test--</option>
+                            <option *ngFor="let t of labTestTypeNames">{{t}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success pull-right" (click)="saveLabTest()" data-dismiss="modal">Add</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Modal success -->
+<div class="modal fade modal-success" id="add-radiology-modal" tabindex="-1" role="dialog" >
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">Add Radiology</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h5>Select Radiology</h5>
+                        <select class="form-control" [(ngModel)]="radiologyTypeName">
+                            <option>--Select Radiology--</option>
+                            <option *ngFor="let t of radiologyTypeNames">{{t}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success pull-right" (click)="saveRadiology()" data-dismiss="modal">Add</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Modal success -->
+<div class="modal fade modal-success" id="add-procedure-modal" tabindex="-1" role="dialog" >
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">Add Procedure</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h5>Select Procedure</h5>
+                        <select class="form-control" [(ngModel)]="procedureTypeName">
+                            <option>--Select Procedure--</option>
+                            <option *ngFor="let t of procedureTypeNames">{{t}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success pull-right" (click)="saveProcedure()" data-dismiss="modal">Add</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
