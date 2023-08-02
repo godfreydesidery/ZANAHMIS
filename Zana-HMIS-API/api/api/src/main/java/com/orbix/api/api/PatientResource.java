@@ -313,6 +313,11 @@ public class PatientResource {
 			patientCreditNote.setReference("Cancel consultation");
 			patientCreditNote.setStatus("PENDING");
 			patientCreditNote.setNo("NA");
+			
+			patientCreditNote.setCreatedby(userService.getUserId(request));
+			patientCreditNote.setCreatedOn(dayService.getDayId());
+			patientCreditNote.setCreatedAt(dayService.getTimeStamp());
+			
 			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
 			patientCreditNote.setNo(patientCreditNote.getId().toString());
 			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
