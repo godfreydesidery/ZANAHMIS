@@ -7,6 +7,8 @@ import { AuthService } from 'src/app/auth.service';
 import { IPatient } from 'src/app/domain/patient';
 import { environment } from 'src/environments/environment';
 
+//import {MatTableDataSource} from '@angular/material';
+
 const API_URL = environment.apiUrl;
 
 @Component({
@@ -17,6 +19,9 @@ const API_URL = environment.apiUrl;
 export class PatientListComponent implements OnInit {
 
   patients : IPatient[] = []
+  patientsToShow : IPatient[] = []
+
+  filterValue : string = ''
 
   constructor(
     private auth : AuthService,
@@ -42,12 +47,31 @@ export class PatientListComponent implements OnInit {
       data?.forEach(element => {
         console.log(element)
         this.patients.push(element)
+        this.patientsToShow.push(element)
       })     
     })
     .catch(error => {
       console.log(error)
       alert('Could not load patients')
     })
-
   }
+
+  async applyFilter(filterValue: string) {
+    let filterValueLower = filterValue.toLowerCase();
+    if(filterValue === '' ) {
+        this.patientsToShow = this.patients
+    } else {
+      this.patientsToShow = []
+      this.patients.forEach(element => {
+        if( element.no.toLocaleLowerCase().includes(filterValueLower) || 
+            element.firstName.toLocaleLowerCase().includes(filterValueLower) ||
+            element.middleName.toLocaleLowerCase().includes(filterValueLower) ||
+            element.lastName.toLocaleLowerCase().includes(filterValueLower)){
+          this.patientsToShow.push(element)
+        }       
+      })
+       
+  }
+ }
+
 }

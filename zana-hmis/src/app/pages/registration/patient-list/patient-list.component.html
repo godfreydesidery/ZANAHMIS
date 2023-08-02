@@ -19,16 +19,6 @@
                     <div class="row">
                         <div class="panel-header">
                             <div class="col-sm-4">
-                                <div class="dataTables_length" id="example_length">
-                                    <label>Display <select name="example_length">
-                                        <option value="10">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                    </select> records per page</label>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
                                 <div class="dataTables_length">
                                     <a class="btn btn-default buttons-copy btn-sm" tabindex="0"><span>Copy</span></a>
                                     <a class="btn btn-default buttons-csv buttons-html5 btn-sm" tabindex="0"><span>CSV</span></a>
@@ -38,17 +28,8 @@
                                 </div>
                             </div>
                             <div class="col-sm-4">
-                                <div class="dataTables_length">
-                                    <div class="input-group custom-search-form">
-                                        <input type="search" class="form-control" placeholder="search..">
-                                        <span class="input-group-btn">
-                                        <button class="btn btn-primary" type="button">
-                                            <span class="glyphicon glyphicon-search"></span>
-                                        </button>
-                                    </span>
-                                </div><!-- /input-group -->
+                                <input type="text" class="form-control"  [(ngModel)]="filterValue" (keyup)="applyFilter(filterValue)" placeholder="Search..">
                             </div>
-                        </div>
                     </div>
                 </div>
 
@@ -63,7 +44,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let p of patients">
+                                <tr *ngFor="let p of patientsToShow">
                                     <td>{{p.no}}</td>
                                     <td>{{p.firstName+' '+p.middleName+' '+p.lastName}}</td>
                                     <td>{{p.gender}}</td>
