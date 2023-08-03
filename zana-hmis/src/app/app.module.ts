@@ -51,6 +51,18 @@ import { LabTestPaymentComponent } from './pages/payments/lab-test-payment/lab-t
 import { RadiologyPaymentComponent } from './pages/payments/radiology-payment/radiology-payment.component';
 import { MedicationPaymentComponent } from './pages/payments/medication-payment/medication-payment.component';
 import { ProcedurePaymentComponent } from './pages/payments/procedure-payment/procedure-payment.component';
+import { RegistrationPriceComponent } from './pages/price-view/registration-price/registration-price.component';
+import { ConsultationPriceComponent } from './pages/price-view/consultation-price/consultation-price.component';
+import { LabTestPriceComponent } from './pages/price-view/lab-test-price/lab-test-price.component';
+import { RadiologyPriceComponent } from './pages/price-view/radiology-price/radiology-price.component';
+import { ProcedurePriceComponent } from './pages/price-view/procedure-price/procedure-price.component';
+import { MedicinePriceComponent } from './pages/price-view/medicine-price/medicine-price.component';
+import { RadiologyInpatientListComponent } from './pages/radiology/radiology-inpatient-list/radiology-inpatient-list.component';
+import { RadiologyOutpatientListComponent } from './pages/radiology/radiology-outpatient-list/radiology-outpatient-list.component';
+import { RadiologyOutsiderListComponent } from './pages/radiology/radiology-outsider-list/radiology-outsider-list.component';
+import { ProcedureInpatientListComponent } from './pages/procedure/procedure-inpatient-list/procedure-inpatient-list.component';
+import { ProcedureOutpatientListComponent } from './pages/procedure/procedure-outpatient-list/procedure-outpatient-list.component';
+import { ProcedureOutsiderListComponent } from './pages/procedure/procedure-outsider-list/procedure-outsider-list.component';
 
 
 @NgModule({
@@ -95,6 +107,18 @@ import { ProcedurePaymentComponent } from './pages/payments/procedure-payment/pr
     RadiologyPaymentComponent,
     MedicationPaymentComponent,
     ProcedurePaymentComponent,
+    RegistrationPriceComponent,
+    ConsultationPriceComponent,
+    LabTestPriceComponent,
+    ProcedurePriceComponent,
+    RadiologyPriceComponent,
+    MedicinePriceComponent,
+    RadiologyInpatientListComponent,
+    RadiologyOutpatientListComponent,
+    RadiologyOutsiderListComponent,
+    ProcedureInpatientListComponent,
+    ProcedureOutpatientListComponent,
+    ProcedureOutsiderListComponent,
   ],
   imports: [
     HttpClientModule,
@@ -139,6 +163,21 @@ import { ProcedurePaymentComponent } from './pages/payments/procedure-payment/pr
     {path : 'lab-outpatient-list', component : LabOutpatientListComponent},
     {path : 'lab-inpatient-list', component : LabInpatientListComponent},
     {path : 'lab-outsider-list', component : LabOutsiderListComponent},
+    {path : 'radiology-outpatient-list', component : RadiologyOutpatientListComponent},
+    {path : 'radiology-inpatient-list', component : RadiologyInpatientListComponent},
+    {path : 'radiology-outsider-list', component : RadiologyOutsiderListComponent},
+    {path : 'procedure-outpatient-list', component : ProcedureOutpatientListComponent},
+    {path : 'procedure-inpatient-list', component : ProcedureInpatientListComponent},
+    {path : 'procedure-outsider-list', component : ProcedureOutsiderListComponent},
+    //{path : 'procedure-outpatient-list', component : ProcedureOutpatientListComponent},
+    //{path : 'procedure-inpatient-list', component : ProcedureInpatientListComponent},
+    //{path : 'procedure-outsider-list', component : ProcedureOutsiderListComponent},
+    {path : 'registration-price', component : RegistrationPriceComponent},
+    {path : 'consultation-price', component : ConsultationPriceComponent},
+    {path : 'lab-test-price', component : LabTestPriceComponent},
+    {path : 'procedure-price', component : ProcedurePriceComponent},
+    {path : 'radiology-price', component : RadiologyPriceComponent},
+    {path : 'medicine-price', component : MedicinePriceComponent},
     ])
   ],
   schemas: [ 

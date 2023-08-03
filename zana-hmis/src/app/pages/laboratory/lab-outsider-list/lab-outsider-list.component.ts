@@ -5,6 +5,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IPatient } from 'src/app/domain/patient';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -16,6 +17,7 @@ const API_URL = environment.apiUrl;
 })
 export class LabOutsiderListComponent implements OnInit {
 
+  patients : IPatient[] = []
   
   constructor(private auth : AuthService,
     private http :HttpClient,
@@ -24,11 +26,36 @@ export class LabOutsiderListComponent implements OnInit {
     private router : Router,
     private msgBox : MsgBoxService) { }
 
-  ngOnInit(): void {
-  }
 
-  attend(){
-    this.router.navigate(['lab-test'])
-  }
-
+    ngOnInit(): void {
+      this.loadOutpatientList()
+    }
+  
+    attend(id : any){
+      localStorage.setItem('lab-test-patient-id', id)
+      this.router.navigate(['lab-test'])
+    }
+  
+    async loadOutpatientList(){   
+      this.patients = [] 
+      let options = {
+        headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+      }
+      this.spinner.show()
+      await this.http.get<IPatient[]>(API_URL+'/patients/get_lab_outsider_list', options)
+      .pipe(finalize(() => this.spinner.hide()))
+      .toPromise()
+      .then(
+        data => {
+          
+          this.patients = data!
+          console.log(this.patients)
+        }
+      )
+      .catch(
+        error => {
+          this.msgBox.showErrorMessage('Could not load patients')
+        }
+      )
+    }  
 }

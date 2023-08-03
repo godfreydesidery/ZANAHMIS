@@ -18,7 +18,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-12 alert alert-primary" role="alert">
-                            <h4>Name: <b>{{patient?.firstName}} {{patient?.middleName}} {{patient?.lastName}}</b>, File No: <b>{{patient?.no}}</b>, Date of birth: <b>{{patient?.dateOfBirth | date}}</b>, {{patient?.gender}}, {{patient?.paymentType}}</h4>
+                            <h4>Name: <b>{{patient.firstName}} {{patient.middleName}} {{patient.lastName}}</b>, File No: <b>{{patient.no}}</b>, Date of birth: <b>{{patient.dateOfBirth | date}}</b>, {{patient.gender}}, {{patient.paymentType}}</h4>
                         </div>
                         <hr>
                     </div>
@@ -41,7 +41,9 @@
                             <small>Test ID </small><span class="label label-primary m-r-15">{{labTest?.id}}</span>
                             <div *ngIf="labTest?.status === 'ACCEPTED' || labTest?.status === 'COLLECTED' || labTest?.status === 'VERIFIED'">
                                 <div class="col-sm-12">
-                                    <textarea class="form-control" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;"></textarea>
+                                    <textarea class="form-control" *ngIf="labTest?.status === 'ACCEPTED'" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;" readonly></textarea>
+                                    <textarea class="form-control" *ngIf="labTest?.status === 'COLLECTED'" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;"></textarea>
+                                    <textarea class="form-control" *ngIf="labTest?.status === 'VERIFIED'" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;" readonly></textarea>
                                 </div>
                                 <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
                                     <div class="col-sm-3">

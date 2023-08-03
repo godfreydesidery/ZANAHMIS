@@ -88,6 +88,12 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
 	 */
 	boolean existsByNonConsultationAndLabTestType(NonConsultation nonConsultation, LabTestType labTestType);
 
+	/**
+	 * @param ncs
+	 * @return
+	 */
+	List<LabTest> findAllByNonConsultationIn(List<NonConsultation> ncs);
+
 	
 	
 }

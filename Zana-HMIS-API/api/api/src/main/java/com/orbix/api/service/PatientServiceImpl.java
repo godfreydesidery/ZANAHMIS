@@ -493,12 +493,15 @@ public class PatientServiceImpl implements PatientService {
 				patientInvoice.setPatient(p);
 				patientInvoice.setInsurancePlan(p.getInsurancePlan());
 				patientInvoice.setStatus("PENDING");
-				patientInvoice = patientInvoiceRepository.save(patientInvoice);
-				patientInvoice.setNo(patientInvoice.getId().toString());
-
+				
 				patientInvoice.setCreatedby(userService.getUser(request).getId());
 				patientInvoice.setCreatedOn(dayService.getDay().getId());
 				patientInvoice.setCreatedAt(dayService.getTimeStamp());
+				
+				patientInvoice = patientInvoiceRepository.save(patientInvoice);
+				patientInvoice.setNo(patientInvoice.getId().toString());
+
+				
 				
 				patientInvoice = patientInvoiceRepository.save(patientInvoice);
 				/**
@@ -943,10 +946,10 @@ public class PatientServiceImpl implements PatientService {
 		prescription.setMedicine(md.get());
 		prescription.setStatus("PENDING");
 		PatientBill patientBill = new PatientBill();
-		patientBill.setAmount(prescription.getMedicine().getPrice());
+		patientBill.setAmount(prescription.getMedicine().getPrice() * prescription.getQty());
 		patientBill.setPaid(0);
-		patientBill.setBalance(prescription.getMedicine().getPrice());
-		patientBill.setQty(1);
+		patientBill.setBalance(prescription.getMedicine().getPrice() * prescription.getQty());
+		patientBill.setQty(prescription.getQty());
 		patientBill.setDescription("Medicine: "+prescription.getMedicine().getName());
 		patientBill.setStatus("UNPAID");		
 		patientBill.setCreatedby(userService.getUser(request).getId());
@@ -960,8 +963,8 @@ public class PatientServiceImpl implements PatientService {
 			Optional<MedicineInsurancePlan> medicinePricePlan = medicineInsurancePlanRepository.findByMedicineAndInsurancePlan(md.get(), patient.getInsurancePlan());
 			
 			if(medicinePricePlan.isPresent()) {
-				patientBill.setAmount(medicinePricePlan.get().getPrice());
-				patientBill.setPaid(medicinePricePlan.get().getPrice());
+				patientBill.setAmount(medicinePricePlan.get().getPrice() * prescription.getQty());
+				patientBill.setPaid(medicinePricePlan.get().getPrice() * prescription.getQty());
 				patientBill.setBalance(0);
 				patientBill.setStatus("COVERED");
 				patientBill = patientBillRepository.save(patientBill);

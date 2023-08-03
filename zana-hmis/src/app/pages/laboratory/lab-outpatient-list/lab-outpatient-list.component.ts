@@ -5,6 +5,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IPatient } from 'src/app/domain/patient';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -59,7 +60,7 @@ export class LabOutpatientListComponent implements OnInit {
 
 }
 
-export interface IPatient {
+export interface IPatient1 {
   id : any
   no : string
   firstName : string

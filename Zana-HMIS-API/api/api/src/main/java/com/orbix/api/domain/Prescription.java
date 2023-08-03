@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -38,13 +39,16 @@ public class Prescription {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String unit;
 	private String dosage;
 	private String frequency;
 	private String route;
 	private String days;
+	@NotNull
+	private double price;
+	@NotNull
 	private double qty;
 	private String status;
+	private String reference;
 	
 	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "consultation_id", nullable = true , updatable = true)
@@ -93,6 +97,12 @@ public class Prescription {
 	@Column(name = "accepted_on_day_id", nullable = true , updatable = true)
     private Long acceptedOn;
 	private LocalDateTime acceptedAt;
+	
+	@Column(name = "held_by_user_id", nullable = true , updatable = true)
+    private Long heldby;
+	@Column(name = "held_on_day_id", nullable = true , updatable = true)
+    private Long heldOn;
+	private LocalDateTime heldAt;
 
 	@Column(name = "rejected_by_user_id", nullable = true , updatable = true)
     private Long rejectedby;

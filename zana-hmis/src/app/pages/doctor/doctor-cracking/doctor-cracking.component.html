@@ -19,7 +19,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-12 alert alert-primary" role="alert">
-                            <h4>Name: <b>{{consultation?.patient?.firstName}} {{consultation?.patient?.middleName}} {{consultation?.patient?.lastName}}</b>, File No: <b>{{consultation?.patient?.no}}</b>, Date of birth: <b>{{consultation?.patient?.dateOfBirth | date}}</b>, {{consultation?.patient?.gender}}, {{consultation?.paymentType}} {{consultation?.insurancePlan?.name}}</h4>
+                            <h4>Name: <b>{{consultation.patient.firstName}} {{consultation.patient.middleName}} {{consultation.patient.lastName}}</b>, File No: <b>{{consultation.patient.no}}</b>, Date of birth: <b>{{consultation.patient.dateOfBirth | date}}</b>, {{consultation.patient.gender}}, {{consultation.paymentType}} {{consultation.insurancePlan.name}}</h4>
                         </div>
                         <div class="col-sm-6">
                             <label>Clinical Notes</label>
@@ -140,8 +140,7 @@
                                 </div>
                             </div>
                         </div>
-
-                        
+ 
                         <br>
 
                         <div class="row" style="margin-left: 1mm; margin-right: 1mm;">
@@ -253,7 +252,7 @@
                                                 <th>Route</th>
                                                 <th>Days</th>
                                                 <th>Qty</th>
-                                                <th>Price</th>
+                                                <th>Amount</th>
                                                 <th>Payment Status</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -264,11 +263,11 @@
                                                     <td>{{prescription.id}}</td>
                                                     <td>{{prescription.medicine.name}}</td>
                                                     <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
+                                                    <td>{{prescription.dosage}}</td>
+                                                    <td>{{prescription.frequency}}</td>
+                                                    <td>{{prescription.route}}</td>
+                                                    <td>{{prescription.days}}</td>
+                                                    <td>{{prescription.qty}}</td>
                                                     <td style="text-align: right;"><span *ngIf="prescription?.patientBill?.status != 'COVERED'">{{prescription?.patientBill?.amount | currency:'':''}}</span><span *ngIf="prescription?.patientBill?.status === 'COVERED'">---</span></td>
                                                     <td>
                                                         <span *ngIf="prescription?.patientBill?.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{prescription?.patientBill?.status}}</span>
@@ -277,6 +276,56 @@
                                                     </td>
                                                     <td>{{prescription.status}}</td>
                                                     <td><a (click)="deletePrescription(prescription.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td>
+                                                        <select class="form-control" [(ngModel)]="medicineName">
+                                                            <option></option>
+                                                            <option *ngFor="let name of medicineNames">{{name}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td><span class="form-control">{{prescriptionUnit}}</span></td>
+                                                    <td><input type="text" class="form-control" [(ngModel)]="prescriptionDosage"></td>
+                                                    <td>
+                                                        <select class="form-control" [(ngModel)]="prescriptionFrequency">
+                                                            <option></option>
+                                                            <option>24 Hour</option>
+                                                            <option>12 Hours</option>
+                                                            <option>8 Hours</option>
+                                                            <option>6 Hrs</option>
+                                                            <option>4 Hours</option>
+                                                            <option>Third Per Week</option>
+                                                            <option>Four Per Week</option>
+                                                            <option>Four Per Day</option>
+                                                            <option>Weekly</option>
+                                                            <option>4.5 Hours</option>
+                                                            <option>1 Hours</option>
+                                                            <option>2 Hours </option>
+                                                        </select>                                                    
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" [(ngModel)]="prescriptionRoute">
+                                                            <option></option>
+                                                            <option>IV</option>
+                                                            <option>IM</option>
+                                                            <option>ORAL</option>
+                                                            <option>SC</option>
+                                                            <option>Topical</option>
+                                                            <option>Drops</option>
+                                                            <option>Per Rectal</option>
+                                                            <option>Per Vaginal</option>
+                                                        </select>
+                                                    </td>
+                                                    <td><input type="text" class="form-control" [(ngModel)]="prescriptionDays"></td>
+                                                    <td><input type="number" class="form-control" [(ngModel)]="prescriptionQty"></td>
+                                                    <td><span class="form-control">{{prescriptionPrice * prescriptionQty | currency:'':''}}</span></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>
+                                                        <button class="btn btn-primary" (click)="savePrescription()">Save</button>
+                                                        <button class="btn btn-danger" (click)="clearPrescription()">Clear</button>
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>    

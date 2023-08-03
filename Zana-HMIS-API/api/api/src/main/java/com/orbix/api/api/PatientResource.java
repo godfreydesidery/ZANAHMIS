@@ -56,6 +56,7 @@ import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.ConsultationModel;
 import com.orbix.api.models.FinalDiagnosisModel;
 import com.orbix.api.models.LabTestModel;
+import com.orbix.api.models.PrescriptionModel;
 import com.orbix.api.models.ProcedureModel;
 import com.orbix.api.models.RadiologyModel;
 import com.orbix.api.models.WorkingDiagnosisModel;
@@ -1080,7 +1081,7 @@ public class PatientResource {
 	}
 	
 	@GetMapping("/patients/load_prescriptions") 
-	public ResponseEntity<List<Prescription>> loadPrescriptions(
+	public ResponseEntity<List<PrescriptionModel>> loadPrescriptions(
 			@RequestParam(name = "consultation_id") Long consultationId,
 			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
 			HttpServletRequest request){
@@ -1104,7 +1105,55 @@ public class PatientResource {
 				prescriptions = prescriptionRepository.findAllByNonConsultation(nc.get());
 			}					
 		}
-		return ResponseEntity.created(uri).body(prescriptions);
+		List<PrescriptionModel> models = new ArrayList<>();
+		for(Prescription l : prescriptions) {
+			PrescriptionModel model= new PrescriptionModel();
+			model.setId(l.getId());
+			model.setMedicine(l.getMedicine());
+			model.setDosage(l.getDosage());
+			model.setFrequency(l.getFrequency());			
+			model.setRoute(l.getRoute());
+			model.setDays(l.getDays());
+			model.setPrice(l.getPrice());
+			model.setQty(l.getQty());
+			model.setPatientBill(l.getPatientBill());
+			model.setStatus(l.getStatus());
+
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}
+			if(l.getOrderedAt() != null) {
+				model.setOrdered(l.getOrderedAt().toString()+" | "+userService.getUserById(l.getOrderedby()).getNickname());
+			}else {
+				model.setOrdered("");
+			}
+			if(l.getRejectedAt() != null) {
+				model.setRejected(l.getRejectedAt().toString()+" | "+userService.getUserById(l.getRejectedby()).getNickname() + " | "+l.getRejectComment());
+			}else {
+				model.setRejected("");
+			}
+			model.setRejectComment(l.getRejectComment());			
+			if(l.getAcceptedAt() != null) {
+				model.setAccepted(l.getAcceptedAt().toString()+" | "+userService.getUserById(l.getAcceptedby()).getNickname());
+			}else {
+				model.setAccepted("");
+			}
+			if(l.getHeldAt() != null) {
+				model.setHeld(l.getHeldAt().toString()+" | "+userService.getUserById(l.getHeldby()).getNickname());
+			}else {
+				model.setHeld("");
+			}		
+			if(l.getVerifiedAt() != null) {
+				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedby()).getNickname());
+			}else {
+				model.setVerified("");
+			}
+			
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
 	}
 	
 	@PostMapping("/patients/delete_lab_test")
@@ -1336,7 +1385,6 @@ public class PatientResource {
 			HttpServletRequest request){
 		
 		List<Consultation> cs = consultationRepository.findAllByStatus("IN-PROCESS");
-		List<NonConsultation> ncs = nonConsultationRepository.findAllByStatus("IN-PROCESS");
 		List<LabTest> labTests = labTestRepository.findAllByConsultationIn(cs);			
 		List<Patient> patients = new ArrayList<>();		
 		for(LabTest t : labTests) {
@@ -1346,6 +1394,23 @@ public class PatientResource {
 		}
 		HashSet<Patient> h = new HashSet<Patient>(patients);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_lab_outpatient_list").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
+	}
+	
+	@GetMapping("/patients/get_lab_outsider_list") 
+	public ResponseEntity<List<Patient>> getLabOutsiderList(
+			HttpServletRequest request){
+		
+		List<NonConsultation> ncs = nonConsultationRepository.findAllByStatus("IN-PROCESS");
+		List<LabTest> labTests = labTestRepository.findAllByNonConsultationIn(ncs);			
+		List<Patient> patients = new ArrayList<>();		
+		for(LabTest t : labTests) {
+			if(t.getPatient().getType().equals("OUTSIDER") && (t.getPatientBill().getStatus().equals("PAID") || t.getPatientBill().getStatus().equals("COVERED"))) {
+				patients.add(t.getPatient());
+			}
+		}
+		HashSet<Patient> h = new HashSet<Patient>(patients);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_lab_outsider_list").toUriString());
 		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
 	}
 	
@@ -1395,6 +1460,16 @@ public class PatientResource {
 		if(!(t.get().getStatus().equals("PENDING") || t.get().getStatus().equals("REJECTED"))) {
 			throw new InvalidOperationException("Could not accept, only PENDING or REJECTED tests can be accepted");
 		}
+		
+		t.get().setAcceptedby(userService.getUserId(request));
+		t.get().setAcceptedOn(dayService.getDayId());
+		t.get().setAcceptedAt(dayService.getTimeStamp());
+		
+		t.get().setRejectedby(null);
+		t.get().setRejectedOn(null);
+		t.get().setRejectedAt(null);
+		t.get().setRejectComment("");
+		
 		t.get().setStatus("ACCEPTED");
 		labTestRepository.save(t.get());
 		return true;
@@ -1411,6 +1486,15 @@ public class PatientResource {
 		if(!(t.get().getStatus().equals("PENDING") || t.get().getStatus().equals("ACCEPTED"))) {
 			throw new InvalidOperationException("Could not accept, only PENDING or ACCEPTED tests can be rejected");
 		}
+		
+		t.get().setRejectedby(userService.getUserId(request));
+		t.get().setRejectedOn(dayService.getDayId());
+		t.get().setRejectedAt(dayService.getTimeStamp());
+		
+		t.get().setAcceptedby(null);
+		t.get().setAcceptedOn(null);
+		t.get().setAcceptedAt(null);
+		
 		t.get().setStatus("REJECTED");
 		labTestRepository.save(t.get());
 		return true;
@@ -1427,6 +1511,11 @@ public class PatientResource {
 		if(!(t.get().getStatus().equals("ACCEPTED"))) {
 			throw new InvalidOperationException("Could not accept, only ACCEPTED tests can be collected");
 		}
+		
+		t.get().setCollectedby(userService.getUserId(request));
+		t.get().setCollectedOn(dayService.getDayId());
+		t.get().setCollectedAt(dayService.getTimeStamp());
+		
 		t.get().setStatus("COLLECTED");
 		labTestRepository.save(t.get());
 		return true;
@@ -1447,6 +1536,11 @@ public class PatientResource {
 		t.get().setLevel(test.getLevel());
 		t.get().setRange(test.getRange());
 		t.get().setUnit(test.getUnit());
+		
+		t.get().setCollectedby(userService.getUserId(request));
+		t.get().setCollectedOn(dayService.getDayId());
+		t.get().setCollectedAt(dayService.getTimeStamp());
+		
 		t.get().setStatus("VERIFIED");
 		labTestRepository.save(t.get());
 		return true;
@@ -1463,6 +1557,11 @@ public class PatientResource {
 		if(!(t.get().getStatus().equals("ACCEPTED"))) {
 			throw new InvalidOperationException("Could not hold, only ACCEPTED tests can be held");
 		}
+		
+		t.get().setHeldby(userService.getUserId(request));
+		t.get().setHeldOn(dayService.getDayId());
+		t.get().setHeldAt(dayService.getTimeStamp());
+		
 		t.get().setStatus("PENDING");
 		labTestRepository.save(t.get());
 		return true;

@@ -108,7 +108,16 @@ export class DoctorCrackingComponent implements OnInit {
 
 
   procedureTypeName : string = ''
+
   medicineName : string = ''
+
+  prescriptionUnit        : number = 0
+  prescriptionDosage      : string = ''
+  prescriptionFrequency   : string = ''
+  prescriptionRoute       : string = ''
+  prescriptionDays        : string = ''
+  prescriptionPrice       : number = 0
+  prescriptionQty         : number = 0
 
   constructor(private auth : AuthService,
     private http :HttpClient,
@@ -503,6 +512,15 @@ export class DoctorCrackingComponent implements OnInit {
 
   clearPrescription(){
     this.medicineName = ''
+
+    this.prescriptionUnit         = 0
+    this.prescriptionDosage       = ''
+    this.prescriptionFrequency    = ''
+    this.prescriptionRoute        = ''
+    this.prescriptionDays         = ''
+    this.prescriptionPrice        = 0
+    this.prescriptionQty          = 0
+
   }
 
   async loadLabTestTypeNames(){
@@ -692,16 +710,33 @@ export class DoctorCrackingComponent implements OnInit {
     this.loadProcedures(this.id, 0)
   }
 
+  
+
+
   async savePrescription(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    var prescription : any = {
+    var prescription = {
       medicine : {
         id : null,
         code : '',
         name : this.medicineName
-      }
+      },
+      dosage    : this.prescriptionDosage,
+      frequency : this.prescriptionFrequency,
+      route     : this.prescriptionRoute,
+      days      : this.prescriptionDays,
+      price     : this.prescriptionPrice,
+      qty       : this.prescriptionQty
+    }
+    if( prescription.medicine.name === '' || 
+        prescription.dosage === '' || 
+        prescription.frequency === '' || 
+        prescription.route === '' || 
+        prescription.days === ''){
+      this.msgBox.showErrorMessage('Can not save, please fill in all the required fields')
+      return
     }
     this.spinner.show()
     await this.http.post<IPrescription>(API_URL+'/patients/save_prescription?consultation_id='+this.id+'&non_consultation_id='+0, prescription, options)
@@ -710,11 +745,12 @@ export class DoctorCrackingComponent implements OnInit {
     .then(
       () => {
         this.msgBox.showSuccessMessage('Prescription Saved successifully')
+        this.clearPrescription()
       }
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not save Prescription')
+        this.msgBox.showErrorMessage(error['error'])
         console.log(error)
       }
     )
