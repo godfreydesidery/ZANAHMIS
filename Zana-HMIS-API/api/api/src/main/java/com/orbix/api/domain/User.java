@@ -63,7 +63,7 @@ public class User {
 	private String password;	
 	private boolean active = false;	
 	
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	private Collection<Role> roles = new ArrayList<>();	
 	
 

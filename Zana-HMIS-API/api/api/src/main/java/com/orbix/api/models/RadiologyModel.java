@@ -37,16 +37,18 @@ public class RadiologyModel {
 	private String result = "";
 	private String diagnosis = "";
 	private String description = "";
-	private Byte attachment = null;
+	private Byte[] attachment = null;
 	private String status = "";	
 	
     private RadiologyType radiologyType;	
     private PatientBill patientBill;
+    private Patient patient;
 		
     private String created;			
     private String ordered;			
     private String accepted;	
-    private String rejected;	
+    private String rejected;
+    private String held;
 	private String rejectComment;	
     private String verified;
 	

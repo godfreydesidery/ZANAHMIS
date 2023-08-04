@@ -19,7 +19,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-12 alert alert-primary" role="alert">
-                            <h4>Name: <b>{{consultation.patient.firstName}} {{consultation.patient.middleName}} {{consultation.patient.lastName}}</b>, File No: <b>{{consultation.patient.no}}</b>, Date of birth: <b>{{consultation.patient.dateOfBirth | date}}</b>, {{consultation.patient.gender}}, {{consultation.paymentType}} {{consultation.insurancePlan.name}}</h4>
+                            <h4>Name: <b>{{consultation?.patient?.firstName}} {{consultation?.patient?.middleName}} {{consultation?.patient?.lastName}}</b>, File No: <b>{{consultation?.patient?.no}}</b>, Date of birth: <b>{{consultation?.patient?.dateOfBirth | date}}</b>, {{consultation?.patient?.gender}}, {{consultation.paymentType}} {{consultation?.insurancePlan?.name}}</h4>
                         </div>
                         <div class="col-sm-6">
                             <label>Clinical Notes</label>
@@ -99,8 +99,8 @@
                                                 <tbody>
                                                     <tr *ngFor="let workingDiagnosis of workingDiagnosises">
                                                         <td>{{workingDiagnosis.id}}</td>
-                                                        <td>{{workingDiagnosis.diagnosisType.code}}</td>
-                                                        <td>{{workingDiagnosis.diagnosisType.name}}</td>
+                                                        <td>{{workingDiagnosis.diagnosisType?.code}}</td>
+                                                        <td>{{workingDiagnosis.diagnosisType?.name}}</td>
                                                         <td>{{workingDiagnosis.description}}</td>
                                                         <td><a (click)="deleteWorkingDiagnosis(workingDiagnosis.id)"><i class="fa fa-trash"></i>Delete</a></td>
                                                     </tr>
@@ -128,8 +128,8 @@
                                                 <tbody>
                                                     <tr *ngFor="let finalDiagnosis of finalDiagnosises">
                                                         <td>{{finalDiagnosis.id}}</td>
-                                                        <td>{{finalDiagnosis.diagnosisType.code}}</td>
-                                                        <td>{{finalDiagnosis.diagnosisType.name}}</td>
+                                                        <td>{{finalDiagnosis.diagnosisType?.code}}</td>
+                                                        <td>{{finalDiagnosis.diagnosisType?.name}}</td>
                                                         <td>{{finalDiagnosis.description}}</td>
                                                         <td><a (click)="deleteFinalDiagnosis(finalDiagnosis.id)"><i class="fa fa-trash"></i>Delete</a></td>
                                                     </tr>
@@ -170,12 +170,12 @@
                                                 <tbody>
                                                     <tr *ngFor="let labTest of labTests">
                                                         <td>{{labTest.id}}</td>
-                                                        <td>{{labTest?.labTestType?.name}}</td>
-                                                        <td style="text-align: right;"><span *ngIf="labTest.patientBill.status != 'COVERED'">{{labTest?.patientBill?.amount | currency:'':''}}</span><span *ngIf="labTest?.patientBill?.status === 'COVERED'">---</span></td>
+                                                        <td>{{labTest.labTestType?.name}}</td>
+                                                        <td style="text-align: right;"><span *ngIf="labTest.patientBill?.status != 'COVERED'">{{labTest.patientBill?.amount | currency:'':''}}</span><span *ngIf="labTest.patientBill?.status === 'COVERED'">---</span></td>
                                                         <td>
-                                                            <span *ngIf="labTest?.patientBill?.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest?.patientBill?.status}}</span>
-                                                            <span *ngIf="labTest?.patientBill?.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{labTest?.patientBill?.status}}</span>
-                                                            <span *ngIf="labTest?.patientBill?.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{labTest?.patientBill?.status}}(NOT COVERED)</span>
+                                                            <span *ngIf="labTest.patientBill?.status === 'COVERED' && consultation.paymentType ==='INSURANCE'">{{labTest.patientBill?.status}}</span>
+                                                            <span *ngIf="labTest.patientBill?.status != 'COVERED' && consultation.paymentType !='INSURANCE'">{{labTest.patientBill?.status}}</span>
+                                                            <span *ngIf="labTest.patientBill?.status != 'COVERED' && consultation.paymentType ==='INSURANCE'">{{labTest.patientBill?.status}}(NOT COVERED)</span>
                                                         </td>
                                                         <td>{{labTest?.status}}</td>
                                                         <td><a (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash"></i>Delete</a></td>
@@ -211,13 +211,13 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let radiology of radiologies">
-                                                        <td>{{radiology?.id}}</td>
-                                                        <td>{{radiology?.radiologyType?.name}}</td>
-                                                        <td style="text-align: right;"><span *ngIf="radiology?.patientBill?.status != 'COVERED'">{{radiology?.patientBill?.amount | currency:'':''}}</span><span *ngIf="radiology?.patientBill?.status === 'COVERED'">---</span></td>
+                                                        <td>{{radiology.id}}</td>
+                                                        <td>{{radiology.radiologyType?.name}}</td>
+                                                        <td style="text-align: right;"><span *ngIf="radiology?.patientBill?.status != 'COVERED'">{{radiology?.patientBill?.amount | currency:'':''}}</span><span *ngIf="radiology.patientBill?.status === 'COVERED'">---</span></td>
                                                         <td>
-                                                            <span *ngIf="radiology?.patientBill?.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{radiology?.patientBill?.status}}</span>
-                                                            <span *ngIf="radiology?.patientBill?.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{radiology?.patientBill?.status}}</span>
-                                                            <span *ngIf="radiology?.patientBill?.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{radiology?.patientBill?.status}}(NOT COVERED)</span>
+                                                            <span *ngIf="radiology.patientBill?.status === 'COVERED' && consultation.paymentType ==='INSURANCE'">{{radiology.patientBill?.status}}</span>
+                                                            <span *ngIf="radiology.patientBill?.status != 'COVERED' && consultation.paymentType !='INSURANCE'">{{radiology.patientBill?.status}}</span>
+                                                            <span *ngIf="radiology.patientBill?.status != 'COVERED' && consultation.paymentType ==='INSURANCE'">{{radiology.patientBill?.status}}(NOT COVERED)</span>
                                                         </td>
                                                         <td>{{radiology?.status}}</td>
                                                         <td><a (click)="deleteRadiology(radiology?.id)"><i class="fa fa-trash"></i>Delete</a></td>
@@ -261,18 +261,18 @@
                                             <tbody>
                                                 <tr *ngFor="let prescription of prescriptions">
                                                     <td>{{prescription.id}}</td>
-                                                    <td>{{prescription.medicine.name}}</td>
+                                                    <td>{{prescription.medicine?.name}}</td>
                                                     <td></td>
                                                     <td>{{prescription.dosage}}</td>
                                                     <td>{{prescription.frequency}}</td>
                                                     <td>{{prescription.route}}</td>
                                                     <td>{{prescription.days}}</td>
                                                     <td>{{prescription.qty}}</td>
-                                                    <td style="text-align: right;"><span *ngIf="prescription?.patientBill?.status != 'COVERED'">{{prescription?.patientBill?.amount | currency:'':''}}</span><span *ngIf="prescription?.patientBill?.status === 'COVERED'">---</span></td>
+                                                    <td style="text-align: right;"><span *ngIf="prescription.patientBill?.status != 'COVERED'">{{prescription?.patientBill?.amount | currency:'':''}}</span><span *ngIf="prescription?.patientBill?.status === 'COVERED'">---</span></td>
                                                     <td>
-                                                        <span *ngIf="prescription?.patientBill?.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{prescription?.patientBill?.status}}</span>
-                                                        <span *ngIf="prescription?.patientBill?.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{prescription?.patientBill?.status}}</span>
-                                                        <span *ngIf="prescription?.patientBill?.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{prescription?.patientBill?.status}}(NOT COVERED)</span>
+                                                        <span *ngIf="prescription.patientBill?.status === 'COVERED' && consultation.paymentType ==='INSURANCE'">{{prescription.patientBill?.status}}</span>
+                                                        <span *ngIf="prescription.patientBill?.status != 'COVERED' && consultation.paymentType !='INSURANCE'">{{prescription.patientBill?.status}}</span>
+                                                        <span *ngIf="prescription.patientBill?.status != 'COVERED' && consultation.paymentType ==='INSURANCE'">{{prescription.patientBill?.status}}(NOT COVERED)</span>
                                                     </td>
                                                     <td>{{prescription.status}}</td>
                                                     <td><a (click)="deletePrescription(prescription.id)"><i class="fa fa-trash"></i>Delete</a></td>
@@ -357,12 +357,12 @@
                                             <tbody>
                                                 <tr *ngFor="let procedure of procedures">
                                                     <td>{{procedure?.id}}</td>
-                                                    <td>{{procedure?.procedureType?.name}}</td>
-                                                    <td style="text-align: right;"><span *ngIf="procedure?.patientBill?.status != 'COVERED'">{{procedure?.patientBill?.amount | currency:'':''}}</span><span *ngIf="procedure?.patientBill?.status === 'COVERED'">---</span></td>
+                                                    <td>{{procedure.procedureType?.name}}</td>
+                                                    <td style="text-align: right;"><span *ngIf="procedure.patientBill?.status != 'COVERED'">{{procedure.patientBill?.amount | currency:'':''}}</span><span *ngIf="procedure.patientBill?.status === 'COVERED'">---</span></td>
                                                     <td>
-                                                        <span *ngIf="procedure?.patientBill?.status === 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{procedure?.patientBill?.status}}</span>
-                                                        <span *ngIf="procedure?.patientBill?.status != 'COVERED' && consultation?.paymentType !='INSURANCE'">{{procedure?.patientBill?.status}}</span>
-                                                        <span *ngIf="procedure?.patientBill?.status != 'COVERED' && consultation?.paymentType ==='INSURANCE'">{{procedure?.patientBill?.status}}(NOT COVERED)</span>
+                                                        <span *ngIf="procedure.patientBill?.status === 'COVERED' && consultation.paymentType ==='INSURANCE'">{{procedure.patientBill?.status}}</span>
+                                                        <span *ngIf="procedure.patientBill?.status != 'COVERED' && consultation.paymentType !='INSURANCE'">{{procedure.patientBill?.status}}</span>
+                                                        <span *ngIf="procedure.patientBill?.status != 'COVERED' && consultation.paymentType ==='INSURANCE'">{{procedure.patientBill?.status}}(NOT COVERED)</span>
                                                     </td>
                                                     <td>{{procedure.status}}</td>
                                                     <td><a (click)="deleteProcedure(procedure.id)"><i class="fa fa-trash"></i>Delete</a></td>
@@ -467,8 +467,8 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let labTest of labTests">
-                                    <td><b>{{labTest?.labTestType?.name}}</b></td>
-                                    <td>{{labTest?.result}}</td>
+                                    <td><b>{{labTest.labTestType?.name}}</b></td>
+                                    <td>{{labTest.result}}</td>
                                     <td>
                                         <table>
                                             <tbody>
@@ -566,7 +566,7 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let radiology of radiologies">
-                                    <td><b>{{radiology?.radiologyType?.name}}</b></td>
+                                    <td><b>{{radiology.radiologyType?.name}}</b></td>
                                     <td>{{radiology?.result}}</td>
                                     <td>
                                         <table>

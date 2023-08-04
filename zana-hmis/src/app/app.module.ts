@@ -63,6 +63,7 @@ import { RadiologyOutsiderListComponent } from './pages/radiology/radiology-outs
 import { ProcedureInpatientListComponent } from './pages/procedure/procedure-inpatient-list/procedure-inpatient-list.component';
 import { ProcedureOutpatientListComponent } from './pages/procedure/procedure-outpatient-list/procedure-outpatient-list.component';
 import { ProcedureOutsiderListComponent } from './pages/procedure/procedure-outsider-list/procedure-outsider-list.component';
+import { RadiologyComponent } from './pages/radiology/radiology/radiology.component';
 
 
 @NgModule({
@@ -119,6 +120,7 @@ import { ProcedureOutsiderListComponent } from './pages/procedure/procedure-outs
     ProcedureInpatientListComponent,
     ProcedureOutpatientListComponent,
     ProcedureOutsiderListComponent,
+    RadiologyComponent,
   ],
   imports: [
     HttpClientModule,
@@ -160,6 +162,7 @@ import { ProcedureOutsiderListComponent } from './pages/procedure/procedure-outs
     {path : 'access-management', component : AccessManagementComponent},
     {path : 'medicine', component : MedicineComponent},
     {path : 'lab-test', component : LabTestComponent},
+    {path : 'radiology', component : RadiologyComponent},
     {path : 'lab-outpatient-list', component : LabOutpatientListComponent},
     {path : 'lab-inpatient-list', component : LabInpatientListComponent},
     {path : 'lab-outsider-list', component : LabOutsiderListComponent},

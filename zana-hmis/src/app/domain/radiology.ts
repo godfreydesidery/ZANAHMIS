@@ -24,7 +24,7 @@ export interface IRadiology {
     nonConsultation : INonConsultation
     admission       : IAdmission
     patientBill     : IPatientBill
-    radiologyType   : IRadiologyType
+    radiologyType?   : IRadiologyType
     
     //createdBy       : IUser
     //createdOn       : IDay

@@ -1,4 +1,5 @@
 import { IDay } from "./day"
+import { ILabTestTypeRange } from "./lab-test-type-range"
 import { IUser } from "./user"
 
 export interface ILabTestType {
@@ -9,6 +10,8 @@ export interface ILabTestType {
     price       : number
     uom         : string
     active      : boolean
+
+    labTestTypeRanges : ILabTestTypeRange[]
     
     createdBy       : IUser
     createdOn       : IDay

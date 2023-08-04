@@ -41,7 +41,7 @@ public class Radiology {
 	private String result;
 	private String diagnosis;
 	private String description;
-	private Byte attachment;
+	private Byte[] attachment;
 	private String status;
 	
 	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)
@@ -105,6 +105,12 @@ public class Radiology {
 	@Column(name = "held_on_day_id", nullable = true , updatable = true)
     private Long heldOn;
 	private LocalDateTime heldAt;
+	
+	@Column(name = "collected_by_user_id", nullable = true , updatable = true)
+    private Long collectedby;
+	@Column(name = "collected_on_day_id", nullable = true , updatable = true)
+    private Long collectedOn;
+	private LocalDateTime collectedAt;	
 
 	@Column(name = "verified_by_user_id", nullable = true , updatable = true)
     private Long verifiedby;

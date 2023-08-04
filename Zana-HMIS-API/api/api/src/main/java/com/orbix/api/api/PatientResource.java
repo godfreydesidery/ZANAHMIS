@@ -1414,6 +1414,40 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
 	}
 	
+	@GetMapping("/patients/get_radiology_outsider_list") 
+	public ResponseEntity<List<Patient>> getRadiologyOutsiderList(
+			HttpServletRequest request){
+		
+		List<NonConsultation> ncs = nonConsultationRepository.findAllByStatus("IN-PROCESS");
+		List<Radiology> radiologies = radiologyRepository.findAllByNonConsultationIn(ncs);			
+		List<Patient> patients = new ArrayList<>();		
+		for(Radiology r : radiologies) {
+			if(r.getPatient().getType().equals("OUTSIDER") && (r.getPatientBill().getStatus().equals("PAID") || r.getPatientBill().getStatus().equals("COVERED"))) {
+				patients.add(r.getPatient());
+			}
+		}
+		HashSet<Patient> h = new HashSet<Patient>(patients);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_radiology_outsider_list").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
+	}
+	
+	@GetMapping("/patients/get_radiology_outpatient_list") 
+	public ResponseEntity<List<Patient>> getRadiologyOutpatientList(
+			HttpServletRequest request){
+		
+		List<Consultation> cs = consultationRepository.findAllByStatus("IN-PROCESS");
+		List<Radiology> radiologies = radiologyRepository.findAllByConsultationIn(cs);			
+		List<Patient> patients = new ArrayList<>();		
+		for(Radiology r : radiologies) {
+			if(r.getPatient().getType().equals("OUTPATIENT") && (r.getPatientBill().getStatus().equals("PAID") || r.getPatientBill().getStatus().equals("COVERED"))) {
+				patients.add(r.getPatient());
+			}
+		}
+		HashSet<Patient> h = new HashSet<Patient>(patients);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_radiology_outpatient_list").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
+	}
+	
 	@GetMapping("/patients/get_lab_tests_by_patient_id") 
 	public ResponseEntity<List<LabTestModel>> getLabTestByPatientId(
 			@RequestParam(name = "id") Long id,
@@ -1537,9 +1571,9 @@ public class PatientResource {
 		t.get().setRange(test.getRange());
 		t.get().setUnit(test.getUnit());
 		
-		t.get().setCollectedby(userService.getUserId(request));
-		t.get().setCollectedOn(dayService.getDayId());
-		t.get().setCollectedAt(dayService.getTimeStamp());
+		t.get().setVerifiedby(userService.getUserId(request));
+		t.get().setVerifiedOn(dayService.getDayId());
+		t.get().setVerifiedAt(dayService.getTimeStamp());
 		
 		t.get().setStatus("VERIFIED");
 		labTestRepository.save(t.get());
@@ -1621,6 +1655,190 @@ public class PatientResource {
 		}
 		return ResponseEntity.ok().body(nonConsultation.getId());
 	}
+	
+	@GetMapping("/patients/get_radiologies_by_patient_id") 
+	public ResponseEntity<List<RadiologyModel>> getRadiologyByPatientId(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		Optional<Patient> p = patientRepository.findById(id);
+		if(!p.isPresent()) {
+			return null;
+		}
+		List<Consultation> cs = consultationRepository.findAllByPatientAndStatus(p.get(), "IN-PROCESS");
+		List<NonConsultation> ncs = nonConsultationRepository.findAllByPatientAndStatus(p.get(), "IN-PROCESS");
+		List<Radiology> radiologies = radiologyRepository.findAllByConsultationInOrNonConsultationIn(cs, ncs);	
+		
+		List<RadiologyModel> radiologiesToReturn = new ArrayList<>();
+		for(Radiology radiology : radiologies) {
+			if(radiology.getPatientBill().getStatus().equals("PAID") || radiology.getPatientBill().getStatus().equals("COVERED")) {
+				RadiologyModel radio = new RadiologyModel();
+				radio.setId(radiology.getId());
+				radio.setResult(radiology.getResult());
+				radio.setDiagnosis(radiology.getDiagnosis());
+				radio.setDescription(radiology.getDescription());
+				radio.setAttachment(radiology.getAttachment());
+				radio.setRadiologyType(radiology.getRadiologyType());
+				radio.setPatient(radiology.getPatient());
+				radio.setPatientBill(radiology.getPatientBill());
+				radio.setStatus(radiology.getStatus());
+				
+				
+				if(radiology.getCreatedAt() != null) {
+					radio.setCreated(radiology.getCreatedAt().toString()+" | "+userService.getUserById(radiology.getCreatedby()).getNickname());
+				}else {
+					radio.setCreated("");
+				}
+				if(radiology.getOrderedAt() != null) {
+					radio.setOrdered(radiology.getOrderedAt().toString()+" | "+userService.getUserById(radiology.getOrderedby()).getNickname());
+				}else {
+					radio.setOrdered("");
+				}
+				if(radiology.getRejectedAt() != null) {
+					radio.setRejected(radiology.getRejectedAt().toString()+" | "+userService.getUserById(radiology.getRejectedby()).getNickname() + " | "+radiology.getRejectComment());
+				}else {
+					radio.setRejected("");
+				}
+				radio.setRejectComment(radiology.getRejectComment());			
+				if(radiology.getAcceptedAt() != null) {
+					radio.setAccepted(radiology.getAcceptedAt().toString()+" | "+userService.getUserById(radiology.getAcceptedby()).getNickname());
+				}else {
+					radio.setAccepted("");
+				}
+				if(radiology.getHeldAt() != null) {
+					radio.setHeld(radiology.getHeldAt().toString()+" | "+userService.getUserById(radiology.getHeldby()).getNickname());
+				}else {
+					radio.setHeld("");
+				}		
+				if(radiology.getVerifiedAt() != null) {
+					radio.setVerified(radiology.getVerifiedAt().toString()+" | "+userService.getUserById(radiology.getVerifiedby()).getNickname());
+				}else {
+					radio.setVerified("");
+				}
+				
+				radiologiesToReturn.add(radio);				
+			}
+		}
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_radiologies_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(radiologiesToReturn);
+	}
+	
+	@PostMapping("/patients/accept_radiology") 
+	public boolean acceptRadiology(
+			@RequestBody LRadiology radio,
+			HttpServletRequest request){
+		Optional<Radiology> radiology = radiologyRepository.findById(radio.getId());
+		if(!radiology.isPresent()) {
+			throw new NotFoundException("Radiology not found");
+		}
+		if(!(radiology.get().getStatus().equals("PENDING") || radiology.get().getStatus().equals("REJECTED"))) {
+			throw new InvalidOperationException("Could not accept, only PENDING or REJECTED radiologies can be accepted");
+		}
+		
+		radiology.get().setAcceptedby(userService.getUserId(request));
+		radiology.get().setAcceptedOn(dayService.getDayId());
+		radiology.get().setAcceptedAt(dayService.getTimeStamp());
+		
+		radiology.get().setRejectedby(null);
+		radiology.get().setRejectedOn(null);
+		radiology.get().setRejectedAt(null);
+		radiology.get().setRejectComment("");
+		
+		radiology.get().setStatus("ACCEPTED");
+		radiologyRepository.save(radiology.get());
+		return true;
+	}
+	
+	@PostMapping("/patients/reject_radiology") 
+	public boolean rejectRadiology(
+			@RequestBody LRadiology radio,
+			HttpServletRequest request){
+		Optional<Radiology> radiology = radiologyRepository.findById(radio.getId());
+		if(!radiology.isPresent()) {
+			throw new NotFoundException("Radiology not found");
+		}
+		if(!(radiology.get().getStatus().equals("PENDING") || radiology.get().getStatus().equals("ACCEPTED"))) {
+			throw new InvalidOperationException("Could not accept, only PENDING or ACCEPTED radiologies can be rejected");
+		}
+		
+		radiology.get().setRejectedby(userService.getUserId(request));
+		radiology.get().setRejectedOn(dayService.getDayId());
+		radiology.get().setRejectedAt(dayService.getTimeStamp());
+		
+		radiology.get().setAcceptedby(null);
+		radiology.get().setAcceptedOn(null);
+		radiology.get().setAcceptedAt(null);
+		
+		radiology.get().setStatus("REJECTED");		
+		radiologyRepository.save(radiology.get());
+		return true;
+	}
+	
+	@PostMapping("/patients/hold_radiology") 
+	public boolean holdRadiology(
+			@RequestBody LRadiology radio,
+			HttpServletRequest request){
+		Optional<Radiology> radiology = radiologyRepository.findById(radio.getId());
+		if(!radiology.isPresent()) {
+			throw new NotFoundException("Radiology not found");
+		}
+		if(!(radiology.get().getStatus().equals("ACCEPTED"))) {
+			throw new InvalidOperationException("Could not hold, only ACCEPTED radiologies can be held");
+		}
+		
+		radiology.get().setHeldby(userService.getUserId(request));
+		radiology.get().setHeldOn(dayService.getDayId());
+		radiology.get().setHeldAt(dayService.getTimeStamp());
+		
+		radiology.get().setStatus("PENDING");
+		radiologyRepository.save(radiology.get());
+		return true;
+	}
+	
+	@PostMapping("/patients/verify_radiology") 
+	public boolean verifyRadiologyResult(
+			@RequestBody LRadiology radio,
+			HttpServletRequest request){
+		Optional<Radiology> radiology = radiologyRepository.findById(radio.getId());
+		if(!radiology.isPresent()) {
+			throw new NotFoundException("Radiology not found");
+		}
+		if(!radiology.get().getStatus().equals("COLLECTED")) {
+			throw new InvalidOperationException("Could not verify, only COLLECTED radiologies can be verified");
+		}
+		radiology.get().setResult(radio.getResult());
+		radiology.get().setDiagnosis(radio.getDiagnosis());
+		radiology.get().setDescription(radio.getDescription());
+		radiology.get().setAttachment(radio.getAttachment());
+				
+		radiology.get().setVerifiedby(userService.getUserId(request));
+		radiology.get().setVerifiedOn(dayService.getDayId());
+		radiology.get().setVerifiedAt(dayService.getTimeStamp());
+		
+		radiology.get().setStatus("VERIFIED");
+		radiologyRepository.save(radiology.get());
+		return true;
+	}	
+	
+	@PostMapping("/patients/collect_radiology") 
+	public boolean collectRadiology(
+			@RequestBody LRadiology radio,
+			HttpServletRequest request){
+		Optional<Radiology> radiology = radiologyRepository.findById(radio.getId()); 
+		if(!radiology.isPresent()) {
+			throw new NotFoundException("Radiology not found");
+		}
+		if(!(radiology.get().getStatus().equals("ACCEPTED"))) {
+			throw new InvalidOperationException("Could not accept, only ACCEPTED radiologies can be collected");
+		}
+		
+		radiology.get().setCollectedby(userService.getUserId(request));
+		radiology.get().setCollectedOn(dayService.getDayId());
+		radiology.get().setCollectedAt(dayService.getTimeStamp());
+		
+		radiology.get().setStatus("COLLECTED");
+		radiologyRepository.save(radiology.get());
+		return true;
+	}
 }
 
 @Data
@@ -1637,5 +1855,13 @@ class LLabTest {
 	private String level;
 	private String unit;
 	
+}
+@Data
+class LRadiology {
+	private Long id;
+	private String result;
+	private String diagnosis;
+	private String description;
+	private Byte[] attachment;
 }
 

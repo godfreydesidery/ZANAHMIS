@@ -79,11 +79,6 @@ public class Admission {
     private Long admittedOn;
 	private LocalDateTime admittedAt = LocalDateTime.now();
 	
-	
-	///@ManyToOne(targetEntity = User.class, optional = true)
-    ///@JoinColumn(name = "discharged_by_user_id", nullable = true , updatable = true)
-    ///@OnDelete(action = OnDeleteAction.NO_ACTION)
-	
 	@Column(name = "discharged_by_user_id", nullable = true , updatable = true)
     private Long dischargedby;
 	@Column(name = "discharged_on_day_id", nullable = true , updatable = true)

@@ -124,27 +124,27 @@ export class DoctorCrackingComponent implements OnInit {
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.id = localStorage.getItem('consultation-id')
     localStorage.removeItem('consultation-id')
-    this.refresh()    
+    await this.refresh()    
   }
 
-  refresh(){
-    this.loadConsultation(this.id)
-    this.loadClinicalNoteByConsultationId(this.id)
-    this.loadGeneralExaminationByConsultationId(this.id)
-    this.loadDiagnosisTypeNames()
-    this.loadLabTestTypeNames()
-    this.loadRadiologyTypeNames()
-    this.loadProcedureTypeNames()
-    this.loadMedicineNames()
-    this.loadWorkingDiagnosis(this.id)
-    this.loadFinalDiagnosis(this.id)
-    this.loadLabTest(this.id, 0)
-    this.loadRadiologies(this.id, 0)
-    this.loadProcedures(this.id, 0)
-    this.loadPrescriptions(this.id, 0)
+  async refresh(){
+    await this.loadConsultation(this.id)
+    await this.loadClinicalNoteByConsultationId(this.id)
+    await this.loadGeneralExaminationByConsultationId(this.id)
+    await this.loadDiagnosisTypeNames()
+    await this.loadLabTestTypeNames()
+    await this.loadRadiologyTypeNames()
+    await this.loadProcedureTypeNames()
+    await this.loadMedicineNames()
+    await this.loadWorkingDiagnosis(this.id)
+    await this.loadFinalDiagnosis(this.id)
+    await this.loadLabTest(this.id, 0)
+    await this.loadRadiologies(this.id, 0)
+    await this.loadProcedures(this.id, 0)
+    await this.loadPrescriptions(this.id, 0)
   }
 
   async loadConsultation(id : any){
@@ -268,8 +268,8 @@ export class DoctorCrackingComponent implements OnInit {
         description : this.gEDescription,
         consultation : { id : this.id}
       }
-    }
-    
+    } 
+   
     this.spinner.show()
     await this.http.post<ICG>(API_URL+'/patients/save_clinical_note_and_general_examination', cg, options)
     .pipe(finalize(() => this.spinner.hide()))

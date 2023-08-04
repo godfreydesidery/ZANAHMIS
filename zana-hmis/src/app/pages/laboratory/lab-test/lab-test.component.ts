@@ -5,6 +5,11 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { ILabTest } from 'src/app/domain/lab-test';
+import { ILabTestType } from 'src/app/domain/lab-test-type';
+import { ILabTestTypeRange } from 'src/app/domain/lab-test-type-range';
+import { IPatient } from 'src/app/domain/patient';
+import { IPatientBill } from 'src/app/domain/patient-bill';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -228,43 +233,8 @@ export class LabTestComponent implements OnInit {
   }
 }
 
-export interface ILabTest{
-  id : any
-  result : string
-  range : string
-  level : string
-  unit : string
-  status : string
-  labTestType : ILabTestType
-  bill : IBill
-  consultation : null
-  verified : string
-}
 
-export interface ILabTestType{
-  id : any
-  name : string
-  labTestTypeRanges : ILabTestTypeRange[]
-}
 
-export interface ILabTestTypeRange{
-  id : any
-  name : string
-}
 
-export interface IBill{
-  id : any
-  status : string
-}
 
-export interface IPatient{
-  id : any
-  no : string
-  firstName : string
-  middleName : string
-  lastName : string
-  dateOfBirth : Date
-  gender : string
-  paymentType : string
-  membershipNo : string
-}
+
