@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.PatientBill;
+import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.ClinicalNote;
 import com.orbix.api.domain.Clinician;
@@ -60,6 +61,7 @@ import com.orbix.api.models.PrescriptionModel;
 import com.orbix.api.models.ProcedureModel;
 import com.orbix.api.models.RadiologyModel;
 import com.orbix.api.models.WorkingDiagnosisModel;
+import com.orbix.api.repositories.AdmissionRepository;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.repositories.ClinicalNoteRepository;
 import com.orbix.api.repositories.ClinicianRepository;
@@ -135,6 +137,7 @@ public class PatientResource {
 	private final RadiologyTypeRepository radiologyTypeRepository;
 	private final ProcedureTypeRepository procedureTypeRepository;
 	private final MedicineRepository medicineRepository;
+	private final AdmissionRepository admissionRepository;
 	
 	
 	@GetMapping("/patients")
@@ -1041,6 +1044,12 @@ public class PatientResource {
 			model.setId(l.getId());
 			model.setProcedureType(l.getProcedureType());
 			model.setPatientBill(l.getPatientBill());
+			model.setDiagnosis(l.getDiagnosis());
+			model.setType(l.getType());
+			model.setTime(l.getTime());
+			model.setDate(l.getDate());
+			model.setHours(l.getHours());
+			model.setMinute(l.getMinutes());
 			model.setStatus(l.getStatus());
 
 			if(l.getCreatedAt() != null) {
@@ -1838,6 +1847,127 @@ public class PatientResource {
 		radiology.get().setStatus("COLLECTED");
 		radiologyRepository.save(radiology.get());
 		return true;
+	}
+	
+	@GetMapping("/patients/get_pharmacy_outpatient_list") 
+	public ResponseEntity<List<Patient>> getPharmacyOutpatientList(
+			HttpServletRequest request){
+		
+		List<Consultation> cs = consultationRepository.findAllByStatus("IN-PROCESS");
+		List<Prescription> prescriptions = prescriptionRepository.findAllByConsultationIn(cs);			
+		List<Patient> patients = new ArrayList<>();		
+		for(Prescription t : prescriptions) {
+			if(t.getPatient().getType().equals("OUTPATIENT") && (t.getPatientBill().getStatus().equals("PAID") || t.getPatientBill().getStatus().equals("COVERED"))) {
+				patients.add(t.getPatient());
+			}
+		}
+		HashSet<Patient> h = new HashSet<Patient>(patients);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_pharmacy_outpatient_list").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
+	}
+	
+	@GetMapping("/patients/get_pharmacy_outsider_list") 
+	public ResponseEntity<List<Patient>> getPharmacyOutsiderList(
+			HttpServletRequest request){
+		
+		List<NonConsultation> ncs = nonConsultationRepository.findAllByStatus("IN-PROCESS");
+		List<Prescription> prescriptions = prescriptionRepository.findAllByNonConsultationIn(ncs);			
+		List<Patient> patients = new ArrayList<>();		
+		for(Prescription t : prescriptions) {
+			if(t.getPatient().getType().equals("OUTSIDER") && (t.getPatientBill().getStatus().equals("PAID") || t.getPatientBill().getStatus().equals("COVERED"))) {
+				patients.add(t.getPatient());
+			}
+		}
+		HashSet<Patient> h = new HashSet<Patient>(patients);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_pharmacy_outsider_list").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
+	}
+	
+	@GetMapping("/patients/get_pharmacy_inpatient_list") 
+	public ResponseEntity<List<Patient>> getPharmacyInpatientList(
+			HttpServletRequest request){
+		
+		List<Admission> adm = admissionRepository.findAllByStatus("IN-PROCESS");
+		List<Prescription> prescriptions = prescriptionRepository.findAllByAdmissionIn(adm);			
+		List<Patient> patients = new ArrayList<>();		
+		for(Prescription t : prescriptions) {
+			if(t.getPatient().getType().equals("INPATIENT") && (t.getPatientBill().getStatus().equals("PAID") || t.getPatientBill().getStatus().equals("COVERED"))) {
+				patients.add(t.getPatient());
+			}
+		}
+		HashSet<Patient> h = new HashSet<Patient>(patients);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_pharmacy_inpatient_list").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
+	}
+	
+	@GetMapping("/patients/get_prescriptions_by_patient_id") 
+	public ResponseEntity<List<PrescriptionModel>> getPrescriptionsByPatientId(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		Optional<Patient> p = patientRepository.findById(id);
+		if(!p.isPresent()) {
+			return null;
+		}
+		List<Consultation> cs = consultationRepository.findAllByPatientAndStatus(p.get(), "IN-PROCESS");
+		List<NonConsultation> ncs = nonConsultationRepository.findAllByPatientAndStatus(p.get(), "IN-PROCESS");
+		List<Prescription> prescriptions = prescriptionRepository.findAllByConsultationInOrNonConsultationIn(cs, ncs);	
+		
+		List<PrescriptionModel> prescriptionsToReturn = new ArrayList<>();
+		for(Prescription pres : prescriptions) {
+			if(pres.getPatientBill().getStatus().equals("PAID") || pres.getPatientBill().getStatus().equals("COVERED")) {
+				PrescriptionModel m = new PrescriptionModel();
+				m.setId(pres.getId());
+				m.setDosage(pres.getDosage());
+				m.setFrequency(pres.getFrequency());
+				m.setRoute(pres.getRoute());
+				m.setDays(pres.getDays());
+				m.setPrice(pres.getPrice());
+				m.setQty(pres.getQty());
+				m.setStatus(pres.getStatus());
+				m.setMedicine(pres.getMedicine());
+				m.setPatient(pres.getPatient());
+				m.setConsultation(pres.getConsultation());
+				m.setNonConsultation(pres.getNonConsultation());
+				m.setPatientBill(pres.getPatientBill());
+				m.setStatus(pres.getStatus());
+				
+				if(pres.getCreatedAt() != null) {
+					m.setCreated(pres.getCreatedAt().toString()+" | "+userService.getUserById(pres.getCreatedby()).getNickname());
+				}else {
+					m.setCreated("");
+				}
+				if(pres.getOrderedAt() != null) {
+					m.setOrdered(pres.getOrderedAt().toString()+" | "+userService.getUserById(pres.getOrderedby()).getNickname());
+				}else {
+					m.setOrdered("");
+				}
+				if(pres.getRejectedAt() != null) {
+					m.setRejected(pres.getRejectedAt().toString()+" | "+userService.getUserById(pres.getRejectedby()).getNickname() + " | "+pres.getRejectComment());
+				}else {
+					m.setRejected("");
+				}
+				m.setRejectComment(pres.getRejectComment());			
+				if(pres.getAcceptedAt() != null) {
+					m.setAccepted(pres.getAcceptedAt().toString()+" | "+userService.getUserById(pres.getAcceptedby()).getNickname());
+				}else {
+					m.setAccepted("");
+				}
+				if(pres.getHeldAt() != null) {
+					m.setHeld(pres.getHeldAt().toString()+" | "+userService.getUserById(pres.getHeldby()).getNickname());
+				}else {
+					m.setHeld("");
+				}		
+				if(pres.getVerifiedAt() != null) {
+					m.setVerified(pres.getVerifiedAt().toString()+" | "+userService.getUserById(pres.getVerifiedby()).getNickname());
+				}else {
+					m.setVerified("");
+				}
+				
+				prescriptionsToReturn.add(m);				
+			}
+		}
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_prescriptions_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(prescriptionsToReturn);
 	}
 }
 

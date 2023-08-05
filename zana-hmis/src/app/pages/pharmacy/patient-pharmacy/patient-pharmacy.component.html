@@ -1,0 +1,119 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="header-title">
+        <h1>Pharmacy - Prescriptions</h1>
+    </div>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <!-- Form controls -->
+        <div class="col-sm-12">
+            <div class="panel panel-bd lobidrag">
+                <div class="panel-heading">
+                    <a class="btn btn-primary btn-outline" style="margin-right: 1mm;" routerLink="/lab-outpatient-list">Outpatient List</a>
+                    <a class="btn btn-primary btn-outline" style="margin-right: 1mm;" routerLink="/lab-inpatient-list">Inpatient List</a>
+                    <a class="btn btn-primary btn-outline" style="margin-right: 1mm;" routerLink="/lab-outsider-list">Outsider List</a>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-12 alert alert-primary" role="alert">
+                            <h4>Name: <b>{{patient.firstName}} {{patient.middleName}} {{patient.lastName}}</b>, File No: <b>{{patient.no}}</b>, Date of birth: <b>{{patient.dateOfBirth | date}}</b>, {{patient.gender}}, {{patient.paymentType}}</h4>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table table-responsive table striped">
+                                <thead>
+                                    <tr style="font-weight: bold;">
+                                        <td>Medicine</td>
+                                        <td>Dosage</td>
+                                        <td>Frequency</td>
+                                        <td>Route</td>
+                                        <td>Days</td>
+                                        <td>qty</td>
+                                        <td>Amount</td>
+                                        <td>Status</td>
+                                        <td>Action</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let prescription of prescriptions">
+                                        <td>{{prescription.medicine.name}}</td>
+                                        <td>{{prescription.dosage}}</td>
+                                        <td>{{prescription.frequency}}</td>
+                                        <td>{{prescription.route}}</td>
+                                        <td>{{prescription.days}}</td>
+                                        <td>{{prescription.qty}}</td>
+                                        <td>{{prescription.price * prescription.qty | currency:'':''}}</td>
+                                        <td>{{prescription.status}}</td>
+                                        <td>
+                                            <button class="btn btn-default btn-rounded" (click)="acceptPrescription(prescription)">Accept</button>
+                                            <button class="btn btn-default btn-rounded" (click)="rejectPrescription(prescription)">Reject</button>
+                                            <button class="btn btn-default btn-rounded" (click)="holdPrescription(prescription)">Hold</button>
+                                            <button class="btn btn-default btn-rounded" (click)="collectPrescription(prescription)">Collect</button>
+                                            <button class="btn btn-primary" (click)="verifyPrescription(prescription)">Verify</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!--<div class="col-sm-6" *ngFor="let prescription of prescriptions">
+                        <div class="row" style="margin: 1mm; background-color: rgb(246, 246, 248);">
+                            <div class="col-sm-12">
+                                <h4><b>{{prescription.medicine.name}}</b></h4>
+                                <h4><b>{{prescription.dosage}}</b></h4>
+                                <h4><b>{{prescription.frequency}}</b></h4>
+                                <h4><b>{{prescription.route}}</b></h4>
+                                <h4><b>{{prescription.qty}}</b></h4>
+                            </div>
+                            <div class="col-sm-12">
+                                <span class="label label-success m-r-15"><small>{{prescription.status}}</small></span>
+                                <button class="btn btn-default btn-rounded" (click)="acceptPrescription(prescription)">Accept</button>
+                                <button class="btn btn-default btn-rounded" (click)="rejectPrescription(prescription)">Reject</button>
+                                <button class="btn btn-default btn-rounded" (click)="holdPrescription(prescription)">Hold</button>
+                                <button class="btn btn-default btn-rounded" (click)="collectPrescription(prescription)">Collect</button>
+
+                                <hr>
+                            </div>
+                            <small>Ordered on: </small><br>
+                            <small>ID </small><span class="label label-primary m-r-15">{{prescription?.id}}</span>
+                            <div *ngIf="prescription?.status === 'ACCEPTED' || prescription?.status === 'COLLECTED' || prescription?.status === 'VERIFIED'">
+                                
+                                
+                                <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
+                                    <br>
+                                    <div class="col-sm-12">
+                                        <span class="label label-info m-r-15">Verified By: {{prescription.verified}}</span>
+                                    </div>
+                                    <div class="col-sm-12" style="text-align: right;">
+                                        <button class="btn btn-primary" (click)="verifyPrescription(prescription)">Verify Results</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="prescription?.status === 'REJECTED'">
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h5>Reason for rejection</h5>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" placeholder="Reason for rejection">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button class="btn btn-info">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>-->
+                </div> 
+                    
+            </div>
+        </div>
+    </div>
+     
+</section> <!-- /.content -->

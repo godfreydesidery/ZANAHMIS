@@ -55,6 +55,11 @@ export class AuthService {
     user.set('username', username)
     user.set('password', password)
 
+    //remove pharmacy data
+    localStorage.removeItem('selected-pharmacy-id')
+    localStorage.removeItem('selected-pharmacy-code')
+    localStorage.removeItem('selected-pharmacy-name')
+
     let options = {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     }
@@ -96,6 +101,7 @@ export class AuthService {
     // remove user from local storage to log user out
     localStorage.removeItem('current-user')
     //this.currentUserSubject.next(new User('', '', new Date))
+    
   }
 
   private tokenExpired(token: string) {

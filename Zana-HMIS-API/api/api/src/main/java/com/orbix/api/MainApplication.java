@@ -41,6 +41,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.thymeleaf.util.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.orbix.api.domain.CompanyProfile;
 import com.orbix.api.domain.Day;
 import com.orbix.api.domain.Privilege;
@@ -73,6 +75,10 @@ protected ConfigurableApplicationContext springContext;
 
     DayRepository dayRepository;
     CompanyProfileRepository companyProfileRepository;
+    UserService userService;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
     
     @Bean
     public CorsFilter corsFilter() {
@@ -92,6 +98,11 @@ protected ConfigurableApplicationContext springContext;
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		
 	}
+	
+	@PostConstruct
+	  public void setUp() {
+	    objectMapper.registerModule(new JavaTimeModule());
+	  }
 	
 	public static void main(String[] args) throws Throwable {
 		SpringApplication.run(MainApplication.class, args);

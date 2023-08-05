@@ -606,7 +606,7 @@ export class PatientRegisterComponent implements OnInit {
     .then(
       data => {
         data?.forEach(element => {
-          this.procedureTotal = this.procedureTotal + element.patientBill.amount
+          this.procedureTotal = this.procedureTotal + element.patientBill!.amount
           this.procedures.push(element)
         })
         console.log(this.procedures)

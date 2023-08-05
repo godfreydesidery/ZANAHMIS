@@ -64,6 +64,13 @@ import { ProcedureInpatientListComponent } from './pages/procedure/procedure-inp
 import { ProcedureOutpatientListComponent } from './pages/procedure/procedure-outpatient-list/procedure-outpatient-list.component';
 import { ProcedureOutsiderListComponent } from './pages/procedure/procedure-outsider-list/procedure-outsider-list.component';
 import { RadiologyComponent } from './pages/radiology/radiology/radiology.component';
+import { PharmacyComponent } from './pages/admin/medical-units/pharmacy/pharmacy.component';
+import { PharmacyOutpatientListComponent } from './pages/pharmacy/pharmacy-outpatient-list/pharmacy-outpatient-list.component';
+import { PharmacyInpatientListComponent } from './pages/pharmacy/pharmacy-inpatient-list/pharmacy-inpatient-list.component';
+import { PharmacyOutsiderListComponent } from './pages/pharmacy/pharmacy-outsider-list/pharmacy-outsider-list.component';
+import { SelectPharmacyComponent } from './pages/pharmacy/select-pharmacy/select-pharmacy.component';
+import { PharmacistComponent } from './pages/admin/personnel/pharmacist/pharmacist.component';
+import { PatientPharmacyComponent } from './pages/pharmacy/patient-pharmacy/patient-pharmacy.component';
 
 
 @NgModule({
@@ -121,6 +128,13 @@ import { RadiologyComponent } from './pages/radiology/radiology/radiology.compon
     ProcedureOutpatientListComponent,
     ProcedureOutsiderListComponent,
     RadiologyComponent,
+    PharmacyComponent,
+    PharmacyOutpatientListComponent,
+    PharmacyInpatientListComponent,
+    PharmacyOutsiderListComponent,
+    SelectPharmacyComponent,
+    PharmacistComponent,
+    PatientPharmacyComponent,
   ],
   imports: [
     HttpClientModule,
@@ -140,7 +154,9 @@ import { RadiologyComponent } from './pages/radiology/radiology/radiology.compon
     {path : 'medication-payment', component : MedicationPaymentComponent},
     {path : 'procedure-payment', component : ProcedurePaymentComponent},
     {path : 'clinic', component : ClinicComponent},
+    {path : 'pharmacy', component : PharmacyComponent},
     {path : 'clinician', component : ClinicianComponent},
+    {path : 'pharmacist', component : PharmacistComponent},
     {path : 'my-consultation', component : MyConsultationComponent},
     {path : 'doctor-cracking', component : DoctorCrackingComponent},
     {path : 'list-from-reception', component : ListFromReceptionComponent},
@@ -172,15 +188,16 @@ import { RadiologyComponent } from './pages/radiology/radiology/radiology.compon
     {path : 'procedure-outpatient-list', component : ProcedureOutpatientListComponent},
     {path : 'procedure-inpatient-list', component : ProcedureInpatientListComponent},
     {path : 'procedure-outsider-list', component : ProcedureOutsiderListComponent},
-    //{path : 'procedure-outpatient-list', component : ProcedureOutpatientListComponent},
-    //{path : 'procedure-inpatient-list', component : ProcedureInpatientListComponent},
-    //{path : 'procedure-outsider-list', component : ProcedureOutsiderListComponent},
     {path : 'registration-price', component : RegistrationPriceComponent},
     {path : 'consultation-price', component : ConsultationPriceComponent},
     {path : 'lab-test-price', component : LabTestPriceComponent},
     {path : 'procedure-price', component : ProcedurePriceComponent},
     {path : 'radiology-price', component : RadiologyPriceComponent},
-    {path : 'medicine-price', component : MedicinePriceComponent},
+    {path : 'select-pharmacy', component : SelectPharmacyComponent},
+    {path : 'pharmacy-outpatient-list', component : PharmacyOutpatientListComponent},
+    {path : 'pharmacy-inpatient-list', component : PharmacyInpatientListComponent},
+    {path : 'pharmacy-outsider-list', component : PharmacyOutsiderListComponent},
+    {path : 'patient-pharmacy', component : PatientPharmacyComponent},
     ])
   ],
   schemas: [ 

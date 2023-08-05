@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,5 +23,11 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	 * @return
 	 */
 	Optional<Admission> findByPatientAndStatus(Patient patient, String string);
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	List<Admission> findAllByStatus(String string);
 
 }

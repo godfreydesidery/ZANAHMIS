@@ -90,21 +90,36 @@
                         <ul class="treeview-menu">
                             <li><a routerLink="/list-from-reception">List From Reception</a></li>
                             <li><a routerLink="/my-consultation">My Consultations</a></li>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-user-md"></i><span>Procedure</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a routerLink="/procedure-outpatient-list">Outpatient List</a></li>
+                                    <li><a routerLink="/procedure-inpatient-list">Inpatient List</a></li>
+                                    <li><a routerLink="/procedure-outsider-list">Outsider List</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-user-md"></i><span>Laboratory</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a routerLink="/lab-outpatient-list">Outpatient List</a></li>
+                            <li><a routerLink="/lab-inpatient-list">Inpatient List</a></li>
+                            <li><a routerLink="/lab-outsider-list">Outsider List</a></li>
                         </ul>
                     </li>
-                    <li class="treeview">
-                      <a href="#">
-                          <i class="fa fa-user-md"></i><span>Laboratory</span>
-                          <span class="pull-right-container">
-                              <i class="fa fa-angle-left pull-right"></i>
-                          </span>
-                      </a>
-                      <ul class="treeview-menu">
-                          <li><a routerLink="/lab-outpatient-list">Outpatient List</a></li>
-                          <li><a routerLink="/lab-inpatient-list">Inpatient List</a></li>
-                          <li><a routerLink="/lab-outsider-list">Outsider List</a></li>
-                      </ul>
-                  </li>
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-user-md"></i><span>Radiology</span>
@@ -120,15 +135,13 @@
                     </li>
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-user-md"></i><span>Procedure</span>
+                            <i class="fa fa-user-md"></i><span>Pharmacy</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a routerLink="/procedure-outpatient-list">Outpatient List</a></li>
-                            <li><a routerLink="/procedure-inpatient-list">Inpatient List</a></li>
-                            <li><a routerLink="/procedure-outsider-list">Outsider List</a></li>
+                            <li><a routerLink="/select-pharmacy">Select Pharmacy</a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -236,6 +249,7 @@
                                 </a>
                                 <ul class="treeview-menu">
                                     <li><a routerLink="/clinician">Doctor</a></li>
+                                    <li><a routerLink="/pharmacist">Pharmacist</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -249,6 +263,7 @@
                                 </a>
                                 <ul class="treeview-menu">
                                     <li><a routerLink="/clinic">Clinic</a></li>
+                                    <li><a routerLink="/pharmacy">Pharmacy</a></li>
                                 </ul>
                             </li>
                         </ul>

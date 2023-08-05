@@ -59,4 +59,29 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
 	 */
 	boolean existsByConsultationAndMedicine(Consultation consultation, Medicine medicine);
 
+	/**
+	 * @param cs
+	 * @return
+	 */
+	List<Prescription> findAllByConsultationIn(List<Consultation> cs);
+
+	/**
+	 * @param cs
+	 * @param ncs
+	 * @return
+	 */
+	List<Prescription> findAllByConsultationInOrNonConsultationIn(List<Consultation> cs, List<NonConsultation> ncs);
+
+	/**
+	 * @param ncs
+	 * @return
+	 */
+	List<Prescription> findAllByNonConsultationIn(List<NonConsultation> ncs);
+
+	/**
+	 * @param adm
+	 * @return
+	 */
+	List<Prescription> findAllByAdmissionIn(List<Admission> adm);
+
 }

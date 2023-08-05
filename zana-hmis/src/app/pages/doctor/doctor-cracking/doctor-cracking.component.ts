@@ -1,3 +1,4 @@
+import { Time } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -118,6 +119,21 @@ export class DoctorCrackingComponent implements OnInit {
   prescriptionDays        : string = ''
   prescriptionPrice       : number = 0
   prescriptionQty         : number = 0
+
+  procedureId : any
+  procedureNote : string = ''
+  procedureType : string = ''
+  procedureTime! : Time
+  procedureDiagnosis : string = ''
+  procedureDate! : Date
+  procedureHours : number = 0
+  procedureMinutes : number = 0
+
+
+
+  procedure! : IProcedure
+
+
 
   constructor(private auth : AuthService,
     private http :HttpClient,
@@ -685,12 +701,18 @@ export class DoctorCrackingComponent implements OnInit {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    var procedure : any = {
+    var procedure  = {
       procedureType : {
-        id : null,
-        code : '',
-        name : this.procedureTypeName
-      }
+        id    : null,
+        code  : '',
+        name  : this.procedureTypeName
+      },
+      type      : this.procedureType,
+      diagnosis : this.procedureDiagnosis,
+      time      : this.procedureTime,
+      date      : this.procedureDate,
+      hours     : this.procedureHours,
+      minutes   : this.procedureMinutes
     }
     this.spinner.show()
     await this.http.post<IProcedure>(API_URL+'/patients/save_procedure?consultation_id='+this.id+'&non_consultation_id='+0, procedure, options)
@@ -708,6 +730,10 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     this.loadProcedures(this.id, 0)
+  }
+
+  async saveProcedureNote(id : any){
+    
   }
 
   

@@ -3,7 +3,10 @@
  */
 package com.orbix.api.domain;
 
+import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +42,14 @@ public class Procedure {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String note;
+	private String type;
+	@Column(name = "time_")
+	private LocalTime time;
+	private String diagnosis;
+	@Column(name = "date_")
+	private LocalDate date;
+	private double hours;
+	private double minutes;
 	private String status;
 	
 	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)

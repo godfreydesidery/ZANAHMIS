@@ -25,20 +25,11 @@ export interface IPrescription {
     patientBill            : IPatientBill
     medicine        : IMedicine
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
-
-    acceptedBy       : IUser
-    acceptedOn       : IDay
-    acceptedAt       : Date
-
-    rejectedBy       : IUser
-    rejectedOn       : IDay
-    rejectedAt       : Date
-    rejectComment    : string
-
-    verifiedBy       : IUser
-    verifiedOn       : IDay
-    verifiedAt       : Date
+    created : string
+    ordered : string
+    accepted : string
+    rejected : string
+    rejectComment : string
+    collected : string
+    verified : string
 }

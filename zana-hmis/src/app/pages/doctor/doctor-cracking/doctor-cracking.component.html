@@ -348,9 +348,16 @@
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Procedure</th>
+                                                <th>Diagnosis</th>
+                                                <th>Theatre/Non Theatre</th>
+                                                <th>Time</th>
+                                                <th>Date</th>
+                                                <th>Hours</th>
+                                                <th>Minutes</th>
                                                 <th>Price</th>
                                                 <th>Payment Status</th>
                                                 <th>Status</th>
+                                                <th>Note</th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
@@ -358,6 +365,12 @@
                                                 <tr *ngFor="let procedure of procedures">
                                                     <td>{{procedure?.id}}</td>
                                                     <td>{{procedure.procedureType?.name}}</td>
+                                                    <td>{{procedure.diagnosis}}</td>
+                                                    <td>{{procedure.type}}</td>
+                                                    <td>{{procedure.time}}</td>
+                                                    <td>{{procedure.date}}</td>
+                                                    <td>{{procedure.hours}}</td>
+                                                    <td>{{procedure.minutes}}</td>
                                                     <td style="text-align: right;"><span *ngIf="procedure.patientBill?.status != 'COVERED'">{{procedure.patientBill?.amount | currency:'':''}}</span><span *ngIf="procedure.patientBill?.status === 'COVERED'">---</span></td>
                                                     <td>
                                                         <span *ngIf="procedure.patientBill?.status === 'COVERED' && consultation.paymentType ==='INSURANCE'">{{procedure.patientBill?.status}}</span>
@@ -365,7 +378,13 @@
                                                         <span *ngIf="procedure.patientBill?.status != 'COVERED' && consultation.paymentType ==='INSURANCE'">{{procedure.patientBill?.status}}(NOT COVERED)</span>
                                                     </td>
                                                     <td>{{procedure.status}}</td>
-                                                    <td><a (click)="deleteProcedure(procedure.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                    <td>
+                                                        <textarea class="form-control" placeholder="Procedure Note" [(ngModel)]="procedure.note">{{procedure.note}}</textarea>
+                                                        <i class="glyphicon glyphicon-save" (click)="saveProcedureNote(procedure.id)"></i>
+                                                    </td>
+                                                    <td>
+                                                        <a (click)="deleteProcedure(procedure.id)"><i class="fa fa-trash"></i>Delete</a>
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>   
@@ -624,8 +643,46 @@
                            <option *ngFor="let name of procedureTypeNames">{{name}}</option>
                        </select>
                     </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>Diagnosis</h4>
+                        <textarea class="form-control" [(ngModel)]="procedureDiagnosis"></textarea>
+                    </div>
                 </div>   
-                   
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>Theatre/Non theatre</h4>
+                        <select class="form-control" [(ngModel)]="procedureType">
+                            <option>Non Theatre</option>
+                            <option>Theatre</option>
+                        </select>
+                    </div>
+                </div>   
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>Time</h4>
+                        <input type="time" class="form-control" [(ngModel)]="procedureTime">
+                    </div>
+                </div> 
+                <div class="row">
+                    <h4>Date</h4>
+                    <div class="col-sm-12">
+                        <input type="date" class="form-control" [(ngModel)]="procedureDate">
+                    </div>
+                </div>  
+                <div class="row">
+                    <h4>Hours</h4>
+                    <div class="col-sm-12">
+                        <input type="number" class="form-control" [(ngModel)]="procedureHours">
+                    </div>
+                </div>  
+                <div class="row">
+                    <h4>Minutes</h4>
+                    <div class="col-sm-12">
+                        <input type="number" class="form-control" [(ngModel)]="procedureMinutes">
+                    </div>
+                </div>                     
                <div class="modal-footer">
                    <button type="button" class="btn btn-success pull-right" (click)="saveProcedure()" data-dismiss="modal">Save</button>
                </div>

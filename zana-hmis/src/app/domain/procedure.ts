@@ -6,18 +6,25 @@ import { INonConsultation } from "./non-consultation"
 import { IPatient } from "./patient"
 import { IProcedureType } from "./procedure-type"
 import { IUser } from "./user"
+import { Time } from "@angular/common"
 
 export interface IProcedure {
     id      : any
     note    : string
+    diagnosis : string
+    type    : string
+    time    : Time
+    date    : Date
+    hours   : number
+    minutes : number
     status  : string
 
-    patient         : IPatient
-    consultation    : IConsultation
-    nonConsultation : INonConsultation
-    admission       : IAdmission
-    patientBill            : IPatientBill
-    procedureType   : IProcedureType
+    patient?         : IPatient
+    consultation?    : IConsultation
+    nonConsultation? : INonConsultation
+    admission?       : IAdmission
+    patientBill?     : IPatientBill
+    procedureType?   : IProcedureType
     
     created        : string
     accepted       : string

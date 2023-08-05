@@ -851,6 +851,12 @@ public class PatientServiceImpl implements PatientService {
 		
 		
 		procedure.setProcedureType(pr.get());
+		
+		for(int i = 0; i < 500; i++) {
+			System.out.println(procedure.getTime().toString());
+		}
+		
+		
 		procedure.setStatus("PENDING");
 		PatientBill patientBill = new PatientBill();
 		patientBill.setAmount(procedure.getProcedureType().getPrice());
