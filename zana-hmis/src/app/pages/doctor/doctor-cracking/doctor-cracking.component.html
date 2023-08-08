@@ -19,7 +19,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-12 alert alert-primary" role="alert">
-                            <h4>Name: <b>{{consultation?.patient?.firstName}} {{consultation?.patient?.middleName}} {{consultation?.patient?.lastName}}</b>, File No: <b>{{consultation?.patient?.no}}</b>, Date of birth: <b>{{consultation?.patient?.dateOfBirth | date}}</b>, {{consultation?.patient?.gender}}, {{consultation.paymentType}} {{consultation?.insurancePlan?.name}}</h4>
+                            <h3 class="text-primary">Name: <b>{{consultation?.patient?.firstName}} {{consultation?.patient?.middleName}} {{consultation?.patient?.lastName}}</b>, File No: <b>{{consultation?.patient?.no}}</b>, <b>Date of Birth: {{consultation.patient.dateOfBirth | date}} Age: {{consultation.patient.dateOfBirth | age}}</b>, {{consultation?.patient?.gender}}, {{consultation.paymentType}} {{consultation?.insurancePlan?.name}}</h3>
                         </div>
                         <div class="col-sm-6">
                             <label>Clinical Notes</label>
@@ -229,16 +229,22 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        
-                        <div class="col-sm-12">
-                            <hr>
-                            <button class="btn btn-primary pull-right" (click)="clearPrescription()" data-toggle="modal" data-target="#assign-drugs-modal">Assign Drugs</button>
-                            <br>
-                        </div>
+                        <br>
                         <div class="col-sm-12">
                             <label>Medications</label>
-                            <div class="jumbotron jumbotron-fluid">                               
+                            <div class="jumbotron jumbotron-fluid"> 
+                                <div class="row">
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-4">
+                                        <h4>Select Medicine</h4>
+                                        <select class="form-control" [(ngModel)]="medicineName">
+                                            <option></option>
+                                            <option *ngFor="let name of medicineNames">{{name}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4"></div>
+                                </div>
+                                <hr>                              
                                 <div>
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-hover  table-striped">
@@ -280,10 +286,7 @@
                                                 <tr>
                                                     <td></td>
                                                     <td>
-                                                        <select class="form-control" [(ngModel)]="medicineName">
-                                                            <option></option>
-                                                            <option *ngFor="let name of medicineNames">{{name}}</option>
-                                                        </select>
+                                                        <span class="form-control">{{medicineName}}</span>
                                                     </td>
                                                     <td><span class="form-control">{{prescriptionUnit}}</span></td>
                                                     <td><input type="text" class="form-control" [(ngModel)]="prescriptionDosage"></td>
@@ -323,8 +326,8 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td>
-                                                        <button class="btn btn-primary" (click)="savePrescription()">Save</button>
-                                                        <button class="btn btn-danger" (click)="clearPrescription()">Clear</button>
+                                                        <a (click)="savePrescription()"><i class="glyphicon glyphicon-plus-sign"></i>Add</a>
+                                                        <a  class="text-danger" (click)="clearPrescription()"><i class="glyphicon glyphicon-remove-sign"></i></a>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -368,7 +371,7 @@
                                                     <td>{{procedure.diagnosis}}</td>
                                                     <td>{{procedure.type}}</td>
                                                     <td>{{procedure.time}}</td>
-                                                    <td>{{procedure.date}}</td>
+                                                    <td>{{procedure.date | date}}</td>
                                                     <td>{{procedure.hours}}</td>
                                                     <td>{{procedure.minutes}}</td>
                                                     <td style="text-align: right;"><span *ngIf="procedure.patientBill?.status != 'COVERED'">{{procedure.patientBill?.amount | currency:'':''}}</span><span *ngIf="procedure.patientBill?.status === 'COVERED'">---</span></td>
@@ -636,56 +639,46 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-sm-12">
-                       <h4>Select Procedure Type</h4>
-                       <select class="form-control" [(ngModel)]="procedureTypeName">
-                           <option></option>
-                           <option *ngFor="let name of procedureTypeNames">{{name}}</option>
-                       </select>
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h4>Select Procedure Type</h4>
+                                <select class="form-control" [(ngModel)]="procedureTypeName">
+                                    <option></option>
+                                    <option *ngFor="let name of procedureTypeNames">{{name}}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12">
+                                <h4>Diagnosis</h4>
+                                <textarea class="form-control" [(ngModel)]="procedureDiagnosis"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <button (click)="toggleTheatre()" style="width: 4cm; height: 4cm; background-color: rgba(244, 248, 247, 0.921);border-style: groove;">Need Theatre?</button>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h4>Diagnosis</h4>
-                        <textarea class="form-control" [(ngModel)]="procedureDiagnosis"></textarea>
-                    </div>
-                </div>   
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h4>Theatre/Non theatre</h4>
-                        <select class="form-control" [(ngModel)]="procedureType">
-                            <option>Non Theatre</option>
-                            <option>Theatre</option>
-                        </select>
-                    </div>
-                </div>   
-                <div class="row">
-                    <div class="col-sm-12">
+                <div class="row" *ngIf="procedureNeedTheatre === true">
+                    <div class="col-sm-3">
                         <h4>Time</h4>
                         <input type="time" class="form-control" [(ngModel)]="procedureTime">
                     </div>
-                </div> 
-                <div class="row">
-                    <h4>Date</h4>
-                    <div class="col-sm-12">
+                    <div class="col-sm-3">
+                        <h4>Date</h4>
                         <input type="date" class="form-control" [(ngModel)]="procedureDate">
                     </div>
-                </div>  
-                <div class="row">
-                    <h4>Hours</h4>
-                    <div class="col-sm-12">
+                    <div class="col-sm-3">
+                        <h4>Hours</h4>
                         <input type="number" class="form-control" [(ngModel)]="procedureHours">
                     </div>
-                </div>  
-                <div class="row">
-                    <h4>Minutes</h4>
-                    <div class="col-sm-12">
+                    <div class="col-sm-3">
+                        <h4>Minutes</h4>
                         <input type="number" class="form-control" [(ngModel)]="procedureMinutes">
                     </div>
-                </div>                     
-               <div class="modal-footer">
-                   <button type="button" class="btn btn-success pull-right" (click)="saveProcedure()" data-dismiss="modal">Save</button>
-               </div>
+                </div>            
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success pull-right" (click)="saveProcedure()" data-dismiss="modal">Save</button>
+                </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->

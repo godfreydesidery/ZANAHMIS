@@ -38,11 +38,12 @@ import lombok.NoArgsConstructor;
  *
  */
 @Entity
-@Data  
+//@Data  
 @NoArgsConstructor 
 @AllArgsConstructor
 @Table(name = "users")
 public class User { 
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -72,5 +73,169 @@ public class User {
 	@Column(name = "created_on_day_id", nullable = true , updatable = false)
     private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
-		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return code;
+	}
+	/**
+	 * @param code the code to set
+	 */
+	public void setCode(String code) {
+		this.code = code;
+	}
+	/**
+	 * @return the firstName
+	 */
+	public String getFirstName() {
+		return firstName;
+	}
+	/**
+	 * @param firstName the firstName to set
+	 */
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	/**
+	 * @return the middleName
+	 */
+	public String getMiddleName() {
+		return middleName;
+	}
+	/**
+	 * @param middleName the middleName to set
+	 */
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+	/**
+	 * @return the lastName
+	 */
+	public String getLastName() {
+		return lastName;
+	}
+	/**
+	 * @param lastName the lastName to set
+	 */
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	/**
+	 * @return the nickname
+	 */
+	public String getNickname() {
+		return nickname;
+	}
+	/**
+	 * @param nickname the nickname to set
+	 */
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	/**
+	 * @return the active
+	 */
+	public boolean isActive() {
+		return active;
+	}
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	/**
+	 * @return the roles
+	 */
+	public Collection<Role> getRoles() {
+		return roles;
+	}
+	/**
+	 * @param roles the roles to set
+	 */
+	public void setRoles(Collection<Role> roles) {
+		this.roles = roles;
+	}
+	/**
+	 * @return the createdby
+	 */
+	public Long getCreatedby() {
+		return createdby;
+	}
+	/**
+	 * @param createdby the createdby to set
+	 */
+	public void setCreatedby(Long createdby) {
+		this.createdby = createdby;
+	}
+	/**
+	 * @return the createdOn
+	 */
+	public Long getCreatedOn() {
+		return createdOn;
+	}
+	/**
+	 * @param createdOn the createdOn to set
+	 */
+	public void setCreatedOn(Long createdOn) {
+		this.createdOn = createdOn;
+	}
+	/**
+	 * @return the createdAt
+	 */
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+	/**
+	 * @param createdAt the createdAt to set
+	 */
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}	
 }

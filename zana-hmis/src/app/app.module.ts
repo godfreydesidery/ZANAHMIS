@@ -72,6 +72,7 @@ import { SelectPharmacyComponent } from './pages/pharmacy/select-pharmacy/select
 import { PharmacistComponent } from './pages/admin/personnel/pharmacist/pharmacist.component';
 import { PatientPharmacyComponent } from './pages/pharmacy/patient-pharmacy/patient-pharmacy.component';
 import { PatientProcedureComponent } from './pages/procedure/patient-procedure/patient-procedure.component';
+import { AgePipe } from './pipes/age.pipe';
 
 
 @NgModule({
@@ -137,6 +138,7 @@ import { PatientProcedureComponent } from './pages/procedure/patient-procedure/p
     PharmacistComponent,
     PatientPharmacyComponent,
     PatientProcedureComponent,
+    AgePipe,//Age pipe
   ],
   imports: [
     HttpClientModule,

@@ -85,8 +85,6 @@ export class DoctorCrackingComponent implements OnInit {
     fDId : any
     
 
-
-
   diagnosisTypeNames : string[] = []
   labTestTypeNames : string[] = []
   radiologyTypeNames : string[] = []
@@ -123,6 +121,8 @@ export class DoctorCrackingComponent implements OnInit {
   procedureId : any
   procedureNote : string = ''
   procedureType : string = ''
+  procedureNeedTheatre : boolean = false
+  procedureTheatreName : string = ''
   procedureTime! : Time
   procedureDiagnosis : string = ''
   procedureDate! : Date
@@ -138,7 +138,8 @@ export class DoctorCrackingComponent implements OnInit {
   constructor(private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,
-    private msgBox : MsgBoxService) { }
+    private msgBox : MsgBoxService
+    ) { }
 
   async ngOnInit(): Promise<void> {
     this.id = localStorage.getItem('consultation-id')
@@ -163,6 +164,19 @@ export class DoctorCrackingComponent implements OnInit {
     await this.loadPrescriptions(this.id, 0)
   }
 
+  toggleTheatre(){
+    if(this.procedureNeedTheatre === false){
+      this.procedureNeedTheatre = true
+    }else{
+      this.procedureNeedTheatre =false
+      this.procedureTheatreName = ''
+      this.procedureDate!
+      this.procedureTime!
+      this.procedureHours = 0
+      this.procedureMinutes = 0
+    }
+  }
+
   async loadConsultation(id : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
@@ -176,6 +190,7 @@ export class DoctorCrackingComponent implements OnInit {
         this.id = data?.id
         this.consultation = data!
         console.log(data)
+
       }
     )
     .catch(
@@ -524,6 +539,13 @@ export class DoctorCrackingComponent implements OnInit {
 
   clearProcedure(){
     this.procedureTypeName = ''
+
+    this.procedureNeedTheatre = false
+    this.procedureTheatreName = ''
+    this.procedureDate!
+    this.procedureTime!
+    this.procedureHours = 0
+    this.procedureMinutes = 0
   }
 
   clearPrescription(){
