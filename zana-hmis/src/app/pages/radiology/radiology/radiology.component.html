@@ -17,8 +17,8 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-sm-12 alert alert-primary" role="alert">
-                            <h4>Name: <b>{{patient.firstName}} {{patient.middleName}} {{patient.lastName}}</b>, File No: <b>{{patient.no}}</b>, Date of birth: <b>{{patient.dateOfBirth | date}}</b>, {{patient.gender}}, {{patient.paymentType}}</h4>
+                        <div class="col-sm-12" style="text-align: center;">
+                            <h3 class="text-primary"><b>{{patient.firstName}} {{patient.middleName}} {{patient.lastName}}</b>, <b>{{patient.no}}</b>, Date of birth: <b>{{patient.dateOfBirth | date}}</b>, {{patient.gender}}, {{patient.paymentType}}</h3>
                         </div>
                         <hr>
                     </div>
@@ -26,31 +26,39 @@
                         <div class="row" style="margin: 1mm; background-color: rgb(246, 246, 248);">
                             <div class="col-sm-12">
                                 <h4><b>{{radiology.radiologyType?.name}}</b></h4>
+                                <span>Diagnosis: {{radiology.diagnosis}} <span class="label label-warning m-r-15" *ngIf="radiology.diagnosis === ''">NONE</span></span><br>
+                                <small>Doctor: </small><br>
+                                <small>Ordered on: </small><br>
+                                <small>Radiology ID </small><span class="label label-primary m-r-15">{{radiology?.id}}</span>
                             </div>
                             <div class="col-sm-12">
-                                <span class="label label-success m-r-15"><small>{{radiology.status}}</small></span>
-                                <button class="btn btn-default btn-rounded" (click)="acceptRadiology(radiology)">Accept</button>
-                                <button class="btn btn-default btn-rounded" (click)="rejectRadiology(radiology)">Reject</button>
-                                <button class="btn btn-default btn-rounded" (click)="holdRadiology(radiology)">Hold</button>
-                                <button class="btn btn-default btn-rounded" (click)="collectRadiology(radiology)">Collect</button>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h4 class="text-info"><b>Clinical History</b></h4>
+                                        <span>{{radiology.description}}</span>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        
+                                    </div>
+                                </div>
+                                
+                                
+                                
                                 <hr>
                             </div>
-                            <small>Last Performed </small><span class="label label-warning m-r-15">NONE</span><br>
-                            <small>Doctor: </small><br>
-                            <small>Ordered on: </small><br>
-                            <small>Radiology ID </small><span class="label label-primary m-r-15">{{radiology?.id}}</span>
-                            <div *ngIf="radiology?.status === 'ACCEPTED' || radiology?.status === 'COLLECTED' || radiology?.status === 'VERIFIED'">
+                            <div>
                                 <div class="col-sm-12">
-                                    <textarea class="form-control" *ngIf="radiology?.status === 'ACCEPTED'" [(ngModel)]="radiology.result" placeholder="Input Results" style="height: 5cm;" readonly></textarea>
-                                    <textarea class="form-control" *ngIf="radiology?.status === 'COLLECTED'" [(ngModel)]="radiology.result" placeholder="Input Results" style="height: 5cm;"></textarea>
+                                    <textarea class="form-control" *ngIf="radiology?.status === 'ACCEPTED'" [(ngModel)]="radiology.result" placeholder="Input Results" style="height: 5cm;"></textarea>
                                     <textarea class="form-control" *ngIf="radiology?.status === 'VERIFIED'" [(ngModel)]="radiology.result" placeholder="Input Results" style="height: 5cm;" readonly></textarea>
                                 </div>
                                 <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
-                                    
-                                    <div class="col-sm-3">
-                                        <span>Diagnosis</span>
-                                        <input type="text" class="form-control" [(ngModel)]="radiology.diagnosis" placeholder="Diagnosis">
+                                    <div class="col-xs-6">
+                                        <span class="label label-success m-r-15"><small>{{radiology.status}}</small></span>
+                                        <button class="btn btn-default btn-rounded" (click)="acceptRadiology(radiology)">Accept</button>
+                                        <button class="btn btn-default btn-rounded" (click)="rejectRadiology(radiology)">Reject</button>
                                     </div>
+
                                     <div class="col-sm-3">
                                         <span>Description</span>
                                         <input type="text" class="form-control" [(ngModel)]="radiology.description" placeholder="Description">

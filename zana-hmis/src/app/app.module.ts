@@ -71,6 +71,7 @@ import { PharmacyOutsiderListComponent } from './pages/pharmacy/pharmacy-outside
 import { SelectPharmacyComponent } from './pages/pharmacy/select-pharmacy/select-pharmacy.component';
 import { PharmacistComponent } from './pages/admin/personnel/pharmacist/pharmacist.component';
 import { PatientPharmacyComponent } from './pages/pharmacy/patient-pharmacy/patient-pharmacy.component';
+import { PatientProcedureComponent } from './pages/procedure/patient-procedure/patient-procedure.component';
 
 
 @NgModule({
@@ -135,6 +136,7 @@ import { PatientPharmacyComponent } from './pages/pharmacy/patient-pharmacy/pati
     SelectPharmacyComponent,
     PharmacistComponent,
     PatientPharmacyComponent,
+    PatientProcedureComponent,
   ],
   imports: [
     HttpClientModule,
@@ -198,6 +200,7 @@ import { PatientPharmacyComponent } from './pages/pharmacy/patient-pharmacy/pati
     {path : 'pharmacy-inpatient-list', component : PharmacyInpatientListComponent},
     {path : 'pharmacy-outsider-list', component : PharmacyOutsiderListComponent},
     {path : 'patient-pharmacy', component : PatientPharmacyComponent},
+    {path : 'patient-procedure', component : PatientProcedureComponent},
     ])
   ],
   schemas: [ 

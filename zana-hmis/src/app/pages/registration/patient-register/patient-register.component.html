@@ -145,6 +145,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div *ngIf="patientRecordMode === ''">
                             <div class="row">
                                 <div class="col-sm-12">
@@ -292,123 +293,110 @@
 
                                         </div>
                                     </div>
-                                    <div *ngIf="type === 'OUTSIDER'">
+
+
+                                    <div class="row">
+                                        <div class=" col-sm-4" *ngIf="type === 'OUTSIDER'">
+                                            <div class="table-responsive">
+                                                <hr>
+                                                <h4 class="text-primary"><b>Ordered Lab Tests</b></h4>
+                                                <table class="table table-bordered table-small table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <td><b>ID</b></td>
+                                                            <td><b>Test</b></td>
+                                                            <td><b>Price</b></td>
+                                                            <td><b>Action</b></td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let labTest of labTests">
+                                                            <td>{{labTest.id}}</td>
+                                                            <td>{{labTest?.labTestType?.name}}</td>
+                                                            <td style="text-align: right;"><span *ngIf="labTest.patientBill.status != 'COVERED'">{{labTest?.patientBill?.amount | currency:'':''}}</span><span *ngIf="labTest?.patientBill?.status === 'COVERED'">---</span></td>
+                                                            <td><a class="text-danger" (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td><b>Total</b></td>
+                                                            <td style="text-align: right;"><b>{{labTotal | currency:'':''}}</b></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class=" col-sm-4">
+                                            <div class="table-responsive">
+                                                <hr>
+                                                <h4 class="text-primary"><b>Ordered Radiologies</b></h4>
+                                                <table class="table table-bordered table-small table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <td><b>ID</b></td>
+                                                            <td><b>Radiology</b></td>
+                                                            <td><b>Price</b></td>
+                                                            <td><b>Action</b></td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let radiology of radiologies">
+                                                            <td>{{radiology?.id}}</td>
+                                                            <td>{{radiology?.radiologyType?.name}}</td>
+                                                            <td style="text-align: right;"><span *ngIf="radiology?.patientBill?.status != 'COVERED'">{{radiology?.patientBill?.amount | currency:'':''}}</span><span *ngIf="radiology?.patientBill?.status === 'COVERED'">---</span></td>
+                                                            <td><a class="text-danger" (click)="deleteRadiology(radiology?.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td><b>Total</b></td>
+                                                            <td style="text-align: right;"><b>{{radiologyTotal | currency:'':''}}</b></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class=" col-sm-4">
+                                            <div class="table-responsive">
+                                                <hr>
+                                                <h4 class="text-primary"><b>Ordered Procedures</b></h4>
+                                                <table class="table table-bordered table-small table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <td><b>ID</b></td>
+                                                            <td><b>Procedure</b></td>
+                                                            <td><b>Price</b></td>
+                                                            <td><b>Action</b></td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let procedure of procedures">
+                                                            <td>{{procedure?.id}}</td>
+                                                            <td>{{procedure?.procedureType?.name}}</td>
+                                                            <td style="text-align: right;"><span *ngIf="procedure?.patientBill?.status != 'COVERED'">{{procedure?.patientBill?.amount | currency:'':''}}</span><span *ngIf="procedure?.patientBill?.status === 'COVERED'">---</span></td>
+                                                            <td><a class="text-danger" (click)="deleteProcedure(procedure.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td><b>Total</b></td>
+                                                            <td style="text-align: right;"><b>{{procedureTotal | currency:'':''}}</b></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <div >
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <div class="table-responsive">
-                                                    <hr>
-                                                    <h4 class="text-primary"><b>Ordered Lab Tests</b></h4>
-                                                    <table class="table table-bordered table-small table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <td><b>ID</b></td>
-                                                                <td><b>Test</b></td>
-                                                                <td><b>Price</b></td>
-                                                                <td><b>Payment Status</b></td>
-                                                                <td><b>Status</b></td>
-                                                                <td><b>Action</b></td>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr *ngFor="let labTest of labTests">
-                                                                <td>{{labTest.id}}</td>
-                                                                <td>{{labTest?.labTestType?.name}}</td>
-                                                                <td style="text-align: right;"><span *ngIf="labTest.patientBill.status != 'COVERED'">{{labTest?.patientBill?.amount | currency:'':''}}</span><span *ngIf="labTest?.patientBill?.status === 'COVERED'">---</span></td>
-                                                                <td>
-                                                                    <span *ngIf="labTest?.patientBill?.status === 'COVERED' && labTest?.nonConsultation?.paymentType ==='INSURANCE'">{{labTest?.patientBill?.status}}</span>
-                                                                    <span *ngIf="labTest?.patientBill?.status != 'COVERED' && labTest?.nonConsultation?.paymentType !='INSURANCE'">{{labTest?.patientBill?.status}}</span>
-                                                                    <span *ngIf="labTest?.patientBill?.status != 'COVERED' && labTest?.nonConsultation?.paymentType ==='INSURANCE'">{{labTest?.patientBill?.status}}(NOT COVERED)</span>
-                                                                </td>
-                                                                <td>{{labTest?.status}}</td>
-                                                                <td><a class="text-danger" (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash"></i>Delete</a></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td></td>
-                                                                <td><b>Total</b></td>
-                                                                <td style="text-align: right;"><b>{{labTotal | currency:'':''}}</b></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div class="table-responsive">
-                                                    <hr>
-                                                    <h4 class="text-primary"><b>Ordered Radiologies</b></h4>
-                                                    <table class="table table-bordered table-small table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <td><b>ID</b></td>
-                                                                <td><b>Radiology</b></td>
-                                                                <td><b>Price</b></td>
-                                                                <td><b>Payment Status</b></td>
-                                                                <td><b>Status</b></td>
-                                                                <td><b>Action</b></td>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr *ngFor="let radiology of radiologies">
-                                                                <td>{{radiology?.id}}</td>
-                                                                <td>{{radiology?.radiologyType?.name}}</td>
-                                                                <td style="text-align: right;"><span *ngIf="radiology?.patientBill?.status != 'COVERED'">{{radiology?.patientBill?.amount | currency:'':''}}</span><span *ngIf="radiology?.patientBill?.status === 'COVERED'">---</span></td>
-                                                                <td>
-                                                                    <span *ngIf="radiology?.patientBill?.status === 'COVERED' && radiology?.nonConsultation?.paymentType ==='INSURANCE'">{{radiology?.patientBill?.status}}</span>
-                                                                    <span *ngIf="radiology?.patientBill?.status != 'COVERED' && radiology?.nonConsultation?.paymentType !='INSURANCE'">{{radiology?.patientBill?.status}}</span>
-                                                                    <span *ngIf="radiology?.patientBill?.status != 'COVERED' && radiology?.nonConsultation?.paymentType ==='INSURANCE'">{{radiology?.patientBill?.status}}(NOT COVERED)</span>
-                                                                </td>
-                                                                <td>{{radiology?.status}}</td>
-                                                                <td><a class="text-danger" (click)="deleteRadiology(radiology?.id)"><i class="fa fa-trash"></i>Delete</a></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td></td>
-                                                                <td><b>Total</b></td>
-                                                                <td style="text-align: right;"><b>{{radiologyTotal | currency:'':''}}</b></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div class="table-responsive">
-                                                    <hr>
-                                                    <h4 class="text-primary"><b>Ordered Procedures</b></h4>
-                                                    <table class="table table-bordered table-small table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <td><b>ID</b></td>
-                                                                <td><b>Procedure</b></td>
-                                                                <td><b>Price</b></td>
-                                                                <td><b>Payment Status</b></td>
-                                                                <td><b>Status</b></td>
-                                                                <td><b>Action</b></td>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr *ngFor="let procedure of procedures">
-                                                                <td>{{procedure?.id}}</td>
-                                                                <td>{{procedure?.procedureType?.name}}</td>
-                                                                <td style="text-align: right;"><span *ngIf="procedure?.patientBill?.status != 'COVERED'">{{procedure?.patientBill?.amount | currency:'':''}}</span><span *ngIf="procedure?.patientBill?.status === 'COVERED'">---</span></td>
-                                                                <td>
-                                                                    <span *ngIf="procedure?.patientBill?.status === 'COVERED' && procedure?.nonConsultation?.paymentType ==='INSURANCE'">{{procedure?.patientBill?.status}}</span>
-                                                                    <span *ngIf="procedure?.patientBill?.status != 'COVERED' && procedure?.nonConsultation?.paymentType !='INSURANCE'">{{procedure?.patientBill?.status}}</span>
-                                                                    <span *ngIf="procedure?.patientBill?.status != 'COVERED' && procedure?.nonConsultation?.paymentType ==='INSURANCE'">{{procedure?.patientBill?.status}}(NOT COVERED)</span>
-                                                                </td>
-                                                                <td>{{procedure.status}}</td>
-                                                                <td><a class="text-danger" (click)="deleteProcedure(procedure.id)"><i class="fa fa-trash"></i>Delete</a></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td></td>
-                                                                <td><b>Total</b></td>
-                                                                <td style="text-align: right;"><b>{{procedureTotal | currency:'':''}}</b></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                
+                                                
+                                                
                                             </div>
                                         </div>
                                     </div>
