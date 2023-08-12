@@ -805,6 +805,40 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(patientService.saveRadiology(radiology, c, nc, request));
 	}
 	
+	@PostMapping("/patients/radiologies/save_reason_for_rejection")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+		public void saveRejectComment(
+				@RequestBody Radiology radiology,
+				HttpServletRequest request){
+			Optional<Radiology> r = radiologyRepository.findById(radiology.getId());
+			if(r.isEmpty()) {
+				throw new NotFoundException("Radiology not found");
+			}
+			if(r.get().getStatus().equals("REJECTED")) {
+				r.get().setRejectComment(radiology.getRejectComment());
+				radiologyRepository.save(r.get());
+			}else {
+				throw new InvalidOperationException("Could not save. Only allowed for rejected tests");
+			}
+		}
+	
+	@PostMapping("/patients/lab_tests/save_reason_for_rejection")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+		public void saveLabTestRejectComment(
+				@RequestBody LabTest test,
+				HttpServletRequest request){
+			Optional<LabTest> r = labTestRepository.findById(test.getId());
+			if(r.isEmpty()) {
+				throw new NotFoundException("Lab Test not found");
+			}
+			if(r.get().getStatus().equals("REJECTED")) {
+				r.get().setRejectComment(test.getRejectComment());
+				labTestRepository.save(r.get());
+			}else {
+				throw new InvalidOperationException("Could not save. Only allowed for rejected tests");
+			}
+		}
+	
 	@PostMapping("/patients/save_procedure")
 	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<Procedure>saveProcedure(
@@ -897,6 +931,8 @@ public class PatientResource {
 			LabTestModel model= new LabTestModel();
 			model.setId(l.getId());
 			model.setResult(l.getResult());
+			model.setReport(l.getReport());
+			model.setDescription(l.getDescription());
 			model.setLabTestType(l.getLabTestType());
 			model.setPatientBill(l.getPatientBill());
 			model.setRange(l.getRange());
@@ -977,9 +1013,10 @@ public class PatientResource {
 			RadiologyModel model= new RadiologyModel();
 			model.setId(r.getId());
 			model.setResult(r.getResult());
+			model.setReport(r.getReport());
 			model.setRadiologyType(r.getRadiologyType());
 			model.setDescription(r.getDescription());
-			model.setDiagnosis(r.getDiagnosis());
+			model.setDiagnosisType(r.getDiagnosisType());			
 			model.setPatientBill(r.getPatientBill());
 			model.setAttachment(r.getAttachment());
 			if(r.getCreatedAt() != null) {
@@ -1221,6 +1258,40 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(true);
 	}
 	
+	@PostMapping("/patients/radiologies/add_report")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public void addReport(
+			@RequestBody Radiology radiology,
+			HttpServletRequest request){
+		Optional<Radiology> r = radiologyRepository.findById(radiology.getId());
+		if(r.isEmpty()) {
+			throw new NotFoundException("Radiology not found");
+		}
+		if(r.get().getPatientBill().getStatus().equals("PAID") || r.get().getPatientBill().getStatus().equals("COVERED")) {
+			r.get().setReport(radiology.getReport());
+			radiologyRepository.save(r.get());
+		}else {
+			throw new InvalidOperationException("Could not add report. Payment not verified");
+		}		
+	}
+	
+	
+	@PostMapping("/patients/lab_tests/add_report")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public void addLabTestReport(
+			@RequestBody LabTest labTest,
+			HttpServletRequest request){
+		Optional<LabTest> r = labTestRepository.findById(labTest.getId());
+		if(r.isEmpty()) {
+			throw new NotFoundException("Lab Test not found");
+		}
+		if(r.get().getPatientBill().getStatus().equals("PAID") || r.get().getPatientBill().getStatus().equals("COVERED")) {
+			r.get().setReport(labTest.getReport());
+			labTestRepository.save(r.get());
+		}else {
+			throw new InvalidOperationException("Could not add report. Payment not verified");
+		}		
+	}
 	
 	@PostMapping("/patients/delete_radiology")
 	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
@@ -1485,6 +1556,40 @@ public class PatientResource {
 				t.setPatientBill(test.getPatientBill());
 				t.setStatus(test.getStatus());
 				t.setVerified("Not Available");;
+				
+				
+				
+				if(test.getCreatedAt() != null) {
+					t.setCreated(test.getCreatedAt().toString()+" | "+userService.getUserById(test.getCreatedby()).getNickname());
+				}else {
+					t.setCreated("");
+				}
+				if(test.getOrderedAt() != null) {
+					t.setOrdered(test.getOrderedAt().toString()+" | "+userService.getUserById(test.getOrderedby()).getNickname());
+				}else {
+					t.setOrdered("");
+				}
+				if(test.getRejectedAt() != null) {
+					t.setRejected(test.getRejectedAt().toString()+" | "+userService.getUserById(test.getRejectedby()).getNickname() + " | "+test.getRejectComment());
+				}else {
+					t.setRejected("");
+				}
+				t.setRejectComment(test.getRejectComment());			
+				if(test.getAcceptedAt() != null) {
+					t.setAccepted(test.getAcceptedAt().toString()+" | "+userService.getUserById(test.getAcceptedby()).getNickname());
+				}else {
+					t.setAccepted("");
+				}
+				if(test.getHeldAt() != null) {
+					t.setHeld(test.getHeldAt().toString()+" | "+userService.getUserById(test.getHeldby()).getNickname());
+				}else {
+					t.setHeld("");
+				}		
+				if(test.getVerifiedAt() != null) {
+					t.setVerified(test.getVerifiedAt().toString()+" | "+userService.getUserById(test.getVerifiedby()).getNickname());
+				}else {
+					t.setVerified("");
+				}				
 				labTestsToReturn.add(t);				
 			}
 		}
@@ -1683,7 +1788,7 @@ public class PatientResource {
 				RadiologyModel radio = new RadiologyModel();
 				radio.setId(radiology.getId());
 				radio.setResult(radiology.getResult());
-				radio.setDiagnosis(radiology.getDiagnosis());
+				radio.setDiagnosisType(radiology.getDiagnosisType());
 				radio.setDescription(radiology.getDescription());
 				radio.setAttachment(radiology.getAttachment());
 				radio.setRadiologyType(radiology.getRadiologyType());
@@ -1815,7 +1920,7 @@ public class PatientResource {
 			throw new InvalidOperationException("Could not verify, only COLLECTED radiologies can be verified");
 		}
 		radiology.get().setResult(radio.getResult());
-		radiology.get().setDiagnosis(radio.getDiagnosis());
+		radiology.get().setDiagnosisType(radio.getDiagnosisType());
 		radiology.get().setDescription(radio.getDescription());
 		radiology.get().setAttachment(radio.getAttachment());
 				
@@ -1993,5 +2098,6 @@ class LRadiology {
 	private String diagnosis;
 	private String description;
 	private Byte[] attachment;
+	private DiagnosisType diagnosisType;
 }
 

@@ -94,16 +94,24 @@ export class DoctorCrackingComponent implements OnInit {
   workingDiagnosises : IWorkingDiagnosis[] = []
   finalDiagnosises : IFinalDiagnosis[] = []
 
-  labTests : ILabTest[] = []
-  radiologies : IRadiology[] = []
+  
+  
   procedures : IProcedure[] = []
   prescriptions : IPrescription[] = []
 
+  labTests : ILabTest[] = []
+  labTestId : any
   labTestTypeName : string = ''
+  labTestDiagnosis : string = ''
+  labTestDescription : string = ''
+  labTestReport : string = ''
 
+  radiologies : IRadiology[] = []
+  radiologyId : any
   radiologyTypeName : string = ''
   radiologyDiagnosis : string = ''
   radiologyDescription : string = ''
+  radiologyReport : string = ''
 
 
   procedureTypeName : string = ''
@@ -666,7 +674,9 @@ export class DoctorCrackingComponent implements OnInit {
         id : null,
         code : '',
         name : this.labTestTypeName
-      }
+      },
+      diagnosisType : {name : this.diagnosisTypeName},   
+      description : this.labTestDescription     
     }
     this.spinner.show()
     await this.http.post(API_URL+'/patients/save_lab_test?consultation_id='+this.id+'&non_consultation_id='+0, labTest, options)
@@ -698,7 +708,7 @@ export class DoctorCrackingComponent implements OnInit {
         code : '',
         name : this.radiologyTypeName,
       },
-      diagnosis : this.radiologyDiagnosis,   
+      diagnosisType : {name : this.diagnosisTypeName},   
       description : this.radiologyDescription       
     }
     this.spinner.show()
@@ -717,6 +727,70 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     this.loadRadiologies(this.id, 0)
+  }
+
+  async addRadiologyReport(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var radiology  = {
+      id : this.radiologyId,
+      report : this.radiologyReport
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/radiologies/add_report', radiology, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      () => {
+        this.msgBox.showSuccessMessage('Added successifully')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+    this.loadRadiologies(this.id, 0)
+  }
+
+  showRadiologyReport(id : any, radiologyTypeName : string, report : string){
+    this.radiologyId = id
+    this.radiologyTypeName = radiologyTypeName
+    this.radiologyReport = report
+  }
+
+  async addLabTestReport(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var labTest  = {
+      id : this.labTestId,
+      report : this.labTestReport
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/lab_tests/add_report', labTest, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      () => {
+        this.msgBox.showSuccessMessage('Added successifully')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+    this.loadLabTest(this.id, 0)
+  }
+
+  showLabTestReport(id : any, labTestTypeName : string, report : string){
+    this.labTestId = id
+    this.labTestTypeName = labTestTypeName
+    this.labTestReport = report
   }
 
   async saveProcedure(){
@@ -851,7 +925,7 @@ export class DoctorCrackingComponent implements OnInit {
     .catch(
       (error) => {
         console.log(error['error'])
-        this.msgBox.showErrorMessage('Could not load radiologies')
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
     

@@ -40,11 +40,18 @@ public class LabTest {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String result;
+	private String report;
+	private String description;
 	@Column(name = "rrange")//this way because range is a reserved keyword in databases
 	private String range;
 	private String level;
 	private String unit;
 	private String status;
+	
+	@ManyToOne(targetEntity = DiagnosisType.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "diagnosis_type_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private DiagnosisType diagnosisType;
 	
 	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "consultation_id", nullable = true , updatable = false)

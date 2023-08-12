@@ -7,11 +7,13 @@ import { INonConsultation } from "./non-consultation"
 import { IPatient } from "./patient"
 import { IRadiologyType } from "./radiology-type"
 import { IUser } from "./user"
+import { IDiagnosisType } from "./diagnosis-type"
 
 export interface IRadiology {
     id          : any
     result      : string
-    diagnosis   : string
+    report      : string
+    diagnosisType   : IDiagnosisType
     description : string
     //attachment  : Byte[]
 
@@ -24,7 +26,7 @@ export interface IRadiology {
     nonConsultation : INonConsultation
     admission       : IAdmission
     patientBill     : IPatientBill
-    radiologyType?   : IRadiologyType
+    radiologyType   : IRadiologyType
     
     //createdBy       : IUser
     //createdOn       : IDay

@@ -26,7 +26,7 @@ export class RadiologyComponent {
 
   radiologies : IRadiology[] = []
 
-  rs : number[] = [1,2,3.4,5,6]
+  diagnosisTypeNames : string[] = []
 
   constructor(private auth : AuthService,
     private http :HttpClient,
@@ -41,6 +41,8 @@ export class RadiologyComponent {
     await this.loadPatient(this.id)
     await this.loadRadiologiesByPatient(this.id)
   }
+
+  
 
   async loadPatient(id : any){
     let options = {
@@ -93,10 +95,7 @@ export class RadiologyComponent {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var radio  = {
-      id          : radiology.id,
-      result      : radiology.result,
-      diagnosis   : radiology.diagnosis,
-      description : radiology.description
+      id          : radiology.id
     }
     this.spinner.show()
     await this.http.post<boolean>(API_URL+'/patients/accept_radiology', radio, options)
@@ -120,10 +119,7 @@ export class RadiologyComponent {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var radio  = {
-      id          : radiology.id,
-      result      : radiology.result,
-      diagnosis   : radiology.diagnosis,
-      description : radiology.description
+      id          : radiology.id
     }
     this.spinner.show()
     await this.http.post<boolean>(API_URL+'/patients/reject_radiology', radio, options)
@@ -142,15 +138,36 @@ export class RadiologyComponent {
     this.loadRadiologiesByPatient(this.id)
   }
 
+  async saveReasonForRejection(id : any, reason : string){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var radio  = {
+      id          : id,
+      rejectComment : reason
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/radiologies/save_reason_for_rejection', radio, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Success')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
   async holdRadiology(radiology : IRadiology){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var radio  = {
-      id          : radiology.id,
-      result      : radiology.result,
-      diagnosis   : radiology.diagnosis,
-      description : radiology.description
+      id          : radiology.id
     }
     this.spinner.show()
     await this.http.post<boolean>(API_URL+'/patients/hold_radiology', radio, options)
@@ -174,10 +191,7 @@ export class RadiologyComponent {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var radio  = {
-      id          : radiology.id,
-      result      : radiology.result,
-      diagnosis   : radiology.diagnosis,
-      description : radiology.description
+      id          : radiology.id
     }
     this.spinner.show()
     await this.http.post<boolean>(API_URL+'/patients/collect_radiology', radio, options)
@@ -201,10 +215,7 @@ export class RadiologyComponent {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var radio  = {
-      id          : radiology.id,
-      result      : radiology.result,
-      diagnosis   : radiology.diagnosis,
-      description : radiology.description
+      id          : radiology.id
     }
     this.spinner.show()
     await this.http.post<boolean>(API_URL+'/patients/verify_radiology', radio, options)

@@ -74,14 +74,6 @@ public class User {
     private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
 	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * @return the id
 	 */

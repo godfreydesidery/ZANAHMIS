@@ -6,10 +6,13 @@ import { ILabTestType } from "./lab-test-type"
 import { INonConsultation } from "./non-consultation"
 import { IPatient } from "./patient"
 import { IUser } from "./user"
+import { IDiagnosisType } from "./diagnosis-type"
 
 export interface ILabTest {
     id      : any
-    result  : string    
+    result  : string
+    report  : string 
+    description   : string   
     range   : string
     level   : string
     unit    : string
@@ -21,6 +24,7 @@ export interface ILabTest {
     admission       : IAdmission
     patientBill     : IPatientBill
     labTestType     : ILabTestType
+    diagnosisType   : IDiagnosisType
 
     created : string
     ordered : string
@@ -29,29 +33,4 @@ export interface ILabTest {
     rejectComment : string
     collected : string
     verified : string
-    
-    /*createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
-
-    orderedBy       : IUser
-    orderedOn       : IDay
-    orderedAt       : Date
-
-    acceptedBy       : IUser
-    acceptedOn       : IDay
-    acceptedAt       : Date
-
-    rejectedBy       : IUser
-    rejectedOn       : IDay
-    rejectedAt       : Date
-    rejectComment    : string
-
-    collectedBy       : IUser
-    collectedOn       : IDay
-    collectedAt       : Date
-
-    verifiedBy       : IUser
-    verifiedOn       : IDay
-    verifiedAt       : Date*/
 }

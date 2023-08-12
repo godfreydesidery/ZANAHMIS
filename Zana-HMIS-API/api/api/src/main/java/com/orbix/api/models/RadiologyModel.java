@@ -19,6 +19,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.Day;
+import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientBill;
@@ -35,12 +36,14 @@ import lombok.Data;
 public class RadiologyModel {
 	private Long id = null;
 	private String result = "";
-	private String diagnosis = "";
+	private String report = "";
+	//private String diagnosis = "";
 	private String description = "";
 	private Byte[] attachment = null;
 	private String status = "";	
 	
-    private RadiologyType radiologyType;	
+    private RadiologyType radiologyType;
+    private DiagnosisType diagnosisType;
     private PatientBill patientBill;
     private Patient patient;
 		

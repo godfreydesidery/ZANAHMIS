@@ -178,7 +178,10 @@
                                                             <span *ngIf="labTest.patientBill?.status != 'COVERED' && consultation.paymentType ==='INSURANCE'">{{labTest.patientBill?.status}}(NOT COVERED)</span>
                                                         </td>
                                                         <td>{{labTest?.status}}</td>
-                                                        <td><a (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                        <td>
+                                                            <a (click)="showLabTestReport(labTest.id, labTest.labTestType.name, labTest.report)" *ngIf="labTest.patientBill?.status === 'COVERED' || labTest.patientBill?.status === 'PAID'" data-toggle="modal" data-target="#add-report-to-lab-test-modal"><i class="fa fa-pencil"></i>Report</a>
+                                                            <a (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash"></i>Delete</a>
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>    
@@ -220,7 +223,10 @@
                                                             <span *ngIf="radiology.patientBill?.status != 'COVERED' && consultation.paymentType ==='INSURANCE'">{{radiology.patientBill?.status}}(NOT COVERED)</span>
                                                         </td>
                                                         <td>{{radiology?.status}}</td>
-                                                        <td><a (click)="deleteRadiology(radiology?.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                        <td>
+                                                            <a (click)="showRadiologyReport(radiology.id, radiology.radiologyType.name, radiology.report)" *ngIf="radiology.patientBill?.status === 'COVERED' || radiology.patientBill?.status === 'PAID'" data-toggle="modal" data-target="#add-report-to-radiology-modal"><i class="fa fa-pencil"></i>Report</a>
+                                                            <a (click)="deleteRadiology(radiology?.id)"><i class="fa fa-trash"></i>Delete</a>
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>    
@@ -458,7 +464,23 @@
                             <option *ngFor="let name of labTestTypeNames">{{name}}</option>
                         </select>
                      </div>
-                 </div>   
+                 </div>  
+                 <div class="row">
+                    <div class="col-sm-12">
+                        <h4>Select Diagnosis(Provisional Diagnosis)</h4>
+                        <select class="form-control" [(ngModel)]="diagnosisTypeName">
+                            <option></option>
+                            <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <br>
+                        <h4>Description</h4>
+                        <textarea class="form-control" [(ngModel)]="labTestDescription" style="height: 3cm;" placeholder="Description"></textarea>
+                    </div>
+                </div>    
                     
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success pull-right" (click)="saveLabTest()" data-dismiss="modal">Save</button>
@@ -469,7 +491,7 @@
 </div>
 
 <div class="modal fade modal-success" id="lab-test-result-modal" tabindex="-2" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg" role="document" style="width: 100%;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -483,6 +505,7 @@
                                 <tr>
                                     <td>Test</td>
                                     <td>Result</td>
+                                    <td>Report</td>
                                     <td></td>
                                     <td></td>
                                 </tr>
@@ -491,6 +514,7 @@
                                 <tr *ngFor="let labTest of labTests">
                                     <td><b>{{labTest.labTestType?.name}}</b></td>
                                     <td>{{labTest.result}}</td>
+                                    <td>{{labTest.report}}</td>
                                     <td>
                                         <table>
                                             <tbody>
@@ -525,6 +549,37 @@
     </div><!-- /.modal -->
 </div>
 
+
+<!-- Modal success -->
+<div class="modal fade modal-success" id="add-report-to-lab-test-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Add Doctor Report to Lab Test</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="text-info">{{labTestTypeName}}</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <br>
+                        <h4>Doctor Report</h4>
+                        <textarea class="form-control" [(ngModel)]="labTestReport" style="height: 3cm;" placeholder="Doctor Report"></textarea>
+                    </div>
+                </div>   
+                   
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-success pull-right" (click)="addLabTestReport()" data-dismiss="modal">Save</button>
+               </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
     <!-- Modal success -->
 <div class="modal fade modal-success" id="assign-radiology-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
@@ -545,16 +600,18 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <br>
-                        <h4>Diagnosis  (provisional diagnosis)</h4>
-                        <input type="text" class="form-control" [(ngModel)]="radiologyDiagnosis" placeholder="Diagnosis">
+                        <h4>Select Diagnosis(Provisional Diagnosis)</h4>
+                        <select class="form-control" [(ngModel)]="diagnosisTypeName">
+                            <option></option>
+                            <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
+                        </select>
                     </div>
-                </div>  
+                </div>
                 <div class="row">
                     <div class="col-sm-12">
                         <br>
-                        <h4>Description    (clinical history)</h4>
-                        <textarea class="form-control" [(ngModel)]="radiologyDescription" placeholder="Description"></textarea>
+                        <h4>Description</h4>
+                        <textarea class="form-control" [(ngModel)]="radiologyDescription" style="height: 3cm;" placeholder="Description"></textarea>
                     </div>
                 </div>   
                    
@@ -566,8 +623,43 @@
     </div><!-- /.modal -->
 </div>
 
-<div class="modal fade modal-success" id="radiology-result-modal" tabindex="-2" role="dialog">
+
+   <!-- Modal success -->
+   <div class="modal fade modal-success" id="add-report-to-radiology-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Add Doctor Report to Radiology</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="text-info">{{radiologyTypeName}}</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <br>
+                        <h4>Doctor Report</h4>
+                        <textarea class="form-control" [(ngModel)]="radiologyReport" style="height: 3cm;" placeholder="Doctor Report"></textarea>
+                    </div>
+                </div>   
+                   
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-success pull-right" (click)="addRadiologyReport()" data-dismiss="modal">Save</button>
+               </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+
+
+
+
+<div class="modal fade modal-success" id="radiology-result-modal" tabindex="-2" role="dialog">
+    <div class="modal-dialog modal-lg" role="document" style="width: 100%;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -593,8 +685,9 @@
                                     <td>
                                         <table>
                                             <tbody>
-                                                <tr><td><small>Diagnosis: {{radiology?.diagnosis}}</small></td></tr>
-                                                <tr><td><small>Description: {{radiology?.description}}</small> </td></tr>    
+                                                <tr><td><small>Diagnosis: {{radiology?.diagnosisType?.name}}</small></td></tr>
+                                                <tr><td><small>Description: {{radiology?.description}}</small> </td></tr> 
+                                                <tr><td><small>Doctor Report: {{radiology?.report}}</small> </td></tr>   
                                             </tbody>
                                         </table>
                                     </td>
@@ -758,6 +851,3 @@
     </div><!-- /.modal -->
 
     <!-- Modal success -->
-
-    
-    

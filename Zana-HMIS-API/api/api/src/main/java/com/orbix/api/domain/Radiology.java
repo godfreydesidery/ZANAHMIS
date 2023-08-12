@@ -39,10 +39,15 @@ public class Radiology {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String result;
-	private String diagnosis;
+	private String report;
 	private String description;
 	private Byte[] attachment;
 	private String status;
+	
+	@ManyToOne(targetEntity = DiagnosisType.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "diagnosis_type_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private DiagnosisType diagnosisType;
 	
 	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "consultation_id", nullable = true , updatable = true)

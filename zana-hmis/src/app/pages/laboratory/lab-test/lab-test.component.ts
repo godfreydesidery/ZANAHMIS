@@ -231,6 +231,30 @@ export class LabTestComponent implements OnInit {
     )
     this.loadLabTestsByPatient(this.id)
   }
+
+  async saveReasonForRejection(id : any, reason : string){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var test  = {
+      id          : id,
+      rejectComment : reason
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/lab_tests/save_reason_for_rejection', test, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Success')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
 }
 
 

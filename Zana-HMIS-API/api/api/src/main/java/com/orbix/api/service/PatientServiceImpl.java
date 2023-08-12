@@ -20,6 +20,7 @@ import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.ConsultationInsurancePlan;
+import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.PatientInvoice;
 import com.orbix.api.domain.PatientInvoiceDetail;
@@ -45,6 +46,7 @@ import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.ConsultationInsurancePlanRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.DayRepository;
+import com.orbix.api.repositories.DiagnosisTypeRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.PatientInvoiceDetailRepository;
 import com.orbix.api.repositories.PatientInvoiceRepository;
@@ -106,6 +108,7 @@ public class PatientServiceImpl implements PatientService {
 	private final MedicineRepository medicineRepository;
 	private final PrescriptionRepository prescriptionRepository;
 	private final RegistrationRepository registrationRepository;
+	private final DiagnosisTypeRepository diagnosisTypeRepository;
 	
 	
 	
@@ -600,6 +603,11 @@ public class PatientServiceImpl implements PatientService {
 		if(!ltt.isPresent()) {
 			throw new NotFoundException("Lab Test type not found");
 		}
+		
+		Optional<DiagnosisType> dt = diagnosisTypeRepository.findByName(test.getDiagnosisType().getName());
+		if(!dt.isPresent() && !test.getDiagnosisType().getName().equals(""))	{
+			throw new NotFoundException("Lab Test type not found");
+		}
 		//LabTestType labTestType = labTestTypeRepository.save(ltt.get());
 		if(c.isPresent() && nc.isPresent()) {
 			throw new InvalidOperationException("Could not save, labtest has two controversial properties");
@@ -626,6 +634,7 @@ public class PatientServiceImpl implements PatientService {
 		}
 		
 		test.setLabTestType(ltt.get());
+		test.setDiagnosisType(dt.get());
 		test.setStatus("PENDING");
 		PatientBill patientBill = new PatientBill();
 		patientBill.setAmount(test.getLabTestType().getPrice());
@@ -716,9 +725,13 @@ public class PatientServiceImpl implements PatientService {
 	public Radiology saveRadiology(Radiology radio, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request) {
 		Patient patient = new Patient();
 		Optional<RadiologyType> rt = radiologyTypeRepository.findByName(radio.getRadiologyType().getName());
-		 
+				 
 		if(!rt.isPresent()) {
 			throw new NotFoundException("Radiology type not found");
+		}
+		Optional<DiagnosisType> dt = diagnosisTypeRepository.findByName(radio.getDiagnosisType().getName());
+		if(!dt.isPresent() && !radio.getDiagnosisType().getName().equals(""))	{
+			throw new NotFoundException("Diagnosis type not found");
 		}
 		if(c.isPresent() && nc.isPresent()) {
 			throw new InvalidOperationException("Could not save, radiology has two controversial properties");
@@ -747,6 +760,7 @@ public class PatientServiceImpl implements PatientService {
 		
 		
 		radio.setRadiologyType(rt.get());
+		radio.setDiagnosisType(dt.get());
 		radio.setStatus("PENDING");
 		PatientBill patientBill = new PatientBill();
 		patientBill.setAmount(radio.getRadiologyType().getPrice());

@@ -22,38 +22,42 @@
                         </div>
                         <hr>
                     </div>
-                    <div class="col-sm-6" *ngFor="let labTest of labTests">
+                    <div class="col-sm-12" *ngFor="let labTest of labTests">
                         <div class="row" style="margin: 1mm; background-color: rgb(246, 246, 248);">
-                            <div class="col-sm-12">
+                            <div class="col-sm-4">
                                 <h4><b>{{labTest.labTestType.name}}</b></h4>
-                            </div>
-                            <div class="col-sm-12">
-                                <span class="label label-success m-r-15"><small>{{labTest.status}}</small></span>
+                                <span>Status: </span><span><small>{{labTest.status}}</small></span><br><br>
+                                <span>Diagnosis: {{labTest?.diagnosisType?.name}} <span *ngIf="labTest?.diagnosisType?.name === null">NONE</span></span><br><br>
+                                <small>Ordered At | By: {{labTest?.created}}</small><br>
+                                <h4 class="text-info"><b>Clinical History</b></h4>
+                                <span>{{labTest.description}}</span><br>
                                 <button class="btn btn-default btn-rounded" (click)="acceptLabTest(labTest)">Accept</button>
                                 <button class="btn btn-default btn-rounded" (click)="rejectLabTest(labTest)">Reject</button>
-                                <button class="btn btn-default btn-rounded" (click)="holdLabTest(labTest)">Hold</button>
                                 <button class="btn btn-default btn-rounded" (click)="collectLabTest(labTest)">Collect</button>
-                                <hr>
-                            </div>
-                            <small>Last Tested </small><span class="label label-warning m-r-15">NONE</span><br>
-                            <small>Doctor: </small><br>
-                            <small>Ordered on: </small><br>
-                            <small>Test ID </small><span class="label label-primary m-r-15">{{labTest?.id}}</span>
-                            <div *ngIf="labTest?.status === 'ACCEPTED' || labTest?.status === 'COLLECTED' || labTest?.status === 'VERIFIED'">
-                                <div class="col-sm-12">
-                                    <textarea class="form-control" *ngIf="labTest?.status === 'ACCEPTED'" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;" readonly></textarea>
-                                    <textarea class="form-control" *ngIf="labTest?.status === 'COLLECTED'" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;"></textarea>
-                                    <textarea class="form-control" *ngIf="labTest?.status === 'VERIFIED'" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;" readonly></textarea>
+                               
+                                <div *ngIf="labTest?.status === 'REJECTED'">
+                                    <h5>Reason for rejection</h5>
+                                    <input type="text" class="form-control" [(ngModel)]="labTest.rejectComment" placeholder="Reason for rejection"><br>
+                                    <button class="btn btn-info" (click)="saveReasonForRejection(labTest.id, labTest.rejectComment)">Save Reason for Rejection</button>
                                 </div>
-                                <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
-                                    <div class="col-sm-3">
+                                 <hr>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="row" *ngIf="labTest?.status === 'ACCEPTED' || labTest?.status === 'COLLECTED' || labTest?.status === 'VERIFIED'" style="padding-left: 3mm; padding-right: 3mm;">
+                                    <div class="col-sm-12">
+                                        <span>Results</span>
+                                        <textarea class="form-control" *ngIf="labTest?.status === 'ACCEPTED'" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;" readonly></textarea>
+                                        <textarea class="form-control" *ngIf="labTest?.status === 'VERIFIED'" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;" readonly></textarea>
+                                        <textarea class="form-control" *ngIf="labTest?.status === 'COLLECTED'" [(ngModel)]="labTest.result" placeholder="Input Results" style="height: 5cm;"></textarea>
+                                    </div>
+                                    <div class="col-sm-4">
                                         <span>Range</span>
                                         <select class="form-control" [(ngModel)]="labTest.range">
                                             <option></option>
                                             <option *ngFor="let range of labTest.labTestType.labTestTypeRanges">{{range.name}}</option>
                                         </select>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <span>Level</span>
                                         <select class="form-control" [(ngModel)]="labTest.level">
                                             <option></option>
@@ -62,40 +66,24 @@
                                             <option>High</option>
                                         </select>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <span>Unit</span>
                                         <input type="text" class="form-control" [(ngModel)]="labTest.unit" placeholder="Unit">
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-6">
                                         <span>Attachment</span>
                                         <input type="file" class="form-control">
                                     </div>
-                                </div>
-                                <div class="row" style="padding-left: 3mm; padding-right: 3mm;">
-                                    <br>
-                                    <div class="col-sm-12">
-                                        <span class="label label-info m-r-15">Verified By: {{labTest.verified}}</span>
-                                    </div>
-                                    <div class="col-sm-12" style="text-align: right;">
+                                    <div class="col-sm-6">
+                                        <br>
                                         <button class="btn btn-primary" (click)="verifyLabTest(labTest)">Verify Results</button>
                                     </div>
-                                </div>
-                            </div>
-                            <div *ngIf="labTest?.status === 'REJECTED'">
-                                <br>
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <h5>Reason for rejection</h5>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control" placeholder="Reason for rejection">
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <button class="btn btn-info">Save</button>
+                                    <div class="col-sm-12">
+                                        <br>
+                                        <span class="label label-info m-r-15">Verified At | By: {{labTest.verified}}</span>
                                     </div>
                                 </div>
                             </div>
-                            
                         </div>
                     </div>
                 </div> 
