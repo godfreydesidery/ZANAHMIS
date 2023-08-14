@@ -141,6 +141,9 @@ export class DoctorCrackingComponent implements OnInit {
 
   procedure! : IProcedure
 
+  theatreName : string = ''
+  theatreNames : string[] = []
+
 
 
   constructor(private auth : AuthService,
@@ -163,6 +166,7 @@ export class DoctorCrackingComponent implements OnInit {
     await this.loadLabTestTypeNames()
     await this.loadRadiologyTypeNames()
     await this.loadProcedureTypeNames()
+    await this.loadTheatreNames()
     await this.loadMedicineNames()
     await this.loadWorkingDiagnosis(this.id)
     await this.loadFinalDiagnosis(this.id)
@@ -170,11 +174,13 @@ export class DoctorCrackingComponent implements OnInit {
     await this.loadRadiologies(this.id, 0)
     await this.loadProcedures(this.id, 0)
     await this.loadPrescriptions(this.id, 0)
+    
   }
 
   toggleTheatre(){
     if(this.procedureNeedTheatre === false){
       this.procedureNeedTheatre = true
+      this.procedureType = 'THEATRE'
     }else{
       this.procedureNeedTheatre =false
       this.procedureTheatreName = ''
@@ -182,6 +188,7 @@ export class DoctorCrackingComponent implements OnInit {
       this.procedureTime!
       this.procedureHours = 0
       this.procedureMinutes = 0
+      this.procedureType = 'NON-THEATRE'
     }
   }
 
@@ -258,6 +265,7 @@ export class DoctorCrackingComponent implements OnInit {
         this.gEWeight = data!.weight
         this.gEHeight = data!.height
         this.gEBodyMassIndex = data!.bodyMassIndex
+        this.gEBodyMassIndexComment = data!.bodyMassIndexComment
         this.gEBodySurfaceArea = data!.bodySurfaceArea
         this.gESaturationOxygen = data!.saturationOxygen
         this.gERespiratoryRate = data!.respiratoryRate
@@ -665,6 +673,30 @@ export class DoctorCrackingComponent implements OnInit {
     )
   }
 
+  async loadTheatreNames(){
+    this.theatreNames = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/theatres/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        data?.forEach(element => {
+          this.theatreNames.push(element)
+        })
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load theatre names')
+      }
+    )
+  }
+
   async saveLabTest(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
@@ -797,14 +829,15 @@ export class DoctorCrackingComponent implements OnInit {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    var procedure  = {
+    var procedure = {
       procedureType : {
         id    : null,
         code  : '',
         name  : this.procedureTypeName
       },
       type      : this.procedureType,
-      diagnosis : this.procedureDiagnosis,
+      theatre   : { name : this.theatreName },
+      diagnosisType : { name : this.diagnosisTypeName},
       time      : this.procedureTime,
       date      : this.procedureDate,
       hours     : this.procedureHours,
@@ -828,9 +861,38 @@ export class DoctorCrackingComponent implements OnInit {
     this.loadProcedures(this.id, 0)
   }
 
-  async saveProcedureNote(id : any){
-    
+  showProcedureNote(id : any, procedureTypeName : string, note : string){
+    this.procedureId = id
+    this.procedureTypeName = procedureTypeName
+    this.procedureNote = note
   }
+
+  async saveProcedureNote(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var procedure  = {
+      id : this.procedureId,
+      note : this.procedureNote
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/procedures/add_note', procedure, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      () => {
+        this.msgBox.showSuccessMessage('Added successifully')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+    this.loadProcedures(this.id, 0)
+  }
+
 
   
 

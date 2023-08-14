@@ -89,7 +89,6 @@
                                             <table class="table table-bordered table-hover  table-striped">
                                                 <thead class="success">
                                                 <tr>
-                                                    <th>No</th>
                                                     <th>Code</th>
                                                     <th>Name</th>
                                                     <th>Description</th>
@@ -98,11 +97,10 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let workingDiagnosis of workingDiagnosises">
-                                                        <td>{{workingDiagnosis.id}}</td>
                                                         <td>{{workingDiagnosis.diagnosisType?.code}}</td>
                                                         <td>{{workingDiagnosis.diagnosisType?.name}}</td>
                                                         <td>{{workingDiagnosis.description}}</td>
-                                                        <td><a (click)="deleteWorkingDiagnosis(workingDiagnosis.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                        <td><a (click)="deleteWorkingDiagnosis(workingDiagnosis.id)"><i class="fa fa-trash"></i></a></td>
                                                     </tr>
                                                 </tbody>
                                             </table>    
@@ -118,7 +116,6 @@
                                             <table class="table table-bordered table-hover  table-striped">
                                                 <thead class="success">
                                                 <tr>
-                                                    <th>No</th>
                                                     <th>Code</th>
                                                     <th>Name</th>
                                                     <th>Description</th>
@@ -127,11 +124,10 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let finalDiagnosis of finalDiagnosises">
-                                                        <td>{{finalDiagnosis.id}}</td>
                                                         <td>{{finalDiagnosis.diagnosisType?.code}}</td>
                                                         <td>{{finalDiagnosis.diagnosisType?.name}}</td>
                                                         <td>{{finalDiagnosis.description}}</td>
-                                                        <td><a (click)="deleteFinalDiagnosis(finalDiagnosis.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                        <td><a (click)="deleteFinalDiagnosis(finalDiagnosis.id)"><i class="fa fa-trash"></i></a></td>
                                                     </tr>
                                                 </tbody>
                                             </table>    
@@ -159,17 +155,16 @@
                                             <table class="table table-bordered table-hover  table-striped">
                                                 <thead class="success">
                                                 <tr>
-                                                    <th>ID</th>
                                                     <th>Lab Test</th>
                                                     <th>Price</th>
                                                     <th>Payment Status</th>
                                                     <th>Status</th>
+                                                    <th>Report</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let labTest of labTests">
-                                                        <td>{{labTest.id}}</td>
                                                         <td>{{labTest.labTestType?.name}}</td>
                                                         <td style="text-align: right;"><span *ngIf="labTest.patientBill?.status != 'COVERED'">{{labTest.patientBill?.amount | currency:'':''}}</span><span *ngIf="labTest.patientBill?.status === 'COVERED'">---</span></td>
                                                         <td>
@@ -179,8 +174,12 @@
                                                         </td>
                                                         <td>{{labTest?.status}}</td>
                                                         <td>
-                                                            <a (click)="showLabTestReport(labTest.id, labTest.labTestType.name, labTest.report)" *ngIf="labTest.patientBill?.status === 'COVERED' || labTest.patientBill?.status === 'PAID'" data-toggle="modal" data-target="#add-report-to-lab-test-modal"><i class="fa fa-pencil"></i>Report</a>
-                                                            <a (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash"></i>Delete</a>
+                                                            <a (click)="showLabTestReport(labTest.id, labTest.labTestType.name, labTest.report)" *ngIf="(labTest.patientBill?.status === 'COVERED' || labTest.patientBill?.status === 'PAID') && (labTest.report === null || labTest.report === '')" data-toggle="modal" data-target="#add-report-to-lab-test-modal"><i class="fa fa-file"></i></a>
+                                                            <a (click)="showLabTestReport(labTest.id, labTest.labTestType.name, labTest.report)" *ngIf="(labTest.patientBill?.status === 'COVERED' || labTest.patientBill?.status === 'PAID') && (labTest.report != null && labTest.report != '')" data-toggle="modal" data-target="#add-report-to-lab-test-modal"><i class="fa fa-pencil"></i></a>
+                                                        </td>
+                                                        <td>
+                                                            
+                                                            <a (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash"></i></a>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -204,17 +203,16 @@
                                             <table class="table table-bordered table-hover  table-striped">
                                                 <thead class="success">
                                                 <tr>
-                                                    <th>ID</th>
                                                     <th>Radiology</th>
                                                     <th>Price</th>
                                                     <th>Payment Status</th>
                                                     <th>Status</th>
+                                                    <th>Report</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr *ngFor="let radiology of radiologies">
-                                                        <td>{{radiology.id}}</td>
                                                         <td>{{radiology.radiologyType?.name}}</td>
                                                         <td style="text-align: right;"><span *ngIf="radiology?.patientBill?.status != 'COVERED'">{{radiology?.patientBill?.amount | currency:'':''}}</span><span *ngIf="radiology.patientBill?.status === 'COVERED'">---</span></td>
                                                         <td>
@@ -224,8 +222,12 @@
                                                         </td>
                                                         <td>{{radiology?.status}}</td>
                                                         <td>
-                                                            <a (click)="showRadiologyReport(radiology.id, radiology.radiologyType.name, radiology.report)" *ngIf="radiology.patientBill?.status === 'COVERED' || radiology.patientBill?.status === 'PAID'" data-toggle="modal" data-target="#add-report-to-radiology-modal"><i class="fa fa-pencil"></i>Report</a>
-                                                            <a (click)="deleteRadiology(radiology?.id)"><i class="fa fa-trash"></i>Delete</a>
+                                                            <a (click)="showRadiologyReport(radiology.id, radiology.radiologyType.name, radiology.report)" *ngIf="(radiology.patientBill?.status === 'COVERED' || radiology.patientBill?.status === 'PAID') && (radiology.report === null || radiology.report === '')" data-toggle="modal" data-target="#add-report-to-radiology-modal"><i class="fa fa-file"></i></a>
+                                                            <a (click)="showRadiologyReport(radiology.id, radiology.radiologyType.name, radiology.report)" *ngIf="(radiology.patientBill?.status === 'COVERED' || radiology.patientBill?.status === 'PAID') && (radiology.report != '' && radiology.report != null)" data-toggle="modal" data-target="#add-report-to-radiology-modal"><i class="fa fa-pencil"></i></a>
+                                                        </td>
+                                                        <td>
+                                                             
+                                                            <a (click)="deleteRadiology(radiology?.id)"><i class="fa fa-trash"></i></a>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -256,7 +258,6 @@
                                         <table class="table table-bordered table-hover  table-striped">
                                             <thead class="success">
                                             <tr>
-                                                <th>ID</th>
                                                 <th>Prescription</th>
                                                 <th>Unit</th>
                                                 <th>Dosage</th>
@@ -272,7 +273,6 @@
                                             </thead>
                                             <tbody>
                                                 <tr *ngFor="let prescription of prescriptions">
-                                                    <td>{{prescription.id}}</td>
                                                     <td>{{prescription.medicine?.name}}</td>
                                                     <td></td>
                                                     <td>{{prescription.dosage}}</td>
@@ -287,13 +287,10 @@
                                                         <span *ngIf="prescription.patientBill?.status != 'COVERED' && consultation.paymentType ==='INSURANCE'">{{prescription.patientBill?.status}}(NOT COVERED)</span>
                                                     </td>
                                                     <td>{{prescription.status}}</td>
-                                                    <td><a (click)="deletePrescription(prescription.id)"><i class="fa fa-trash"></i>Delete</a></td>
+                                                    <td><a (click)="deletePrescription(prescription.id)"><i class="fa fa-trash"></i></a></td>
                                                 </tr>
-                                                <tr>
-                                                    <td></td>
-                                                    <td>
-                                                        <span class="form-control">{{medicineName}}</span>
-                                                    </td>
+                                                <tr *ngIf="medicineName != ''">
+                                                    <td>{{medicineName}}</td>
                                                     <td><span class="form-control">{{prescriptionUnit}}</span></td>
                                                     <td><input type="text" class="form-control" [(ngModel)]="prescriptionDosage"></td>
                                                     <td>
@@ -355,10 +352,9 @@
                                         <table class="table table-bordered table-hover  table-striped">
                                             <thead class="success">
                                             <tr>
-                                                <th>ID</th>
                                                 <th>Procedure</th>
                                                 <th>Diagnosis</th>
-                                                <th>Theatre/Non Theatre</th>
+                                                <th>Theatre</th>
                                                 <th>Time</th>
                                                 <th>Date</th>
                                                 <th>Hours</th>
@@ -366,16 +362,15 @@
                                                 <th>Price</th>
                                                 <th>Payment Status</th>
                                                 <th>Status</th>
-                                                <th>Note</th>
+                                                <th>Procedure Note</th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                                 <tr *ngFor="let procedure of procedures">
-                                                    <td>{{procedure?.id}}</td>
                                                     <td>{{procedure.procedureType?.name}}</td>
-                                                    <td>{{procedure.diagnosis}}</td>
-                                                    <td>{{procedure.type}}</td>
+                                                    <td>{{procedure.diagnosisType?.name}}</td>
+                                                    <td>{{procedure.theatre?.name}}</td>
                                                     <td>{{procedure.time}}</td>
                                                     <td>{{procedure.date | date}}</td>
                                                     <td>{{procedure.hours}}</td>
@@ -388,11 +383,11 @@
                                                     </td>
                                                     <td>{{procedure.status}}</td>
                                                     <td>
-                                                        <textarea class="form-control" placeholder="Procedure Note" [(ngModel)]="procedure.note">{{procedure.note}}</textarea>
-                                                        <i class="glyphicon glyphicon-save" (click)="saveProcedureNote(procedure.id)"></i>
+                                                        <a (click)="showProcedureNote(procedure.id, procedure.procedureType.name, procedure.note)" *ngIf="(procedure.patientBill?.status === 'COVERED' || procedure.patientBill?.status === 'PAID') && procedure.note === null" data-toggle="modal" data-target="#add-procedure-note-to-procedure-modal"><i class="fa fa-file"></i></a>
+                                                        <a (click)="showProcedureNote(procedure.id, procedure.procedureType.name, procedure.note)" *ngIf="(procedure.patientBill?.status === 'COVERED' || procedure.patientBill?.status === 'PAID') && procedure.note != null" data-toggle="modal" data-target="#add-procedure-note-to-procedure-modal"><i class="fa fa-pencil"></i></a>
                                                     </td>
                                                     <td>
-                                                        <a (click)="deleteProcedure(procedure.id)"><i class="fa fa-trash"></i>Delete</a>
+                                                        <a (click)="deleteProcedure(procedure.id)"><i class="fa fa-trash"></i></a>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -742,8 +737,11 @@
                                 </select>
                             </div>
                             <div class="col-sm-12">
-                                <h4>Diagnosis</h4>
-                                <textarea class="form-control" [(ngModel)]="procedureDiagnosis"></textarea>
+                                <h4>Select Diagnosis</h4>
+                                <select class="form-control" [(ngModel)]="diagnosisTypeName">
+                                    <option></option>
+                                    <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -752,6 +750,13 @@
                     </div>
                 </div>
                 <div class="row" *ngIf="procedureNeedTheatre === true">
+                    <div  class="col-sm-12">
+                        <h4>Select Theatre</h4>
+                        <select class="form-control" [(ngModel)]="theatreName">
+                            <option></option>
+                            <option *ngFor="let name of theatreNames">{{name}}</option>
+                        </select>
+                    </div>
                     <div class="col-sm-3">
                         <h4>Time</h4>
                         <input type="time" class="form-control" [(ngModel)]="procedureTime">
@@ -776,6 +781,42 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 </div>
+
+
+
+<div class="modal fade modal-success" id="add-procedure-note-to-procedure-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Add/Edit Procedure Note</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="text-info">{{procedureTypeName}}</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <br>
+                        <h4>Procedure Note</h4>
+                        <textarea class="form-control" [(ngModel)]="procedureNote" style="height: 3cm;" placeholder="Procedure Note"></textarea>
+                    </div>
+                </div>   
+                   
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-success pull-right" (click)="saveProcedureNote()" data-dismiss="modal">Save</button>
+               </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+
+
+
+
 
     <!-- Modal success -->
 <div class="modal fade modal-success" id="assign-drugs-modal" tabindex="-1" role="dialog">
@@ -851,3 +892,6 @@
     </div><!-- /.modal -->
 
     <!-- Modal success -->
+
+    <!-- Modal success -->
+   

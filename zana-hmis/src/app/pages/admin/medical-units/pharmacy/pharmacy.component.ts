@@ -22,6 +22,7 @@ export class PharmacyComponent {
   code            : string = ''
   name            : string = ''
   description     : string = ''
+  category        : string = ''
   active          : boolean = true
 
   pharmacies : IPharmacy[] = []
@@ -46,6 +47,7 @@ export class PharmacyComponent {
       code            : this.code,
       name            : this.name,
       description     : this.description,
+      category        : this.category,
       active          : true
     }
     if(this.id == null || this.id == ''){
@@ -60,6 +62,7 @@ export class PharmacyComponent {
           this.code         = data!.code
           this.name         = data!.name
           this.description  = data!.description
+          this.category     = data!.category
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Pharmacy created successifully')
           this.loadPharmacies()
@@ -84,6 +87,7 @@ export class PharmacyComponent {
           this.code         = data!.code
           this.name         = data!.name
           this.description  = data!.description
+          this.category     = data!.category
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Pharmacy updated successifully')
           this.loadPharmacies()
@@ -125,6 +129,7 @@ export class PharmacyComponent {
     this.code         = ''
     this.name         = ''
     this.description  = ''
+    this.category     = ''
   }
 
   async getPharmacy(key: string) {
@@ -144,6 +149,7 @@ export class PharmacyComponent {
         this.code         = data!.code
         this.name         = data!.name
         this.description  = data!.description
+        this.category     = data!.category
         this.active       = data!.active
       }
     )

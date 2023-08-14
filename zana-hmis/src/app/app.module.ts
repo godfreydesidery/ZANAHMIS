@@ -73,6 +73,7 @@ import { PharmacistComponent } from './pages/admin/personnel/pharmacist/pharmaci
 import { PatientPharmacyComponent } from './pages/pharmacy/patient-pharmacy/patient-pharmacy.component';
 import { PatientProcedureComponent } from './pages/procedure/patient-procedure/patient-procedure.component';
 import { AgePipe } from './pipes/age.pipe';
+import { TheatreComponent } from './pages/admin/medical-units/theatre/theatre.component';
 
 
 @NgModule({
@@ -138,7 +139,8 @@ import { AgePipe } from './pipes/age.pipe';
     PharmacistComponent,
     PatientPharmacyComponent,
     PatientProcedureComponent,
-    AgePipe,//Age pipe
+    AgePipe,
+    TheatreComponent,//Age pipe
   ],
   imports: [
     HttpClientModule,
@@ -159,6 +161,7 @@ import { AgePipe } from './pipes/age.pipe';
     {path : 'procedure-payment', component : ProcedurePaymentComponent},
     {path : 'clinic', component : ClinicComponent},
     {path : 'pharmacy', component : PharmacyComponent},
+    {path : 'theatre', component : TheatreComponent},
     {path : 'clinician', component : ClinicianComponent},
     {path : 'pharmacist', component : PharmacistComponent},
     {path : 'my-consultation', component : MyConsultationComponent},

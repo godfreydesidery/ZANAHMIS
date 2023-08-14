@@ -40,6 +40,7 @@ import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.RadiologyTypeInsurancePlan;
 import com.orbix.api.domain.Registration;
 import com.orbix.api.domain.RegistrationInsurancePlan;
+import com.orbix.api.domain.Theatre;
 import com.orbix.api.domain.Visit;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
@@ -67,6 +68,7 @@ import com.orbix.api.repositories.RadiologyTypeInsurancePlanRepository;
 import com.orbix.api.repositories.RadiologyTypeRepository;
 import com.orbix.api.repositories.RegistrationInsurancePlanRepository;
 import com.orbix.api.repositories.RegistrationRepository;
+import com.orbix.api.repositories.TheatreRepository;
 import com.orbix.api.repositories.VisitRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -109,6 +111,7 @@ public class PatientServiceImpl implements PatientService {
 	private final PrescriptionRepository prescriptionRepository;
 	private final RegistrationRepository registrationRepository;
 	private final DiagnosisTypeRepository diagnosisTypeRepository;
+	private final TheatreRepository theatreRepository;
 	
 	
 	
@@ -834,7 +837,22 @@ public class PatientServiceImpl implements PatientService {
 	public Procedure saveProcedure(Procedure procedure, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request) {
 		Patient patient = new Patient();
 		Optional<ProcedureType> pr = procedureTypeRepository.findByName(procedure.getProcedureType().getName());
-		 
+		if(procedure.getType().equals("THEATRE")) {
+			Optional<Theatre> th = theatreRepository.findByName(procedure.getTheatre().getName());
+			if(th.isEmpty()) {
+				throw new InvalidOperationException("Theatre not found");
+			}
+			procedure.setTheatre(th.get());
+		}
+		if(!procedure.getDiagnosisType().getName().equals("")) {
+			Optional<DiagnosisType> dt = diagnosisTypeRepository.findByName(procedure.getDiagnosisType().getName());
+			if(dt.isEmpty()) {
+				throw new NotFoundException("Diagnosis Type not found");
+			}else {
+				procedure.setDiagnosisType(dt.get());
+			}
+		}
+		
 		if(!pr.isPresent()) {
 			throw new NotFoundException("Procedure type not found");
 		}
@@ -866,9 +884,6 @@ public class PatientServiceImpl implements PatientService {
 		
 		procedure.setProcedureType(pr.get());
 		
-		for(int i = 0; i < 500; i++) {
-			System.out.println(procedure.getTime().toString());
-		}
 		
 		
 		procedure.setStatus("PENDING");

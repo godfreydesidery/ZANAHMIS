@@ -6,6 +6,7 @@ export interface IPharmacy {
     code            : string
     name            : string
     description     : string
+    category        : string
     active          : boolean
     
     createdBy       : IUser

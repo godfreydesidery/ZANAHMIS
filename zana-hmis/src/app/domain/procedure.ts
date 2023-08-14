@@ -7,11 +7,13 @@ import { IPatient } from "./patient"
 import { IProcedureType } from "./procedure-type"
 import { IUser } from "./user"
 import { Time } from "@angular/common"
+import { ITheatre } from "./theatre"
+import { IDiagnosisType } from "./diagnosis-type"
 
 export interface IProcedure {
     id      : any
     note    : string
-    diagnosis : string
+    diagnosisType : IDiagnosisType
     type    : string
     time    : Time
     date    : Date
@@ -19,12 +21,14 @@ export interface IProcedure {
     minutes : number
     status  : string
 
+    theatre : ITheatre
+
     patient?         : IPatient
     consultation?    : IConsultation
     nonConsultation? : INonConsultation
     admission?       : IAdmission
     patientBill?     : IPatientBill
-    procedureType?   : IProcedureType
+    procedureType   : IProcedureType
     
     created        : string
     accepted       : string

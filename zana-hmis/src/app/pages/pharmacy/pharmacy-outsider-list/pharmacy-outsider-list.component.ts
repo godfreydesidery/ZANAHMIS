@@ -23,6 +23,8 @@ export class PharmacyOutsiderListComponent {
 
   patients : IPatient[] = []
 
+  pharmacyName = localStorage.getItem('selected-pharmacy-name')
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,

@@ -11,10 +11,13 @@ import javax.persistence.Column;
 
 import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
+import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientBill;
 import com.orbix.api.domain.ProcedureType;
+import com.orbix.api.domain.Theatre;
+
 import lombok.Data;
 
 /**
@@ -31,8 +34,11 @@ public class ProcedureModel {
 	private String diagnosis = "";
 	private LocalDate date = null;
 	private double hours = 0;
-	private double minute = 0;
+	private double minutes = 0;
 	private String status = "";
+	
+	private Theatre theatre = null;
+	private DiagnosisType diagnosisType = null;
 	
     private Consultation consultation = null;	
     private NonConsultation nonConsultation = null;	

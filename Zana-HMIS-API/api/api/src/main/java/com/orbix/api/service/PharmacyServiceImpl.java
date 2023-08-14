@@ -49,6 +49,10 @@ public class PharmacyServiceImpl implements PharmacyService{
 			pharmacy.setActive(true);
 		}
 		
+		if(!(pharmacy.getCategory().equals("INPATIENT") || pharmacy.getCategory().equals("OUTPATIENT") || pharmacy.getCategory().equals("ALL"))) {
+			throw new InvalidOperationException("Invalid category name");
+		}
+		
 		
 		log.info("Saving new pharmacy to the database");
 		return pharmacyRepository.save(pharmacy);

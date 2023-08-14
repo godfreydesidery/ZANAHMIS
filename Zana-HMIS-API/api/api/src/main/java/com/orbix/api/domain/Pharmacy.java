@@ -42,6 +42,7 @@ public class Pharmacy {
 	@Column(unique = true)
 	private String name;
 	private String description;	
+	private String category;
 	private boolean active = false;
 	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)

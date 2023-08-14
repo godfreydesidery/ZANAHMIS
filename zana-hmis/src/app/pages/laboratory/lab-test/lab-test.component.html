@@ -22,15 +22,13 @@
                         </div>
                         <hr>
                     </div>
-                    <div class="col-sm-12" *ngFor="let labTest of labTests">
+                    <div class="col-sm-6" *ngFor="let labTest of labTests">
                         <div class="row" style="margin: 1mm; background-color: rgb(246, 246, 248);">
-                            <div class="col-sm-4">
+                            <div class="col-sm-12">
                                 <h4><b>{{labTest.labTestType.name}}</b></h4>
                                 <span>Status: </span><span><small>{{labTest.status}}</small></span><br><br>
                                 <span>Diagnosis: {{labTest?.diagnosisType?.name}} <span *ngIf="labTest?.diagnosisType?.name === null">NONE</span></span><br><br>
                                 <small>Ordered At | By: {{labTest?.created}}</small><br>
-                                <h4 class="text-info"><b>Clinical History</b></h4>
-                                <span>{{labTest.description}}</span><br>
                                 <button class="btn btn-default btn-rounded" (click)="acceptLabTest(labTest)">Accept</button>
                                 <button class="btn btn-default btn-rounded" (click)="rejectLabTest(labTest)">Reject</button>
                                 <button class="btn btn-default btn-rounded" (click)="collectLabTest(labTest)">Collect</button>
@@ -42,7 +40,7 @@
                                 </div>
                                  <hr>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-12">
                                 <div class="row" *ngIf="labTest?.status === 'ACCEPTED' || labTest?.status === 'COLLECTED' || labTest?.status === 'VERIFIED'" style="padding-left: 3mm; padding-right: 3mm;">
                                     <div class="col-sm-12">
                                         <span>Results</span>

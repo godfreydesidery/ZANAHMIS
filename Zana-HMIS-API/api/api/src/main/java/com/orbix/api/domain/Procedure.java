@@ -52,6 +52,17 @@ public class Procedure {
 	private double minutes;
 	private String status;
 	
+	@ManyToOne(targetEntity = Theatre.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "theatre_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private Theatre theatre;
+	
+	@ManyToOne(targetEntity = DiagnosisType.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "diagnosis_type_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private DiagnosisType diagnosisType;
+	
+	
 	@ManyToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "consultation_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	

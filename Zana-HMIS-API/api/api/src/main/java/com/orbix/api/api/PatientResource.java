@@ -1081,13 +1081,15 @@ public class PatientResource {
 			model.setId(l.getId());
 			model.setProcedureType(l.getProcedureType());
 			model.setPatientBill(l.getPatientBill());
-			model.setDiagnosis(l.getDiagnosis());
+			model.setDiagnosisType(l.getDiagnosisType());
 			model.setType(l.getType());
 			model.setTime(l.getTime());
 			model.setDate(l.getDate());
 			model.setHours(l.getHours());
-			model.setMinute(l.getMinutes());
+			model.setMinutes(l.getMinutes());
 			model.setStatus(l.getStatus());
+			model.setNote(l.getNote());
+			model.setTheatre(l.getTheatre());
 
 			if(l.getCreatedAt() != null) {
 				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
@@ -1290,6 +1292,23 @@ public class PatientResource {
 			labTestRepository.save(r.get());
 		}else {
 			throw new InvalidOperationException("Could not add report. Payment not verified");
+		}		
+	}
+	
+	@PostMapping("/patients/procedures/add_note")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public void addProcedureNote(
+			@RequestBody Procedure procedure,
+			HttpServletRequest request){
+		Optional<Procedure> r = procedureRepository.findById(procedure.getId());
+		if(r.isEmpty()) {
+			throw new NotFoundException("Procedure not found");
+		}
+		if(r.get().getPatientBill().getStatus().equals("PAID") || r.get().getPatientBill().getStatus().equals("COVERED")) {
+			r.get().setNote(procedure.getNote());
+			procedureRepository.save(r.get());
+		}else {
+			throw new InvalidOperationException("Could not add procedure note. Payment not verified");
 		}		
 	}
 	
@@ -1916,8 +1935,8 @@ public class PatientResource {
 		if(!radiology.isPresent()) {
 			throw new NotFoundException("Radiology not found");
 		}
-		if(!radiology.get().getStatus().equals("COLLECTED")) {
-			throw new InvalidOperationException("Could not verify, only COLLECTED radiologies can be verified");
+		if(!radiology.get().getStatus().equals("ACCEPTED")) {
+			throw new InvalidOperationException("Could not verify, only ACCEPTED radiologies can be verified");
 		}
 		radiology.get().setResult(radio.getResult());
 		radiology.get().setDiagnosisType(radio.getDiagnosisType());
@@ -1933,7 +1952,7 @@ public class PatientResource {
 		return true;
 	}	
 	
-	@PostMapping("/patients/collect_radiology") 
+	@PostMapping("/patients/collect_radiology111") 
 	public boolean collectRadiology(
 			@RequestBody LRadiology radio,
 			HttpServletRequest request){

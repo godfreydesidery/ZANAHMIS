@@ -24,6 +24,7 @@
                                     <td>Code</td>
                                     <td>Name</td>
                                     <td>Description</td>
+                                    <td>Category</td>
                                     <td>Status</td>
                                     <td>Action</td>
                                 </tr>
@@ -33,6 +34,7 @@
                                     <td>{{pharmacy.code}}</td>
                                     <td>{{pharmacy.name}}</td>
                                     <td>{{pharmacy.description}}</td>
+                                    <td>{{pharmacy.category}}</td>
                                     <td><span class="label label-info" *ngIf="pharmacy.active === true">Active</span><span class="label label-danger" *ngIf="pharmacy.active === false">Inactive</span></td>
                                     <td><a (click)="getPharmacy(pharmacy.id)" data-toggle="modal" data-target="#add-edit-modal"><i class="glyphicon glyphicon-pencil"></i>Edit</a></td>
                                 </tr>
@@ -72,6 +74,17 @@
                         <div class="col-xs-12">
                             <label>Description</label>
                             <input type="text" class="form-control" [(ngModel)]="description">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Select Category</label>
+                            <select class="form-control" [(ngModel)]="category">
+                                <option></option>
+                                <option>INPATIENT</option>
+                                <option>OUTPATIENT</option>
+                                <option>ALL</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row">

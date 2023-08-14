@@ -28,6 +28,8 @@ export class PatientPharmacyComponent {
 
   prescriptions : IPrescription[] = []
 
+  pharmacyName = localStorage.getItem('selected-pharmacy-name')
+
 
 
   constructor(private auth : AuthService,
