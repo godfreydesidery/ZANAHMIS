@@ -47,6 +47,8 @@ public class Prescription {
 	private double price;
 	@NotNull
 	private double qty;
+	private double issued = 0;
+	private double balance;
 	private String status;
 	private String reference;
 	
@@ -116,4 +118,10 @@ public class Prescription {
 	@Column(name = "verified_on_day_id", nullable = true , updatable = true)
     private Long verifiedOn;
 	private LocalDateTime verifiedAt;
+	
+	@Column(name = "approved_by_user_id", nullable = true , updatable = true)
+    private Long approvedBy;
+	@Column(name = "approved_on_day_id", nullable = true , updatable = true)
+    private Long approvedOn;
+	private LocalDateTime approvedAt;
 }

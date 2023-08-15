@@ -16,6 +16,10 @@ export interface IPrescription {
     days        : string
     price       : number
     qty         : number
+    issued      : number
+    balance     : number
+    stock       : number
+    checked     : boolean
     status      : string
 
     patient         : IPatient

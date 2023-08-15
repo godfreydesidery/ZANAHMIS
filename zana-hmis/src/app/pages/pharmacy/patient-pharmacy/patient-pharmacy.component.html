@@ -43,26 +43,37 @@
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let prescription of prescriptions">
-                                        <td><input type="checkbox"></td>
+                                        <td><input type="checkbox" [(ngModel)]="prescription.checked" *ngIf="prescription.status === 'PENDING'" (ngModelChange)="clearIssued(prescription.id)"></td>
                                         <td>{{prescription.ordered}}</td>
                                         <td>{{prescription.medicine.name}}</td>
-                                        <td></td>
+                                        <td>{{prescription.stock}}</td>
                                         <td>{{prescription.dosage}}</td>
                                         <td>{{prescription.frequency}}</td>
                                         <td>{{prescription.route}}</td>
                                         <td>{{prescription.days}}</td>
                                         <td>{{prescription.qty}}</td>
-                                        <td style="text-align: right;">{{prescription.price * prescription.qty | currency:'':''}}</td>
                                         <td>
                                             <div class="row">
+                                                <div class="col-sm-12" *ngIf="prescription.patientBill.status === 'COVERED'" style="text-align: center;">
+                                                    <span>COVERED</span>
+                                                </div>
+                                                <div class="col-sm-12" *ngIf="prescription.patientBill.status === 'PAID'" style="text-align: right;">
+                                                    {{prescription.patientBill.amount | currency:'':''}}
+                                                </div>
+                                            </div>
+                                            
+                                        </td>
+                                        <td>
+                                            <div class="row" *ngIf="prescription.status === 'PENDING'">
                                                 <div class="col-sm-4">
-                                                    <button class="btn btn-warning">Set 0</button>
+                                                    <button class="btn btn-warning" (click)="clearIssued(prescription.id)">Set 0</button>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input type="number" class="form-control">
+                                                    <input type="number" class="form-control" *ngIf="prescription.checked === true" [(ngModel)]="prescription.issued">
+                                                    <input type="number" class="form-control" *ngIf="prescription.checked === false" [(ngModel)]="prescription.issued" readonly>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input type="checkbox">
+                                                    <!--<input type="checkbox">-->
                                                 </div>
                                             </div>
                                         </td>
@@ -72,7 +83,7 @@
                             </table>
                         </div>
                         <div class="col-sm-12">
-                            <button class="btn btn-success pull-right">Submit Drug Done</button>
+                            <button class="btn btn-success pull-right" (click)="issueMedicine()">Submit Drug Done</button>
                         </div>
                     </div>
                     

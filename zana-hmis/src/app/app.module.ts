@@ -74,6 +74,8 @@ import { PatientPharmacyComponent } from './pages/pharmacy/patient-pharmacy/pati
 import { PatientProcedureComponent } from './pages/procedure/patient-procedure/patient-procedure.component';
 import { AgePipe } from './pipes/age.pipe';
 import { TheatreComponent } from './pages/admin/medical-units/theatre/theatre.component';
+import { ItemRegisterComponent } from './pages/admin/inventory/item-register/item-register.component';
+import { SupplierRegisterComponent } from './pages/admin/stakeholders/supplier-register/supplier-register.component';
 
 
 @NgModule({
@@ -140,7 +142,9 @@ import { TheatreComponent } from './pages/admin/medical-units/theatre/theatre.co
     PatientPharmacyComponent,
     PatientProcedureComponent,
     AgePipe,
-    TheatreComponent,//Age pipe
+    TheatreComponent,
+    ItemRegisterComponent,
+    SupplierRegisterComponent,
   ],
   imports: [
     HttpClientModule,
@@ -206,6 +210,8 @@ import { TheatreComponent } from './pages/admin/medical-units/theatre/theatre.co
     {path : 'pharmacy-outsider-list', component : PharmacyOutsiderListComponent},
     {path : 'patient-pharmacy', component : PatientPharmacyComponent},
     {path : 'patient-procedure', component : PatientProcedureComponent},
+    {path : 'supplier-register', component : SupplierRegisterComponent},
+    {path : 'item-register', component : ItemRegisterComponent},
     ])
   ],
   schemas: [ 

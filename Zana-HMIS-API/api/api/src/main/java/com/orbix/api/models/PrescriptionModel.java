@@ -38,6 +38,9 @@ public class PrescriptionModel {
 	private String days = "";
 	private double price = 0;
 	private double qty = 0;
+	private double issued = 0;
+	private double balance = 0;
+	private double stock = 0;
 	private String status = "";
 	private String reference;
 	private Consultation consultation = null;
@@ -53,5 +56,6 @@ public class PrescriptionModel {
     private String held;
     private String rejected;	
 	private String rejectComment;	
-    private String verified;   
+    private String verified; 
+    private String approved;
 }

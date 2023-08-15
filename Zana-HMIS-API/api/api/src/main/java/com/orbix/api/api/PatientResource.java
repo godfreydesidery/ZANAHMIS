@@ -37,6 +37,8 @@ import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.PatientInvoice;
 import com.orbix.api.domain.PatientInvoiceDetail;
 import com.orbix.api.domain.PatientPaymentDetail;
+import com.orbix.api.domain.Pharmacy;
+import com.orbix.api.domain.PharmacyMedicine;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.Medicine;
@@ -82,6 +84,8 @@ import com.orbix.api.repositories.PatientInvoiceRepository;
 import com.orbix.api.repositories.PatientPaymentDetailRepository;
 import com.orbix.api.repositories.PatientPaymentRepository;
 import com.orbix.api.repositories.PatientRepository;
+import com.orbix.api.repositories.PharmacyMedicineRepository;
+import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.ProcedureTypeRepository;
@@ -138,6 +142,8 @@ public class PatientResource {
 	private final ProcedureTypeRepository procedureTypeRepository;
 	private final MedicineRepository medicineRepository;
 	private final AdmissionRepository admissionRepository;
+	private final PharmacyRepository pharmacyRepository;
+	private final PharmacyMedicineRepository pharmacyMedicineRepository;
 	
 	
 	@GetMapping("/patients")
@@ -1164,6 +1170,8 @@ public class PatientResource {
 			model.setDays(l.getDays());
 			model.setPrice(l.getPrice());
 			model.setQty(l.getQty());
+			model.setIssued(l.getIssued());
+			model.setBalance(l.getBalance());
 			model.setPatientBill(l.getPatientBill());
 			model.setStatus(l.getStatus());
 
@@ -1197,6 +1205,12 @@ public class PatientResource {
 				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedby()).getNickname());
 			}else {
 				model.setVerified("");
+			}
+			
+			if(l.getApprovedAt() != null) {
+				model.setApproved(l.getApprovedAt().toString()+" | "+userService.getUserById(l.getApprovedBy()).getNickname());
+			}else {
+				model.setApproved("");
 			}
 			
 			models.add(model);
@@ -1275,6 +1289,39 @@ public class PatientResource {
 		}else {
 			throw new InvalidOperationException("Could not add report. Payment not verified");
 		}		
+	}
+	
+	@PostMapping("/patients/issue_medicine")
+	public boolean issueMedicine(
+			@RequestBody List<Prescription> prescriptions, 
+			HttpServletRequest request) {
+		for(Prescription prescription : prescriptions) {
+			Optional<Prescription> pres = prescriptionRepository.findById(prescription.getId());
+			if(pres.isEmpty()) {
+				throw new NotFoundException("Prescription with id "+prescription.getId().toString()+" not found in database");
+			}
+			if(!pres.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not issue medicine. Prescription with id "+prescription.getId().toString()+" is not a pending prescription");
+			}
+			if(pres.get().getBalance() > prescription.getIssued() || prescription.getIssued() <= 0) {
+				throw new InvalidOperationException("Invalid issue value in "+prescription.getMedicine().getName());
+			}
+			if(prescription.getIssued() != pres.get().getQty()) {
+				throw new InvalidOperationException("You can only issue the prescribed qty");
+			}
+			pres.get().setIssued(prescription.getIssued());
+			pres.get().setBalance(pres.get().getBalance() - prescription.getIssued());
+						
+			pres.get().setStatus("APPROVED");
+			
+			pres.get().setApprovedBy(userService.getUser(request).getId());
+			pres.get().setApprovedOn(dayService.getDay().getId());
+			pres.get().setApprovedAt(dayService.getTimeStamp());
+			
+			prescriptionRepository.save(pres.get());
+		}
+		
+		return true;
 	}
 	
 	
@@ -2026,10 +2073,15 @@ public class PatientResource {
 	
 	@GetMapping("/patients/get_prescriptions_by_patient_id") 
 	public ResponseEntity<List<PrescriptionModel>> getPrescriptionsByPatientId(
-			@RequestParam(name = "id") Long id,
+			@RequestParam(name = "patient_id") Long patientId,
+			@RequestParam(name = "pharmacy_id") Long pharmacyId,
 			HttpServletRequest request){
-		Optional<Patient> p = patientRepository.findById(id);
+		Optional<Patient> p = patientRepository.findById(patientId);
 		if(!p.isPresent()) {
+			return null;
+		}
+		Optional<Pharmacy> phar = pharmacyRepository.findById(pharmacyId);
+		if(!phar.isPresent()) {
 			return null;
 		}
 		List<Consultation> cs = consultationRepository.findAllByPatientAndStatus(p.get(), "IN-PROCESS");
@@ -2054,6 +2106,19 @@ public class PatientResource {
 				m.setNonConsultation(pres.getNonConsultation());
 				m.setPatientBill(pres.getPatientBill());
 				m.setStatus(pres.getStatus());
+				
+				Optional<PharmacyMedicine> pm = pharmacyMedicineRepository.findByPharmacyAndMedicine(phar.get(), pres.getMedicine());
+				PharmacyMedicine pharmacyMedicine = new PharmacyMedicine();
+				if(pm.isEmpty()) {
+					pharmacyMedicine.setPharmacy(phar.get());
+					pharmacyMedicine.setMedicine(pres.getMedicine());
+					pharmacyMedicine.setStock(0);
+					pharmacyMedicine = pharmacyMedicineRepository.save(pharmacyMedicine);
+				}else {
+					pharmacyMedicine = pm.get();
+				}
+				
+				m.setStock(pharmacyMedicine.getStock());
 				
 				if(pres.getCreatedAt() != null) {
 					m.setCreated(pres.getCreatedAt().toString()+" | "+userService.getUserById(pres.getCreatedby()).getNickname());

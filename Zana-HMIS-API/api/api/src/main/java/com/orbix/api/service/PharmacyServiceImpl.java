@@ -3,6 +3,7 @@
  */
 package com.orbix.api.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,10 +12,14 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.api.accessories.Sanitizer;
+import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Pharmacy;
+import com.orbix.api.domain.PharmacyMedicine;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.DayRepository;
+import com.orbix.api.repositories.MedicineRepository;
+import com.orbix.api.repositories.PharmacyMedicineRepository;
 import com.orbix.api.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +40,8 @@ public class PharmacyServiceImpl implements PharmacyService{
 	private final DayRepository dayRepository;
 	private final DayService dayService;
 	private final PharmacyRepository pharmacyRepository;
+	private final MedicineRepository medicineRepository;
+	private final PharmacyMedicineRepository pharmacyMedicineRepository;
 	
 	@Override
 	public Pharmacy save(Pharmacy pharmacy, HttpServletRequest request) {
@@ -53,7 +60,17 @@ public class PharmacyServiceImpl implements PharmacyService{
 			throw new InvalidOperationException("Invalid category name");
 		}
 		
-		
+		if(pharmacy.getId() == null) {
+			pharmacy = pharmacyRepository.save(pharmacy);
+			List<Medicine> medicines = medicineRepository.findAll();
+			for(Medicine medicine : medicines) {
+				PharmacyMedicine pm = new PharmacyMedicine();
+				pm.setMedicine(medicine);
+				pm.setPharmacy(pharmacy);
+				pm.setStock(0);
+				pharmacyMedicineRepository.save(pm);
+			}			
+		}		
 		log.info("Saving new pharmacy to the database");
 		return pharmacyRepository.save(pharmacy);
 	}

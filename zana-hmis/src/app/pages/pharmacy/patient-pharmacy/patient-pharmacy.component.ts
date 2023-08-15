@@ -29,6 +29,7 @@ export class PatientPharmacyComponent {
   prescriptions : IPrescription[] = []
 
   pharmacyName = localStorage.getItem('selected-pharmacy-name')
+  pharmacyId = localStorage.getItem('selected-pharmacy-id')
 
 
 
@@ -43,7 +44,7 @@ export class PatientPharmacyComponent {
     this.id = localStorage.getItem('pharmacy-patient-id')
     localStorage.removeItem('pharmacy-patient-id')
     this.loadPatient(this.id)
-    this.loadPrescriptionsByPatient(this.id)
+    this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
   }
 
   async loadPatient(id : any){
@@ -69,18 +70,21 @@ export class PatientPharmacyComponent {
     )
   }
 
-  async loadPrescriptionsByPatient(id : any){
+  async loadPrescriptionsByPatientAndPharmacy(id : any, pharmacyId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IPrescription[]>(API_URL+'/patients/get_prescriptions_by_patient_id?id='+id, options)
+    await this.http.get<IPrescription[]>(API_URL+'/patients/get_prescriptions_by_patient_id?patient_id='+id+'&pharmacy_id='+pharmacyId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
         
         this.prescriptions = data!
+        this.prescriptions.forEach(element => {
+          element.checked = false
+        })
         console.log(this.prescriptions)
       }
     )
@@ -111,7 +115,7 @@ export class PatientPharmacyComponent {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
-    this.loadPrescriptionsByPatient(this.id)
+    this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
   }
 
   async rejectPrescription(prescription : IPrescription){
@@ -133,7 +137,7 @@ export class PatientPharmacyComponent {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
-    this.loadPrescriptionsByPatient(this.id)
+    this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
   }
 
   async holdPrescription(prescription : IPrescription){
@@ -155,7 +159,7 @@ export class PatientPharmacyComponent {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
-    this.loadPrescriptionsByPatient(this.id)
+    this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
   }
 
   async collectPrescription(prescription : IPrescription){
@@ -177,7 +181,7 @@ export class PatientPharmacyComponent {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
-    this.loadPrescriptionsByPatient(this.id)
+    this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
   }
 
   async verifyPrescription(prescription : IPrescription){
@@ -199,6 +203,46 @@ export class PatientPharmacyComponent {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
-    this.loadPrescriptionsByPatient(this.id)
+    this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
+  }
+
+  async issueMedicine(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var prescriptions : IPrescription[] = []
+    this.prescriptions.forEach(prescription => {
+      if(prescription.checked === true){
+        if(prescription.issued <= 0){
+          this.msgBox.showErrorMessage('Invalid value at '+prescription.medicine.name)
+          return
+        }
+        prescriptions.push(prescription)
+      }
+    })
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/issue_medicine', prescriptions, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Medicine issued successifully')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
+  }
+
+  clearIssued(id : any){
+    this.prescriptions.forEach(element => {
+      if(element.id === id){
+        element.issued = 0
+      }
+    })
   }
 }

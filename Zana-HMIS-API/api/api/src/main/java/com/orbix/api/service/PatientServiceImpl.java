@@ -1025,7 +1025,7 @@ public class PatientServiceImpl implements PatientService {
 					patientInvoiceDetail.setPatientBill(patientBill);
 					patientInvoiceDetail.setAmount(patientBill.getAmount());
 					patientInvoiceDetail.setDescription("Medicine: "+prescription.getMedicine().getName());
-					patientInvoiceDetail.setQty(1);
+					patientInvoiceDetail.setQty(prescription.getQty());
 					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}else {
 					/**
@@ -1036,12 +1036,14 @@ public class PatientServiceImpl implements PatientService {
 					patientInvoiceDetail.setPatientBill(patientBill);
 					patientInvoiceDetail.setAmount(patientBill.getAmount());
 					patientInvoiceDetail.setDescription("Medicine: "+prescription.getMedicine().getName());
-					patientInvoiceDetail.setQty(1);
+					patientInvoiceDetail.setQty(prescription.getQty());
 					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}
 			}
 			
 		}
+		prescription.setIssued(0);
+		prescription.setBalance(prescription.getQty());
 		prescription.setPatient(patient);
 		prescription.setPatientBill(patientBill);
 		return prescriptionRepository.save(prescription);		

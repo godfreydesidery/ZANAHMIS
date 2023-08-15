@@ -12,9 +12,13 @@ import org.springframework.stereotype.Service;
 
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Medicine;
+import com.orbix.api.domain.Pharmacy;
+import com.orbix.api.domain.PharmacyMedicine;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.MedicineRepository;
+import com.orbix.api.repositories.PharmacyMedicineRepository;
+import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +38,8 @@ public class MedicineServiceImpl implements MedicineService{
 	private final DayRepository dayRepository;
 	private final DayService dayService;
 	private final MedicineRepository medicineRepository;
+	private final PharmacyRepository pharmacyRepository;
+	private final PharmacyMedicineRepository pharmacyMedicineRepository;
 	
 	@Override
 	public Medicine save(Medicine medicine, HttpServletRequest request) {
@@ -47,6 +53,19 @@ public class MedicineServiceImpl implements MedicineService{
 			
 			medicine.setActive(true);
 		}
+		
+		
+		if(medicine.getId() == null) {
+			medicine = medicineRepository.save(medicine);
+			List<Pharmacy> pharmacies = pharmacyRepository.findAll();
+			for(Pharmacy pharmacy : pharmacies) {
+				PharmacyMedicine pm = new PharmacyMedicine();
+				pm.setMedicine(medicine);
+				pm.setPharmacy(pharmacy);
+				pm.setStock(0);
+				pharmacyMedicineRepository.save(pm);
+			}			
+		}	
 		
 		log.info("Saving new medicine to the database");
 		return medicineRepository.save(medicine);
