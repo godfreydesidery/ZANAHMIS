@@ -38,7 +38,8 @@ public class PharmacyToStoreRODetail {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotNull
-	private double qty;
+	private double orderedQty;
+	private double receivedQty = 0;
 	private String status;
 	
 	@ManyToOne(targetEntity = PharmacyToStoreRO.class, fetch = FetchType.EAGER,  optional = false)
