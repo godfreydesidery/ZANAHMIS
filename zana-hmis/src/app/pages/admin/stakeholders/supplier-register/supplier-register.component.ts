@@ -6,6 +6,7 @@ import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IClinic } from 'src/app/domain/clinic';
 import { IClinician } from 'src/app/domain/clinician';
+import { ISupplier } from 'src/app/domain/supplier';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -19,24 +20,31 @@ const API_URL = environment.apiUrl;
 })
 export class SupplierRegisterComponent {
   
+  id                  : any
+  code                : string = ''
+  name                : string = ''
+  contactName         : string = ''
+  active              : boolean = false
+  tin                 : string = ''
+  vrn                 : string = ''
+  termsOfContract     : string = ''
+  physicalAddress     : string = ''
+  postCode            : string = ''
+  postAddress         : string = ''
+  telephone           : string = ''
+  mobile              : string = ''
+  email               : string = ''
+  fax                 : string = ''
+  bankAccountName     : string = ''
+  bankPhysicalAddress : string = ''
+  bankPostCode        : string = ''
+  bankPostAddress     : string = ''
+  bankName            : string = ''
+  bankAccountNo       : string = ''
 
-  id : any
-  code : string = ''
-  firstName : string = ''
-  middleName : string = ''
-  lastName : string = ''
-  type : string = ''
-  active : boolean = true
+  supplier! : ISupplier
 
-  public clinics           : IClinic[]
-
-
-  clinicians : IClinician[] = []
-
-  clinicianClinics : IClinic[] = []
-
-  userCode : string = ''
-
+  names : string[] = []
 
   constructor(
     private auth : AuthService,
@@ -44,252 +52,71 @@ export class SupplierRegisterComponent {
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
   ) {
-    this.clinics           = []
+    
   }
 
   ngOnInit(): void {
-    this.loadClinicians()
-    this.loadClinics()
+    this.loadSupplierNames()
   }
 
-  public async saveClinician(){
-    let options = {
-      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
-    }
-    var clinicianClinics : IClinic[] = []
-    this.clinics.forEach(clinic => { /**Get the roles */
-      if(clinic.assigned == true){
-        clinicianClinics.push(clinic)
-      }
-    })
-    var clinician = {
-      id          : this.id,
-      code        : this.code,
-      firstName   : this.firstName,
-      middleName  : this.middleName,
-      lastName    : this.lastName,
-      type        : this.type,
-      clinics     : clinicianClinics,
-      active      : true
-    }
-    if(this.id == null || this.id == ''){
-      //save a new clinic
-      this.spinner.show()
-      await this.http.post<IClinician>(API_URL+'/clinicians/save', clinician, options)
-      .pipe(finalize(() => this.spinner.hide()))
-      .toPromise()
-      .then(
-        data => {
-          this.id         = data?.id
-          this.code       = data!.code
-          this.firstName  = data!.firstName
-          this.middleName = data!.middleName
-          this.lastName   = data!.lastName
-          this.type       = data!.type
-          this.clinics    = data!.clinics
-          this.active     = data!.active
-          this.msgBox.showSuccessMessage('Clinician created successifully')
-          this.loadClinicians()
-          this.clear()
-        }
-      )
-      .catch(
-        error => {
-          this.msgBox.showErrorMessage('Could not create clinician')
-        }
-      )
-
-    }else{
-      //update an existing clinic
-      this.spinner.show()
-      await this.http.post<IClinician>(API_URL+'/clinicians/save', clinician, options)
-      .pipe(finalize(() => this.spinner.hide()))
-      .toPromise()
-      .then(
-        data => {
-          this.id         = data?.id
-          this.code       = data!.code
-          this.firstName  = data!.firstName
-          this.middleName = data!.middleName
-          this.lastName   = data!.lastName
-          this.type       = data!.type
-          this.clinics    = data!.clinics
-          this.active     = data!.active
-          this.msgBox.showSuccessMessage('Clinician updated successifully')
-          this.loadClinicians()
-        }
-      )
-      .catch(
-        error => {
-          this.msgBox.showErrorMessage('Could not update clinician')
-        }
-      )
-    }
-  }
-
-  async loadClinicians(){
-    this.clinicians = []
-    let options = {
-      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
-    }
-    this.spinner.show()
-    await this.http.get<IClinician[]>(API_URL+'/clinicians', options)
-    .pipe(finalize(() => this.spinner.hide()))
-    .toPromise()
-    .then(
-      data => {
-        data?.forEach(element => {
-          this.clinicians.push(element)
-        })
-      }
-    )
-    .catch(
-      error => {
-        this.msgBox.showErrorMessage('Could not load clinicians')
-      }
-    )
-  }
-
-  clear(){
-    this.id         = null
-    this.code       = ''
-    this.firstName  = ''
-    this.middleName = ''
-    this.lastName   = ''
-    this.type       = ''
-    this.active     = false
-  }
-
-  async getClinician(key: string) {
-    if(key == ''){
-      return
-    }
-    let options = {
-      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
-    }
-    this.spinner.show()
-    await this.http.get<IClinician>(API_URL+'/clinicians/get?id='+key, options)
-    .pipe(finalize(() => this.spinner.hide()))
-    .toPromise()
-    .then(
-      data=>{
-        console.log(data)
-        this.id         = data?.id
-        this.code       = data!.code
-        this.firstName  = data!.firstName
-        this.middleName = data!.middleName
-        this.lastName   = data!.lastName
-        this.type       = data!.type
-        this.active     = data!.active
-
-        this.showUserRoles(this.clinics, data!['clinics'])
-        
-      }
-    )
-    .catch(
-      error=>{
-        console.log(error)        
-        this.msgBox.showErrorMessage('Could not find Doctor')
-      }
-    )
-  }
-
-  showClinicianClinics(clinics : IClinic[], clinicianClinics : IClinic[]){
-    /**
-     * Display user roles, the roles for that particular user are checked
-     * args: roles-global user roles, userRoles-roles for a specific user
-     */
-    /** First uncheck all roles */
-    this.clearClinics()
-    /** Now, check the respective  roles */
-    clinicianClinics.forEach(clinicianClinic => {
-      clinics.forEach(clinic => {        
-        if(clinic.name === clinicianClinic.name){
-          clinic.assigned = true
-        }
-      })
-    })
-    this.clinics = clinics
-  }
-
- 
-
-  showUserRoles(clinics : IClinic[], clinicianClinics : IClinic[]){
-    /**
-     * Display user roles, the roles for that particular user are checked
-     * args: roles-global user roles, userRoles-roles for a specific user
-     */
-    /** First uncheck all roles */
-    this.clearClinics()
-    /** Now, check the respective  roles */
-    clinicianClinics.forEach(clinicianClinic => {
-      clinics.forEach(clinic => {        
-        if(clinic.name === clinicianClinic.name){
-          clinic.assigned = true
-        }
-      })
-    })
-    this.clinics = clinics
-  }
-
-  clearClinics(){
-    /**Uncheck all roles */
-    this.clinics.forEach(clinic => {
-      clinic.assigned = false
-    })
-  }
-
-  async loadClinics(){  
-    /**Get all roles */
-     let options = {
-       headers : new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
-     }
-     this.spinner.show()
-     await this.http.get<IClinic[]>(API_URL+'/clinics', options)
-     .pipe(finalize(() => this.spinner.hide()))
-     .toPromise()
-     .then(
-       data => {
-         data?.forEach(
-           element => {
-             console.log(element)
-             this.clinics.push(element)
-           }
-         )
-       }
-     )
-     .catch(error => {
-       console.log(error)
-     })
-   }
-
-   clearUser(){
-     this.userCode = ''
-   }
-
-   public async assignUserProfile(){
+  public async saveSupplier(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     
-    if(this.id != null){
+    var supplier = {
+      id                  : this.id,
+      code                : this.code,
+      name                : this.name,
+      contactName         : this.contactName,
+      active              : this.active,
+      tin                 : this.tin,
+      vrn                 : this.vrn,
+      termsOfContract     : this.termsOfContract,
+      physicalAddress     : this.physicalAddress,
+      postCode            : this.postCode,
+      postAddress         : this.postAddress,
+      telephone           : this.telephone,
+      mobile              : this.mobile,
+      email               : this.email,
+      fax                 : this.fax,
+      bankAccountName     : this.bankAccountName,
+      bankPhysicalAddress : this.bankPhysicalAddress,
+      bankPostCode        : this.bankPostCode,
+      bankPostAddress     : this.bankPostAddress,
+      bankName            : this.bankName,
+      bankAccountNo       : this.bankAccountNo
+    }
+    if(this.id == null || this.id == ''){
+      //save a new supplier
       this.spinner.show()
-      await this.http.post<IClinician>(API_URL+'/clinicians/assign_user_profile?id='+this.id+'&code='+this.userCode, null, options)
+      await this.http.post<ISupplier>(API_URL+'/suppliers/save', supplier, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
-          this.id         = data?.id
-          this.code       = data!.code
-          this.firstName  = data!.firstName
-          this.middleName = data!.middleName
-          this.lastName   = data!.lastName
-          this.type       = data!.type
-          this.clinics    = data!.clinics
-          this.active     = data!.active
-          this.msgBox.showSuccessMessage('Saved successifully')
-          this.loadClinicians()
-          this.clear()
+          this.id               = data?.id
+          this.code             = data!.code
+          this.name             = data!.name
+          this.contactName      = data!.contactName
+          this.active           = data!.active
+          this.tin              = data!.tin
+          this.vrn              = data!.vrn
+          this.termsOfContract  = data!.termsOfContract
+          this.physicalAddress  = data!.physicalAddress
+          this.postCode         = data!.postCode
+          this.postAddress      = data!.postAddress
+          this.telephone        = data!.telephone
+          this.mobile           = data!.mobile
+          this.email            = data!.email
+          this.fax              = data!.fax
+          this.bankAccountName  = data!.bankAccountName
+          this.bankPhysicalAddress = data!.bankPhysicalAddress
+          this.bankPostCode     = data!.bankPostCode
+          this.bankPostAddress  = data!.bankPostAddress
+          this.bankName         = data!.bankName
+          this.bankAccountNo    = data!.bankAccountNo
+          this.msgBox.showSuccessMessage('Supplier created successifully')
         }
       )
       .catch(
@@ -298,6 +125,139 @@ export class SupplierRegisterComponent {
         }
       )
 
+    }else{
+      //update an existing supplier
+      this.spinner.show()
+      await this.http.post<ISupplier>(API_URL+'/suppliers/save', supplier, options)
+      .pipe(finalize(() => this.spinner.hide()))
+      .toPromise()
+      .then(
+        data => {
+          this.id               = data?.id
+          this.code             = data!.code
+          this.name             = data!.name
+          this.contactName      = data!.contactName
+          this.active           = data!.active
+          this.tin              = data!.tin
+          this.vrn              = data!.vrn
+          this.termsOfContract  = data!.termsOfContract
+          this.physicalAddress  = data!.physicalAddress
+          this.postCode         = data!.postCode
+          this.postAddress      = data!.postAddress
+          this.telephone        = data!.telephone
+          this.mobile           = data!.mobile
+          this.email            = data!.email
+          this.fax              = data!.fax
+          this.bankAccountName  = data!.bankAccountName
+          this.bankPhysicalAddress = data!.bankPhysicalAddress
+          this.bankPostCode     = data!.bankPostCode
+          this.bankPostAddress  = data!.bankPostAddress
+          this.bankName         = data!.bankName
+          this.bankAccountNo    = data!.bankAccountNo
+          this.msgBox.showSuccessMessage('Supplier updated successifully')
+        }
+      )
+      .catch(
+        error => {
+          this.msgBox.showErrorMessage(error['error'])
+        }
+      )
     }
-  } 
+  }
+
+  clear(){
+    this.id               = null
+    this.code             = ''
+    this.name             = ''
+    this.contactName      = ''
+    this.tin              = ''
+    this.vrn              = ''
+    this.termsOfContract  = ''
+    this.physicalAddress  = ''
+    this.postCode         = ''
+    this.postAddress      = ''
+    this.telephone        = ''
+    this.mobile           = ''
+    this.email            = ''
+    this.fax              = ''
+    this.bankAccountName  = ''
+    this.bankPhysicalAddress = ''
+    this.bankPostCode     = ''
+    this.bankPostAddress  = ''
+    this.bankName         = ''
+    this.bankAccountNo    = ''
+    this.active           = false
+  }
+
+
+  async searchSupplier(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var code = this.code
+    var name = this.name
+    if(code != ''){
+      name = ''
+    }
+    
+    this.spinner.show()
+    await this.http.get<ISupplier>(API_URL+'/suppliers/search?code='+code+'&name='+name, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.id               = data?.id
+        this.code             = data!.code
+        this.name             = data!.name
+        this.contactName      = data!.contactName
+        this.active           = data!.active
+        this.tin              = data!.tin
+        this.vrn              = data!.vrn
+        this.termsOfContract  = data!.termsOfContract
+        this.physicalAddress  = data!.physicalAddress
+        this.postCode         = data!.postCode
+        this.postAddress      = data!.postAddress
+        this.telephone        = data!.telephone
+        this.mobile           = data!.mobile
+        this.email            = data!.email
+        this.fax              = data!.fax
+        this.bankAccountName  = data!.bankAccountName
+        this.bankPhysicalAddress = data!.bankPhysicalAddress
+        this.bankPostCode     = data!.bankPostCode
+        this.bankPostAddress  = data!.bankPostAddress
+        this.bankName         = data!.bankName
+        this.bankAccountNo    = data!.bankAccountNo
+      },
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+
+  async loadSupplierNames(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/suppliers/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.names = []
+        data?.forEach(element => {
+          this.names.push(element)
+        })
+      },
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage('Could not load supplier names')
+      }
+    )
+  }
+
+   
 }

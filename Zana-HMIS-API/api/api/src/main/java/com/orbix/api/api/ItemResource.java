@@ -6,6 +6,7 @@ package com.orbix.api.api;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -22,6 +23,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Item;
+import com.orbix.api.exceptions.InvalidOperationException;
+import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.ItemRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
 import com.orbix.api.service.ItemService;
@@ -59,6 +62,34 @@ public class ItemResource {
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){
 		return ResponseEntity.ok().body(itemService.getItemById(id, request));
+	}
+	
+	@GetMapping("/items/search")
+	public ResponseEntity<Item> searchItem(
+			@RequestParam(name = "code") String code,
+			@RequestParam(name = "barcode") String barcode,
+			@RequestParam(name = "name") String name,
+			HttpServletRequest request){
+		Optional<Item> i;
+		if(!code.equals("")) {
+			i = itemRepository.findByCode(code);
+			if(i.isEmpty()) {
+				throw new NotFoundException("Item not found");
+			}
+		}else if(!barcode.equals("")) {
+			i = itemRepository.findByBarcode(barcode);
+			if(i.isEmpty()) {
+				throw new NotFoundException("Item not found");
+			}
+		}else if(!name.equals("")) {
+			i = itemRepository.findByName(name);
+			if(i.isEmpty()) {
+				throw new NotFoundException("Item not found");
+			}
+		}else {
+			throw new InvalidOperationException("No search key specified");
+		}
+		return ResponseEntity.ok().body(i.get());
 	}
 	
 	@GetMapping("/items/get_names")

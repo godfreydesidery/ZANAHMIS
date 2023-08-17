@@ -76,6 +76,8 @@ import { AgePipe } from './pipes/age.pipe';
 import { TheatreComponent } from './pages/admin/medical-units/theatre/theatre.component';
 import { ItemRegisterComponent } from './pages/admin/inventory/item-register/item-register.component';
 import { SupplierRegisterComponent } from './pages/admin/stakeholders/supplier-register/supplier-register.component';
+import { ItemInquiryComponent } from './pages/store/item-inquiry/item-inquiry.component';
+import { PharmacyToStoreROComponent } from './pages/pharmacy/pharmacy-to-store-r-o/pharmacy-to-store-r-o.component';
 
 
 @NgModule({
@@ -145,6 +147,8 @@ import { SupplierRegisterComponent } from './pages/admin/stakeholders/supplier-r
     TheatreComponent,
     ItemRegisterComponent,
     SupplierRegisterComponent,
+    ItemInquiryComponent,
+    PharmacyToStoreROComponent,
   ],
   imports: [
     HttpClientModule,
@@ -212,6 +216,8 @@ import { SupplierRegisterComponent } from './pages/admin/stakeholders/supplier-r
     {path : 'patient-procedure', component : PatientProcedureComponent},
     {path : 'supplier-register', component : SupplierRegisterComponent},
     {path : 'item-register', component : ItemRegisterComponent},
+    {path : 'item-inquiry', component : ItemInquiryComponent},
+    {path : 'pharmacy-to-store-r-o', component : PharmacyToStoreROComponent},
     ])
   ],
   schemas: [ 

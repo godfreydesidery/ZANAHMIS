@@ -26,4 +26,18 @@ public interface ItemRepository extends JpaRepository <Item, Long> {
 
 	@Query("SELECT i.name FROM Item i")
 	List<String> getNames();
+
+
+	/**
+	 * @param code
+	 * @return
+	 */
+	Optional<Item> findByCode(String code);
+
+
+	/**
+	 * @param barcode
+	 * @return
+	 */
+	Optional<Item> findByBarcode(String barcode);
 }

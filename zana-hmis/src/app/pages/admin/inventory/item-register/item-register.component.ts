@@ -62,8 +62,8 @@ export class ItemRegisterComponent {
       id                  : this.id,
       code                : this.code,
       barcode             : this.barcode,
-      name         : this.name,
-      shortName    : this.shortName,
+      name                : this.name,
+      shortName           : this.shortName,
       commonName          : this.commonName,
       vat                 : this.vat,
       uom                 : this.uom,
@@ -185,4 +185,50 @@ export class ItemRegisterComponent {
       }
     )
   }
+
+  async searchItem(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var code = this.code
+    var barcode = this.barcode
+    var name = this.name
+    if(code != ''){
+      barcode = ''
+      name = ''
+    }
+    if(barcode != ''){
+      name = ''
+    }
+
+    this.spinner.show()
+    await this.http.get<IItem>(API_URL+'/items/search?code='+code+'&barcode='+barcode+'&name='+name, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.id                   = data?.id
+        this.code                 = data!.code
+        this.barcode              = data!.barcode
+        this.name                 = data!.name
+        this.shortName            = data!.shortName
+        this.commonName           = data!.commonName
+        this.vat                  = data!.vat
+        this.uom                  = data!.uom
+        this.packSize             = data!.packSize
+        this.stock                = data!.stock
+        this.minimumInventory     = data!.minimumInventory
+        this.maximumInventory     = data!.maximumInventory
+        this.defaultReorderQty    = data!.defaultReorderQty
+        this.defaultReorderLevel  = data!.defaultReorderLevel
+        this.active               = data!.active
+        this.ingredients          = data!.ingredients
+      },
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
 }
