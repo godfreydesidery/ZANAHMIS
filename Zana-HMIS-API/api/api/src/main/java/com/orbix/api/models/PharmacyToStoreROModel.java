@@ -40,5 +40,5 @@ public class PharmacyToStoreROModel {
     public String verified = "";
     public String approved = "";
     
-    public List<PharmacyToStoreRODetailModel> pharmacyToStoreRODetailModels = new ArrayList<>();
+    public List<PharmacyToStoreRODetailModel> pharmacyToStoreRODetails = new ArrayList<>();
 }

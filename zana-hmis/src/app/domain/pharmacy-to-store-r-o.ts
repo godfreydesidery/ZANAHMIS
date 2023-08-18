@@ -1,3 +1,4 @@
+import { IPharmacy } from "./pharmacy"
 import { IPharmacyToStoreRODetail } from "./pharmacy-to-store-r-o-detail"
 
 export interface IPharmacyToStoreRO {
@@ -6,6 +7,8 @@ export interface IPharmacyToStoreRO {
     orderDate     : Date
     validUntil    : Date
     status        : string
+
+    pharmacy      : IPharmacy
 
     pharmacyToStoreRODetails : IPharmacyToStoreRODetail[]
 

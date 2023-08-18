@@ -24,7 +24,10 @@ import { IRadiology } from 'src/app/domain/radiology';
 import { IRadiologyType } from 'src/app/domain/radiology-type';
 import { IWorkingDiagnosis } from 'src/app/domain/working-diagnosis';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
+import { Byte } from 'src/custom-packages/util';
 import { environment } from 'src/environments/environment';
+
+
 
 const API_URL = environment.apiUrl;
 

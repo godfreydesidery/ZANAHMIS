@@ -13,6 +13,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.accessories.Formater;
+import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyToStoreRO;
 import com.orbix.api.domain.PharmacyToStoreRODetail;
@@ -23,7 +24,9 @@ import com.orbix.api.models.PharmacyToStoreROModel;
 import com.orbix.api.models.RecordModel;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
+import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
+import com.orbix.api.repositories.PharmacyToStoreRODetailRepository;
 import com.orbix.api.repositories.PharmacyToStoreRORepository;
 import com.orbix.api.repositories.UserRepository;
 
@@ -46,6 +49,8 @@ public class PharmacyToStoreROServiceImpl implements PharmacyToStoreROService {
 	private final DayService dayService;
 	private final PharmacyRepository pharmacyRepository;
 	private final PharmacyToStoreRORepository pharmacyToStoreRORepository;
+	private final PharmacyToStoreRODetailRepository pharmacyToStoreRODetailRepository;
+	private final MedicineRepository medicineRepository;
 	
 	@Override
 	public PharmacyToStoreROModel save(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request) {
@@ -99,7 +104,7 @@ public class PharmacyToStoreROServiceImpl implements PharmacyToStoreROService {
 				}
 				modelDetails.add(modelDetail);
 			}
-			model.setPharmacyToStoreRODetailModels(modelDetails);
+			model.setPharmacyToStoreRODetails(modelDetails);
 		}
 		
 		if(ro.getCreatedAt() != null) {
@@ -118,6 +123,43 @@ public class PharmacyToStoreROServiceImpl implements PharmacyToStoreROService {
 			model.setApproved(null);
 		}		
 		return model;
+	}
+	
+	@Override
+	public boolean saveDetail(PharmacyToStoreRODetail detail, HttpServletRequest request) {
+		
+		Optional<PharmacyToStoreRO> ro = pharmacyToStoreRORepository.findById(detail.getPharmacyToStoreRO().getId());
+		if(ro.isEmpty()) {
+			throw new NotFoundException("Requisition order not found");
+		}
+		Optional<Medicine> med = medicineRepository.findByName(detail.getMedicine().getName());
+		if(med.isEmpty()) {
+			throw new NotFoundException("Medicine not found");
+		}
+		
+		if(detail.getId() == null) {
+			List<PharmacyToStoreRODetail> det = pharmacyToStoreRODetailRepository.findAllByPharmacyToStoreROAndMedicine(ro.get(), med.get());
+			if(!det.isEmpty()) {
+				throw new InvalidOperationException("Duplicates are not allowed");
+			}
+		}
+		
+		
+		PharmacyToStoreRODetail d = new PharmacyToStoreRODetail();
+		d.setId(detail.getId());
+		d.setPharmacyToStoreRO(ro.get());
+		d.setMedicine(med.get());
+		d.setOrderedQty(detail.getOrderedQty());
+		d.setReceivedQty(0);
+		d.setStatus("PENDING");
+		
+		d.setCreatedBy(userService.getUser(request).getId());
+		d.setCreatedOn(dayService.getDay().getId());
+		d.setCreatedAt(dayService.getTimeStamp());
+		
+		pharmacyToStoreRODetailRepository.save(d);
+	
+		return true;
 	}
 
 	@Override

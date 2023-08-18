@@ -78,6 +78,8 @@ import { ItemRegisterComponent } from './pages/admin/inventory/item-register/ite
 import { SupplierRegisterComponent } from './pages/admin/stakeholders/supplier-register/supplier-register.component';
 import { ItemInquiryComponent } from './pages/store/item-inquiry/item-inquiry.component';
 import { PharmacyToStoreROComponent } from './pages/pharmacy/pharmacy-to-store-r-o/pharmacy-to-store-r-o.component';
+import { PharmacyToStoreROListComponent } from './pages/store/pharmacy-to-store-r-o-list/pharmacy-to-store-r-o-list.component';
+import { StoreToPharmacyTOComponent } from './pages/store/store-to-pharmacy-t-o/store-to-pharmacy-t-o.component';
 
 
 @NgModule({
@@ -149,6 +151,8 @@ import { PharmacyToStoreROComponent } from './pages/pharmacy/pharmacy-to-store-r
     SupplierRegisterComponent,
     ItemInquiryComponent,
     PharmacyToStoreROComponent,
+    PharmacyToStoreROListComponent,
+    StoreToPharmacyTOComponent,
   ],
   imports: [
     HttpClientModule,
@@ -218,6 +222,8 @@ import { PharmacyToStoreROComponent } from './pages/pharmacy/pharmacy-to-store-r
     {path : 'item-register', component : ItemRegisterComponent},
     {path : 'item-inquiry', component : ItemInquiryComponent},
     {path : 'pharmacy-to-store-r-o', component : PharmacyToStoreROComponent},
+    {path : 'pharmacy-to-store-r-o-list', component : PharmacyToStoreROListComponent},
+    {path : 'store-to-pharmacy-t-o', component : StoreToPharmacyTOComponent},
     ])
   ],
   schemas: [ 

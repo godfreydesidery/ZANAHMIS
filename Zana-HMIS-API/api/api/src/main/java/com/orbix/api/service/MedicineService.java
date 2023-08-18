@@ -16,6 +16,7 @@ import com.orbix.api.domain.Medicine;
 public interface MedicineService {
 	Medicine save(Medicine medicine, HttpServletRequest request);	
 	List<Medicine>getMedicines(HttpServletRequest request); // return all the medicines
+	Medicine getMedicineByCode(String code, HttpServletRequest request);
 	Medicine getMedicineByName(String name, HttpServletRequest request);
 	Medicine getMedicineById(Long id, HttpServletRequest request);
 	boolean deleteMedicine(Medicine medicine, HttpServletRequest request);

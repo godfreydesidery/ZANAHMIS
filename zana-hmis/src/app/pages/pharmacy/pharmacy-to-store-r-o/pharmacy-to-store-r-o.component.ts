@@ -12,6 +12,7 @@ import { IPatientBill } from 'src/app/domain/patient-bill';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 import { IPharmacyToStoreRO } from 'src/app/domain/pharmacy-to-store-r-o';
+import { IPharmacyToStoreRODetail } from 'src/app/domain/pharmacy-to-store-r-o-detail';
 
 const API_URL = environment.apiUrl;
 
@@ -42,6 +43,16 @@ export class PharmacyToStoreROComponent {
 
   pharmacyToStoreROs : IPharmacyToStoreRO[] = []
 
+  detailId          : any
+  detailCode        : string = ''
+  detailName        : string = ''
+  detailOrderedQty  : number = 0
+  detailReceivedQty : number = 0
+
+  medicineNames : string[] = []
+
+  //pharmacyToStoreDetails : IPharmacyToStoreRODetail[] = []
+
 
   constructor(
     private auth : AuthService,
@@ -53,6 +64,7 @@ export class PharmacyToStoreROComponent {
 
   async ngOnInit(): Promise<void> {
     this.loadOrdersByPharmacy()
+    this.loadMedicineNames()
   }
 
   async requestNo(){
@@ -119,8 +131,81 @@ export class PharmacyToStoreROComponent {
 
   
 
-  saveDetail(){
+  async saveDetail(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var detail = {
+      id                : this.detailId,
+      pharmacyToStoreRO : {id : this.id},
+      medicine          : {name : this.detailName},
+      orderedQty        : this.detailOrderedQty,
+      receivedQty       : this.detailReceivedQty
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/pharmacy_to_store_r_os/save_detail', detail, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.search(this.id)
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
 
+  async deleteDetail(detailId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var detail = {
+      id : detailId,
+      pharmacyToStoreRO : {id : this.id}
+    }
+    
+    this.spinner.show()
+    await this.http.post(API_URL+'/pharmacy_to_store_r_os/delete_detail', detail, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.search(this.id)
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  async loadMedicineNames(){
+    this.medicineNames = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/medicines/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        data?.forEach(element => {
+          this.medicineNames.push(element)
+        })
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load medicine names')
+      }
+    )
   }
 
   postOrder(){
@@ -186,6 +271,7 @@ export class PharmacyToStoreROComponent {
         this.pharmacyToStoreRO = data!
 
         this.lock()
+        console.log(data)
       },
       error => {
         console.log(error)
@@ -217,6 +303,7 @@ export class PharmacyToStoreROComponent {
         this.pharmacyToStoreRO = data!
 
         this.lock()
+        console.log(data)
       },
       error => {
         console.log(error)
@@ -244,4 +331,54 @@ export class PharmacyToStoreROComponent {
       }
     )
   }
+
+  async searchMedicine(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    if(this.detailCode != ''){
+      this.spinner.show()
+      await this.http.get<IMedicine>(API_URL+'/medicines/get_by_code?code='+this.detailCode, options)
+      .pipe(finalize(() => this.spinner.hide()))
+      .toPromise()
+      .then(
+        data => {
+          this.clearDetail()
+          this.detailCode = data!.code
+          this.detailName = data!.name
+        },
+        error => {
+          console.log(error)
+          this.msgBox.showErrorMessage(error['error'])
+        }
+      )
+    }else{
+      this.spinner.show()
+      await this.http.get<IMedicine>(API_URL+'/medicines/get_by_name?name='+this.detailName, options)
+      .pipe(finalize(() => this.spinner.hide()))
+      .toPromise()
+      .then(
+        data => {
+          this.clearDetail()
+          this.detailCode = data!.code
+          this.detailName = data!.name
+        },
+        error => {
+          console.log(error)
+          this.msgBox.showErrorMessage(error['error'])
+        }
+      )
+    }
+    
+  }
+
+  clearDetail(){
+    this.detailId = null
+    this.detailCode = ''
+    this.detailName = ''
+    this.detailOrderedQty = 0
+    this.detailReceivedQty = 0
+  }
+
+  
 }

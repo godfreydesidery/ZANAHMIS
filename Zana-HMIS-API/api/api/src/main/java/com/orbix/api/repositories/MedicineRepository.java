@@ -28,6 +28,12 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 	@Query("SELECT m.name FROM Medicine m")
 	List<String> getNames();
 
+	/**
+	 * @param code
+	 * @return
+	 */
+	Optional<Medicine> findByCode(String code);
+
 	
 
 }

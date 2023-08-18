@@ -33,4 +33,10 @@ public interface PharmacyToStoreRORepository extends JpaRepository<PharmacyToSto
 	 * @return
 	 */
 	List<PharmacyToStoreRO> findByPharmacyAndStatusIn(Pharmacy pharmacy, List<String> statuses);
+
+	/**
+	 * @param statuses
+	 * @return
+	 */
+	List<PharmacyToStoreRO> findByStatusIn(List<String> statuses);
 }

@@ -62,6 +62,20 @@ public class MedicineResource {
 		return ResponseEntity.ok().body(medicineService.getMedicineById(id, request));
 	}
 	
+	@GetMapping("/medicines/get_by_code")
+	public ResponseEntity<Medicine> getMedicineByCode(
+			@RequestParam(name = "code") String code,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(medicineService.getMedicineByCode(code, request));
+	}
+	
+	@GetMapping("/medicines/get_by_name")
+	public ResponseEntity<Medicine> getMedicineByName(
+			@RequestParam(name = "name") String name,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(medicineService.getMedicineByName(name, request));
+	}
+	
 	@GetMapping("/medicines/get_names")
 	public ResponseEntity<List<String>> getMedicineNames(
 			HttpServletRequest request){

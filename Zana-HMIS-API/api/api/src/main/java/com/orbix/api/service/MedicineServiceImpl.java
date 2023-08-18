@@ -76,6 +76,11 @@ public class MedicineServiceImpl implements MedicineService{
 		log.info("Fetching all medicines");
 		return medicineRepository.findAll();
 	}
+	
+	@Override
+	public Medicine getMedicineByCode(String code, HttpServletRequest request) {
+		return medicineRepository.findByCode(code).get();
+	}
 
 	@Override
 	public Medicine getMedicineByName(String name, HttpServletRequest request) {

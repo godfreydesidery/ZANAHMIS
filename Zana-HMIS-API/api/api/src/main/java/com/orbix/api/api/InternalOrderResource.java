@@ -33,6 +33,7 @@ import com.orbix.api.models.PharmacyToStoreROModel;
 import com.orbix.api.models.RecordModel;
 import com.orbix.api.repositories.InsuranceProviderRepository;
 import com.orbix.api.repositories.PharmacyRepository;
+import com.orbix.api.repositories.PharmacyToStoreRODetailRepository;
 import com.orbix.api.repositories.PharmacyToStoreRORepository;
 import com.orbix.api.service.DayService;
 import com.orbix.api.service.InsuranceProviderService;
@@ -54,6 +55,7 @@ public class InternalOrderResource {
 	
 	private final PharmacyToStoreROService pharmacyToStoreROService;
 	private final PharmacyToStoreRORepository pharmacyToStoreRORepository;
+	private final PharmacyToStoreRODetailRepository pharmacyToStoreRODetailRepository;
 	private final UserService userService;
 	private final PharmacyRepository pharmacyRepository;
 
@@ -69,7 +71,7 @@ public class InternalOrderResource {
 	}
 	
 	@GetMapping("/pharmacy_to_store_r_os/load_pharmacy_orders_by_pharmacy")
-	public List<PharmacyToStoreRO> loadPharmacyOrders(
+	public List<PharmacyToStoreRO> loadPharmacyOrdersByPharmacy(
 			@RequestParam(name = "pharmacy_id") Long pharmacyId){
 		Optional<Pharmacy> pharm = pharmacyRepository.findById(pharmacyId);
 		if(pharm.isEmpty()) {
@@ -83,9 +85,76 @@ public class InternalOrderResource {
 		return pharmacyToStoreRORepository.findByPharmacyAndStatusIn(pharm.get(), statuses);
 	}
 	
+	@GetMapping("/pharmacy_to_store_r_os/load_pharmacy_orders")
+	public List<PharmacyToStoreRO> loadPharmacyOrders(){
+
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		statuses.add("VERIFIED");
+		statuses.add("APPROVED");
+		
+		return pharmacyToStoreRORepository.findByStatusIn(statuses);
+	}
+	
 	@GetMapping("/pharmacy_to_store_r_os/request_no")
 	public RecordModel requestNo(){
 		return pharmacyToStoreROService.requestNo();
+	}
+	
+	@GetMapping("/pharmacy_to_store_r_os/get")
+	public ResponseEntity<PharmacyToStoreROModel> getPharmacyOrder(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		Optional<PharmacyToStoreRO> ro = pharmacyToStoreRORepository.findById(id);
+		if(ro.isEmpty()) {
+			throw new NotFoundException("Order not found");
+		}		
+		
+		PharmacyToStoreROModel model = new PharmacyToStoreROModel();
+		List<PharmacyToStoreRODetailModel> modelDetails = new ArrayList<>();
+		
+		model.setId(ro.get().getId());
+		model.setNo(ro.get().getNo());
+		model.setPharmacy(ro.get().getPharmacy());
+		model.setOrderDate(ro.get().getOrderDate());
+		model.setValidUntil(ro.get().getValidUntil());
+		model.setStatus(ro.get().getStatus());
+		if(ro.get().getPharmacyToStoreRODetails() != null) {
+			for(PharmacyToStoreRODetail d : ro.get().getPharmacyToStoreRODetails()) {
+				PharmacyToStoreRODetailModel modelDetail = new PharmacyToStoreRODetailModel();
+				modelDetail.setId(d.getId());
+				modelDetail.setMedicine(d.getMedicine());
+				modelDetail.setOrderedQty(d.getOrderedQty());
+				modelDetail.setReceivedQty(d.getReceivedQty());
+				if(d.getCreatedAt() != null) {
+					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());
+				}else {
+					modelDetail.setCreated(null);
+				}
+				modelDetails.add(modelDetail);
+			}
+			model.setPharmacyToStoreRODetails(modelDetails);
+		}
+		
+		if(ro.get().getCreatedAt() != null) {
+			model.setCreated(ro.get().getCreatedAt().toString()+" | "+userService.getUserById(ro.get().getCreatedBy()).getNickname());
+		}else {
+			model.setCreated(null);
+		}
+		if(ro.get().getVerifiedAt() != null) {
+			model.setVerified(ro.get().getVerifiedAt().toString()+" | "+userService.getUserById(ro.get().getVerifiedBy()).getNickname());
+		}else {
+			model.setVerified(null);
+		}
+		if(ro.get().getApprovedAt() != null) {
+			model.setApproved(ro.get().getApprovedAt().toString()+" | "+userService.getUserById(ro.get().getApprovedBy()).getNickname());
+		}else {
+			model.setApproved(null);
+		}		
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacy_to_store_r_os/search_by_no").toUriString());
+		return ResponseEntity.created(uri).body(model);
+		
 	}
 	
 	@GetMapping("/pharmacy_to_store_r_os/search")
@@ -124,7 +193,7 @@ public class InternalOrderResource {
 				}
 				modelDetails.add(modelDetail);
 			}
-			model.setPharmacyToStoreRODetailModels(modelDetails);
+			model.setPharmacyToStoreRODetails(modelDetails);
 		}
 		
 		if(ro.get().getCreatedAt() != null) {
@@ -184,7 +253,7 @@ public class InternalOrderResource {
 				}
 				modelDetails.add(modelDetail);
 			}
-			model.setPharmacyToStoreRODetailModels(modelDetails);
+			model.setPharmacyToStoreRODetails(modelDetails);
 		}
 		
 		if(ro.get().getCreatedAt() != null) {
@@ -206,5 +275,37 @@ public class InternalOrderResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacy_to_store_r_os/search_by_no").toUriString());
 		return ResponseEntity.created(uri).body(model);
 		
+	}
+	
+	@PostMapping("/pharmacy_to_store_r_os/save_detail")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<Boolean>savePharmacyToStoreRODetail(
+			@RequestBody PharmacyToStoreRODetail detail,
+			HttpServletRequest request){
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacy_to_store_r_o/save_detail").toUriString());
+		return ResponseEntity.created(uri).body(pharmacyToStoreROService.saveDetail(detail, request));
+	}
+	
+	@PostMapping("/pharmacy_to_store_r_os/delete_detail")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public boolean deletePharmacyToStoreRODetail(
+			@RequestBody PharmacyToStoreRODetail detail,
+			HttpServletRequest request){
+		
+		Optional<PharmacyToStoreRODetail> det = pharmacyToStoreRODetailRepository.findById(detail.getId());
+		if(det.isEmpty()) {
+			throw new NotFoundException("Detail not found");
+		}
+		if(det.get().getPharmacyToStoreRO().getId() != detail.getPharmacyToStoreRO().getId()) {
+			throw new InvalidOperationException("Could not delete, order do not match");
+		}
+		if(!det.get().getPharmacyToStoreRO().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Only pending orders can be  modified");
+		}
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacy_to_store_r_o/delete_detail").toUriString());
+		pharmacyToStoreRODetailRepository.delete(det.get());
+		return true;
 	}
 }

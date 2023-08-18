@@ -1,0 +1,81 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="header-title">
+        <h1>Pharmacy To Store Requisition Order List</h1>
+    </div>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <!-- Form controls -->
+        <div class="col-sm-12">
+            <div class="panel panel-bd lobidrag">
+                <div class="panel-heading">
+                    <div class="btn"> 
+
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-4 jumbotron">
+                            <h4 class="text-primary">Order List</h4>
+                            <table class="table table-bordered">
+                                <thead style="position: sticky; top: 0;">
+                                    <tr class="table-dark">
+                                        <td>Order#</td>
+                                        <td>Order Date</td>
+                                        <td>Valid Until</td>
+                                        <td>Status</td>
+                                        <td>Select</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let p of pharmacyToStoreROs">
+                                        <td>{{p.no}}</td>
+                                        <td>{{p.orderDate | date}}</td>
+                                        <td>{{p.validUntil | date}}</td>
+                                        <td>{{p.status}}</td>
+                                        <td><span data-dismiss="modal" (click)="get(p.id)" style="cursor: pointer;">[Select]</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-8">
+                            <div *ngIf="pharmacyToStoreRO != null">
+                                <h4 class="text-primary">Order</h4>
+                                <h5>Pharmacy: {{pharmacyToStoreRO?.pharmacy?.name}}</h5>
+                                <h5>Order#: {{pharmacyToStoreRO?.no}}</h5>
+                                <h5>Order Date: {{pharmacyToStoreRO?.orderDate | date}}</h5>
+                                <h5>Valid Until: {{pharmacyToStoreRO?.validUntil | date}}</h5>
+                                <h5>Status: {{pharmacyToStoreRO?.status}}</h5>
+                                <h5>Created: {{pharmacyToStoreRO?.created}}</h5>
+                                <h5>Verified: {{pharmacyToStoreRO?.verified}}</h5>
+                                <h5>Approved: {{pharmacyToStoreRO?.approved}}</h5>
+                                <table class="table table-responsive table striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <td>Code</td>
+                                            <td>Name</td>
+                                            <td>Ordered Qty</td>
+                                            <td>Received Qty</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let d of pharmacyToStoreRO?.pharmacyToStoreRODetails">
+                                            <td>{{d.medicine.code}}</td>
+                                            <td>{{d.medicine.name}}</td>
+                                            <td>{{d.orderedQty}}</td>
+                                            <td>{{d.receivedQty}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <hr>
+                                <button class="btn btn-primary" *ngIf="pharmacyToStoreRO.pharmacyToStoreRODetails.length > 0 ">Create Transfer Order</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+         </div>
+     </div>     
+ </section> <!-- /.content -->
