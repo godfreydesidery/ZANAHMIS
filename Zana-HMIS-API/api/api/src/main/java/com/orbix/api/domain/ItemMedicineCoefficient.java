@@ -1,4 +1,4 @@
-/**
+                                                                                                                                                                                    /**
  * 
  */
 package com.orbix.api.domain;
@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
@@ -35,7 +36,7 @@ public class ItemMedicineCoefficient {
 	
 	private double coefficient = 0;
 	
-	@ManyToOne(targetEntity = Item.class, fetch = FetchType.EAGER,  optional = false)
+	@OneToOne(targetEntity = Item.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "item_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Item item;

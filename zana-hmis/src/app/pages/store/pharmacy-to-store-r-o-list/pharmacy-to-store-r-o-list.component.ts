@@ -13,6 +13,7 @@ import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 import { IPharmacyToStoreRO } from 'src/app/domain/pharmacy-to-store-r-o';
 import { IPharmacyToStoreRODetail } from 'src/app/domain/pharmacy-to-store-r-o-detail';
+import { IStoreToPharmacyTO } from 'src/app/domain/store-to-pharmacy-t-o';
 
 const API_URL = environment.apiUrl;
 
@@ -23,6 +24,8 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./pharmacy-to-store-r-o-list.component.scss']
 })
 export class PharmacyToStoreROListComponent {
+
+  id : any = null
 
   pharmacyToStoreROs : IPharmacyToStoreRO[] = []
 
@@ -65,6 +68,8 @@ export class PharmacyToStoreROListComponent {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
+
+    this.id = null
     
     this.spinner.show()
     await this.http.get<IPharmacyToStoreRO>(API_URL+'/pharmacy_to_store_r_os/get?id='+id, options)
@@ -72,6 +77,8 @@ export class PharmacyToStoreROListComponent {
     .toPromise()
     .then(
       data => {
+        this.id = id
+
         /*this.id         = data?.id
         this.no         = data!.no
         this.orderDate  = data!.orderDate
@@ -90,5 +97,41 @@ export class PharmacyToStoreROListComponent {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
+  }
+
+  async createTransferOrder(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var pharmacyToStoreRO = {
+      id : id
+    }
+
+    this.spinner.show()
+    await this.http.post<IStoreToPharmacyTO>(API_URL+'/store_to_pharmacy_t_os/create', pharmacyToStoreRO, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        localStorage.setItem('store-to-pharmacy-t-o-id', data?.id)
+        this.router.navigate(['store-to-pharmacy-t-o'])
+
+        /*this.id         = data?.id
+        this.no         = data!.no
+        this.orderDate  = data!.orderDate
+        this.validUntil = data!.validUntil
+        this.status     = data!.status
+        this.created    = data!.created
+        this.verified   = data!.verified
+        this.approved   = data!.approved*/
+
+        console.log(data)
+      },
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+
   }
 }

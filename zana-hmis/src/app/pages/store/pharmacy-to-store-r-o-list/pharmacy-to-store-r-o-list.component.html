@@ -70,7 +70,7 @@
                                     </tbody>
                                 </table>
                                 <hr>
-                                <button class="btn btn-primary" *ngIf="pharmacyToStoreRO.pharmacyToStoreRODetails.length > 0 ">Create Transfer Order</button>
+                                <button class="btn btn-primary" *ngIf="pharmacyToStoreRO.pharmacyToStoreRODetails.length > 0 " (click)="createTransferOrder(id)">Transfer Order</button>
                             </div>
                         </div>
                     </div>

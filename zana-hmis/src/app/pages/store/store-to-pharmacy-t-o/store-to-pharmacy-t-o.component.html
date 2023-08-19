@@ -12,13 +12,167 @@
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
                     <div class="btn"> 
-
+                        <button class="btn btn-primary">Approve Transfer</button>
                     </div>
                 </div>
                 <div class="panel-body">
-                    
+                    <div class="row">
+                        <div class="col-sm-12" *ngIf="storeToPharmacyTO != null">
+                            <h4 class="text-primary">Order</h4>
+                            <h5>Pharmacy: {{storeToPharmacyTO?.pharmacy?.name}}</h5>
+                            <h5>Order#: {{storeToPharmacyTO?.no}}</h5>
+                            <h5>Order Date: {{storeToPharmacyTO?.orderDate | date}}</h5>
+                            <h5>Status: {{storeToPharmacyTO?.status}}</h5>
+                            <h5>Created: {{storeToPharmacyTO?.created}}</h5>
+                            <h5>Verified: {{storeToPharmacyTO?.verified}}</h5>
+                            <h5>Approved: {{storeToPharmacyTO?.approved}}</h5>
+                            <table class="table table-responsive table striped">
+                                <thead>
+                                    <tr style="font-weight: bold;">
+                                        <td>Requested Pharmacy SKUs</td>
+                                        <td>Action</td>
+                                        <td>Transfered Store SKUs</td>
+                                        <td>Transfered Pharmacy SKUs</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let d of storeToPharmacyTO.storeToPharmacyTODetails">
+                                        <td><b>{{d.orderedPharmacySKUQty}}</b> | <i>{{d?.medicine?.code}}</i> | {{d?.medicine?.name}}</td>
+                                        <td><button  data-toggle="modal" data-target="#add-sku-modal">Add</button></td>
+                                        <td>
+                                            <span *ngIf="d.transferedStoreSKUQty > 0"><b>{{d.transferedStoreSKUQty}}</b> | [{{d?.item?.code}}] {{d?.item?.name}}</span>
+                                            <table class="table table-responsive table-bordered table-small">
+                                                <thead>
+                                                    <tr>
+                                                        <td>Batch#</td>
+                                                        <td>Qty</td>
+                                                        <td>Expiry Date</td>
+                                                        <td></td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>K2070</td>
+                                                        <td>20</td>
+                                                        <td>23 Jun 2025</td>
+                                                        <td>
+                                                            <span class="glyphicon glyphicon-pencil"></span>
+                                                            <span class="glyphicon glyphicon-trash"></span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>K2070</td>
+                                                        <td>20</td>
+                                                        <td>23 Jun 2025</td>
+                                                        <td>
+                                                            <span class="glyphicon glyphicon-pencil"></span>
+                                                            <span class="glyphicon glyphicon-trash"></span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>K2070</td>
+                                                        <td>20</td>
+                                                        <td>23 Jun 2025</td>
+                                                        <td>
+                                                            <span class="glyphicon glyphicon-pencil"></span>
+                                                            <span class="glyphicon glyphicon-trash"></span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <span *ngIf="d.transferedPharmacySKUQty > 0"><b>{{d.transferedPharmacySKUQty}}</b> | [{{d?.item?.code}}] {{d?.item?.name}}</span>
+                                            <table class="table table-responsive table-bordered table-small">
+                                                <thead>
+                                                    <tr>
+                                                        <td>Batch#</td>
+                                                        <td>Qty</td>
+                                                        <td>Expiry Date</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>K2070</td>
+                                                        <td>20</td>
+                                                        <td>23 Jun 2025</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>K2070</td>
+                                                        <td>20</td>
+                                                        <td>23 Jun 2025</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>K2070</td>
+                                                        <td>20</td>
+                                                        <td>23 Jun 2025</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
              </div>
          </div>
      </div>     
  </section> <!-- /.content -->
+
+ <div class="modal fade modal-success" id="add-sku-modal" tabindex="-2" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Add/Edit SKUs</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h4>Code</h4>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="col-sm-4">
+                                <button>Search</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h4>Name</h4>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h4>Batch#</h4>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h4>Qty</h4>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="number" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
