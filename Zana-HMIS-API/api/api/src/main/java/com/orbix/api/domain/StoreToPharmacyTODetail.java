@@ -15,7 +15,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
@@ -67,4 +69,9 @@ public class StoreToPharmacyTODetail {
 	@Column(name = "created_on_day_id", nullable = false , updatable = false)
     private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
+	
+	@OneToMany(targetEntity = StoreToPharmacyBatch.class, mappedBy = "storeToPharmacyTODetail", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Valid
+    @JsonIgnoreProperties("storeToPharmacyTODetail")
+    private List<StoreToPharmacyBatch> storeToPharmacyBatches;
 }

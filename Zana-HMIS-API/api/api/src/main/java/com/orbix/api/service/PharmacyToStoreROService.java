@@ -22,5 +22,5 @@ public interface PharmacyToStoreROService {
 	/**
 	 * @return
 	 */
-	RecordModel requestNo();
+	RecordModel requestRequestOrderNo();
 }

@@ -24,5 +24,5 @@ public interface StoreToPharmacyTOService {
 	/**
 	 * @return
 	 */
-	RecordModel requestNo();
+	RecordModel requestTransferOrderNo();
 }

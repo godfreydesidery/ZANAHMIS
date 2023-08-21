@@ -67,7 +67,7 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 		Optional<StoreToPharmacyTO> to = storeToPharmacyTORepository.findByPharmacyToStoreRO(pharmacyToStoreRO);
 		StoreToPharmacyTO order = new StoreToPharmacyTO();
 		if(to.isEmpty()) {
-			order.setNo(this.requestNo().getNo());
+			order.setNo(this.requestTransferOrderNo().getNo());
 			order.setOrderDate(LocalDate.now());
 			order.setPharmacyToStoreRO(pharmacyToStoreRO);
 			order.setPharmacy(pharmacyToStoreRO.getPharmacy());
@@ -171,10 +171,10 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 	}
 
 	@Override
-	public RecordModel requestNo() {
+	public RecordModel requestTransferOrderNo() {
 		Long id = 1L;
 		try {
-			id = pharmacyToStoreRORepository.getLastId() + 1;
+			id = storeToPharmacyTORepository.getLastId() + 1;
 		}catch(Exception e) {}
 		RecordModel model = new RecordModel();
 		model.setNo(Formater.formatWithCurrentDate("SPT",id.toString()));

@@ -23,9 +23,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Item;
+import com.orbix.api.domain.ItemMedicineCoefficient;
+import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyToStoreRO;
 import com.orbix.api.domain.PharmacyToStoreRODetail;
+import com.orbix.api.domain.StoreToPharmacyBatch;
 import com.orbix.api.domain.StoreToPharmacyTO;
 import com.orbix.api.domain.StoreToPharmacyTODetail;
 import com.orbix.api.exceptions.InvalidOperationException;
@@ -36,9 +39,14 @@ import com.orbix.api.models.RecordModel;
 import com.orbix.api.models.StoreToPharmacyTODetailModel;
 import com.orbix.api.models.StoreToPharmacyTOModel;
 import com.orbix.api.repositories.InsuranceProviderRepository;
+import com.orbix.api.repositories.ItemMedicineCoefficientRepository;
+import com.orbix.api.repositories.ItemRepository;
+import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.PharmacyToStoreRODetailRepository;
 import com.orbix.api.repositories.PharmacyToStoreRORepository;
+import com.orbix.api.repositories.StoreToPharmacyBatchRepository;
+import com.orbix.api.repositories.StoreToPharmacyTODetailRepository;
 import com.orbix.api.repositories.StoreToPharmacyTORepository;
 import com.orbix.api.service.DayService;
 import com.orbix.api.service.InsuranceProviderService;
@@ -66,6 +74,11 @@ public class InternalOrderResource {
 	private final PharmacyRepository pharmacyRepository;
 	private final StoreToPharmacyTOService storeToPharmacyTOService;
 	private final StoreToPharmacyTORepository storeToPharmacyTORepository;
+	private final StoreToPharmacyTODetailRepository storeToPharmacyTODetailRepository;
+	private final ItemRepository itemRepository;
+	private final ItemMedicineCoefficientRepository itemMedicineCoefficientRepository;
+	private final StoreToPharmacyBatchRepository storeToPharmacyBatchRepository;
+	private final MedicineRepository medicineRepository;
 
 	
 	@PostMapping("/pharmacy_to_store_r_os/save")
@@ -106,7 +119,7 @@ public class InternalOrderResource {
 	
 	@GetMapping("/pharmacy_to_store_r_os/request_no")
 	public RecordModel requestNo(){
-		return pharmacyToStoreROService.requestNo();
+		return pharmacyToStoreROService.requestRequestOrderNo();
 	}
 	
 	@GetMapping("/pharmacy_to_store_r_os/get")
@@ -389,5 +402,84 @@ public class InternalOrderResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/store_to_pharmacy_t_os/get").toUriString());
 		return ResponseEntity.created(uri).body(model);
 		
+	}
+	
+	@PostMapping("/store_to_pharmacy_t_os/add_batch")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public boolean storeToPharmacyAddBatch(
+			@RequestBody StoreToPharmacyBatch batch,
+			HttpServletRequest request){
+		
+		Optional<StoreToPharmacyTODetail> tod = storeToPharmacyTODetailRepository.findById(batch.getStoreToPharmacyTODetail().getId());
+		if(tod.isEmpty()) {
+			throw new NotFoundException("Detail Not found");
+		}
+		Optional<Item> i = itemRepository.findByName(batch.getItem().getName());
+		if(i.isEmpty()) {
+			throw new NotFoundException("Item not found");
+		}
+		Item item = tod.get().getItem();
+		if(item != null) {
+			if(item.getId() != i.get().getId()) {
+				throw new InvalidOperationException("Addition of different SKUs is not allowed. Items should have the same SKU");
+			}
+		}
+		Optional<ItemMedicineCoefficient> coe = itemMedicineCoefficientRepository.findByItemAndMedicine(i.get(), tod.get().getMedicine());
+		if(coe.isEmpty()) {
+			throw new NotFoundException("Conversion coefficient for "+ i.get().getName() +" and " + tod.get().getMedicine().getName() +" not found");
+		}
+		if(batch.getStoreSKUQty() <= 0) {
+			throw new InvalidOperationException("Invalid qty entered, value must be more than zero");
+		}
+		batch.setPharmacySKUQty(batch.getStoreSKUQty() * coe.get().getCoefficient());
+		
+		tod.get().setTransferedStoreSKUQty(tod.get().getTransferedStoreSKUQty() + batch.getStoreSKUQty());
+		tod.get().setTransferedPharmacySKUQty(tod.get().getTransferedPharmacySKUQty() + batch.getPharmacySKUQty());
+		
+		
+		
+		StoreToPharmacyTODetail detail = storeToPharmacyTODetailRepository.save(tod.get());
+		batch.setItem(i.get());
+		batch.setStoreToPharmacyTODetail(detail);
+		
+		storeToPharmacyBatchRepository.save(batch);
+		
+		return true;
+	}
+	
+	@GetMapping("/store_to_pharmacy_t_os/load_item_names_by_medicine")
+	public List<String> loadItemNamesByMedicine(
+			@RequestParam(name = "medicine_id") Long medicineId,
+			HttpServletRequest request){
+		
+		Optional<Medicine> med = medicineRepository.findById(medicineId);
+		if(med.isEmpty()) {
+			throw new NotFoundException("Medicine Not found");
+		}
+			
+		List<ItemMedicineCoefficient> coes = itemMedicineCoefficientRepository.findAllByMedicine(med.get());
+		List<String> names = new ArrayList<>();
+		if(!coes.isEmpty()) {
+			for(ItemMedicineCoefficient coe : coes) {
+				names.add(coe.getItem().getName());
+			}
+		}
+		
+		return names;
+	}
+	
+	@GetMapping("/store_to_pharmacy_t_os/get_store_to_pharmacy_transfer_batches")
+	public List<StoreToPharmacyBatch> loa(
+			@RequestParam(name = "detail_id") Long detailId,
+			HttpServletRequest request){
+		
+		Optional<StoreToPharmacyTODetail> tod = storeToPharmacyTODetailRepository.findById(detailId);
+		if(tod.isEmpty()) {
+			throw new NotFoundException("Detail not found");
+		}
+			
+		List<StoreToPharmacyBatch> bs = storeToPharmacyBatchRepository.findAllByStoreToPharmacyTODetail(tod.get());
+		
+		return bs;
 	}
 }

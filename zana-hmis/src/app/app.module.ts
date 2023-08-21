@@ -80,6 +80,7 @@ import { ItemInquiryComponent } from './pages/store/item-inquiry/item-inquiry.co
 import { PharmacyToStoreROComponent } from './pages/pharmacy/pharmacy-to-store-r-o/pharmacy-to-store-r-o.component';
 import { PharmacyToStoreROListComponent } from './pages/store/pharmacy-to-store-r-o-list/pharmacy-to-store-r-o-list.component';
 import { StoreToPharmacyTOComponent } from './pages/store/store-to-pharmacy-t-o/store-to-pharmacy-t-o.component';
+import { ItemMedicineConversionCoefficientComponent } from './pages/store/conversion-coefficients/item-medicine-conversion-coefficient/item-medicine-conversion-coefficient.component';
 
 
 @NgModule({
@@ -153,6 +154,7 @@ import { StoreToPharmacyTOComponent } from './pages/store/store-to-pharmacy-t-o/
     PharmacyToStoreROComponent,
     PharmacyToStoreROListComponent,
     StoreToPharmacyTOComponent,
+    ItemMedicineConversionCoefficientComponent,
   ],
   imports: [
     HttpClientModule,
@@ -224,6 +226,7 @@ import { StoreToPharmacyTOComponent } from './pages/store/store-to-pharmacy-t-o/
     {path : 'pharmacy-to-store-r-o', component : PharmacyToStoreROComponent},
     {path : 'pharmacy-to-store-r-o-list', component : PharmacyToStoreROListComponent},
     {path : 'store-to-pharmacy-t-o', component : StoreToPharmacyTOComponent},
+    {path : 'item-medicine-conversion-coefficient', component : ItemMedicineConversionCoefficientComponent},
     ])
   ],
   schemas: [ 

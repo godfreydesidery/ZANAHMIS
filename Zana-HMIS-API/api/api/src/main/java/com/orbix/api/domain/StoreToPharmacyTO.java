@@ -78,7 +78,7 @@ public class StoreToPharmacyTO {
     private Long approvedOn;
 	private LocalDateTime approvedAt;
 	
-	@OneToMany(targetEntity = StoreToPharmacyTODetail.class, mappedBy = "storeToPharmacyTO", fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(targetEntity = StoreToPharmacyTODetail.class, mappedBy = "storeToPharmacyTO", fetch = FetchType.EAGER, orphanRemoval = true)
     @Valid
     @JsonIgnoreProperties("storeToPharmacyTO")
     private List<StoreToPharmacyTODetail> storeToPharmacyTODetails;

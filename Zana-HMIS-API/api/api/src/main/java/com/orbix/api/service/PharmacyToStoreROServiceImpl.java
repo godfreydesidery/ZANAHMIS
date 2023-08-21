@@ -163,13 +163,13 @@ public class PharmacyToStoreROServiceImpl implements PharmacyToStoreROService {
 	}
 
 	@Override
-	public RecordModel requestNo() {
+	public RecordModel requestRequestOrderNo() {
 		Long id = 1L;
 		try {
 			id = pharmacyToStoreRORepository.getLastId() + 1;
 		}catch(Exception e) {}
 		RecordModel model = new RecordModel();
-		model.setNo(Formater.formatWithCurrentDate("PHRO",id.toString()));
+		model.setNo(Formater.formatWithCurrentDate("PSR",id.toString()));
 		return model;
 	}	
 }

@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,5 +24,11 @@ public interface ItemMedicineCoefficientRepository extends JpaRepository <ItemMe
 	 * @return
 	 */
 	Optional<ItemMedicineCoefficient> findByItemAndMedicine(Item item, Medicine medicine);
+
+	/**
+	 * @param medicine
+	 * @return
+	 */
+	List<ItemMedicineCoefficient> findAllByMedicine(Medicine medicine);
 
 }

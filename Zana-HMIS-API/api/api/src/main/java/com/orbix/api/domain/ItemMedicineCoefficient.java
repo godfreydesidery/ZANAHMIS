@@ -3,6 +3,9 @@
  */
 package com.orbix.api.domain;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -41,8 +44,17 @@ public class ItemMedicineCoefficient {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Item item;
 	
+	private double itemQty = 0;
+	private double medicineQty = 0;
+	
 	@ManyToOne(targetEntity = Medicine.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "medicine_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Medicine medicine;
+	
+	@Column(name = "created_by_user_id", nullable = false , updatable = false)
+	private Long createdBy;
+	@Column(name = "created_on_day_id", nullable = false , updatable = false)
+    private Long createdOn;
+	private LocalDateTime createdAt = LocalDateTime.now();
 }
