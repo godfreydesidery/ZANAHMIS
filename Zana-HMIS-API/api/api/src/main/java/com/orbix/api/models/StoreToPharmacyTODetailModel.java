@@ -3,10 +3,13 @@
  */
 package com.orbix.api.models;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import com.orbix.api.domain.Item;
 import com.orbix.api.domain.Medicine;
+import com.orbix.api.domain.StoreToPharmacyBatch;
 import com.orbix.api.domain.StoreToPharmacyTO;
 
 import lombok.Data;
@@ -33,6 +36,8 @@ public class StoreToPharmacyTODetailModel {
     public Item item = null;
     
     public String created;
+    
+    public List<StoreToPharmacyBatch> storeToPharmacyBatches;
     
     
 	

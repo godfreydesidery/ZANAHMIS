@@ -363,7 +363,7 @@ public class InternalOrderResource {
 		model.setOrderDate(to.get().getOrderDate());
 		model.setPharmacyToStoreRO(to.get().getPharmacyToStoreRO());
 		model.setStatus(to.get().getStatus());
-		if(to.get().getStoreToPharmacyTODetails() != null) {
+		if(!to.get().getStoreToPharmacyTODetails().isEmpty()) {
 			for(StoreToPharmacyTODetail d : to.get().getStoreToPharmacyTODetails()) {
 				StoreToPharmacyTODetailModel modelDetail = new StoreToPharmacyTODetailModel();
 				modelDetail.setId(d.getId());
@@ -372,7 +372,8 @@ public class InternalOrderResource {
 				modelDetail.setOrderedPharmacySKUQty(d.getOrderedPharmacySKUQty());
 				modelDetail.setTransferedPharmacySKUQty(d.getTransferedPharmacySKUQty());
 				modelDetail.setTransferedStoreSKUQty(d.getTransferedStoreSKUQty());
-				modelDetail.setStoreToPharmacyTO(d.getStoreToPharmacyTO());
+				modelDetail.setStoreToPharmacyTO(d.getStoreToPharmacyTO());				
+				modelDetail.setStoreToPharmacyBatches(d.getStoreToPharmacyBatches());
 				if(d.getCreatedAt() != null) {
 					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());
 				}else {
@@ -424,6 +425,8 @@ public class InternalOrderResource {
 				throw new InvalidOperationException("Addition of different SKUs is not allowed. Items should have the same SKU");
 			}
 		}
+		tod.get().setItem(i.get());
+		storeToPharmacyTODetailRepository.save(tod.get());
 		Optional<ItemMedicineCoefficient> coe = itemMedicineCoefficientRepository.findByItemAndMedicine(i.get(), tod.get().getMedicine());
 		if(coe.isEmpty()) {
 			throw new NotFoundException("Conversion coefficient for "+ i.get().getName() +" and " + tod.get().getMedicine().getName() +" not found");
@@ -433,16 +436,51 @@ public class InternalOrderResource {
 		}
 		batch.setPharmacySKUQty(batch.getStoreSKUQty() * coe.get().getCoefficient());
 		
+		
+		
 		tod.get().setTransferedStoreSKUQty(tod.get().getTransferedStoreSKUQty() + batch.getStoreSKUQty());
 		tod.get().setTransferedPharmacySKUQty(tod.get().getTransferedPharmacySKUQty() + batch.getPharmacySKUQty());
 		
-		
+		if(tod.get().getTransferedPharmacySKUQty() > tod.get().getOrderedPharmacySKUQty()) {
+			throw new InvalidOperationException("Can not transfer more than ordered qty");
+		}
 		
 		StoreToPharmacyTODetail detail = storeToPharmacyTODetailRepository.save(tod.get());
 		batch.setItem(i.get());
 		batch.setStoreToPharmacyTODetail(detail);
 		
 		storeToPharmacyBatchRepository.save(batch);
+		
+		return true;
+	}
+	
+	@PostMapping("/store_to_pharmacy_t_os/delete_batch")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public boolean storeToPharmacyDeleteBatch(
+			@RequestBody StoreToPharmacyBatch batch,
+			HttpServletRequest request){
+		
+		Optional<StoreToPharmacyBatch> b = storeToPharmacyBatchRepository.findById(batch.getId());
+		if(b.isEmpty()) {
+			throw new NotFoundException("Batch not found");
+		}
+		
+		Optional<StoreToPharmacyTODetail> tod = storeToPharmacyTODetailRepository.findById(b.get().getStoreToPharmacyTODetail().getId());
+		if(tod.isEmpty()) {
+			throw new NotFoundException("Detail Not found");
+		}
+		
+		tod.get().setTransferedStoreSKUQty(tod.get().getTransferedStoreSKUQty() - b.get().getStoreSKUQty());
+		tod.get().setTransferedPharmacySKUQty(tod.get().getTransferedPharmacySKUQty() - b.get().getPharmacySKUQty());
+		
+		StoreToPharmacyTODetail detail = storeToPharmacyTODetailRepository.save(tod.get());
+		
+		storeToPharmacyBatchRepository.delete(b.get());
+		
+		if(detail.getTransferedStoreSKUQty() == 0) {
+			detail.setItem(null);
+			storeToPharmacyTODetailRepository.save(detail);
+		}
 		
 		return true;
 	}

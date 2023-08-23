@@ -30,6 +30,7 @@
                                 <thead>
                                     <tr style="font-weight: bold;">
                                         <td>Requested Pharmacy SKUs</td>
+                                        <td></td>
                                         <td>Transfered Store SKUs</td>
                                         <td>Transfered Pharmacy SKUs</td>
                                     </tr>
@@ -52,23 +53,20 @@
                                                 </tr>
                                             </table>
                                         </td>
+                                        <td><button (click)="loadItemNames(d?.medicine?.id, d.id)" data-toggle="modal" data-target="#add-sku-modal">Add Batch</button></td>
                                         <td>
                                             <table class="table">
                                                 <tr>
-                                                    <td>Code</td>
-                                                    <td>{{d?.item?.code}}</td>
+                                                    <td>{{d?.item?.code}} .</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Name</td>
-                                                    <td>{{d?.item?.name}}</td>
+                                                    <td>{{d?.item?.name}} .</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Qty/UOM</td>
-                                                    <td><b>{{d.transferedStoreSKUQty}}</b>  <i>{{d?.item?.uom}}</i></td>
+                                                    <td><b>{{d.transferedStoreSKUQty}}</b>  <i>{{d?.item?.uom}} .</i></td>
                                                 </tr>
                                             </table>
-                                            <button (click)="loadItemNames(d?.medicine?.id, d.id)" data-toggle="modal" data-target="#add-sku-modal">Add Batch</button>
-
+                                            
                                             <table class="table table-responsive table-bordered table-small">
                                                 <thead>
                                                     <tr>
@@ -79,20 +77,30 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>K2070</td>
-                                                        <td>20</td>
-                                                        <td>23 Jun 2025</td>
+                                                    <tr *ngFor="let b of d?.storeToPharmacyBatches">
+                                                        <td>{{b.no}}</td>
+                                                        <td>{{b.storeSKUQty}}</td>
+                                                        <td>{{b.expiryDate | date}}</td>
                                                         <td>
                                                             <span class="glyphicon glyphicon-pencil"></span>
-                                                            <span class="glyphicon glyphicon-trash"></span>
+                                                            <span class="glyphicon glyphicon-trash" (click)="deleteBatch(b.id)"></span>
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </td>
                                         <td>
-                                            <span *ngIf="d.transferedPharmacySKUQty > 0"><b>{{d.transferedPharmacySKUQty}}</b> | [{{d?.item?.code}}] {{d?.item?.name}}</span>
+                                            <table class="table">
+                                                <tr>
+                                                    <td>{{d?.medicine?.code}} </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>{{d?.medicine?.name}} </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>{{d.transferedPharmacySKUQty}}</b>  <i>{{d?.medicine?.uom}} </i></td>
+                                                </tr>
+                                            </table>
                                             <table class="table table-responsive table-bordered table-small">
                                                 <thead>
                                                     <tr>
@@ -102,10 +110,10 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>K2070</td>
-                                                        <td>20</td>
-                                                        <td>23 Jun 2025</td>
+                                                    <tr *ngFor="let b of d?.storeToPharmacyBatches">
+                                                        <td>{{b.no}}</td>
+                                                        <td>{{b.pharmacySKUQty}}</td>
+                                                        <td>{{b.expiryDate | date}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -170,6 +178,14 @@
                     </div>
                     <div class="col-sm-8">
                         <input type="number" class="form-control" [(ngModel)]="batchStoreSKUQty">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h4>Expiry Date</h4>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="date" class="form-control" [(ngModel)]="batchExpiryDate">
                     </div>
                 </div>
                 <div class="modal-footer">

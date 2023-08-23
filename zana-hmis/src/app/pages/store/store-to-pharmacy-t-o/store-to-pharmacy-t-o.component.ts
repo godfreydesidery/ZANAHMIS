@@ -134,7 +134,31 @@ export class StoreToPharmacyTOComponent {
     .toPromise()
     .then(
       data => {
-        
+        this.loadCurrentTransferOrder(this.id)
+        console.log(data)
+      },
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  async deleteBatch(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var batch = {
+      id: id
+    }
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/store_to_pharmacy_t_os/delete_batch', batch, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.loadCurrentTransferOrder(this.id)
         console.log(data)
       },
       error => {

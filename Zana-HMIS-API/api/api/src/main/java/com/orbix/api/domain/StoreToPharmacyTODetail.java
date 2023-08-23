@@ -70,7 +70,7 @@ public class StoreToPharmacyTODetail {
     private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
 	
-	@OneToMany(targetEntity = StoreToPharmacyBatch.class, mappedBy = "storeToPharmacyTODetail", fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(targetEntity = StoreToPharmacyBatch.class, mappedBy = "storeToPharmacyTODetail", fetch = FetchType.LAZY, orphanRemoval = true)
     @Valid
     @JsonIgnoreProperties("storeToPharmacyTODetail")
     private List<StoreToPharmacyBatch> storeToPharmacyBatches;
