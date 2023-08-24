@@ -72,6 +72,6 @@ public class StoreToPharmacyTODetail {
 	
 	@OneToMany(targetEntity = StoreToPharmacyBatch.class, mappedBy = "storeToPharmacyTODetail", fetch = FetchType.LAZY, orphanRemoval = true)
     @Valid
-    @JsonIgnoreProperties("storeToPharmacyTODetail")
+    @JsonIgnoreProperties({"storeToPharmacyTODetail", "storeToPharmacyRNDetail"})
     private List<StoreToPharmacyBatch> storeToPharmacyBatches;
 }

@@ -81,6 +81,7 @@ import { PharmacyToStoreROComponent } from './pages/pharmacy/pharmacy-to-store-r
 import { PharmacyToStoreROListComponent } from './pages/store/pharmacy-to-store-r-o-list/pharmacy-to-store-r-o-list.component';
 import { StoreToPharmacyTOComponent } from './pages/store/store-to-pharmacy-t-o/store-to-pharmacy-t-o.component';
 import { ItemMedicineConversionCoefficientComponent } from './pages/store/conversion-coefficients/item-medicine-conversion-coefficient/item-medicine-conversion-coefficient.component';
+import { StoreToPharmacyRNComponent } from './pages/pharmacy/store-to-pharmacy-r-n/store-to-pharmacy-r-n.component';
 
 
 @NgModule({
@@ -155,6 +156,7 @@ import { ItemMedicineConversionCoefficientComponent } from './pages/store/conver
     PharmacyToStoreROListComponent,
     StoreToPharmacyTOComponent,
     ItemMedicineConversionCoefficientComponent,
+    StoreToPharmacyRNComponent,
   ],
   imports: [
     HttpClientModule,
@@ -226,6 +228,7 @@ import { ItemMedicineConversionCoefficientComponent } from './pages/store/conver
     {path : 'pharmacy-to-store-r-o', component : PharmacyToStoreROComponent},
     {path : 'pharmacy-to-store-r-o-list', component : PharmacyToStoreROListComponent},
     {path : 'store-to-pharmacy-t-o', component : StoreToPharmacyTOComponent},
+    {path : 'store-to-pharmacy-r-n', component : StoreToPharmacyRNComponent},
     {path : 'item-medicine-conversion-coefficient', component : ItemMedicineConversionCoefficientComponent},
     ])
   ],

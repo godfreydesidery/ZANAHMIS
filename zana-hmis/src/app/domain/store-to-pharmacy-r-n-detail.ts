@@ -15,6 +15,8 @@ export interface IStoreToPharmacyRNDetail{
     medicine : IMedicine
     item : IItem
 
+    storeToPharmacyBatches : IStoreToPharmacyBatch[]
+
     created : string
 
    

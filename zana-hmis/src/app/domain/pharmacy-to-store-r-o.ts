@@ -1,5 +1,6 @@
 import { IPharmacy } from "./pharmacy"
 import { IPharmacyToStoreRODetail } from "./pharmacy-to-store-r-o-detail"
+import { IStoreToPharmacyTO } from "./store-to-pharmacy-t-o"
 
 export interface IPharmacyToStoreRO {
     id            : any
@@ -11,6 +12,8 @@ export interface IPharmacyToStoreRO {
     pharmacy      : IPharmacy
 
     pharmacyToStoreRODetails : IPharmacyToStoreRODetail[]
+
+    storeToPharmacyTO : IStoreToPharmacyTO
 
     
     created     : string

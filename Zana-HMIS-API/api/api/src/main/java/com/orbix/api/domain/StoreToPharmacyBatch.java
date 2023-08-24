@@ -18,6 +18,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,14 +44,14 @@ public class StoreToPharmacyBatch {
 	
 	private LocalDate expiryDate;
 	
-	@ManyToOne(targetEntity = StoreToPharmacyTODetail.class, fetch = FetchType.EAGER,  optional = false)
+	@ManyToOne(targetEntity = StoreToPharmacyTODetail.class, fetch = FetchType.LAZY,  optional = false)
     @JoinColumn(name = "store_to_pharmacy_t_o_detail_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private StoreToPharmacyTODetail storeToPharmacyTODetail;
 	
-	@ManyToOne(targetEntity = StoreToPharmacyRNDetail.class, fetch = FetchType.EAGER,  optional = true)
+	@ManyToOne(targetEntity = StoreToPharmacyRNDetail.class, fetch = FetchType.LAZY,  optional = true)
     @JoinColumn(name = "store_to_pharmacy_r_n_detail_id", nullable = true , updatable = true)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private StoreToPharmacyRNDetail storeToPharmacyRNDetail;
 	
 	@ManyToOne(targetEntity = Item.class, fetch = FetchType.EAGER,  optional = false)

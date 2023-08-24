@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.orbix.api.domain.StoreToPharmacyBatch;
+import com.orbix.api.domain.StoreToPharmacyRNDetail;
 import com.orbix.api.domain.StoreToPharmacyTODetail;
 
 /**
@@ -21,5 +22,11 @@ public interface StoreToPharmacyBatchRepository extends JpaRepository<StoreToPha
 	 * @return
 	 */
 	List<StoreToPharmacyBatch> findAllByStoreToPharmacyTODetail(StoreToPharmacyTODetail storeToPharmacyTODetail);
+
+	/**
+	 * @param d
+	 * @return
+	 */
+	List<StoreToPharmacyBatch> findAllByStoreToPharmacyRNDetail(StoreToPharmacyRNDetail d);
 
 }

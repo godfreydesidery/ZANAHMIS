@@ -56,7 +56,8 @@ public class StoreToPharmacyRN {
 	
 	@ManyToOne(targetEntity = StoreToPharmacyTO.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "store_to_pharmacy_t_o_id", nullable = true , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JsonIgnoreProperties("storeToPharmacyTODetails")
     private StoreToPharmacyTO storeToPharmacyTO;
 	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)

@@ -32,10 +32,12 @@ import com.orbix.api.domain.StoreToPharmacyBatch;
 import com.orbix.api.domain.StoreToPharmacyTO;
 import com.orbix.api.domain.StoreToPharmacyTODetail;
 import com.orbix.api.exceptions.InvalidOperationException;
+import com.orbix.api.exceptions.MissingInformationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.PharmacyToStoreRODetailModel;
 import com.orbix.api.models.PharmacyToStoreROModel;
 import com.orbix.api.models.RecordModel;
+import com.orbix.api.models.StoreToPharmacyRNModel;
 import com.orbix.api.models.StoreToPharmacyTODetailModel;
 import com.orbix.api.models.StoreToPharmacyTOModel;
 import com.orbix.api.repositories.InsuranceProviderRepository;
@@ -51,6 +53,7 @@ import com.orbix.api.repositories.StoreToPharmacyTORepository;
 import com.orbix.api.service.DayService;
 import com.orbix.api.service.InsuranceProviderService;
 import com.orbix.api.service.PharmacyToStoreROService;
+import com.orbix.api.service.StoreToPharmacyRNService;
 import com.orbix.api.service.StoreToPharmacyTOService;
 import com.orbix.api.service.UserService;
 
@@ -73,6 +76,7 @@ public class InternalOrderResource {
 	private final UserService userService;
 	private final PharmacyRepository pharmacyRepository;
 	private final StoreToPharmacyTOService storeToPharmacyTOService;
+	private final StoreToPharmacyRNService storeToPharmacyRNService;
 	private final StoreToPharmacyTORepository storeToPharmacyTORepository;
 	private final StoreToPharmacyTODetailRepository storeToPharmacyTODetailRepository;
 	private final ItemRepository itemRepository;
@@ -341,7 +345,7 @@ public class InternalOrderResource {
 			throw new NotFoundException("Request Order not found");
 		}
 
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/store_to_pharmacy_t_o/create").toUriString());
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/store_to_pharmacy_t_os/create").toUriString());
 		return ResponseEntity.created(uri).body(storeToPharmacyTOService.createOrder(reqOrder.get(), request));
 	}
 	
@@ -519,5 +523,32 @@ public class InternalOrderResource {
 		List<StoreToPharmacyBatch> bs = storeToPharmacyBatchRepository.findAllByStoreToPharmacyTODetail(tod.get());
 		
 		return bs;
+	}
+	
+	
+	@PostMapping("/store_to_pharmacy_r_ns/create")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<StoreToPharmacyRNModel>createStoreToPharmacyRN(
+			@RequestBody PharmacyToStoreRO ro,
+			HttpServletRequest request){
+		
+		Optional<PharmacyToStoreRO> reqOrder;
+		if(ro.getId() != null) {
+			reqOrder = pharmacyToStoreRORepository.findById(ro.getId());
+		}else if(!ro.getNo().equals("")){
+			reqOrder = pharmacyToStoreRORepository.findByNo(ro.getNo());
+		}else {
+			throw new MissingInformationException("Request Order no not provided");
+		}
+		
+		if(reqOrder.isEmpty()) {
+			throw new NotFoundException("Request Order not found");
+		}
+		if(reqOrder.get().getPharmacy().getId() != ro.getPharmacy().getId()) {
+			throw new InvalidOperationException("Can not process order from a different pharmacy");
+		}
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/store_to_pharmacy_r_ns/create").toUriString());
+		return ResponseEntity.created(uri).body(storeToPharmacyRNService.createReceivingNote(reqOrder.get(), request));
 	}
 }
