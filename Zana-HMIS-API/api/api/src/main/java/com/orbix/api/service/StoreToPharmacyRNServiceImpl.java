@@ -23,6 +23,7 @@ import com.orbix.api.domain.StoreToPharmacyRN;
 import com.orbix.api.domain.StoreToPharmacyRNDetail;
 import com.orbix.api.domain.StoreToPharmacyTO;
 import com.orbix.api.domain.StoreToPharmacyTODetail;
+import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.RecordModel;
 import com.orbix.api.models.StoreToPharmacyRNDetailModel;
@@ -75,6 +76,13 @@ public class StoreToPharmacyRNServiceImpl implements StoreToPharmacyRNService {
 	public StoreToPharmacyRNModel createReceivingNote(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request) {
 		
 		Optional<StoreToPharmacyTO> t = storeToPharmacyTORepository.findByPharmacyToStoreRO(pharmacyToStoreRO);
+		if(t.isEmpty()) {
+			throw new NotFoundException("Corresponding transfer order not found");
+		}
+		
+		if(!t.get().getStatus().equals("GOODS-ISSUED")) {
+			throw new InvalidOperationException("Could not create/process GRN. Goods not issued");
+		}
 		
 		Optional<StoreToPharmacyRN> nt = storeToPharmacyRNRepository.findByStoreToPharmacyTO(t.get());
 		StoreToPharmacyRN note;

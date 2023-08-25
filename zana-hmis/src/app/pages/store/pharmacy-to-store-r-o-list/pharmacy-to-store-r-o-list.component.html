@@ -11,9 +11,8 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <div class="btn"> 
-
-                    </div>
+                        <button class="btn" (click)="returnOrder()"><span class="glyphicon glyphicon-arrow-left"></span>Return Order</button>
+                        <button class="btn" (click)="rejectOrder()"><span class="glyphicon glyphicon-remove-sign"></span>Reject Order</button>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -22,20 +21,20 @@
                             <table class="table table-bordered">
                                 <thead style="position: sticky; top: 0;">
                                     <tr class="table-dark">
-                                        <td>Order#</td>
-                                        <td>Order Date</td>
-                                        <td>Valid Until</td>
-                                        <td>Status</td>
-                                        <td>Select</td>
+                                        <td><small>Order#</small></td>
+                                        <td><small>Order Date</small></td>
+                                        <td><small>Valid Until</small></td>
+                                        <td><small>Status</small></td>
+                                        <td><small>Select</small></td>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let p of pharmacyToStoreROs">
-                                        <td>{{p.no}}</td>
-                                        <td>{{p.orderDate | date}}</td>
-                                        <td>{{p.validUntil | date}}</td>
-                                        <td>{{p.status}}</td>
-                                        <td><span data-dismiss="modal" (click)="get(p.id)" style="cursor: pointer;">[Select]</span></td>
+                                        <td><small>{{p.no}}</small></td>
+                                        <td><small>{{p.orderDate | date}}</small></td>
+                                        <td><small>{{p.validUntil | date}}</small></td>
+                                        <td><small>{{p.status}}</small></td>
+                                        <td><span data-dismiss="modal" (click)="get(p.id)" style="cursor: pointer;"><small>[Select]</small></span></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -48,6 +47,7 @@
                                 <h5>Order Date: {{pharmacyToStoreRO?.orderDate | date}}</h5>
                                 <h5>Valid Until: {{pharmacyToStoreRO?.validUntil | date}}</h5>
                                 <h5>Status: {{pharmacyToStoreRO?.status}}</h5>
+                                <h5>Status Description: {{pharmacyToStoreRO?.statusDescription}}</h5>
                                 <h5>Created: {{pharmacyToStoreRO?.created}}</h5>
                                 <h5>Verified: {{pharmacyToStoreRO?.verified}}</h5>
                                 <h5>Approved: {{pharmacyToStoreRO?.approved}}</h5>

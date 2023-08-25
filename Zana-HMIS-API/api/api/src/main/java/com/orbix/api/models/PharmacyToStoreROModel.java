@@ -34,7 +34,8 @@ public class PharmacyToStoreROModel {
 	public String no = "";
 	public LocalDate orderDate;
 	public LocalDate validUntil;
-	public String status = "";		
+	public String status = "";	
+	public String statusDescription = "";
     public Pharmacy pharmacy = null;
     public String created = "";
     public String verified = "";

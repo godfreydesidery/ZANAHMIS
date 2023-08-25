@@ -22,6 +22,7 @@ public class StoreToPharmacyRNModel {
 	public String no = "";
 	public LocalDate receivingDate = null;
 	public String status = "";
+	public String statusDescription = "";
 	
 	public Pharmacy pharmacy = null;	
 	public StoreToPharmacyTO storeToPharmacyTO = null;

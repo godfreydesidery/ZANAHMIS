@@ -83,6 +83,81 @@ export class StoreToPharmacyTOComponent {
     )
   }
 
+  async verifyOrder(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var order = {
+      id : this.id
+    }
+    
+    this.spinner.show()
+    await this.http.post<IStoreToPharmacyTO>(API_URL+'/store_to_pharmacy_t_os/verify', order, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.loadCurrentTransferOrder(this.id)
+        this.msgBox.showSuccessMessage('Order verified successifully')
+        console.log(data)
+      },
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  async approveOrder(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var order = {
+      id : this.id
+    }
+    
+    this.spinner.show()
+    await this.http.post<IStoreToPharmacyTO>(API_URL+'/store_to_pharmacy_t_os/approve', order, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.loadCurrentTransferOrder(this.id)
+        this.msgBox.showSuccessMessage('Order verified successifully')
+        console.log(data)
+      },
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  async issueGoods(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var order = {
+      id : this.id
+    }
+    
+    this.spinner.show()
+    await this.http.post<IStoreToPharmacyTO>(API_URL+'/store_to_pharmacy_t_os/issue', order, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.loadCurrentTransferOrder(this.id)
+        this.msgBox.showSuccessMessage('Goods issued successifully')
+        console.log(data)
+      },
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
   async loadItemNames(medicineId : any, detailId : any){
     this.loadedItemNames = []
     let options = {

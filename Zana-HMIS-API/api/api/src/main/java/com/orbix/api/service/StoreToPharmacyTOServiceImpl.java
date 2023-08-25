@@ -20,6 +20,7 @@ import com.orbix.api.domain.PharmacyToStoreRO;
 import com.orbix.api.domain.PharmacyToStoreRODetail;
 import com.orbix.api.domain.StoreToPharmacyTO;
 import com.orbix.api.domain.StoreToPharmacyTODetail;
+import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.RecordModel;
 import com.orbix.api.models.StoreToPharmacyTODetailModel;
@@ -64,14 +65,24 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 	@Override
 	public StoreToPharmacyTOModel createOrder(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request) {
 		
+		Optional<PharmacyToStoreRO> ro = pharmacyToStoreRORepository.findById(pharmacyToStoreRO.getId());
+		
 		Optional<StoreToPharmacyTO> to = storeToPharmacyTORepository.findByPharmacyToStoreRO(pharmacyToStoreRO);
 		StoreToPharmacyTO order = new StoreToPharmacyTO();
 		if(to.isEmpty()) {
+			if(ro.get().getStatus().equals("SUBMITTED")) {
+				ro.get().setStatus("IN-PROCESS");
+				ro.get().setStatusDescription("Order under process");
+				pharmacyToStoreRORepository.save(ro.get());
+			}else {
+				throw new InvalidOperationException("Could not create transfer order. Can only create transfer order for submitted requests");
+			}
 			order.setNo(this.requestTransferOrderNo().getNo());
 			order.setOrderDate(LocalDate.now());
 			order.setPharmacyToStoreRO(pharmacyToStoreRO);
 			order.setPharmacy(pharmacyToStoreRO.getPharmacy());
 			order.setStatus("PENDING");
+			order.setStatusDescription("Order awaiting for verification");
 			
 			order.setCreatedBy(userService.getUser(request).getId());
 			order.setCreatedOn(dayService.getDay().getId());
@@ -99,7 +110,7 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 		}
 		
 		
-		StoreToPharmacyTOModel model = new StoreToPharmacyTOModel();
+		/*StoreToPharmacyTOModel model = new StoreToPharmacyTOModel();
 		List<StoreToPharmacyTODetailModel> modelDetails = new ArrayList<>();
 		
 		model.setId(order.getId());
@@ -142,7 +153,135 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 			model.setApproved(null);
 		}		
 		return model;
+		*/
+		return showOrder(order);
 	}
+	
+	
+	@Override
+	public StoreToPharmacyTOModel verify(StoreToPharmacyTO storeToPharmacyTO, HttpServletRequest request) {
+		
+		Optional<StoreToPharmacyTO> to = storeToPharmacyTORepository.findById(storeToPharmacyTO.getId());
+		if(to.isEmpty()) {
+			throw new NotFoundException("Transfer order not found");
+		}
+		if(!to.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not verify. Only Pending Transfer Order can be verified");
+		}
+		to.get().setStatus("VERIFIED");
+		to.get().setStatusDescription("Order awaiting for approval");
+		
+		to.get().setVerifiedBy(userService.getUser(request).getId());
+		to.get().setVerifiedOn(dayService.getDay().getId());
+		to.get().setVerifiedAt(dayService.getTimeStamp());
+		 
+		StoreToPharmacyTO order = storeToPharmacyTORepository.save(to.get());
+		
+		return showOrder(order);
+	}
+	
+	@Override
+	public StoreToPharmacyTOModel approve(StoreToPharmacyTO storeToPharmacyTO, HttpServletRequest request) {
+		
+		Optional<StoreToPharmacyTO> to = storeToPharmacyTORepository.findById(storeToPharmacyTO.getId());
+		if(to.isEmpty()) {
+			throw new NotFoundException("Transfer order not found");
+		}
+		if(!to.get().getStatus().equals("VERIFIED")) {
+			throw new InvalidOperationException("Could not approve. Only verified Transfer Order can be approved");
+		}
+		to.get().setStatus("APPROVED");
+		to.get().setStatusDescription("Order submitted for goods issuing");
+		
+		to.get().setApprovedBy(userService.getUser(request).getId());
+		to.get().setApprovedOn(dayService.getDay().getId());
+		to.get().setApprovedAt(dayService.getTimeStamp());
+		 
+		StoreToPharmacyTO order = storeToPharmacyTORepository.save(to.get());
+		
+		return showOrder(order);
+	}
+	
+	@Override
+	public StoreToPharmacyTOModel issue(StoreToPharmacyTO storeToPharmacyTO, HttpServletRequest request) {
+		
+		Optional<StoreToPharmacyTO> to = storeToPharmacyTORepository.findById(storeToPharmacyTO.getId());
+		if(to.isEmpty()) {
+			throw new NotFoundException("Transfer order not found");
+		}
+		if(!to.get().getStatus().equals("APPROVED")) {
+			throw new InvalidOperationException("Could not issue. Only approved Transfer Order can issue goods");
+		}
+		to.get().setStatus("GOODS-ISSUED");
+		to.get().setStatusDescription("Goods issued");
+		
+		//to.get().setApprovedBy(userService.getUser(request).getId());
+		//to.get().setApprovedOn(dayService.getDay().getId());
+		//to.get().setApprovedAt(dayService.getTimeStamp());
+		 
+		StoreToPharmacyTO order = storeToPharmacyTORepository.save(to.get());
+		
+		PharmacyToStoreRO ro = order.getPharmacyToStoreRO();
+		ro.setStatus("GOODS-ISSUED");
+		ro.setStatusDescription("Goods issued by store");
+		pharmacyToStoreRORepository.save(ro);
+		
+		/**
+		 * Put here goods issue bussiness logic, should update store stocks
+		 */
+		
+		return showOrder(order);
+	}
+	
+	
+	StoreToPharmacyTOModel showOrder(StoreToPharmacyTO order) {
+		
+		StoreToPharmacyTOModel model = new StoreToPharmacyTOModel();
+		List<StoreToPharmacyTODetailModel> modelDetails = new ArrayList<>();
+		
+		model.setId(order.getId());
+		model.setNo(order.getNo());
+		model.setPharmacy(order.getPharmacy());
+		model.setPharmacyToStoreRO(order.getPharmacyToStoreRO());
+		model.setOrderDate(order.getOrderDate());
+		model.setStatus(order.getStatus());
+		model.setStatusDescription(order.getStatusDescription());
+		if(order.getStoreToPharmacyTODetails() != null) {
+			for(StoreToPharmacyTODetail d : order.getStoreToPharmacyTODetails()) {
+				StoreToPharmacyTODetailModel modelDetail = new StoreToPharmacyTODetailModel();
+				modelDetail.setId(d.getId());
+				modelDetail.setMedicine(d.getMedicine());
+				modelDetail.setOrderedPharmacySKUQty(d.getOrderedPharmacySKUQty());
+				modelDetail.setStoreToPharmacyTO(d.getStoreToPharmacyTO());
+
+				if(d.getCreatedAt() != null) {
+					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());
+				}else {
+					modelDetail.setCreated(null);
+				}
+				modelDetails.add(modelDetail);
+			}
+			model.setStoreToPharmacyTODetails(modelDetails);
+		}
+		
+		if(order.getCreatedAt() != null) {
+			model.setCreated(order.getCreatedAt().toString()+" | "+userService.getUserById(order.getCreatedBy()).getNickname());
+		}else {
+			model.setCreated(null);
+		}
+		if(order.getVerifiedAt() != null) {
+			model.setVerified(order.getVerifiedAt().toString()+" | "+userService.getUserById(order.getVerifiedBy()).getNickname());
+		}else {
+			model.setVerified(null);
+		}
+		if(order.getApprovedAt() != null) {
+			model.setApproved(order.getApprovedAt().toString()+" | "+userService.getUserById(order.getApprovedBy()).getNickname());
+		}else {
+			model.setApproved(null);
+		}		
+		return model;
+	}
+	
 	
 	@Override
 	public boolean saveDetail(StoreToPharmacyTODetail detail, HttpServletRequest request) {

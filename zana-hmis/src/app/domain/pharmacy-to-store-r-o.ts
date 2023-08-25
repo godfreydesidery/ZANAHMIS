@@ -8,6 +8,7 @@ export interface IPharmacyToStoreRO {
     orderDate     : Date
     validUntil    : Date
     status        : string
+    statusDescription : string
 
     pharmacy      : IPharmacy
 

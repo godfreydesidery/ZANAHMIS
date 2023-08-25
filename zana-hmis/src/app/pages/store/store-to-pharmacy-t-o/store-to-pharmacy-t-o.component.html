@@ -11,9 +11,9 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <div class="btn"> 
-                        <button class="btn btn-primary">Approve Transfer</button>
-                    </div>
+                    <button class="btn" (click)="verifyOrder()"><span class="glyphicon glyphicon-check"></span>Verify Order</button>
+                    <button class="btn" (click)="approveOrder()"><span class="glyphicon glyphicon-ok"></span>Approve Order</button>
+                    <button class="btn" (click)="issueGoods()"><span class="glyphicon glyphicon-shopping-cart"></span>Issue Goods</button>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -23,6 +23,7 @@
                             <h5>Order#: {{storeToPharmacyTO?.no}}</h5>
                             <h5>Order Date: {{storeToPharmacyTO?.orderDate | date}}</h5>
                             <h5>Status: {{storeToPharmacyTO?.status}}</h5>
+                            <h5>Status Description: {{storeToPharmacyTO?.statusDescription}}</h5>
                             <h5>Created: {{storeToPharmacyTO?.created}}</h5>
                             <h5>Verified: {{storeToPharmacyTO?.verified}}</h5>
                             <h5>Approved: {{storeToPharmacyTO?.approved}}</h5>

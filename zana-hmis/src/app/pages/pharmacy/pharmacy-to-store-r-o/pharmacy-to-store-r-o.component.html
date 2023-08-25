@@ -11,10 +11,13 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#order-list-modal">Order List</button>
-                    <button class="btn btn-primary" (click)="requestNo()">New Order</button>
-                    <button class="btn btn-primary" (click)="openToEdit()">Edit Order</button>
-                    <button class="btn btn-primary" (click)="saveOrder()">Save Order</button>
+                    <button class="btn" data-toggle="modal" data-target="#order-list-modal"><span class="glyphicon glyphicon-list"></span>Order List</button>
+                    <button class="btn" (click)="requestNo()"><span class="glyphicon glyphicon-file"></span>New Order</button>
+                    <button class="btn" (click)="openToEdit()"><span class="glyphicon glyphicon-pencil"></span>Edit Order</button>
+                    <button class="btn" (click)="saveOrder()"><span class="glyphicon glyphicon-floppy-disk"></span>Save Order</button>
+                    <button class="btn" (click)="verifyOrder()"><span class="glyphicon glyphicon-arrow-right"></span>Verify Order</button>
+                    <button class="btn" (click)="approveOrder()"><span class="glyphicon glyphicon-ok"></span>Approve Order</button>
+                    <button class="btn" (click)="submitOrder()"><span class="glyphicon glyphicon-arrow-right"></span>Submit Order</button>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -50,11 +53,15 @@
                                 <div class="col-sm-3"><h4 class="text-primary">Status</h4></div>
                                 <div class="col-sm-9"><input type="text" class="form-control" [(ngModel)]="status" readonly></div>
                             </div>
+                            <div class="row">
+                                <div class="col-sm-3"><h4 class="text-primary">Status Description</h4></div>
+                                <div class="col-sm-9"><textarea class="form-control" readonly>{{statusDescription}}</textarea></div>
+                            </div>
                         </div>
                         <div class="col-sm-8">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <h4 class="text-primary">Order Details  <button class="btn btn-success" (click)="clearDetail()"  data-toggle="modal" data-target="#medicine-modal" style="border-radius: 5mm;">+</button></h4>
+                                    <h4 class="text-primary" *ngIf="id != null && status === 'PENDING'">Order Details  <button class="btn btn-success" (click)="clearDetail()"  data-toggle="modal" data-target="#medicine-modal" style="border-radius: 5mm;">+</button></h4>
                                 </div>
                                 <div class="col-sm-12">
                                     <table class="table table-responsive table striped table-bordered">
@@ -73,7 +80,7 @@
                                                 <td>{{d.medicine.name}}</td>
                                                 <td>{{d.orderedQty}}</td>
                                                 <td>{{d.receivedQty}}</td>
-                                                <td><span class="glyphicon glyphicon-trash" (click)="deleteDetail(d.id)"></span></td>
+                                                <td><span class="glyphicon glyphicon-trash" *ngIf="status === 'PENDING'" (click)="deleteDetail(d.id)"></span></td>
                                             </tr>
                                         </tbody>
                                     </table>

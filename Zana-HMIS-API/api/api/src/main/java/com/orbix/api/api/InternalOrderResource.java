@@ -91,8 +91,58 @@ public class InternalOrderResource {
 			@RequestBody PharmacyToStoreRO ro,
 			HttpServletRequest request){
 
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacy_to_store_r_o/save").toUriString());
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacy_to_store_r_os/save").toUriString());
 		return ResponseEntity.created(uri).body(pharmacyToStoreROService.save(ro, request));
+	}
+	
+	@PostMapping("/pharmacy_to_store_r_os/verify")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<PharmacyToStoreROModel>verifyPharmacyToStoreRO(
+			@RequestBody PharmacyToStoreRO ro,
+			HttpServletRequest request){
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacy_to_store_r_os/verify").toUriString());
+		return ResponseEntity.created(uri).body(pharmacyToStoreROService.verify(ro, request));
+	}
+	
+	@PostMapping("/pharmacy_to_store_r_os/approve")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<PharmacyToStoreROModel> approvePharmacyToStoreRO(
+			@RequestBody PharmacyToStoreRO ro,
+			HttpServletRequest request){
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacy_to_store_r_os/approve").toUriString());
+		return ResponseEntity.created(uri).body(pharmacyToStoreROService.approve(ro, request));
+	}
+	
+	@PostMapping("/pharmacy_to_store_r_os/submit")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<PharmacyToStoreROModel>submitPharmacyToStoreRO(
+			@RequestBody PharmacyToStoreRO ro,
+			HttpServletRequest request){
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacy_to_store_r_os/submit").toUriString());
+		return ResponseEntity.created(uri).body(pharmacyToStoreROService.submit(ro, request));
+	}
+	
+	@PostMapping("/pharmacy_to_store_r_os/return")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<PharmacyToStoreROModel>returnPharmacyToStoreRO(
+			@RequestBody PharmacyToStoreRO ro,
+			HttpServletRequest request){
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacy_to_store_r_os/return").toUriString());
+		return ResponseEntity.created(uri).body(pharmacyToStoreROService._return(ro, request));
+	}
+	
+	@PostMapping("/pharmacy_to_store_r_os/reject")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<PharmacyToStoreROModel>rejectPharmacyToStoreRO(
+			@RequestBody PharmacyToStoreRO ro,
+			HttpServletRequest request){
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacy_to_store_r_os/reject").toUriString());
+		return ResponseEntity.created(uri).body(pharmacyToStoreROService.reject(ro, request));
 	}
 	
 	@GetMapping("/pharmacy_to_store_r_os/load_pharmacy_orders_by_pharmacy")
@@ -106,7 +156,12 @@ public class InternalOrderResource {
 		statuses.add("PENDING");
 		statuses.add("VERIFIED");
 		statuses.add("APPROVED");
-		
+		statuses.add("SUBMITTED");
+		statuses.add("IN-PROCESS");
+		statuses.add("GOODS-ISSUED");
+		statuses.add("COMPLETED");
+		statuses.add("RETURNED");
+		statuses.add("REJECTED");
 		return pharmacyToStoreRORepository.findByPharmacyAndStatusIn(pharm.get(), statuses);
 	}
 	
@@ -114,9 +169,9 @@ public class InternalOrderResource {
 	public List<PharmacyToStoreRO> loadPharmacyOrders(){
 
 		List<String> statuses = new ArrayList<>();
-		statuses.add("PENDING");
-		statuses.add("VERIFIED");
-		statuses.add("APPROVED");
+		statuses.add("SUBMITTED");
+		statuses.add("IN-PROCESS");
+		statuses.add("GOODS-ISSUED");
 		
 		return pharmacyToStoreRORepository.findByStatusIn(statuses);
 	}
@@ -144,6 +199,7 @@ public class InternalOrderResource {
 		model.setOrderDate(ro.get().getOrderDate());
 		model.setValidUntil(ro.get().getValidUntil());
 		model.setStatus(ro.get().getStatus());
+		model.setStatusDescription(ro.get().getStatusDescription());
 		if(ro.get().getPharmacyToStoreRODetails() != null) {
 			for(PharmacyToStoreRODetail d : ro.get().getPharmacyToStoreRODetails()) {
 				PharmacyToStoreRODetailModel modelDetail = new PharmacyToStoreRODetailModel();
@@ -204,6 +260,7 @@ public class InternalOrderResource {
 		model.setOrderDate(ro.get().getOrderDate());
 		model.setValidUntil(ro.get().getValidUntil());
 		model.setStatus(ro.get().getStatus());
+		model.setStatusDescription(ro.get().getStatusDescription());
 		if(ro.get().getPharmacyToStoreRODetails() != null) {
 			for(PharmacyToStoreRODetail d : ro.get().getPharmacyToStoreRODetails()) {
 				PharmacyToStoreRODetailModel modelDetail = new PharmacyToStoreRODetailModel();
@@ -264,6 +321,7 @@ public class InternalOrderResource {
 		model.setOrderDate(ro.get().getOrderDate());
 		model.setValidUntil(ro.get().getValidUntil());
 		model.setStatus(ro.get().getStatus());
+		model.setStatusDescription(ro.get().getStatusDescription());
 		if(ro.get().getPharmacyToStoreRODetails() != null) {
 			for(PharmacyToStoreRODetail d : ro.get().getPharmacyToStoreRODetails()) {
 				PharmacyToStoreRODetailModel modelDetail = new PharmacyToStoreRODetailModel();
@@ -349,6 +407,36 @@ public class InternalOrderResource {
 		return ResponseEntity.created(uri).body(storeToPharmacyTOService.createOrder(reqOrder.get(), request));
 	}
 	
+	@PostMapping("/store_to_pharmacy_t_os/verify")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<StoreToPharmacyTOModel>verifyStoreToPharmacyTO(
+			@RequestBody StoreToPharmacyTO to,
+			HttpServletRequest request){
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/store_to_pharmacy_t_os/verify").toUriString());
+		return ResponseEntity.created(uri).body(storeToPharmacyTOService.verify(to, request));
+	}
+	
+	@PostMapping("/store_to_pharmacy_t_os/approve")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<StoreToPharmacyTOModel>approveStoreToPharmacyTO(
+			@RequestBody StoreToPharmacyTO to,
+			HttpServletRequest request){
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/store_to_pharmacy_t_os/approve").toUriString());
+		return ResponseEntity.created(uri).body(storeToPharmacyTOService.approve(to, request));
+	}
+	
+	@PostMapping("/store_to_pharmacy_t_os/issue")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<StoreToPharmacyTOModel>issueStoreToPharmacyTO(
+			@RequestBody StoreToPharmacyTO to,
+			HttpServletRequest request){
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/store_to_pharmacy_t_os/issue").toUriString());
+		return ResponseEntity.created(uri).body(storeToPharmacyTOService.issue(to, request));
+	}
+	
 	@GetMapping("/store_to_pharmacy_t_os/get")
 	public ResponseEntity<StoreToPharmacyTOModel> getPharmacyTransferOrder(
 			@RequestParam(name = "id") Long id,
@@ -367,6 +455,7 @@ public class InternalOrderResource {
 		model.setOrderDate(to.get().getOrderDate());
 		model.setPharmacyToStoreRO(to.get().getPharmacyToStoreRO());
 		model.setStatus(to.get().getStatus());
+		model.setStatusDescription(to.get().getStatusDescription());
 		if(!to.get().getStoreToPharmacyTODetails().isEmpty()) {
 			for(StoreToPharmacyTODetail d : to.get().getStoreToPharmacyTODetails()) {
 				StoreToPharmacyTODetailModel modelDetail = new StoreToPharmacyTODetailModel();
@@ -418,6 +507,9 @@ public class InternalOrderResource {
 		Optional<StoreToPharmacyTODetail> tod = storeToPharmacyTODetailRepository.findById(batch.getStoreToPharmacyTODetail().getId());
 		if(tod.isEmpty()) {
 			throw new NotFoundException("Detail Not found");
+		}
+		if(!tod.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not edit. Only pending transfer orders can be edited");
 		}
 		Optional<Item> i = itemRepository.findByName(batch.getItem().getName());
 		if(i.isEmpty()) {
@@ -472,6 +564,10 @@ public class InternalOrderResource {
 		Optional<StoreToPharmacyTODetail> tod = storeToPharmacyTODetailRepository.findById(b.get().getStoreToPharmacyTODetail().getId());
 		if(tod.isEmpty()) {
 			throw new NotFoundException("Detail Not found");
+		}
+		
+		if(!tod.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not edit. Only pending transfer orders can be edited");
 		}
 		
 		tod.get().setTransferedStoreSKUQty(tod.get().getTransferedStoreSKUQty() - b.get().getStoreSKUQty());

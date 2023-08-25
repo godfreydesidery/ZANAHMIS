@@ -8,6 +8,7 @@ export interface IStoreToPharmacyTO {
     no            : string
     orderDate     : Date
     status        : string
+    statusDescription : string
 
     pharmacy      : IPharmacy
     pharmacyToStoreRO : IPharmacyToStoreRO

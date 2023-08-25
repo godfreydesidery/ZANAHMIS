@@ -31,6 +31,7 @@ export class PharmacyToStoreROComponent {
   orderDate! : Date
   validUntil! : Date
   status : string = ''
+  statusDescription : string = ''
   created : string = ''
   verified : string = ''
   approved : string = ''
@@ -72,7 +73,6 @@ export class PharmacyToStoreROComponent {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    
     this.spinner.show()
     await this.http.get<any>(API_URL+'/pharmacy_to_store_r_os/request_no', options)
     .pipe(finalize(() => this.spinner.hide()))
@@ -89,6 +89,7 @@ export class PharmacyToStoreROComponent {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
+    this.pharmacyToStoreRO.pharmacyToStoreRODetails = []
   }
 
   async saveOrder(){
@@ -112,6 +113,7 @@ export class PharmacyToStoreROComponent {
         this.orderDate  = data!.orderDate
         this.validUntil = data!.validUntil
         this.status     = data!.status
+        this.statusDescription = data!.statusDescription
         this.created    = data!.created
         this.verified   = data!.verified
         this.approved   = data!.approved
@@ -184,6 +186,117 @@ export class PharmacyToStoreROComponent {
     )
   }
 
+  async verifyOrder(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var order = {
+      id  : this.id,
+      no : this.no,
+      pharmacy : {id : this.pharmacyId }
+    }
+    this.spinner.show()
+    await this.http.post<IPharmacyToStoreRO>(API_URL+'/pharmacy_to_store_r_os/verify', order, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.id         = data?.id
+        this.no         = data!.no
+        this.orderDate  = data!.orderDate
+        this.validUntil = data!.validUntil
+        this.status     = data!.status
+        this.statusDescription = data!.statusDescription
+        this.created    = data!.created
+        this.verified   = data!.verified
+        this.approved   = data!.approved
+
+        this.pharmacyToStoreRO = data!
+
+        this.msgBox.showSuccessMessage('Order verified successifuly')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  async approveOrder(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var order = {
+      id  : this.id,
+      no : this.no,
+      pharmacy : {id : this.pharmacyId }
+    }
+    this.spinner.show()
+    await this.http.post<IPharmacyToStoreRO>(API_URL+'/pharmacy_to_store_r_os/approve', order, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.id         = data?.id
+        this.no         = data!.no
+        this.orderDate  = data!.orderDate
+        this.validUntil = data!.validUntil
+        this.status     = data!.status
+        this.statusDescription = data!.statusDescription
+        this.created    = data!.created
+        this.verified   = data!.verified
+        this.approved   = data!.approved
+
+        this.pharmacyToStoreRO = data!
+
+        this.msgBox.showSuccessMessage('Order approved successifuly')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  async submitOrder(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var order = {
+      id  : this.id,
+      no : this.no,
+      pharmacy : {id : this.pharmacyId }
+    }
+    this.spinner.show()
+    await this.http.post<IPharmacyToStoreRO>(API_URL+'/pharmacy_to_store_r_os/submit', order, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.id         = data?.id
+        this.no         = data!.no
+        this.orderDate  = data!.orderDate
+        this.validUntil = data!.validUntil
+        this.status     = data!.status
+        this.statusDescription = data!.statusDescription
+        this.created    = data!.created
+        this.verified   = data!.verified
+        this.approved   = data!.approved
+
+        this.pharmacyToStoreRO = data!
+
+        this.msgBox.showSuccessMessage('Order submitted successifuly')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
   async loadMedicineNames(){
     this.medicineNames = []
     let options = {
@@ -238,9 +351,10 @@ export class PharmacyToStoreROComponent {
   clear(){
     this.id         = null
     this.no         = ''
-    this.orderDate! 
-    this.validUntil! 
+    this.orderDate! = new Date()
+    this.validUntil!  = new Date()
     this.status     = ''
+    this.statusDescription = ''
     this.created    = ''
     this.verified   = ''
     this.approved   = ''
@@ -264,6 +378,7 @@ export class PharmacyToStoreROComponent {
         this.orderDate  = data!.orderDate
         this.validUntil = data!.validUntil
         this.status     = data!.status
+        this.statusDescription = data!.statusDescription
         this.created    = data!.created
         this.verified   = data!.verified
         this.approved   = data!.approved
@@ -296,6 +411,7 @@ export class PharmacyToStoreROComponent {
         this.orderDate  = data!.orderDate
         this.validUntil = data!.validUntil
         this.status     = data!.status
+        this.statusDescription = data!.statusDescription
         this.created    = data!.created
         this.verified   = data!.verified
         this.approved   = data!.approved

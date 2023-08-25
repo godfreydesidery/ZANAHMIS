@@ -134,4 +134,52 @@ export class PharmacyToStoreROListComponent {
     )
 
   }
+
+  async returnOrder(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var order = {
+      id  : this.pharmacyToStoreRO?.id,
+      no : this.pharmacyToStoreRO?.no,
+    }
+    this.spinner.show()
+    await this.http.post<IPharmacyToStoreRO>(API_URL+'/pharmacy_to_store_r_os/return', order, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      () => {
+        this.msgBox.showSuccessMessage('Order returned successifuly')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  async rejectOrder(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var order = {
+      id  : this.pharmacyToStoreRO?.id,
+      no : this.pharmacyToStoreRO?.no,
+    }
+    this.spinner.show()
+    await this.http.post<IPharmacyToStoreRO>(API_URL+'/pharmacy_to_store_r_os/reject', order, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      () => {
+        this.msgBox.showSuccessMessage('Order rejected successifuly')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
 }

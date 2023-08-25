@@ -21,6 +21,7 @@ public class StoreToPharmacyTOModel {
 	public String no = "";
 	public LocalDate orderDate = null;		
 	public String status = "";
+	public String statusDescription = "";
 	
 	public Pharmacy pharmacy = null;	
 	public PharmacyToStoreRO pharmacyToStoreRO = null;

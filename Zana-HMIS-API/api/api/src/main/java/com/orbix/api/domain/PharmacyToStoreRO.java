@@ -51,6 +51,7 @@ public class PharmacyToStoreRO {
 	private LocalDate validUntil;
 	
 	private String status;
+	private String statusDescription;
 	
 	@ManyToOne(targetEntity = Pharmacy.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "pharmacy_id", nullable = false , updatable = false)

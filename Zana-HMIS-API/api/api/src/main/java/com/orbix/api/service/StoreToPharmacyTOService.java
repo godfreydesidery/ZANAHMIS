@@ -20,6 +20,11 @@ import com.orbix.api.models.StoreToPharmacyTOModel;
 public interface StoreToPharmacyTOService {
 	StoreToPharmacyTOModel createOrder(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request);
 	boolean saveDetail(StoreToPharmacyTODetail storeToPharmacyTODetail, HttpServletRequest request);
+	
+	
+	StoreToPharmacyTOModel verify(StoreToPharmacyTO storeToPharmacyTO, HttpServletRequest request);
+	StoreToPharmacyTOModel approve(StoreToPharmacyTO storeToPharmacyTO, HttpServletRequest request);
+	StoreToPharmacyTOModel issue(StoreToPharmacyTO storeToPharmacyTO, HttpServletRequest request);
 
 	/**
 	 * @return

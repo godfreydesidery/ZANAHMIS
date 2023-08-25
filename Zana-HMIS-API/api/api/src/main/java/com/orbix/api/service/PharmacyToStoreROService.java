@@ -18,6 +18,13 @@ import com.orbix.api.models.RecordModel;
 public interface PharmacyToStoreROService {
 	PharmacyToStoreROModel save(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request);
 	boolean saveDetail(PharmacyToStoreRODetail pharmacyToStoreRODetail, HttpServletRequest request);
+	
+	PharmacyToStoreROModel verify(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request);
+	PharmacyToStoreROModel approve(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request);
+	PharmacyToStoreROModel submit(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request);
+	
+	PharmacyToStoreROModel _return(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request);
+	PharmacyToStoreROModel reject(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request);
 
 	/**
 	 * @return

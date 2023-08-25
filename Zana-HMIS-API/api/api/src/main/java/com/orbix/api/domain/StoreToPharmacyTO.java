@@ -49,6 +49,7 @@ public class StoreToPharmacyTO {
 	private LocalDate orderDate = LocalDate.now();
 		
 	private String status;
+	private String statusDescription;
 	
 	@ManyToOne(targetEntity = Pharmacy.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "pharmacy_id", nullable = true , updatable = false)
