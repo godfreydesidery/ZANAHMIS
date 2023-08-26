@@ -20,6 +20,8 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -79,8 +81,9 @@ public class StoreToPharmacyRN {
     private Long approvedOn;
 	private LocalDateTime approvedAt;
 	
-	@OneToMany(targetEntity = StoreToPharmacyRNDetail.class, mappedBy = "storeToPharmacyRN", fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(targetEntity = StoreToPharmacyRNDetail.class, mappedBy = "storeToPharmacyRN", fetch = FetchType.EAGER, orphanRemoval = true)
     @Valid
     @JsonIgnoreProperties("storeToPharmacyRN")
+	@Fetch(FetchMode.SUBSELECT)
     private List<StoreToPharmacyRNDetail> storeToPharmacyRNDetails;
 }

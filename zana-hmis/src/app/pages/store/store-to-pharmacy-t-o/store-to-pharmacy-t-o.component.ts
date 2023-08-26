@@ -38,7 +38,7 @@ export class StoreToPharmacyTOComponent {
   batchId : any
   batchNo : string = ''
   batchStoreSKUQty : number = 0
-  batchExpiryDate!  : Date
+  batchExpiryDate!  : Date | string | undefined
   batchStoreItemId : any
   batchStoreItemCode : string = ''
   batchStoreItemName : string = ''
@@ -84,6 +84,9 @@ export class StoreToPharmacyTOComponent {
   }
 
   async verifyOrder(){
+    if(!window.confirm('Confirm verify order. Confirm?')){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -109,6 +112,9 @@ export class StoreToPharmacyTOComponent {
   }
 
   async approveOrder(){
+    if(!window.confirm('Confirm approve order. Confirm?')){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -123,7 +129,7 @@ export class StoreToPharmacyTOComponent {
     .then(
       data => {
         this.loadCurrentTransferOrder(this.id)
-        this.msgBox.showSuccessMessage('Order verified successifully')
+        this.msgBox.showSuccessMessage('Order approved successifully')
         console.log(data)
       },
       error => {
@@ -134,6 +140,9 @@ export class StoreToPharmacyTOComponent {
   }
 
   async issueGoods(){
+    if(!window.confirm('Confirm issue goods. Confirm?')){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -177,8 +186,7 @@ export class StoreToPharmacyTOComponent {
         this.batchStoreItemCode =  ''
         this.batchStoreSKUQty = 0
         this.batchStoreToPharmacyTODetailId = detailId
-
-
+        this.batchExpiryDate = undefined
 
         console.log(data)
       },

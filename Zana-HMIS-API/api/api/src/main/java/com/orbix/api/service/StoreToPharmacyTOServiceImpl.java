@@ -253,6 +253,8 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 				modelDetail.setMedicine(d.getMedicine());
 				modelDetail.setOrderedPharmacySKUQty(d.getOrderedPharmacySKUQty());
 				modelDetail.setStoreToPharmacyTO(d.getStoreToPharmacyTO());
+				
+				//modelDetail.setStoreToPharmacyBatches(d.getStoreToPharmacyBatches());
 
 				if(d.getCreatedAt() != null) {
 					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());

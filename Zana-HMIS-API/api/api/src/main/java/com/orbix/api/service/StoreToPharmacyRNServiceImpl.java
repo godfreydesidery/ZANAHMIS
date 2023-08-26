@@ -182,6 +182,74 @@ public class StoreToPharmacyRNServiceImpl implements StoreToPharmacyRNService {
 		return model;
 	}
 	
+	
+	
+	
+	@Override
+	public StoreToPharmacyRNModel approveReceivingNote(StoreToPharmacyRN receiveNote, HttpServletRequest request) {
+		
+		
+		
+		
+		StoreToPharmacyRNModel model = new StoreToPharmacyRNModel();
+		List<StoreToPharmacyRNDetailModel> modelDetails = new ArrayList<>();
+		
+		model.setId(receiveNote.getId());
+		model.setNo(receiveNote.getNo());
+		model.setPharmacy(receiveNote.getPharmacy());
+		model.setStoreToPharmacyTO(receiveNote.getStoreToPharmacyTO());
+		model.setReceivingDate(receiveNote.getReceivingDate());
+		model.setStatus(receiveNote.getStatus());
+		
+		List<StoreToPharmacyRNDetail> ds = storeToPharmacyRNDetailRepository.findAllByStoreToPharmacyRN(receiveNote);
+		if(ds != null) {
+			for(StoreToPharmacyRNDetail d : ds) {
+				StoreToPharmacyRNDetailModel modelDetail = new StoreToPharmacyRNDetailModel();
+				modelDetail.setId(d.getId());
+				modelDetail.setMedicine(d.getMedicine());
+				modelDetail.setOrderedPharmacySKUQty(d.getOrderedPharmacySKUQty());
+				modelDetail.setReceivedPharmacySKUQty(d.getReceivedPharmacySKUQty());
+				modelDetail.setItem(d.getItem());
+				modelDetail.setReceivedStoreSKUQty(d.getReceivedStoreSKUQty());
+				modelDetail.setStoreToPharmacyRN(d.getStoreToPharmacyRN());
+				
+				List<StoreToPharmacyBatch> bs = storeToPharmacyBatchRepository.findAllByStoreToPharmacyRNDetail(d);				
+				modelDetail.setStoreToPharmacyBatches(bs);
+				
+				if(d.getCreatedAt() != null) {
+					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());
+				}else {
+					modelDetail.setCreated(null);
+				}
+				modelDetails.add(modelDetail);
+			}
+			model.setStoreToPharmacyRNDetails(modelDetails);
+		}
+		
+		if(receiveNote.getCreatedAt() != null) {
+			model.setCreated(receiveNote.getCreatedAt().toString()+" | "+userService.getUserById(receiveNote.getCreatedBy()).getNickname());
+		}else {
+			model.setCreated(null);
+		}
+		if(receiveNote.getVerifiedAt() != null) {
+			model.setVerified(receiveNote.getVerifiedAt().toString()+" | "+userService.getUserById(receiveNote.getVerifiedBy()).getNickname());
+		}else {
+			model.setVerified(null);
+		}
+		if(receiveNote.getApprovedAt() != null) {
+			model.setApproved(receiveNote.getApprovedAt().toString()+" | "+userService.getUserById(receiveNote.getApprovedBy()).getNickname());
+		}else {
+			model.setApproved(null);
+		}		
+		return model;
+	}
+	
+	
+	
+	
+	
+	
+	
 	@Override
 	public boolean saveDetail(StoreToPharmacyRNDetail detail, HttpServletRequest request) {
 		
@@ -203,6 +271,10 @@ public class StoreToPharmacyRNServiceImpl implements StoreToPharmacyRNService {
 		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 		return true;
 	}
+	
+	
+	
+	
 
 	@Override
 	public RecordModel requestReceivingNoteNo() {

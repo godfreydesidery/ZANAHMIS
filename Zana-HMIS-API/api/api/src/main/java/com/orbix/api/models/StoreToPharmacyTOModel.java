@@ -30,5 +30,5 @@ public class StoreToPharmacyTOModel {
     public String verified;
     public String approved;
 
-    private List<StoreToPharmacyTODetailModel> storeToPharmacyTODetails;
+    public List<StoreToPharmacyTODetailModel> storeToPharmacyTODetails;
 }

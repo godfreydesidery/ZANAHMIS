@@ -21,6 +21,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -82,5 +84,6 @@ public class StoreToPharmacyTO {
 	@OneToMany(targetEntity = StoreToPharmacyTODetail.class, mappedBy = "storeToPharmacyTO", fetch = FetchType.EAGER, orphanRemoval = true)
     @Valid
     @JsonIgnoreProperties("storeToPharmacyTO")
+	@Fetch(FetchMode.SUBSELECT)
     private List<StoreToPharmacyTODetail> storeToPharmacyTODetails;
 }

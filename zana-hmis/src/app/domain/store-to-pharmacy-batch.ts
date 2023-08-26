@@ -12,4 +12,6 @@ export interface IStoreToPharmacyBatch{
     storeToPharmacyTODetail : IStoreToPharmacyTODetail
     storeToPharmacyRNDetail : IStoreToPharmacyRNDetail
     item : IItem
+
+    checked : boolean
 }

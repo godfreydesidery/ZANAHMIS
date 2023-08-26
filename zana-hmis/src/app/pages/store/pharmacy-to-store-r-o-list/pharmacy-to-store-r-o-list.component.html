@@ -11,8 +11,8 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                        <button class="btn" (click)="returnOrder()"><span class="glyphicon glyphicon-arrow-left"></span>Return Order</button>
-                        <button class="btn" (click)="rejectOrder()"><span class="glyphicon glyphicon-remove-sign"></span>Reject Order</button>
+                        <button class="btn btn-primary btn-outline" *ngIf="id != null" (click)="returnOrder()"><span class="glyphicon glyphicon-arrow-left"></span>Return Order</button>
+                        <button class="btn btn-primary btn-outline" *ngIf="id != null" (click)="rejectOrder()"><span class="glyphicon glyphicon-remove-sign"></span>Reject Order</button>
                 </div>
                 <div class="panel-body">
                     <div class="row">

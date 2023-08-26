@@ -100,6 +100,9 @@ export class PharmacyToStoreROListComponent {
   }
 
   async createTransferOrder(id : any){
+    if(!window.confirm('Greate / Go to Transfer Order. Confirm?')){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -136,6 +139,9 @@ export class PharmacyToStoreROListComponent {
   }
 
   async returnOrder(){
+    if(!window.confirm('Confirm return order for correction. Confirm?')){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -160,6 +166,9 @@ export class PharmacyToStoreROListComponent {
   }
 
   async rejectOrder(){
+    if(!window.confirm('Confirm reject order. Confirm?')){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }

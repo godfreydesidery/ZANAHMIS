@@ -14,6 +14,8 @@ import { environment } from 'src/environments/environment';
 import { IPharmacyToStoreRO } from 'src/app/domain/pharmacy-to-store-r-o';
 import { IPharmacyToStoreRODetail } from 'src/app/domain/pharmacy-to-store-r-o-detail';
 import { IStoreToPharmacyRN } from 'src/app/domain/store-to-pharmacy-r-n';
+import { IStoreToPharmacyBatch } from 'src/app/domain/store-to-pharmacy-batch';
+import { IStoreToPharmacyRNDetail } from 'src/app/domain/store-to-pharmacy-r-n-detail';
 
 const API_URL = environment.apiUrl;
 
@@ -163,6 +165,15 @@ export class StoreToPharmacyRNComponent {
     
   }
 
+  clear(){
+    this.pharmacyToStoreRONo = ''
+    this.storeToPharmacyRN.id = null
+    this.storeToPharmacyRN.no = ''
+    
+    //etc
+    this.storeToPharmacyRN!
+  }
+
   clearDetail(){
     this.detailId = null
     this.detailCode = ''
@@ -171,5 +182,47 @@ export class StoreToPharmacyRNComponent {
     this.detailReceivedQty = 0
   }
 
-  
+  async approveReceipt(){
+    var valid : number = 1
+    this.storeToPharmacyRN.storeToPharmacyRNDetails.forEach(detail => {
+      detail.storeToPharmacyBatches.forEach(batch => {
+        if(batch.checked === undefined || batch.checked === false){
+          this.msgBox.showErrorMessage('Can not approve receipt. You can not receive less than the supplied goods')
+          valid = 0
+          return
+          //provide logic to send to server for validation later, too cumbersome
+        }
+      })
+    })
+    if(valid === 0){
+      return
+    }
+
+    if(!window.confirm('Confirm receive goods. Confirm?')){
+      return
+    }
+
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+
+    var rn = this.storeToPharmacyRN
+
+    this.spinner.show()
+    await this.http.post<IStoreToPharmacyRN[]>(API_URL+'/store_to_pharmacy_r_ns/approve_receipt', rn, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Goods received successifuly')
+        console.log(data)
+      },
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+
+  }
 }

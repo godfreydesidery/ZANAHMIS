@@ -11,12 +11,12 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#requisition-order-list-modal">Requisition Order List</button>
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#store-receiving-note-list-modal">Store GRN List</button>
-                    <button class="btn btn-primary">New Store GRN</button>
+                    <button class="btn btn-primary btn-outline" data-toggle="modal" data-target="#requisition-order-list-modal">Requisition Order List</button>
+                    <button class="btn btn-primary btn-outline" data-toggle="modal" data-target="#store-receiving-note-list-modal">Store GRN List</button>
+                    <button class="btn btn-primary btn-outline" (click)="clear()">New Store GRN</button>
                 </div>
                 <div class="panel-body">
-                    <div class="row">
+                    <div class="row" *ngIf="storeToPharmacyRN?.id === null">
                         <div class="col-sm-4"></div>
                         <div class="col-sm-4">
                             <h4 class="text-primary">Enter Store Requisition Order#</h4>
@@ -27,7 +27,7 @@
                         <div class="col-sm-4"></div>
                     </div>
                     
-                    <div class="row">
+                    <div class="row" *ngIf="storeToPharmacyRN?.id != null">
                         <hr>
                         <div class="col-sm-12">
                             <h5>GRN No: {{storeToPharmacyRN?.no}}</h5>
@@ -94,7 +94,7 @@
                                                         <td><small>{{b?.no}}</small></td>
                                                         <td><small>{{b?.pharmacySKUQty}}</small></td>
                                                         <td><small>{{b?.expiryDate | date}}</small></td>
-                                                        <td><input type="checkbox"></td>
+                                                        <td><input type="checkbox" [(ngModel)]="b.checked"></td>
                                                     </tr>
                                                     
                                                 </tbody>
@@ -136,7 +136,7 @@
                             </table>
                         </div>
                         <div class="col-sm-12">
-                            <button class="btn btn-primary pull-right">Appprove Receipt</button>
+                            <button class="btn btn-primary pull-right" (click)="approveReceipt()">Appprove Receipt</button>
                         </div>
                     </div>
                 </div> 
@@ -212,7 +212,7 @@
                                         Transfer Order: {{p?.storeToPharmacyTO?.status}}<br>
                                         Receiving Note:
                                     </td>
-                                    <td><button class="btn btn-primary" (click)="createGRN(p?.id, '')" data-dismiss="modal" aria-label="Close">Create / Go to GRN</button></td>
+                                    <td><button class="btn btn-primary" *ngIf="p?.status === 'GOODS-ISSUED'" (click)="createGRN(p?.id, '')" data-dismiss="modal" aria-label="Close">Create / Go to GRN</button></td>
                                 </tr>
                             </tbody>
                         </table>

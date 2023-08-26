@@ -11,13 +11,13 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <button class="btn" data-toggle="modal" data-target="#order-list-modal"><span class="glyphicon glyphicon-list"></span>Order List</button>
-                    <button class="btn" (click)="requestNo()"><span class="glyphicon glyphicon-file"></span>New Order</button>
-                    <button class="btn" (click)="openToEdit()"><span class="glyphicon glyphicon-pencil"></span>Edit Order</button>
-                    <button class="btn" (click)="saveOrder()"><span class="glyphicon glyphicon-floppy-disk"></span>Save Order</button>
-                    <button class="btn" (click)="verifyOrder()"><span class="glyphicon glyphicon-arrow-right"></span>Verify Order</button>
-                    <button class="btn" (click)="approveOrder()"><span class="glyphicon glyphicon-ok"></span>Approve Order</button>
-                    <button class="btn" (click)="submitOrder()"><span class="glyphicon glyphicon-arrow-right"></span>Submit Order</button>
+                    <button class="btn btn-primary btn-outline" data-toggle="modal" data-target="#order-list-modal"><span class="glyphicon glyphicon-list"></span>Order List</button>
+                    <button class="btn btn-primary btn-outline" (click)="requestNo()"><span class="glyphicon glyphicon-file"></span>New Order</button>
+                    <button class="btn btn-primary btn-outline" (click)="openToEdit()"><span class="glyphicon glyphicon-pencil"></span>Edit Order</button>
+                    <button class="btn btn-primary btn-outline" (click)="saveOrder()"><span class="glyphicon glyphicon-floppy-disk"></span>Save Order</button>
+                    <button class="btn btn-primary btn-outline" *ngIf="status === 'PENDING'" (click)="verifyOrder()"><span class="glyphicon glyphicon-arrow-right"></span>Verify Order</button>
+                    <button class="btn btn-primary btn-outline" *ngIf="status === 'VERIFIED'" (click)="approveOrder()"><span class="glyphicon glyphicon-ok"></span>Approve Order</button>
+                    <button class="btn btn-primary btn-outline" *ngIf="status === 'APPROVED'" (click)="submitOrder()"><span class="glyphicon glyphicon-arrow-right"></span>Submit Order</button>
                 </div>
                 <div class="panel-body">
                     <div class="row">

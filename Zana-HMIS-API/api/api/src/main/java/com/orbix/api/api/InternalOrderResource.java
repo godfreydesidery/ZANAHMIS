@@ -29,6 +29,7 @@ import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyToStoreRO;
 import com.orbix.api.domain.PharmacyToStoreRODetail;
 import com.orbix.api.domain.StoreToPharmacyBatch;
+import com.orbix.api.domain.StoreToPharmacyRN;
 import com.orbix.api.domain.StoreToPharmacyTO;
 import com.orbix.api.domain.StoreToPharmacyTODetail;
 import com.orbix.api.exceptions.InvalidOperationException;
@@ -48,6 +49,7 @@ import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.PharmacyToStoreRODetailRepository;
 import com.orbix.api.repositories.PharmacyToStoreRORepository;
 import com.orbix.api.repositories.StoreToPharmacyBatchRepository;
+import com.orbix.api.repositories.StoreToPharmacyRNRepository;
 import com.orbix.api.repositories.StoreToPharmacyTODetailRepository;
 import com.orbix.api.repositories.StoreToPharmacyTORepository;
 import com.orbix.api.service.DayService;
@@ -83,6 +85,7 @@ public class InternalOrderResource {
 	private final ItemMedicineCoefficientRepository itemMedicineCoefficientRepository;
 	private final StoreToPharmacyBatchRepository storeToPharmacyBatchRepository;
 	private final MedicineRepository medicineRepository;
+	private final StoreToPharmacyRNRepository storeToPharmacyRNRepository;
 
 	
 	@PostMapping("/pharmacy_to_store_r_os/save")
@@ -566,7 +569,7 @@ public class InternalOrderResource {
 			throw new NotFoundException("Detail Not found");
 		}
 		
-		if(!tod.get().getStatus().equals("PENDING")) {
+		if(!tod.get().getStoreToPharmacyTO().getStatus().equals("PENDING")) {
 			throw new InvalidOperationException("Could not edit. Only pending transfer orders can be edited");
 		}
 		
@@ -646,5 +649,47 @@ public class InternalOrderResource {
 
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/store_to_pharmacy_r_ns/create").toUriString());
 		return ResponseEntity.created(uri).body(storeToPharmacyRNService.createReceivingNote(reqOrder.get(), request));
+	}
+	
+	@PostMapping("/store_to_pharmacy_r_ns/approve_receipt")
+	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	public ResponseEntity<StoreToPharmacyRNModel>approveReceiptStoreToPharmacyRN(
+			@RequestBody StoreToPharmacyRN rn,
+			HttpServletRequest request){
+		
+		Optional<StoreToPharmacyRN> n = storeToPharmacyRNRepository.findById(rn.getId());
+		if(n.isEmpty()) {
+			throw new NotFoundException("GRN not found");
+		}
+		
+		if(!n.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not receive. Not a pending GRN");
+		}
+		
+		PharmacyToStoreRO ro = n.get().getStoreToPharmacyTO().getPharmacyToStoreRO();
+		if(ro != null) {
+			ro.setStatus("COMPLETED");
+			ro.setStatusDescription("Request order completed and received");
+			
+			pharmacyToStoreRORepository.save(ro);
+		}
+		
+		StoreToPharmacyTO to = n.get().getStoreToPharmacyTO();
+		if(to != null) {
+			to.setStatus("COMPLETED");
+			to.setStatusDescription("Transfer order completed and received");
+			
+			storeToPharmacyTORepository.save(to);
+		}
+		
+		n.get().setStatus("COMPLETED");
+		n.get().setStatusDescription("Goods received");
+		
+		storeToPharmacyRNRepository.save(n.get());
+		
+		n = storeToPharmacyRNRepository.findById(rn.getId());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/store_to_pharmacy_r_ns/approve_receipt").toUriString());
+		return ResponseEntity.created(uri).body(storeToPharmacyRNService.approveReceivingNote(n.get(), request));
 	}
 }

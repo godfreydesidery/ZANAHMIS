@@ -29,7 +29,7 @@ export class PharmacyToStoreROComponent {
   id : any
   no : string = ''
   orderDate! : Date
-  validUntil! : Date
+  validUntil! : Date | string
   status : string = ''
   statusDescription : string = ''
   created : string = ''
@@ -187,6 +187,9 @@ export class PharmacyToStoreROComponent {
   }
 
   async verifyOrder(){
+    if(!window.confirm('Confirm verify order. Confirm?')){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -224,6 +227,9 @@ export class PharmacyToStoreROComponent {
   }
 
   async approveOrder(){
+    if(!window.confirm('Confirm approve order. Confirm?')){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -261,6 +267,9 @@ export class PharmacyToStoreROComponent {
   }
 
   async submitOrder(){
+    if(!window.confirm('Confirm submit order. Confirm?')){
+      return
+    }
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -352,7 +361,7 @@ export class PharmacyToStoreROComponent {
     this.id         = null
     this.no         = ''
     this.orderDate! = new Date()
-    this.validUntil!  = new Date()
+    this.validUntil!  = ''
     this.status     = ''
     this.statusDescription = ''
     this.created    = ''
