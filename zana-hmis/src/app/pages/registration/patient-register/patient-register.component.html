@@ -252,13 +252,13 @@
                                                     <h4 class="text-primary"><b>Add service for Outsider</b></h4>
                                                     <div class="row">
                                                         <div class="col-sm-12">
-                                                            <button class="btn btn-primary form-control" data-toggle="modal" data-target="#add-lab-test-modal">Add Lab Test</button>
+                                                            <button class="btn btn-primary form-control" (click)="clearTests()" data-toggle="modal" data-target="#add-lab-test-modal">Add Lab Test</button>
                                                             <br>
                                                             <br>
-                                                            <button class="btn btn-primary form-control" data-toggle="modal" data-target="#add-radiology-modal">Add Radiology</button>
+                                                            <button class="btn btn-primary form-control" (click)="clearTests()" data-toggle="modal" data-target="#add-radiology-modal">Add Radiology</button>
                                                             <br>
                                                             <br>
-                                                            <button class="btn btn-primary form-control" data-toggle="modal" data-target="#add-procedure-modal">Add Procedure</button>
+                                                            <button class="btn btn-primary form-control" (click)="clearTests()" data-toggle="modal" data-target="#add-procedure-modal">Add Procedure</button>
                                                             <br>
                                                             <br>
                                                         </div>
@@ -600,6 +600,15 @@
                         </select>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>Select Diagnosis(Provisional Diagnosis)</h4>
+                        <select class="form-control" [(ngModel)]="diagnosisTypeName">
+                            <option></option>
+                            <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
@@ -627,6 +636,15 @@
                         </select>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>Select Diagnosis(Provisional Diagnosis)</h4>
+                        <select class="form-control" [(ngModel)]="diagnosisTypeName">
+                            <option></option>
+                            <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
@@ -646,14 +664,53 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-sm-12">
-                        <h5>Select Procedure</h5>
-                        <select class="form-control" [(ngModel)]="procedureTypeName">
-                            <option>--Select Procedure--</option>
-                            <option *ngFor="let t of procedureTypeNames">{{t}}</option>
-                        </select>
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h4>Select Procedure Type</h4>
+                                <select class="form-control" [(ngModel)]="procedureTypeName">
+                                    <option></option>
+                                    <option *ngFor="let name of procedureTypeNames">{{name}}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12">
+                                <h4>Select Diagnosis</h4>
+                                <select class="form-control" [(ngModel)]="diagnosisTypeName">
+                                    <option></option>
+                                    <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <button (click)="toggleTheatre()" style="width: 4cm; height: 4cm; background-color: rgba(244, 248, 247, 0.921);border-style: groove;">Need Theatre?</button>
                     </div>
                 </div>
+                <div class="row" *ngIf="procedureNeedTheatre === true">
+                    <div  class="col-sm-12">
+                        <h4>Select Theatre</h4>
+                        <select class="form-control" [(ngModel)]="theatreName">
+                            <option></option>
+                            <option *ngFor="let name of theatreNames">{{name}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <h4>Time</h4>
+                        <input type="time" class="form-control" [(ngModel)]="procedureTime">
+                    </div>
+                    <div class="col-sm-3">
+                        <h4>Date</h4>
+                        <input type="date" class="form-control" [(ngModel)]="procedureDate">
+                    </div>
+                    <div class="col-sm-3">
+                        <h4>Hours</h4>
+                        <input type="number" class="form-control" [(ngModel)]="procedureHours">
+                    </div>
+                    <div class="col-sm-3">
+                        <h4>Minutes</h4>
+                        <input type="number" class="form-control" [(ngModel)]="procedureMinutes">
+                    </div>
+                </div> 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>

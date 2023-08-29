@@ -18,6 +18,7 @@ import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.PatientBill;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
+import com.orbix.api.domain.CompanyProfile;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.ConsultationInsurancePlan;
 import com.orbix.api.domain.DiagnosisType;
@@ -44,6 +45,7 @@ import com.orbix.api.domain.Theatre;
 import com.orbix.api.domain.Visit;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationInsurancePlanRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.DayRepository;
@@ -112,6 +114,7 @@ public class PatientServiceImpl implements PatientService {
 	private final RegistrationRepository registrationRepository;
 	private final DiagnosisTypeRepository diagnosisTypeRepository;
 	private final TheatreRepository theatreRepository;
+	private final CompanyProfileRepository companyProfileRepository;
 	
 	
 	
@@ -133,6 +136,11 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public Patient doRegister(Patient p, HttpServletRequest request) {
 		// TODO Auto-generated method stub
+		double regFee = 0;
+		List<CompanyProfile> cps = companyProfileRepository.findAll();
+		for(CompanyProfile cp : cps) {
+			regFee = cp.getRegistrationFee();
+		}
 		/**
 		 * Save patient after validating credentials
 		 */
@@ -166,11 +174,11 @@ public class PatientServiceImpl implements PatientService {
 		 * Create registration patientBill and assign it to patient
 		 */
 		PatientBill regBill = new PatientBill();
-		double am = 2000;//fetch this value from database, later
-		regBill.setAmount(am);
+		//fetch this value from database, later
+		regBill.setAmount(regFee);
 		regBill.setQty(1);
-		regBill.setBalance(am);
-		regBill.setDescription("Registration Fee");
+		regBill.setBalance(regFee);
+		regBill.setDescription("Registration Fee"); 
 		regBill.setStatus("UNPAID");
 		regBill.setPatient(patient);
 		/**
@@ -857,7 +865,10 @@ public class PatientServiceImpl implements PatientService {
 			if(th.isEmpty()) {
 				throw new InvalidOperationException("Theatre not found");
 			}
+			
 			procedure.setTheatre(th.get());
+		}else {
+			procedure.setTheatre(null);
 		}
 		if(!procedure.getDiagnosisType().getName().equals("")) {
 			Optional<DiagnosisType> dt = diagnosisTypeRepository.findByName(procedure.getDiagnosisType().getName());

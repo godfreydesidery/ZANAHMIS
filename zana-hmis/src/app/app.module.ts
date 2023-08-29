@@ -82,6 +82,8 @@ import { PharmacyToStoreROListComponent } from './pages/store/pharmacy-to-store-
 import { StoreToPharmacyTOComponent } from './pages/store/store-to-pharmacy-t-o/store-to-pharmacy-t-o.component';
 import { ItemMedicineConversionCoefficientComponent } from './pages/store/conversion-coefficients/item-medicine-conversion-coefficient/item-medicine-conversion-coefficient.component';
 import { StoreToPharmacyRNComponent } from './pages/pharmacy/store-to-pharmacy-r-n/store-to-pharmacy-r-n.component';
+import { CompanyProfileComponent } from './pages/admin/company/company-profile/company-profile.component';
+import { ReportTemplateComponent } from './pages/reports/report-template/report-template.component';
 
 
 @NgModule({
@@ -157,6 +159,8 @@ import { StoreToPharmacyRNComponent } from './pages/pharmacy/store-to-pharmacy-r
     StoreToPharmacyTOComponent,
     ItemMedicineConversionCoefficientComponent,
     StoreToPharmacyRNComponent,
+    CompanyProfileComponent,
+    ReportTemplateComponent,
   ],
   imports: [
     HttpClientModule,
@@ -167,6 +171,7 @@ import { StoreToPharmacyRNComponent } from './pages/pharmacy/store-to-pharmacy-r
     FormsModule,
     ReactiveFormsModule,
       RouterModule.forRoot([
+    {path : 'company-profile', component : CompanyProfileComponent},
     {path : 'patient-register', component : PatientRegisterComponent},
     {path : 'patient-list', component : PatientListComponent},
     {path : 'patient-payment', component : PatientPaymentComponent},
@@ -230,6 +235,7 @@ import { StoreToPharmacyRNComponent } from './pages/pharmacy/store-to-pharmacy-r
     {path : 'store-to-pharmacy-t-o', component : StoreToPharmacyTOComponent},
     {path : 'store-to-pharmacy-r-n', component : StoreToPharmacyRNComponent},
     {path : 'item-medicine-conversion-coefficient', component : ItemMedicineConversionCoefficientComponent},
+    {path : 'report-template', component : ReportTemplateComponent},
     ])
   ],
   schemas: [ 

@@ -1,3 +1,4 @@
+import { Time } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Pipe,PipeTransform } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
@@ -90,10 +91,27 @@ export class PatientRegisterComponent implements OnInit {
   procedureTypeNames : string[] = []
   procedureTypeName : string = ''
 
+  diagnosisTypeName : string = ''
+  diagnosisTypeNames : string[] = []
+
 
   labTotal : number = 0
   radiologyTotal : number = 0
   procedureTotal : number = 0
+
+  procedureId : any
+  procedureNote : string = ''
+  procedureType : string = ''
+  procedureNeedTheatre : boolean = false
+  procedureTheatreName : string = ''
+  procedureTime! : Time
+  procedureDiagnosis : string = ''
+  procedureDate! : Date
+  procedureHours : number = 0
+  procedureMinutes : number = 0
+
+  theatreName : string = ''
+  theatreNames : string[] = []
   
   constructor(
     //private shortcut : ShortCutHandlerService,
@@ -131,7 +149,8 @@ export class PatientRegisterComponent implements OnInit {
     this.loadLabTestTypeNames()
     this.loadRadiologyTypeNames()
     this.loadProcedureTypeNames()
-    
+    this.loadDiagnosisTypeNames()
+    this.loadTheatreNames()
   }
 
   clear(){
@@ -363,7 +382,6 @@ export class PatientRegisterComponent implements OnInit {
         this.kinRelationship = data!['kinRelationship']
         this.kinPhoneNo = data!['kinPhoneNo']
 
-       
 
         this.insurancePlanName = data!['insurancePlan']?.name
         
@@ -502,7 +520,7 @@ export class PatientRegisterComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.post<boolean>(API_URL+'/patients/delete_lab_test?id='+labTestId, options)
+    await this.http.post<boolean>(API_URL+'/patients/delete_lab_test?id='+labTestId, null, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -524,7 +542,7 @@ export class PatientRegisterComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.post<boolean>(API_URL+'/patients/delete_radiology?id='+radiologyId, options)
+    await this.http.post<boolean>(API_URL+'/patients/delete_radiology?id='+radiologyId, null, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -547,7 +565,7 @@ export class PatientRegisterComponent implements OnInit {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.post<boolean>(API_URL+'/patients/delete_procedure?id='+procedureId, options)
+    await this.http.post<boolean>(API_URL+'/patients/delete_procedure?id='+procedureId, null, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -904,8 +922,9 @@ export class PatientRegisterComponent implements OnInit {
       labTestType : {
         id : null,
         code : '',
-        name : this.labTestTypeName
-      }
+        name : this.labTestTypeName,
+      },
+      diagnosisType : {name : this.diagnosisTypeName}
     }
     this.spinner.show()
     await this.http.post(API_URL+'/patients/save_lab_test?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId, labTest, options)
@@ -940,7 +959,14 @@ export class PatientRegisterComponent implements OnInit {
         id : null,
         code : '',
         name : this.procedureTypeName
-      }
+      },
+      type      : this.procedureType,
+      theatre   : { name : this.theatreName },
+      diagnosisType : { name : this.diagnosisTypeName},
+      time      : this.procedureTime,
+      date      : this.procedureDate,
+      hours     : this.procedureHours,
+      minutes   : this.procedureMinutes
     }
     this.spinner.show()
     await this.http.post(API_URL+'/patients/save_procedure?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId, procedure, options)
@@ -954,7 +980,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.loadProcedures(0, this.nonConsultationId)
+        //this.loadProcedures(0, this.nonConsultationId)
         this.msgBox.showErrorMessage('Could not save Procedure')
         console.log(error)
       }
@@ -1002,7 +1028,8 @@ export class PatientRegisterComponent implements OnInit {
         id : null,
         code : '',
         name : this.radiologyTypeName
-      }
+      },
+      diagnosisType : {name : this.diagnosisTypeName}
     }
     this.spinner.show()
     await this.http.post(API_URL+'/patients/save_radiology?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId, radiology, options)
@@ -1124,6 +1151,76 @@ export class PatientRegisterComponent implements OnInit {
         this.msgBox.showErrorMessage('Could not load lab test types names')
       }
     )
+  }
+
+  async loadDiagnosisTypeNames(){
+    this.diagnosisTypeNames = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/diagnosis_types/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        data?.forEach(element => {
+          this.diagnosisTypeNames.push(element)
+        })
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load diagnosis types names')
+      }
+    )
+  }
+
+  clearTests(){
+    this.labTestTypeName = ''
+    this.diagnosisTypeName = ''
+    this.radiologyTypeName = ''
+    this.procedureTypeName = ''
+  }
+
+  async loadTheatreNames(){
+    this.theatreNames = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<string[]>(API_URL+'/theatres/get_names', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        data?.forEach(element => {
+          this.theatreNames.push(element)
+        })
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load theatre names')
+      }
+    )
+  }
+
+  toggleTheatre(){
+    if(this.procedureNeedTheatre === false){
+      this.procedureNeedTheatre = true
+      this.procedureType = 'THEATRE'
+    }else{
+      this.procedureNeedTheatre =false
+      this.procedureTheatreName = ''
+      this.procedureDate!
+      this.procedureTime!
+      this.procedureHours = 0
+      this.procedureMinutes = 0
+      this.procedureType = 'NON-THEATRE'
+    }
   }
 
 }

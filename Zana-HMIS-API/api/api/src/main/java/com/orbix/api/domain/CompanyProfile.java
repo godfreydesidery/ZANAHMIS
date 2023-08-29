@@ -73,5 +73,7 @@ public class CompanyProfile {
 	private String quotationNotes;
 	//@Length(max = 2000)
 	private String salesInvoiceNotes;
+	
+	private double registrationFee = 0;
 
 }

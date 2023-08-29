@@ -15,7 +15,8 @@
               </span>
               <span class="logo-lg" style="margin-top: 4mm;">
                   <!--<b>Admin</b>H-admin-->
-                  <img src="assets/dist/img/zana-logo.png" alt="">
+                  <img *ngIf="retrievedImage" class="img-fluid img-thumbnail" [src]="retrievedImage" style="width: 3cm;">
+                  <!--<img src="assets/dist/img/zana-logo.png" alt="">-->
               </span>
           </a>
           <!-- Header Navbar -->
@@ -249,22 +250,6 @@
                         <ul class="treeview-menu">
                             <li class="treeview">
                                 <a href="#">
-                                    <i class="fa fa-user-md"></i><span>User and Access</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a routerLink="/user-profile">User Profile</a></li>
-                                    <li><a routerLink="/role">Roles</a></li>
-                                    <li><a routerLink="/access-management">Access Management</a></li>
-                                </ul>
-
-                            </li>
-                        </ul>
-                        <ul class="treeview-menu">
-                            <li class="treeview">
-                                <a href="#">
                                     <i class="fa fa-user-md"></i><span>Personel Management</span>
                                     <span class="pull-right-container">
                                         <i class="fa fa-angle-left pull-right"></i>
@@ -317,6 +302,35 @@
                                 </ul>
                             </li>
                         </ul>
+                        <ul class="treeview-menu">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-user-md"></i><span>User and Access</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a routerLink="/user-profile">User Profile</a></li>
+                                    <li><a routerLink="/role">Roles</a></li>
+                                    <li><a routerLink="/access-management">Access Management</a></li>
+                                </ul>
+
+                            </li>
+                        </ul>
+                        <ul class="treeview-menu">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-user-md"></i><span>Company</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a routerLink="/company-profile">Company Profile</a></li>
+                                </ul>
+                            </li>
+                        </ul>
                     </li>
                   
                   <li class="treeview">
@@ -330,6 +344,7 @@
                       <li><a href="patient-wise-report.html">Patient wise Report</a></li>
                       <li><a href="doctor-wise-report.html">Doctor wise Report</a></li>
                       <li><a href="total-report.html">Total Report</a></li>
+                      <li><a routerLink="/report-template">Report Template</a></li>
                   </ul>
               </li>
              

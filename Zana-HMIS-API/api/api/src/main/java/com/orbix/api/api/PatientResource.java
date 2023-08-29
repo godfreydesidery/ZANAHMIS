@@ -67,6 +67,7 @@ import com.orbix.api.repositories.AdmissionRepository;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.repositories.ClinicalNoteRepository;
 import com.orbix.api.repositories.ClinicianRepository;
+import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
@@ -95,6 +96,7 @@ import com.orbix.api.repositories.VisitRepository;
 import com.orbix.api.repositories.WorkingDiagnosisRepository;
 import com.orbix.api.service.CompanyProfileService;
 import com.orbix.api.service.DayService;
+import com.orbix.api.service.PatientCreditNoteService;
 import com.orbix.api.service.PatientService;
 import com.orbix.api.service.UserService;
 
@@ -144,6 +146,8 @@ public class PatientResource {
 	private final AdmissionRepository admissionRepository;
 	private final PharmacyRepository pharmacyRepository;
 	private final PharmacyMedicineRepository pharmacyMedicineRepository;
+	private final PatientCreditNoteService patientCreditNoteService;
+	private final CompanyProfileRepository companyProfileRepository;
 	
 	
 	@GetMapping("/patients")
@@ -251,8 +255,10 @@ public class PatientResource {
 				throw new InvalidOperationException("Can not transform to the same type");
 			}
 			List<String> statuses = new ArrayList<>();
+			statuses.add("PENDING");
 			statuses.add("IN-PROCESS");
 			List<NonConsultation> ncs = nonConsultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
+			
 			if(!ncs.isEmpty()) {
 				throw new InvalidOperationException("Can not change patient type, the has pending services. Please consider removing the services or clearing with the patient.");
 			}else {
@@ -310,7 +316,7 @@ public class PatientResource {
 		/**
 		 * If there is a payment associated with this patientBill, refund it, and create a credit note for it
 		 */
-		if(pd.isPresent()) {
+		if(pd.isPresent() && pd.get().getStatus().equals("RECEIVED")) {
 			PatientPaymentDetail ppd = pd.get();
 			ppd.setStatus("REFUNDED");
 			ppd = patientPaymentDetailRepository.save(ppd);
@@ -320,16 +326,14 @@ public class PatientResource {
 			PatientCreditNote patientCreditNote = new PatientCreditNote();
 			patientCreditNote.setAmount(ppd.getPatientBill().getAmount());
 			patientCreditNote.setPatient(consultation.getPatient());
-			patientCreditNote.setReference("Cancel consultation");
+			patientCreditNote.setReference("Canceled consultation");
 			patientCreditNote.setStatus("PENDING");
-			patientCreditNote.setNo("NA");
+			patientCreditNote.setNo(patientCreditNoteService.requestPatientCreditNoteNo().getNo());
 			
 			patientCreditNote.setCreatedby(userService.getUserId(request));
 			patientCreditNote.setCreatedOn(dayService.getDayId());
 			patientCreditNote.setCreatedAt(dayService.getTimeStamp());
 			
-			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
-			patientCreditNote.setNo(patientCreditNote.getId().toString());
 			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
 		}
 		/**
@@ -1232,10 +1236,10 @@ public class PatientResource {
 		PatientBill patientBill = patientBillRepository.findById(t.get().getPatientBill().getId()).get();
 		
 		Optional<PatientPaymentDetail> pd = patientPaymentDetailRepository.findByPatientBill(patientBill);
-		if(pd.isPresent()) {
+		if(pd.isPresent() && pd.get().getStatus().equals("RECEIVED")) {
 			
 			//disable deleting a paid test first
-			throw new InvalidOperationException("Can not delete a paid lab test, please contact system administrator");
+			//throw new InvalidOperationException("Can not delete a paid lab test, please contact system administrator");
 			
 			/*PatientCreditNote patientCreditNote = new PatientCreditNote();
 			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
@@ -1246,6 +1250,19 @@ public class PatientResource {
 			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
 			patientCreditNote.setNo(patientCreditNote.getId().toString());
 			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);*/
+			
+			PatientCreditNote patientCreditNote = new PatientCreditNote();
+			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
+			patientCreditNote.setPatient(pd.get().getPatientBill().getPatient());
+			patientCreditNote.setReference("Canceled lab test");
+			patientCreditNote.setStatus("PENDING");
+			patientCreditNote.setNo(patientCreditNoteService.requestPatientCreditNoteNo().getNo());
+			
+			patientCreditNote.setCreatedby(userService.getUserId(request));
+			patientCreditNote.setCreatedOn(dayService.getDayId());
+			patientCreditNote.setCreatedAt(dayService.getTimeStamp());
+			
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
 		}
 		Optional<PatientInvoiceDetail> i = patientInvoiceDetailRepository.findByPatientBill(patientBill);
 		/**
@@ -1264,8 +1281,8 @@ public class PatientResource {
 		}
 		if(pd.isPresent()) {
 			//disable deleting a paid test first
-			throw new InvalidOperationException("Can not delete a paid lab test, please contact system administrator");
-			/*patientPaymentDetailRepository.delete(pd.get());*/
+			//throw new InvalidOperationException("Can not delete a paid lab test, please contact system administrator");
+			patientPaymentDetailRepository.delete(pd.get());
 		}
 		labTestRepository.delete(labTest);
 		patientBillRepository.delete(patientBill);		
@@ -1373,9 +1390,9 @@ public class PatientResource {
 		PatientBill patientBill = patientBillRepository.findById(r.get().getPatientBill().getId()).get();
 		
 		Optional<PatientPaymentDetail> pd = patientPaymentDetailRepository.findByPatientBill(patientBill);
-		if(pd.isPresent()) {
+		if(pd.isPresent() && pd.get().getStatus().equals("RECEIVED")) {
 			//disable deleting a paid radiology first, in the mean time
-			throw new InvalidOperationException("Can not delete a paid lab test, please contact system administrator");
+			//throw new InvalidOperationException("Can not delete a paid lab test, please contact system administrator");
 			
 			/*PatientCreditNote patientCreditNote = new PatientCreditNote();
 			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
@@ -1386,6 +1403,19 @@ public class PatientResource {
 			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
 			patientCreditNote.setNo(patientCreditNote.getId().toString());
 			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);*/
+			
+			PatientCreditNote patientCreditNote = new PatientCreditNote();
+			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
+			patientCreditNote.setPatient(pd.get().getPatientBill().getPatient());
+			patientCreditNote.setReference("Canceled radiology");
+			patientCreditNote.setStatus("PENDING");
+			patientCreditNote.setNo(patientCreditNoteService.requestPatientCreditNoteNo().getNo());
+			
+			patientCreditNote.setCreatedby(userService.getUserId(request));
+			patientCreditNote.setCreatedOn(dayService.getDayId());
+			patientCreditNote.setCreatedAt(dayService.getTimeStamp());
+			
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
 		}
 		Optional<PatientInvoiceDetail> i = patientInvoiceDetailRepository.findByPatientBill(patientBill);
 		/**
@@ -1404,8 +1434,8 @@ public class PatientResource {
 		}
 		if(pd.isPresent()) {
 			//disable deleting a paid test first, in the mean time
-			throw new InvalidOperationException("Can not delete a paid radiology, please contact system administrator");
-			/*patientPaymentDetailRepository.delete(pd.get());*/
+			//throw new InvalidOperationException("Can not delete a paid radiology, please contact system administrator");
+			patientPaymentDetailRepository.delete(pd.get());
 		}
 		radiologyRepository.delete(radiology);
 		patientBillRepository.delete(patientBill);
@@ -1428,9 +1458,9 @@ public class PatientResource {
 		PatientBill patientBill = patientBillRepository.findById(pr.get().getPatientBill().getId()).get();
 		
 		Optional<PatientPaymentDetail> pd = patientPaymentDetailRepository.findByPatientBill(patientBill);
-		if(pd.isPresent()) {
+		if(pd.isPresent() && pd.get().getStatus().equals("RECEIVED")) {
 			//disable deleting a paid procedure first, in the mean time
-			throw new InvalidOperationException("Can not delete a paid procedure, please contact system administrator");
+			//throw new InvalidOperationException("Can not delete a paid procedure, please contact system administrator");
 			
 			/*PatientCreditNote patientCreditNote = new PatientCreditNote();
 			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
@@ -1441,6 +1471,19 @@ public class PatientResource {
 			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
 			patientCreditNote.setNo(patientCreditNote.getId().toString());
 			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);*/
+			
+			PatientCreditNote patientCreditNote = new PatientCreditNote();
+			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
+			patientCreditNote.setPatient(pd.get().getPatientBill().getPatient());
+			patientCreditNote.setReference("Canceled procedure");
+			patientCreditNote.setStatus("PENDING");
+			patientCreditNote.setNo(patientCreditNoteService.requestPatientCreditNoteNo().getNo());
+			
+			patientCreditNote.setCreatedby(userService.getUserId(request));
+			patientCreditNote.setCreatedOn(dayService.getDayId());
+			patientCreditNote.setCreatedAt(dayService.getTimeStamp());
+			
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
 		}
 		Optional<PatientInvoiceDetail> i = patientInvoiceDetailRepository.findByPatientBill(patientBill);
 		/**
@@ -1459,8 +1502,8 @@ public class PatientResource {
 		}
 		if(pd.isPresent()) {
 			//disable deleting a paid test first, in the mean time
-			throw new InvalidOperationException("Can not delete a paid procedure, please contact system administrator");
-			/*patientPaymentDetailRepository.delete(pd.get());*/
+			//throw new InvalidOperationException("Can not delete a paid procedure, please contact system administrator");
+			patientPaymentDetailRepository.delete(pd.get());
 		}
 		
 		procedureRepository.delete(procedure);
@@ -1483,9 +1526,9 @@ public class PatientResource {
 		PatientBill patientBill = patientBillRepository.findById(pr.get().getPatientBill().getId()).get();
 		
 		Optional<PatientPaymentDetail> pd = patientPaymentDetailRepository.findByPatientBill(patientBill);
-		if(pd.isPresent()) {
+		if(pd.isPresent() && pd.get().getStatus().equals("RECEIVED")) {
 			//disable deleting a paid test first, in the mean time
-			throw new InvalidOperationException("Can not delete a paid prescription, please contact system administrator");
+			//throw new InvalidOperationException("Can not delete a paid prescription, please contact system administrator");
 			
 			/*PatientCreditNote patientCreditNote = new PatientCreditNote();
 			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
@@ -1496,6 +1539,19 @@ public class PatientResource {
 			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
 			patientCreditNote.setNo(patientCreditNote.getId().toString());
 			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);*/
+			
+			PatientCreditNote patientCreditNote = new PatientCreditNote();
+			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
+			patientCreditNote.setPatient(pd.get().getPatientBill().getPatient());
+			patientCreditNote.setReference("Canceled prescription");
+			patientCreditNote.setStatus("PENDING");
+			patientCreditNote.setNo(patientCreditNoteService.requestPatientCreditNoteNo().getNo());
+			
+			patientCreditNote.setCreatedby(userService.getUserId(request));
+			patientCreditNote.setCreatedOn(dayService.getDayId());
+			patientCreditNote.setCreatedAt(dayService.getTimeStamp());
+			
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
 		}
 		Optional<PatientInvoiceDetail> i = patientInvoiceDetailRepository.findByPatientBill(patientBill);
 		/**
@@ -1514,8 +1570,8 @@ public class PatientResource {
 		}
 		if(pd.isPresent()) {
 			//disable deleting a paid test first, in the mean time
-			throw new InvalidOperationException("Can not delete a paid prescription, please contact system administrator");
-			/*patientPaymentDetailRepository.delete(pd.get());*/
+			//throw new InvalidOperationException("Can not delete a paid prescription, please contact system administrator");
+			patientPaymentDetailRepository.delete(pd.get());
 		}
 		
 		prescriptionRepository.delete(prescription);
@@ -1621,9 +1677,6 @@ public class PatientResource {
 				t.setNonConsultation(test.getNonConsultation());
 				t.setPatientBill(test.getPatientBill());
 				t.setStatus(test.getStatus());
-				t.setVerified("Not Available");;
-				
-				
 				
 				if(test.getCreatedAt() != null) {
 					t.setCreated(test.getCreatedAt().toString()+" | "+userService.getUserById(test.getCreatedby()).getNickname());

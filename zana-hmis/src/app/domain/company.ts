@@ -1,22 +1,48 @@
 //import { Byte } from '@angular/compiler/src/util';
 
-export interface ICompany {
-    name            : string
-    //logo            : Byte[]
-    contactName     : string
-    vrn             : string
-    tin             : string
-    physicalAddress : string
-    postalAddress   : string
-    postCode        : string
-    telephone       : string
-    fax             : string
-    email           : string
-    website         : string
+import { Byte } from "src/custom-packages/util"
 
-    bankName        : string
-    bankAccountNo   : string
-    bankAccountName : string
+export interface ICompanyProfile {
+  id              : any
+  companyName     : string
+  retrievedImage  : any
+  contactName     : string
+  logo            : Byte[]
+  tin             : string
+  vrn             : string
+  physicalAddress : string
+  postCode        : string
+  postAddress     : string
+  telephone       : string
+  mobile          : string
+  email           : string
+  website         : string
+  fax             : string
+  bankAccountName : string
+  bankPhysicalAddress : string
+  bankPostCode    : string
+  bankPostAddress : string
+  bankName        : string
+  bankAccountNo   : string
+  bankAccountName2 : string
+  bankPhysicalAddress2 : string
+  bankPostCode2    : string
+  bankPostAddress2 : string
+  bankName2        : string
+  bankAccountNo2  : string
+  bankAccountName3 : string
+  bankPhysicalAddress3 : string
+  bankPostCode3    : string
+  bankPostAddress3 : string
+  bankName3        : string
+  bankAccountNo3   : string
 
-    registrationFee : number
+  quotationNotes   : string
+  salesInvoiceNotes : string
+
+  registrationFee : number
 }
+
+export interface ILogo{
+    logo : Blob
+  }

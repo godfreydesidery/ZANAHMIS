@@ -56,7 +56,7 @@ public class CompanyProfileResource {
 	}
 	
 	@PostMapping("/company_profile/save")
-	@PreAuthorize("hasAnyAuthority('COMPANY_PROFILE-CREATE','COMPANY_PROFILE-UPDATE')")
+	//@PreAuthorize("hasAnyAuthority('COMPANY_PROFILE-CREATE','COMPANY_PROFILE-UPDATE')")
 	public ResponseEntity<CompanyProfile>saveCompanyProfile(
 			@RequestBody CompanyProfile profile,
 			HttpServletRequest request){
@@ -65,12 +65,13 @@ public class CompanyProfileResource {
 	}
 	
 	@PostMapping("/company_profile/save_logo")
-	@PreAuthorize("hasAnyAuthority('COMPANY_PROFILE-CREATE','COMPANY_PROFILE-UPDATE')")
+	//@PreAuthorize("hasAnyAuthority('COMPANY_PROFILE-CREATE','COMPANY_PROFILE-UPDATE')")
 	public ResponseEntity<CompanyProfile> saveCompanyLogo(
 			@RequestParam("logo") MultipartFile logo,
 			HttpServletRequest request) throws IOException{
 		CompanyProfile profile = companyProfileService.getCompanyProfile(request);
-		profile.setLogo(compressBytes(logo.getBytes()));		
+		//profile.setLogo(compressBytes(logo.getBytes())); inazingua
+		profile.setLogo(logo.getBytes());
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/company_profile/save_logo").toUriString());
 		return ResponseEntity.created(uri).body(companyProfileService.saveCompanyProfile(profile));
 	}
@@ -78,7 +79,8 @@ public class CompanyProfileResource {
 	@GetMapping("/company_profile/get_logo")
 	public ResponseEntity<CompanyProfile> getLogo(HttpServletRequest request) {
 		CompanyProfile profile = companyProfileService.getCompanyProfile(request);
-		profile.setLogo(decompressBytes(profile.getLogo()));
+		//profile.setLogo(decompressBytes(profile.getLogo())); inazingua
+		profile.setLogo(profile.getLogo());
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/company_profile/get_logo").toUriString());
 		return ResponseEntity.created(uri).body(profile);
 	}
