@@ -8,6 +8,7 @@ package com.orbix.api.security;
  *
  */
 public class Operation {
+	public static String A = "A";//ALL
 	 public static String C = "C";//CREATE
 	 public static String R = "R";//READ
 	 public static String U = "U";//UPDATE

@@ -71,6 +71,12 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 	 */
 	List<Consultation> findAllByStatus(String string);
 
+	/**
+	 * @param conStatuses
+	 * @return
+	 */
+	List<Consultation> findAllByStatusIn(List<String> conStatuses);
+
 	
 
 	/**

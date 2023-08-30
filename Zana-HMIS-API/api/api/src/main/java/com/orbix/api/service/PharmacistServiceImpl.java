@@ -4,6 +4,7 @@
 package com.orbix.api.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Pharmacist;
+import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.InvalidOperationException;
+import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.PharmacistRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.UserRepository;
@@ -38,6 +41,17 @@ public class PharmacistServiceImpl implements PharmacistService{
 	
 	@Override
 	public Pharmacist save(Pharmacist pharmacist, HttpServletRequest request) {
+		
+		Optional<User> u = userRepository.findByCode(pharmacist.getCode());
+		if(u.isEmpty()) {
+			throw new NotFoundException("Could not find user with the given user code");
+		}
+		
+		if(!u.get().getFirstName().equals(pharmacist.getFirstName()) || !u.get().getMiddleName().equals(pharmacist.getMiddleName()) || !u.get().getLastName().equals(pharmacist.getLastName())){
+			throw new InvalidOperationException("Provided names do not match with user account");
+		}
+		pharmacist.setNickname(u.get().getNickname());
+		pharmacist.setUser(u.get());
 
 		pharmacist.setNickname(Sanitizer.sanitizeString(pharmacist.getFirstName()+ " "+pharmacist.getMiddleName()+ " "+pharmacist.getLastName()+" "+pharmacist.getCode()));
 		

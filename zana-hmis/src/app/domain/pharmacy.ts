@@ -6,10 +6,9 @@ export interface IPharmacy {
     code            : string
     name            : string
     description     : string
+    location        : string
     category        : string
     active          : boolean
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created         : string
 }

@@ -7,7 +7,6 @@ export interface IRole {
     granted : boolean
     active  : boolean
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created       : string
+    
 }

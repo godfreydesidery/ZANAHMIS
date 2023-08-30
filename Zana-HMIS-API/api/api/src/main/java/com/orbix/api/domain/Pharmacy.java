@@ -42,6 +42,7 @@ public class Pharmacy {
 	@Column(unique = true)
 	private String name;
 	private String description;	
+	private String location;
 	private String category;
 	private boolean active = false;
 	

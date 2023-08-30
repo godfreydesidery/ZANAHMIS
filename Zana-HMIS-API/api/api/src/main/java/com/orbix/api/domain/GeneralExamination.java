@@ -49,6 +49,7 @@ public class GeneralExamination {
 	private String bodySurfaceArea;
 	private String saturationOxygen;
 	private String respiratoryRate;
+	@Column(length = 1000)
 	private String description;
 	
 	@OneToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = false)

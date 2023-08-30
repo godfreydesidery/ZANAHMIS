@@ -23,6 +23,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -47,8 +49,7 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@NotBlank
-	@Column(unique = true)
+	@Column(unique = true, nullable = false)
 	private String code;
 	@NotBlank
 	private String firstName;
@@ -64,7 +65,8 @@ public class User {
 	private String password;	
 	private boolean active = false;	
 	
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
+	@Fetch(FetchMode.SUBSELECT)
 	private Collection<Role> roles = new ArrayList<>();	
 	
 

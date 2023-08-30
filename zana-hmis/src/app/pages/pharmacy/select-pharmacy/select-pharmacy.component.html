@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <div class="header-title">
-        <h1>Pharmacy  {{selectedPharmacyName}}</h1>
+        <h1>Pharmacy - {{selectedPharmacyName}}</h1>
     </div>
 </section>
 <!-- Main content -->
@@ -23,8 +23,8 @@
                     
                     <section class="content">
                         <div class="row" style="margin-top: 5%;">
-                            <div class="col-sm-4"></div>
-                            <div class="col-sm-4 jumbotron">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-6 jumbotron">
                                 <div class="row">
                                     <div *ngIf="selectedPharmacyName != ''">
                                         <div class="col-sm-12">
@@ -36,7 +36,7 @@
                                     <div *ngIf="selectedPharmacyName === ''">
                                         <div class="col-sm-12">
                                             <h2 class="text-primary">Please Select Pharmacy</h2>
-                                            <select class="form-control" [(ngModel)]="pharmacyName" style="font-size: xx-large; height: 2cm;">
+                                            <select class="form-control" [(ngModel)]="pharmacyName" style="font-size: x-large; height: 2cm;">
                                                 <option></option>
                                                 <option *ngFor="let pharmacy of pharmacies">{{pharmacy.name}}</option>
                                             </select>
@@ -54,7 +54,7 @@
                                 </div>
                                 
                             </div>
-                            <div class="col-sm-4"></div>
+                            <div class="col-sm-3"></div>
                         </div>
                          
                     </section>

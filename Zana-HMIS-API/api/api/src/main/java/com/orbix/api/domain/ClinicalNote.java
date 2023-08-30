@@ -40,13 +40,21 @@ public class ClinicalNote {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(length = 500)
 	private String mainComplain;
+	@Column(length = 3000)
 	private String presentIllnessHistory;
+	@Column(length = 3000)
 	private String pastMedicalHistory;
+	@Column(length = 3000)
 	private String familyAndSocialHistory;
+	@Column(length = 3000)
 	private String drugsAndAllergyHistory;
+	@Column(length = 3000)
 	private String reviewOfOtherSystems;
+	@Column(length = 3000)
 	private String physicalExamination;
+	@Column(length = 3000)
 	private String managementPlan;
 	
 	@OneToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = false)

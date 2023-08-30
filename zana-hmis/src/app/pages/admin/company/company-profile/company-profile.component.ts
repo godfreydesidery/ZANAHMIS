@@ -164,7 +164,7 @@ async getCompanyProfile() {
       this.quotationNotes    = data!.quotationNotes
       this.salesInvoiceNotes = data!.salesInvoiceNotes
 
-      this.registrationFee = 0
+      this.registrationFee = data!.registrationFee
       if(this.companyName == null){
         this.msgBox.showErrorMessage('Could not find company details')
       }       

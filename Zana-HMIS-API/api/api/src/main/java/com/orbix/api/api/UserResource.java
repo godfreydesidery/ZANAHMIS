@@ -110,7 +110,7 @@ public class UserResource {
 	
 	
 	@PostMapping("/users/create")
-	@PreAuthorize("hasAnyAuthority('USER-CREATE')")
+	@PreAuthorize("hasAnyAuthority('USER-A','USER-C')")
 	public ResponseEntity<User>createUser(
 			@RequestBody User user,
 			HttpServletRequest request){
@@ -122,7 +122,7 @@ public class UserResource {
 	}
 		
 	@PutMapping("/users/update")
-	@PreAuthorize("hasAnyAuthority('USER-CREATE','USER-UPDATE')")
+	@PreAuthorize("hasAnyAuthority('USER-A','USER-C','USER-U')")
 	public ResponseEntity<User>updateUser(
 			@RequestBody User user, 
 			HttpServletRequest request){
@@ -157,7 +157,7 @@ public class UserResource {
 	}
 	
 	@DeleteMapping("/users/delete")
-	@PreAuthorize("hasAnyAuthority('USER-DELETE')")
+	@PreAuthorize("hasAnyAuthority('USER-A','USER-D')")
 	public ResponseEntity<Boolean> deleteUser(
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){
@@ -177,7 +177,7 @@ public class UserResource {
 	}
 	
 	@PostMapping("/roles/create")
-	@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	@PreAuthorize("hasAnyAuthority('ROLE-C')")
 	public ResponseEntity<Role>saveRole(
 			@RequestBody Role role,
 			HttpServletRequest request){
@@ -189,7 +189,7 @@ public class UserResource {
 	}
 	
 	@PutMapping("/roles/update")
-	@PreAuthorize("hasAnyAuthority('ROLE-CREATE','ROLE-UPDATE')")
+	@PreAuthorize("hasAnyAuthority('ROLE-C','ROLE-U')")
 	public ResponseEntity<Role>updateRole(
 			@RequestBody Role role,
 			HttpServletRequest request){
@@ -202,7 +202,7 @@ public class UserResource {
 	}
 	
 	@DeleteMapping("/roles/delete")
-	@PreAuthorize("hasAnyAuthority('ROLE-DELETE')")
+	@PreAuthorize("hasAnyAuthority('ROLE-D')")
 	public ResponseEntity<Boolean> deleteRole(
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){
@@ -215,7 +215,7 @@ public class UserResource {
 	}
 
 	@PostMapping("/roles/addtouser")
-	@PreAuthorize("hasAnyAuthority('USER-UPDATE')")
+	@PreAuthorize("hasAnyAuthority('USER-U')")
 	public ResponseEntity<Role>addRoleToUser(
 			@RequestBody RoleToUserForm form,
 			HttpServletRequest request){
@@ -314,7 +314,7 @@ public class UserResource {
 	}
 	
 	@PostMapping("/privileges/addtorole")
-	@PreAuthorize("hasAnyAuthority('ROLE-UPDATE')")
+	@PreAuthorize("hasAnyAuthority('ROLE-U')")
 	public boolean addPrivilegeToRole(
 			@RequestBody AccessModel form,
 			HttpServletRequest request){	

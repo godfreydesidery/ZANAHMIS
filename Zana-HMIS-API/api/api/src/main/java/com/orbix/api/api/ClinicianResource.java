@@ -74,9 +74,15 @@ public class ClinicianResource {
 	public ResponseEntity<Clinician>save(
 			@RequestBody Clinician clinician,
 			HttpServletRequest request){
-		clinician.setFirstName(Sanitizer.sanitizeString(clinician.getFirstName()));
-		clinician.setMiddleName(Sanitizer.sanitizeString(clinician.getMiddleName()));
-		clinician.setLastName(Sanitizer.sanitizeString(clinician.getLastName()));
+		
+		Optional<User> u = userRepository.findByCode(clinician.getCode());
+		if(u.isEmpty()) {
+			throw new NotFoundException("Could not find user with the given user code");
+		}
+		
+		//clinician.setFirstName(Sanitizer.sanitizeString(clinician.getFirstName()));
+		//clinician.setMiddleName(Sanitizer.sanitizeString(clinician.getMiddleName()));
+		//clinician.setLastName(Sanitizer.sanitizeString(clinician.getLastName()));
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/clinicians/save").toUriString());
 		return ResponseEntity.created(uri).body(clinicianService.save(clinician, request));

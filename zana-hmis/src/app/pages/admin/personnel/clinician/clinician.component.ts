@@ -94,7 +94,7 @@ export class ClinicianComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create clinician')
+          this.msgBox.showErrorMessage(error['error'])
         }
       )
 
@@ -120,7 +120,7 @@ export class ClinicianComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update clinician')
+          this.msgBox.showErrorMessage(error['error'])
         }
       )
     }

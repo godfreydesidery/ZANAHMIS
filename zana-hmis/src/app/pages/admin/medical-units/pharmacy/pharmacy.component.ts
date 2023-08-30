@@ -22,6 +22,7 @@ export class PharmacyComponent {
   code            : string = ''
   name            : string = ''
   description     : string = ''
+  location        : string = ''
   category        : string = ''
   active          : boolean = true
 
@@ -47,6 +48,7 @@ export class PharmacyComponent {
       code            : this.code,
       name            : this.name,
       description     : this.description,
+      location        : this.location,
       category        : this.category,
       active          : true
     }
@@ -62,6 +64,7 @@ export class PharmacyComponent {
           this.code         = data!.code
           this.name         = data!.name
           this.description  = data!.description
+          this.location     = data!.location
           this.category     = data!.category
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Pharmacy created successifully')
@@ -87,6 +90,7 @@ export class PharmacyComponent {
           this.code         = data!.code
           this.name         = data!.name
           this.description  = data!.description
+          this.location     = data!.location
           this.category     = data!.category
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Pharmacy updated successifully')
@@ -129,6 +133,7 @@ export class PharmacyComponent {
     this.code         = ''
     this.name         = ''
     this.description  = ''
+    this.location     = ''
     this.category     = ''
   }
 
@@ -149,6 +154,7 @@ export class PharmacyComponent {
         this.code         = data!.code
         this.name         = data!.name
         this.description  = data!.description
+        this.location     = data!.location
         this.category     = data!.category
         this.active       = data!.active
       }

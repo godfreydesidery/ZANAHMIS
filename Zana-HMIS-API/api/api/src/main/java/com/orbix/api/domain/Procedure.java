@@ -41,6 +41,7 @@ public class Procedure {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@Column(length = 10000)
 	private String note;
 	private String type;
 	@Column(name = "time_")

@@ -92,7 +92,7 @@ export class PharmacistComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create pharmacist')
+          this.msgBox.showErrorMessage(error['error'])
         }
       )
 
@@ -117,7 +117,7 @@ export class PharmacistComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update pharmacist')
+          this.msgBox.showErrorMessage(error['error'])
         }
       )
     }

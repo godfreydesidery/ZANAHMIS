@@ -48,14 +48,20 @@ import com.orbix.api.domain.Day;
 import com.orbix.api.domain.Privilege;
 import com.orbix.api.domain.Role;
 import com.orbix.api.domain.User;
+import com.orbix.api.repositories.AdmissionRepository;
 import com.orbix.api.repositories.CompanyProfileRepository;
+import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.DayRepository;
+import com.orbix.api.repositories.NonConsultationRepository;
+import com.orbix.api.repositories.PrivilegeRepository;
 import com.orbix.api.security.Object_;
 import com.orbix.api.security.Operation;
 import com.orbix.api.service.CompanyProfileService;
 import com.orbix.api.service.DayService;
 import com.orbix.api.service.UserService;
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -70,12 +76,19 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Data
+@RequiredArgsConstructor
 public class MainApplication {
 protected ConfigurableApplicationContext springContext;
 
     DayRepository dayRepository;
     CompanyProfileRepository companyProfileRepository;
     UserService userService;
+    private final PrivilegeRepository privilegeRepository;
+    
+    private final ConsultationRepository consultationRepository;
+	private final NonConsultationRepository nonConsultationRepository;
+	private final AdmissionRepository admissionRepository;
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -107,6 +120,16 @@ protected ConfigurableApplicationContext springContext;
 	public static void main(String[] args) throws Throwable {
 		SpringApplication.run(MainApplication.class, args);
 		
+		
+		
+	}
+	
+	@Bean
+	void updateRecords() {
+		//thread to update patient records periodically
+		UpdatePatient updatePatient = new UpdatePatient(consultationRepository, nonConsultationRepository, admissionRepository);
+	    Thread updatePatientThread = new Thread(updatePatient);
+	    updatePatientThread.start();
 	}
 	
 	@Bean
@@ -171,7 +194,9 @@ protected ConfigurableApplicationContext springContext;
 					if(!prohibitedOperations.contains(operationFields[j].getName().toString())) {
 						privilege.setName(object+"-"+operationFields[j].getName());
 						try {
-							userService.savePrivilege(privilege, null);
+							if(!privilegeRepository.existsByName(privilege.getName())) {
+								userService.savePrivilege(privilege, null);
+							}
 						}catch(Exception e) {
 							System.out.println("Could not save privilege");
 						}
@@ -184,7 +209,14 @@ protected ConfigurableApplicationContext springContext;
 				userService.addPrivilegeToRole("ROOT", "USER-R");
 				userService.addPrivilegeToRole("ROOT", "USER-U");
 				userService.addPrivilegeToRole("ROOT", "USER-D");
-							
+				
+				userService.addPrivilegeToRole("ROOT", "ROLE-A");
+				userService.addPrivilegeToRole("ROOT", "ROLE-C");
+				userService.addPrivilegeToRole("ROOT", "ROLE-R");
+				userService.addPrivilegeToRole("ROOT", "ROLE-U");
+				userService.addPrivilegeToRole("ROOT", "ROLE-D");
+				userService.addPrivilegeToRole("ROOT", "ROLE-T");
+					
 			}catch(Exception e) {}			
 		};
 	}

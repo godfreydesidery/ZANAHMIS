@@ -14,7 +14,5 @@ export interface IUser {
 
     roles : IRole[]
     
-    //createdBy       : IUser
-    //createdOn       : IDay
-    //createdAt       : Date
+    created : string
 }

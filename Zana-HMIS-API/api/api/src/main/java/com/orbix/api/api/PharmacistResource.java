@@ -74,9 +74,9 @@ public class PharmacistResource {
 	public ResponseEntity<Pharmacist>save(
 			@RequestBody Pharmacist pharmacist,
 			HttpServletRequest request){
-		pharmacist.setFirstName(Sanitizer.sanitizeString(pharmacist.getFirstName()));
-		pharmacist.setMiddleName(Sanitizer.sanitizeString(pharmacist.getMiddleName()));
-		pharmacist.setLastName(Sanitizer.sanitizeString(pharmacist.getLastName()));
+		//pharmacist.setFirstName(Sanitizer.sanitizeString(pharmacist.getFirstName()));
+		//pharmacist.setMiddleName(Sanitizer.sanitizeString(pharmacist.getMiddleName()));
+		//pharmacist.setLastName(Sanitizer.sanitizeString(pharmacist.getLastName()));
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacists/save").toUriString());
 		return ResponseEntity.created(uri).body(pharmacistService.save(pharmacist, request));

@@ -39,6 +39,7 @@ public class Radiology {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String result;
+	@Column(length = 10000)
 	private String report;
 	private String description;
 	private Byte[] attachment;

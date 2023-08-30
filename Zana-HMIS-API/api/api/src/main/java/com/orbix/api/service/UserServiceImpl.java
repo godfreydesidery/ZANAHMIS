@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.accessories.Formater;
 import com.orbix.api.domain.Privilege;
 import com.orbix.api.domain.Role;
 import com.orbix.api.domain.Shortcut;
@@ -30,6 +31,7 @@ import com.orbix.api.exceptions.InvalidEntryException;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.models.RecordModel;
 import com.orbix.api.repositories.PrivilegeRepository;
 import com.orbix.api.repositories.RoleRepository;
 import com.orbix.api.repositories.ShortcutRepository;
@@ -80,14 +82,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		validateUser(user);
 		log.info("Saving user to the database");
 		if(user.getId() == null) {
+			user.setCode(this.requestUserCode().getCode());
 			user.setPassword(passwordEncoder.encode(user.getPassword()));			
 		}else {
 			User userToUpdate = userRepository.findById(user.getId()).get();
+			if(!userToUpdate.getCode().equals(user.getCode())) {
+				throw new InvalidOperationException("Changing user code is not allowed");
+			}
 			if(user.getPassword().equals("") || user.getPassword().equals(null)) {
 				user.setPassword(userToUpdate.getPassword());
 			}else {
 				user.setPassword(passwordEncoder.encode(user.getPassword()));
 			}
+			user.setActive(true);// use this in the mean time before implementing actiavate and deactivate user
 		}
 		return userRepository.save(user);
 	}
@@ -169,7 +176,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		Optional<Privilege> p = privilegeRepository.findByName(privilegeName);
 		
 		try {
-			role.getPrivileges().add(p.get());
+			if(!role.getPrivileges().contains(p.get())) {
+				role.getPrivileges().add(p.get());
+			}			
 		}catch(Exception e) {
 			log.info(e.getMessage());
 		}			
@@ -364,4 +373,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public User getUser(HttpServletRequest request) {
 		return userRepository.findByUsername(request.getUserPrincipal().getName());
 	}
+	
+	public RecordModel requestUserCode() {
+		Long id = 1L;
+		try {
+			id = userRepository.getLastId() + 1;
+		}catch(Exception e) {}
+		RecordModel model = new RecordModel();
+		model.setCode("USR-"+Formater.formatSix(id.toString()));
+		model.setNo("USR-"+Formater.formatSix(id.toString()));
+		return model;
+	}	
 }

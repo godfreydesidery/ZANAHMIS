@@ -4,6 +4,7 @@
 package com.orbix.api.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
+import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.InvalidOperationException;
+import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.DayRepository;
@@ -40,9 +43,18 @@ public class ClinicianServiceImpl implements ClinicianService{
 	
 	@Override
 	public Clinician save(Clinician clinician, HttpServletRequest request) {
-
-		clinician.setNickname(Sanitizer.sanitizeString(clinician.getFirstName()+ " "+clinician.getMiddleName()+ " "+clinician.getLastName()+" "+clinician.getCode()));
 		
+		Optional<User> u = userRepository.findByCode(clinician.getCode());
+		if(u.isEmpty()) {
+			throw new NotFoundException("Could not find user with the given user code");
+		}
+		
+		if(!u.get().getFirstName().equals(clinician.getFirstName()) || !u.get().getMiddleName().equals(clinician.getMiddleName()) || !u.get().getLastName().equals(clinician.getLastName())){
+			throw new InvalidOperationException("Provided names do not match with user account");
+		}
+		clinician.setNickname(u.get().getNickname());
+		clinician.setUser(u.get());
+
 		if(clinician.getId() == null) {
 			clinician.setCreatedby(userService.getUser(request).getId());
 			clinician.setCreatedOn(dayService.getDay().getId());
