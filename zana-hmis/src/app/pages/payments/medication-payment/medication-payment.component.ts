@@ -3,7 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { ReceiptItem } from 'src/app/domain/receipt-item';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
+import { PosReceiptPrinterService } from 'src/app/services/pos-receipt-printer.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -60,7 +62,8 @@ export class MedicationPaymentComponent implements OnInit {
               private auth : AuthService,
               private http : HttpClient,
               private spinner: NgxSpinnerService,
-              private msgBox : MsgBoxService) 
+              private msgBox : MsgBoxService,
+              private printer : PosReceiptPrinterService) 
               { }
   
 
@@ -270,6 +273,23 @@ export class MedicationPaymentComponent implements OnInit {
         this.msgBox.showErrorMessage('Could not confirm payment')
       }
     )
+  }
+
+  printReceipt(){
+    var items : ReceiptItem[] = []
+    var item : ReceiptItem = new ReceiptItem()
+
+    this.prescriptionBills.forEach(element => {
+      item.code = element.id
+      item.name = element.description
+      item.price = element.amount
+      item.qty = element.qty
+    })
+
+    items.push(item)
+
+    this.printer.print(items, 'NA', 5000)
+
   }
 
 }

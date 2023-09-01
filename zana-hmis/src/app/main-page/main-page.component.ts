@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { PosReceiptPrinterService } from '../services/pos-receipt-printer.service';
 
 @Component({
   selector: 'app-main-page',
@@ -13,7 +14,8 @@ export class MainPageComponent implements OnInit {
   userName : string = ''
 
 
-  constructor(private router : Router) { }
+  constructor(private router : Router,
+    printer : PosReceiptPrinterService) { }
 
   ngOnInit(): void {
     var currentUser = null

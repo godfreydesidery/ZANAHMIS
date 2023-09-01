@@ -87,4 +87,10 @@ public interface RadiologyRepository extends JpaRepository<Radiology, Long> {
 	 */
 	List<Radiology> findAllByConsultationInOrNonConsultationIn(List<Consultation> cs, List<NonConsultation> ncs);
 
+	/**
+	 * @param patient
+	 * @return
+	 */
+	List<Radiology> findAllByPatient(Patient patient);
+
 }

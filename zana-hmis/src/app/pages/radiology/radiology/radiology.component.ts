@@ -215,7 +215,8 @@ export class RadiologyComponent {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var radio  = {
-      id          : radiology.id
+      id          : radiology.id,
+      result      : radiology.result
     }
     this.spinner.show()
     await this.http.post<boolean>(API_URL+'/patients/verify_radiology', radio, options)

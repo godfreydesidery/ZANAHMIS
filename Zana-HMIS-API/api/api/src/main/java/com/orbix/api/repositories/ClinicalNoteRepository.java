@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,5 +23,11 @@ public interface ClinicalNoteRepository extends JpaRepository<ClinicalNote, Long
 	 * @return
 	 */
 	Optional<ClinicalNote> findByConsultation(Consultation consultation);
+
+	/**
+	 * @param cons
+	 * @return
+	 */
+	List<ClinicalNote> findAllByConsultationIn(List<Consultation> cons);
 
 }

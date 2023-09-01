@@ -3,7 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { ReceiptItem } from 'src/app/domain/receipt-item';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
+import { PosReceiptPrinterService } from 'src/app/services/pos-receipt-printer.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -61,7 +63,8 @@ export class RegistrationPaymentComponent implements OnInit {
               private auth : AuthService,
               private http : HttpClient,
               private spinner: NgxSpinnerService,
-              private msgBox : MsgBoxService) 
+              private msgBox : MsgBoxService,
+              private printer : PosReceiptPrinterService) 
               { }
   
 
@@ -258,6 +261,31 @@ export class RegistrationPaymentComponent implements OnInit {
       }
     )
   }
+
+  printReceipt(){
+    var items : ReceiptItem[] = []
+    var item : ReceiptItem = new ReceiptItem()
+
+
+    if(this.registrationBill != null){
+      item.code = this.registrationBill.id
+      item.name = this.registrationBill.description
+      item.price = this.registrationBill.amount
+      item.qty = this.registrationBill.qty
+      items.push(item)
+    }
+
+    if(this.consultationBill != null){
+      item.code = this.consultationBill.id
+      item.name = this.consultationBill.description
+      item.price = this.consultationBill.amount
+      item.qty = this.consultationBill.qty
+      items.push(item)
+    }
+    this.printer.print(items, 'NA', 5000)
+
+  }
+
 
 }
 

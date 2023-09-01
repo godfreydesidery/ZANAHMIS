@@ -37,4 +37,10 @@ public interface WorkingDiagnosisRepository extends JpaRepository<WorkingDiagnos
 	 */
 	List<WorkingDiagnosis> findByConsultation(Consultation consultation);
 
+	/**
+	 * @param cons
+	 * @return
+	 */
+	List<WorkingDiagnosis> findAllByConsultationIn(List<Consultation> cons);
+
 }

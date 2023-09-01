@@ -84,6 +84,15 @@ import { ItemMedicineConversionCoefficientComponent } from './pages/store/conver
 import { StoreToPharmacyRNComponent } from './pages/pharmacy/store-to-pharmacy-r-n/store-to-pharmacy-r-n.component';
 import { CompanyProfileComponent } from './pages/admin/company/company-profile/company-profile.component';
 import { ReportTemplateComponent } from './pages/reports/report-template/report-template.component';
+import { PatientHistoryMenuComponent } from './pages/doctor/patient-history-menu/patient-history-menu.component';
+import { ClinicalNoteHistoryComponent } from './pages/doctor/clinical-note-history/clinical-note-history.component';
+import { GeneralExaminationHistoryComponent } from './pages/doctor/general-examination-history/general-examination-history.component';
+import { LabTestHistoryComponent } from './pages/doctor/lab-test-history/lab-test-history.component';
+import { RadiologyHistoryComponent } from './pages/doctor/radiology-history/radiology-history.component';
+import { ProcedureHistoryComponent } from './pages/doctor/procedure-history/procedure-history.component';
+import { PrescriptionHistoryComponent } from './pages/doctor/prescription-history/prescription-history.component';
+import { WorkingDiagnosisHistoryComponent } from './pages/doctor/working-diagnosis-history/working-diagnosis-history.component';
+import { FinalDiagnosisHistoryComponent } from './pages/doctor/final-diagnosis-history/final-diagnosis-history.component';
 
 
 @NgModule({
@@ -161,6 +170,15 @@ import { ReportTemplateComponent } from './pages/reports/report-template/report-
     StoreToPharmacyRNComponent,
     CompanyProfileComponent,
     ReportTemplateComponent,
+    PatientHistoryMenuComponent,
+    ClinicalNoteHistoryComponent,
+    GeneralExaminationHistoryComponent,
+    WorkingDiagnosisHistoryComponent,
+    FinalDiagnosisHistoryComponent,
+    LabTestHistoryComponent,
+    RadiologyHistoryComponent,
+    ProcedureHistoryComponent,
+    PrescriptionHistoryComponent,
   ],
   imports: [
     HttpClientModule,
@@ -236,10 +254,19 @@ import { ReportTemplateComponent } from './pages/reports/report-template/report-
     {path : 'store-to-pharmacy-r-n', component : StoreToPharmacyRNComponent},
     {path : 'item-medicine-conversion-coefficient', component : ItemMedicineConversionCoefficientComponent},
     {path : 'report-template', component : ReportTemplateComponent},
+    {path : 'patient-history-menu', component : PatientHistoryMenuComponent},
+    {path : 'clinical-note-history', component : ClinicalNoteHistoryComponent},
+    {path : 'general-examination-history', component : GeneralExaminationHistoryComponent},
+    {path : 'lab-test-history', component : LabTestHistoryComponent},
+    {path : 'radiology-history', component : RadiologyHistoryComponent},
+    {path : 'procedure-history', component : ProcedureHistoryComponent},
+    {path : 'prescription-history', component : PrescriptionHistoryComponent},
+    {path : 'working-diagnosis-history', component : WorkingDiagnosisHistoryComponent},
+    {path : 'final-diagnosis-history', component : FinalDiagnosisHistoryComponent},
     ])
   ],
   schemas: [ 
-    //CUSTOM_ELEMENTS_SCHEMA
+    //CUSTOM_ELEMENTS_SCHEMA,
     NO_ERRORS_SCHEMA
    ],
   providers: [

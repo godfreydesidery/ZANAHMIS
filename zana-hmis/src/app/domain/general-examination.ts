@@ -13,15 +13,12 @@ export interface IGeneralExamination {
     pulseRate           : string
     respiratoryRate     : string
     saturationOxygen    : string
-    temparature         : string
     weight              : string
     description         : string
 
     consultation        : IConsultation
 
     
-    createdBy           : IUser
-    createdOn           : IDay
-    createdAt           : Date
+    created       : string
 
 }

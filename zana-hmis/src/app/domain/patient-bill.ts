@@ -13,7 +13,5 @@ export interface IPatientBill {
 
     patient : IPatient
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created : string
 }

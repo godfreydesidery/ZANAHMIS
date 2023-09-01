@@ -116,9 +116,6 @@ public class PatientServiceImpl implements PatientService {
 	private final TheatreRepository theatreRepository;
 	private final CompanyProfileRepository companyProfileRepository;
 	
-	
-	
-	
 	@Override
 	public List<Patient> getAll() {
 		return patientRepository.findAll();
@@ -206,8 +203,6 @@ public class PatientServiceImpl implements PatientService {
 		reg.setStatus("ACTIVE");
 		registrationRepository.save(reg);
 		
-		//patient.setRegistrationBillId(regBill.getId());
-		//patient.setRegistrationFeeStatus("UNPAID");
 		/**
 		 * Save patient
 		 */
@@ -304,7 +299,7 @@ public class PatientServiceImpl implements PatientService {
 			 * Set patient Registration fee status to PAID
 			 */
 			//patient.setRegistrationFeeStatus("PAID");
-			patient = patientRepository.save(patient);			
+			patient = patientRepository.save(patient);
 			
 			patient = patientRepository.saveAndFlush(patient);			
 		}	
@@ -1020,7 +1015,7 @@ public class PatientServiceImpl implements PatientService {
 			prescription.setNonConsultation(nc.get());
 		}
 		prescription.setMedicine(md.get());
-		prescription.setStatus("PENDING");
+		prescription.setStatus("NOT-GIVEN");
 		PatientBill patientBill = new PatientBill();
 		patientBill.setAmount(prescription.getMedicine().getPrice() * prescription.getQty());
 		patientBill.setPaid(0);

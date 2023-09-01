@@ -3,7 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IPatient } from 'src/app/domain/patient';
 import { environment } from 'src/environments/environment';
+
+import * as pdfMake from 'pdfmake/build/pdfmake';
+var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
+const fs = require('file-saver');
 
 const API_URL = environment.apiUrl;
 @Component({
@@ -61,7 +66,7 @@ export class InvestigationPaymentComponent implements OnInit {
               private auth : AuthService,
               private http : HttpClient,
               private spinner: NgxSpinnerService) 
-              { }
+              { (window as any).pdfMake.vfs = pdfFonts.pdfMake.vfs; }
   
 
   ngOnInit(): void {
@@ -124,7 +129,7 @@ export class InvestigationPaymentComponent implements OnInit {
         this.dateOfBirth = data!['dateOfBirth']
         this.phoneNo = data!['phoneNo']
         this.address = data!['address']
-        this.registrationFeeStatus = data!['registrationFeeStatus']
+        //this.registrationFeeStatus = data!['registrationFeeStatus']
 
         this.total = 0
         this.loadRegistrationBill()
@@ -369,9 +374,24 @@ export class InvestigationPaymentComponent implements OnInit {
     )
   }
 
+  print = async () => {
+    const docDefinition : any = {
+      content : [
+        'content'
+      ]
+    }
+    const pdfDocGenerator = pdfMake.createPdf(docDefinition)
+    pdfDocGenerator.getDataUrl((dataUrl) => {
+      const targetElement = document.querySelector('#iframeContainer')!;
+      const iframe = document.createElement('iframe');
+      iframe.src = dataUrl;
+      targetElement.appendChild(iframe);
+    });
+  }
+
 }
 
-export interface IPatient {
+export interface IPatientaa {
   id : any
   no : string
   firstName : string

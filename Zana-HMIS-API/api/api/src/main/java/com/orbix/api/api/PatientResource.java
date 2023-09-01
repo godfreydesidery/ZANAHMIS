@@ -56,8 +56,10 @@ import com.orbix.api.domain.WorkingDiagnosis;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.models.ClinicalNoteModel;
 import com.orbix.api.models.ConsultationModel;
 import com.orbix.api.models.FinalDiagnosisModel;
+import com.orbix.api.models.GeneralExaminationModel;
 import com.orbix.api.models.LabTestModel;
 import com.orbix.api.models.PrescriptionModel;
 import com.orbix.api.models.ProcedureModel;
@@ -259,12 +261,12 @@ public class PatientResource {
 			statuses.add("IN-PROCESS");
 			List<NonConsultation> ncs = nonConsultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
 			
-			if(!ncs.isEmpty()) {
-				throw new InvalidOperationException("Can not change patient type, the has pending services. Please consider removing the services or clearing with the patient.");
-			}else {
+			//if(!ncs.isEmpty()) {
+				//throw new InvalidOperationException("Can not change patient type, the has pending services. Please consider removing the services or clearing with the patient.");
+			//}else {
 				p.get().setType("OUTPATIENT");
 				patient = patientRepository.save(p.get());
-			}
+			//}
 		}				
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/change_type").toUriString());
 		return ResponseEntity.created(uri).body(patient);
@@ -1055,7 +1057,8 @@ public class PatientResource {
 			}else {
 				model.setVerified("");
 			}
-			model.setStatus(r.getStatus());models.add(model);
+			model.setStatus(r.getStatus());
+			models.add(model);
 		}
 		return ResponseEntity.created(uri).body(models);
 	}
@@ -1317,7 +1320,7 @@ public class PatientResource {
 			if(pres.isEmpty()) {
 				throw new NotFoundException("Prescription with id "+prescription.getId().toString()+" not found in database");
 			}
-			if(!pres.get().getStatus().equals("PENDING")) {
+			if(!(pres.get().getStatus().equals("PENDING") || pres.get().getStatus().equals("NOT-GIVEN"))) {
 				throw new InvalidOperationException("Could not issue medicine. Prescription with id "+prescription.getId().toString()+" is not a pending prescription");
 			}
 			if(pres.get().getBalance() > prescription.getIssued() || prescription.getIssued() <= 0) {
@@ -1329,7 +1332,7 @@ public class PatientResource {
 			pres.get().setIssued(prescription.getIssued());
 			pres.get().setBalance(pres.get().getBalance() - prescription.getIssued());
 						
-			pres.get().setStatus("APPROVED");
+			pres.get().setStatus("GIVEN");
 			
 			pres.get().setApprovedBy(userService.getUser(request).getId());
 			pres.get().setApprovedOn(dayService.getDay().getId());
@@ -2211,6 +2214,423 @@ public class PatientResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_prescriptions_by_patient_id").toUriString());
 		return ResponseEntity.created(uri).body(prescriptionsToReturn);
 	}
+	
+	@GetMapping("/patients/get_all_clinical_notes_by_patient_id") 
+	public ResponseEntity<List<ClinicalNoteModel>> getAllClinicalNotesByPatient(
+			@RequestParam(name = "patient_id") Long patientId,
+			HttpServletRequest request){
+		
+		Optional<Patient> p = patientRepository.findById(patientId);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found in database");
+		}
+		List<Consultation> cons = consultationRepository.findAllByPatient(p.get());
+		
+		List<ClinicalNote> clinicalNotes = clinicalNoteRepository.findAllByConsultationIn(cons);
+		
+		HashSet<ClinicalNote> h = new HashSet<ClinicalNote>(clinicalNotes);
+		
+		List<ClinicalNoteModel> models = new ArrayList<>();
+		for(ClinicalNote l : clinicalNotes) {
+			ClinicalNoteModel model= new ClinicalNoteModel();
+			model.setId(l.getId());
+			
+			model.setMainComplain(l.getMainComplain());
+			model.setPresentIllnessHistory(l.getPresentIllnessHistory());
+			model.setPastMedicalHistory(l.getPastMedicalHistory());
+			model.setFamilyAndSocialHistory(l.getFamilyAndSocialHistory());
+			model.setDrugsAndAllergyHistory(l.getDrugsAndAllergyHistory());
+			model.setReviewOfOtherSystems(l.getReviewOfOtherSystems());
+			model.setPhysicalExamination(l.getPhysicalExamination());
+			model.setManagementPlan(l.getManagementPlan());
+			
+			model.setConsultation(null);
+			
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}
+			
+			models.add(model);
+		}
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/patients/get_all_clinical_notes_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<ClinicalNoteModel>(models));
+	}
+	
+	@GetMapping("/patients/get_all_general_examinations_by_patient_id") 
+	public ResponseEntity<List<GeneralExaminationModel>> getAllGeneralExaminationsByPatient(
+			@RequestParam(name = "patient_id") Long patientId,
+			HttpServletRequest request){
+		
+		Optional<Patient> p = patientRepository.findById(patientId);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found in database");
+		}
+		List<Consultation> cons = consultationRepository.findAllByPatient(p.get());
+		
+		List<GeneralExamination> generalExaminations = generalExaminationRepository.findAllByConsultationIn(cons);
+		
+		HashSet<GeneralExamination> h = new HashSet<GeneralExamination>(generalExaminations);
+		
+		List<GeneralExaminationModel> models = new ArrayList<>();
+		for(GeneralExamination l : generalExaminations) {
+			GeneralExaminationModel model= new GeneralExaminationModel();
+			model.setId(l.getId());
+			
+			model.setPressure(l.getPressure());
+			model.setTemperature(l.getTemperature());
+			model.setPulseRate(l.getPulseRate());
+			model.setWeight(l.getWeight());
+			model.setHeight(l.getHeight());
+			model.setBodyMassIndex(l.getBodyMassIndex());
+			model.setBodyMassIndexComment(l.getBodyMassIndexComment());
+			model.setBodySurfaceArea(l.getBodySurfaceArea());
+			model.setSaturationOxygen(l.getSaturationOxygen());
+			model.setRespiratoryRate(l.getRespiratoryRate());
+			model.setDescription(l.getDescription());
+			
+			model.setConsultation(null);
+			
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}
+			
+			models.add(model);
+		}
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/patients/get_all_general_examination_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<GeneralExaminationModel>(models));
+	}
+	
+	@GetMapping("/patients/get_all_working_diagnosises_by_patient_id") 
+	public ResponseEntity<List<WorkingDiagnosis>> getAllWorkingDiagnosisesByPatient(
+			@RequestParam(name = "patient_id") Long patientId,
+			HttpServletRequest request){
+		
+		Optional<Patient> p = patientRepository.findById(patientId);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found in database");
+		}
+		List<Consultation> cons = consultationRepository.findAllByPatient(p.get());
+		
+		List<WorkingDiagnosis> workingDiagnosises = workingDiagnosisRepository.findAllByConsultationIn(cons);
+		
+		HashSet<WorkingDiagnosis> h = new HashSet<WorkingDiagnosis>(workingDiagnosises);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/patients/get_all_working_diagnosises_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<WorkingDiagnosis>(h));
+	}
+	
+	@GetMapping("/patients/get_all_final_diagnosises_by_patient_id") 
+	public ResponseEntity<List<FinalDiagnosisModel>> getAllFinalDiagnosisesByPatient(
+			@RequestParam(name = "patient_id") Long patientId,
+			HttpServletRequest request){
+		
+		Optional<Patient> p = patientRepository.findById(patientId);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found in database");
+		}
+		List<Consultation> cons = consultationRepository.findAllByPatient(p.get());
+		
+		List<FinalDiagnosis> finalDiagnosises = finalDiagnosisRepository.findAllByConsultationIn(cons);
+		
+		HashSet<FinalDiagnosis> h = new HashSet<FinalDiagnosis>(finalDiagnosises);
+		
+		List<FinalDiagnosisModel> models = new ArrayList<>();
+		for(FinalDiagnosis l : finalDiagnosises) {
+			FinalDiagnosisModel model= new FinalDiagnosisModel();
+			model.setId(l.getId());
+			model.setDescription(l.getDescription());
+			model.setDiagnosisType(l.getDiagnosisType());
+			
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}			
+			models.add(model);
+		}
+		
+		
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/patients/get_all_final_diagnosises_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<FinalDiagnosisModel>(models));
+	}
+	
+	@GetMapping("/patients/get_all_lab_tests_by_patient_id") 
+	public ResponseEntity<List<LabTestModel>> getAllLabTestsByPatient(
+			@RequestParam(name = "patient_id") Long patientId,
+			HttpServletRequest request){
+		
+		Optional<Patient> p = patientRepository.findById(patientId);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found in database");
+		}
+
+		List<LabTest> labTests = labTestRepository.findAllByPatient(p.get());
+		
+		
+		
+		List<LabTestModel> models = new ArrayList<>();
+		for(LabTest l : labTests) {
+			LabTestModel model= new LabTestModel();
+			model.setId(l.getId());
+			model.setResult(l.getResult());
+			model.setReport(l.getReport());
+			model.setDescription(l.getDescription());
+			model.setLabTestType(l.getLabTestType());
+			model.setPatientBill(l.getPatientBill());
+			model.setRange(l.getRange());
+			model.setLevel(l.getLevel());
+			model.setUnit(l.getUnit());
+			model.setStatus(l.getStatus());
+
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}
+			if(l.getOrderedAt() != null) {
+				model.setOrdered(l.getOrderedAt().toString()+" | "+userService.getUserById(l.getOrderedby()).getNickname());
+			}else {
+				model.setOrdered("");
+			}
+			if(l.getRejectedAt() != null) {
+				model.setRejected(l.getRejectedAt().toString()+" | "+userService.getUserById(l.getRejectedby()).getNickname() + " | "+l.getRejectComment());
+			}else {
+				model.setRejected("");
+			}
+			model.setRejectComment(l.getRejectComment());			
+			if(l.getAcceptedAt() != null) {
+				model.setAccepted(l.getAcceptedAt().toString()+" | "+userService.getUserById(l.getAcceptedby()).getNickname());
+			}else {
+				model.setAccepted("");
+			}
+			if(l.getHeldAt() != null) {
+				model.setHeld(l.getHeldAt().toString()+" | "+userService.getUserById(l.getHeldby()).getNickname());
+			}else {
+				model.setHeld("");
+			}
+			if(l.getCollectedAt() != null) {
+				model.setCollected(l.getCollectedAt().toString()+" | "+userService.getUserById(l.getCollectedby()).getNickname());
+			}else {
+				model.setCollected("");
+			}
+			
+			if(l.getVerifiedAt() != null) {
+				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedby()).getNickname());
+			}else {
+				model.setVerified("");
+			}
+			
+			models.add(model);
+		}
+		
+		
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/patients/get_all_lab_tests_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(models);
+	}
+	
+	@GetMapping("/patients/get_all_radiologies_by_patient_id") 
+	public ResponseEntity<List<RadiologyModel>> getAllRadiologiesByPatient(
+			@RequestParam(name = "patient_id") Long patientId,
+			HttpServletRequest request){
+		
+		Optional<Patient> p = patientRepository.findById(patientId);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found in database");
+		}
+
+		List<Radiology> radiologies = radiologyRepository.findAllByPatient(p.get());
+		
+		List<RadiologyModel> models = new ArrayList<>();
+		for(Radiology r : radiologies) {
+			RadiologyModel model= new RadiologyModel();
+			model.setId(r.getId());
+			model.setResult(r.getResult());
+			model.setReport(r.getReport());
+			model.setRadiologyType(r.getRadiologyType());
+			model.setDescription(r.getDescription());
+			model.setDiagnosisType(r.getDiagnosisType());			
+			model.setPatientBill(r.getPatientBill());
+			model.setAttachment(r.getAttachment());
+			if(r.getCreatedAt() != null) {
+				model.setCreated(r.getCreatedAt().toString()+" | "+userService.getUserById(r.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}
+			if(r.getRejectedAt() != null) {
+				model.setRejected(r.getRejectedAt().toString()+" | "+userService.getUserById(r.getRejectedby()).getNickname());
+			}else {
+				model.setRejected("");
+			}
+			model.setRejectComment(r.getRejectComment());			
+			if(r.getAcceptedAt() != null) {
+				model.setAccepted(r.getAcceptedAt().toString()+" | "+userService.getUserById(r.getAcceptedby()).getNickname());
+			}else {
+				model.setAccepted("");
+			}
+			if(r.getOrderedAt() != null) {
+				model.setOrdered(r.getOrderedAt().toString()+" | "+userService.getUserById(r.getOrderedby()).getNickname());
+			}else {
+				model.setOrdered("");
+			}
+			if(r.getVerifiedAt() != null) {
+				model.setVerified(r.getVerifiedAt().toString()+" | "+userService.getUserById(r.getVerifiedby()).getNickname());
+			}else {
+				model.setVerified("");
+			}
+			model.setStatus(r.getStatus());models.add(model);
+		}
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/patients/get_all_radiologies_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(models);
+	}
+	
+	@GetMapping("/patients/get_all_procedures_by_patient_id") 
+	public ResponseEntity<List<ProcedureModel>> getAllProceduresByPatient(
+			@RequestParam(name = "patient_id") Long patientId,
+			HttpServletRequest request){
+		
+		Optional<Patient> p = patientRepository.findById(patientId);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found in database");
+		}
+
+		List<Procedure> procedures = procedureRepository.findAllByPatient(p.get());
+		
+		List<ProcedureModel> models = new ArrayList<>();
+		for(Procedure l : procedures) {
+			ProcedureModel model= new ProcedureModel();
+			model.setId(l.getId());
+			model.setProcedureType(l.getProcedureType());
+			model.setPatientBill(l.getPatientBill());
+			model.setDiagnosisType(l.getDiagnosisType());
+			model.setType(l.getType());
+			model.setTime(l.getTime());
+			model.setDate(l.getDate());
+			model.setHours(l.getHours());
+			model.setMinutes(l.getMinutes());
+			model.setStatus(l.getStatus());
+			model.setNote(l.getNote());
+			model.setTheatre(l.getTheatre());
+
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}
+			if(l.getOrderedAt() != null) {
+				model.setOrdered(l.getOrderedAt().toString()+" | "+userService.getUserById(l.getOrderedby()).getNickname());
+			}else {
+				model.setOrdered("");
+			}
+			if(l.getRejectedAt() != null) {
+				model.setRejected(l.getRejectedAt().toString()+" | "+userService.getUserById(l.getRejectedby()).getNickname() + " | "+l.getRejectComment());
+			}else {
+				model.setRejected("");
+			}
+			model.setRejectComment(l.getRejectComment());			
+			if(l.getAcceptedAt() != null) {
+				model.setAccepted(l.getAcceptedAt().toString()+" | "+userService.getUserById(l.getAcceptedby()).getNickname());
+			}else {
+				model.setAccepted("");
+			}
+			if(l.getHeldAt() != null) {
+				model.setHeld(l.getHeldAt().toString()+" | "+userService.getUserById(l.getHeldby()).getNickname());
+			}else {
+				model.setHeld("");
+			}		
+			if(l.getVerifiedAt() != null) {
+				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedby()).getNickname());
+			}else {
+				model.setVerified("");
+			}
+			
+			models.add(model);
+		}
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/patients/get_all_procedures_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(models);
+	}
+	
+	@GetMapping("/patients/get_all_prescriptions_by_patient_id") 
+	public ResponseEntity<List<PrescriptionModel>> getAllPrescriptionsByPatient(
+			@RequestParam(name = "patient_id") Long patientId,
+			HttpServletRequest request){
+		
+		Optional<Patient> p = patientRepository.findById(patientId);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found in database");
+		}
+
+		List<Prescription> prescriptions = prescriptionRepository.findAllByPatient(p.get());
+		
+		List<PrescriptionModel> models = new ArrayList<>();
+		for(Prescription l : prescriptions) {
+			PrescriptionModel model= new PrescriptionModel();
+			model.setId(l.getId());
+			model.setMedicine(l.getMedicine());
+			model.setDosage(l.getDosage());
+			model.setFrequency(l.getFrequency());			
+			model.setRoute(l.getRoute());
+			model.setDays(l.getDays());
+			model.setPrice(l.getPrice());
+			model.setQty(l.getQty());
+			model.setIssued(l.getIssued());
+			model.setBalance(l.getBalance());
+			model.setPatientBill(l.getPatientBill());
+			model.setStatus(l.getStatus());
+
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}
+			if(l.getOrderedAt() != null) {
+				model.setOrdered(l.getOrderedAt().toString()+" | "+userService.getUserById(l.getOrderedby()).getNickname());
+			}else {
+				model.setOrdered("");
+			}
+			if(l.getRejectedAt() != null) {
+				model.setRejected(l.getRejectedAt().toString()+" | "+userService.getUserById(l.getRejectedby()).getNickname() + " | "+l.getRejectComment());
+			}else {
+				model.setRejected("");
+			}
+			model.setRejectComment(l.getRejectComment());			
+			if(l.getAcceptedAt() != null) {
+				model.setAccepted(l.getAcceptedAt().toString()+" | "+userService.getUserById(l.getAcceptedby()).getNickname());
+			}else {
+				model.setAccepted("");
+			}
+			if(l.getHeldAt() != null) {
+				model.setHeld(l.getHeldAt().toString()+" | "+userService.getUserById(l.getHeldby()).getNickname());
+			}else {
+				model.setHeld("");
+			}		
+			if(l.getVerifiedAt() != null) {
+				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedby()).getNickname());
+			}else {
+				model.setVerified("");
+			}
+			
+			if(l.getApprovedAt() != null) {
+				model.setApproved(l.getApprovedAt().toString()+" | "+userService.getUserById(l.getApprovedBy()).getNickname());
+			}else {
+				model.setApproved("");
+			}
+			
+			models.add(model);
+		}
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/patients/get_all_prescriptions_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(models);
+	}
+	
 }
 
 @Data

@@ -314,6 +314,7 @@ public class PatientBillResource {
 		Patient patient = patientRepository.findById(patient_id).get();
 		List<String> statuses = new ArrayList<>();
 		statuses.add("PENDING");
+		statuses.add("NOT-GIVEN");
 		List<Prescription> prescriptions = new ArrayList<>();
 		Optional<Consultation> c = consultationRepository.findByPatientAndStatus(patient, "IN-PROCESS");
 		Optional<NonConsultation> nc = nonConsultationRepository.findByPatientAndStatus(patient, "IN-PROCESS");

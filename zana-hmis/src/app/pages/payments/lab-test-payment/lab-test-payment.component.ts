@@ -6,6 +6,13 @@ import { AuthService } from 'src/app/auth.service';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { ReceiptItem } from 'src/app/domain/receipt-item';
+import { PosReceiptPrinterService } from 'src/app/services/pos-receipt-printer.service';
+import { IPatientBill } from 'src/app/domain/patient-bill';
+var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
+const fs = require('file-saver');
+
 const API_URL = environment.apiUrl;
 
 @Component({
@@ -43,9 +50,9 @@ export class LabTestPaymentComponent implements OnInit {
 
 
 
-  registrationBill! : IBill
+  registrationBill! : IPatientBill
   
-  labTestBills : IBill[] = []
+  labTestBills : IPatientBill[] = []
   
 
   registrationAmount : number = 0
@@ -59,8 +66,9 @@ export class LabTestPaymentComponent implements OnInit {
               private auth : AuthService,
               private http : HttpClient,
               private spinner: NgxSpinnerService,
-              private msgBox : MsgBoxService) 
-              { }
+              private msgBox : MsgBoxService,
+              private printer : PosReceiptPrinterService) 
+              { (window as any).pdfMake.vfs = pdfFonts.pdfMake.vfs; }
   
 
   ngOnInit(): void {
@@ -173,7 +181,7 @@ export class LabTestPaymentComponent implements OnInit {
     }
 
     this.spinner.show()
-    await this.http.get<IBill>(API_URL+'/bills/get_registration_bill?patient_id='+this.id, options)
+    await this.http.get<IPatientBill>(API_URL+'/bills/get_registration_bill?patient_id='+this.id, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -201,7 +209,7 @@ export class LabTestPaymentComponent implements OnInit {
     }
 
     this.spinner.show()
-    await this.http.get<IBill[]>(API_URL+'/bills/get_lab_test_bills?patient_id='+this.id, options)
+    await this.http.get<IPatientBill[]>(API_URL+'/bills/get_lab_test_bills?patient_id='+this.id, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -264,6 +272,40 @@ export class LabTestPaymentComponent implements OnInit {
       }
     )
   }
+
+
+  /*print = async () => {
+    const docDefinition : any = {
+      content : [
+        'content'
+      ]
+    }
+    const pdfDocGenerator = pdfMake.createPdf(docDefinition)
+    pdfDocGenerator.getDataUrl((dataUrl) => {
+      const targetElement = document.querySelector('#iframeContainer')!;
+      const iframe = document.createElement('iframe');
+      iframe.src = dataUrl;
+      targetElement.appendChild(iframe);
+    });
+  }*/
+
+  printReceipt(){
+    var items : ReceiptItem[] = []
+    var item : ReceiptItem = new ReceiptItem()
+
+    this.labTestBills.forEach(element => {
+      item.code = element.id
+      item.name = element.description
+      item.price = element.amount
+      item.qty = element.qty
+    })
+
+    items.push(item)
+
+    this.printer.print(items, 'NA', 5000)
+
+  }
+
 
 }
 

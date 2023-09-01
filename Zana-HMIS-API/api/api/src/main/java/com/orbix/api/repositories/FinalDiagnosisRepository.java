@@ -32,4 +32,11 @@ public interface FinalDiagnosisRepository extends JpaRepository<FinalDiagnosis, 
 	 */
 	List<FinalDiagnosis> findAllByConsultation(Consultation consultation);
 
+
+	/**
+	 * @param cons
+	 * @return
+	 */
+	List<FinalDiagnosis> findAllByConsultationIn(List<Consultation> cons);
+
 }

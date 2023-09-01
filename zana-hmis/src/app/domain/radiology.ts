@@ -8,6 +8,7 @@ import { IPatient } from "./patient"
 import { IRadiologyType } from "./radiology-type"
 import { IUser } from "./user"
 import { IDiagnosisType } from "./diagnosis-type"
+import { Byte } from "src/custom-packages/util"
 
 export interface IRadiology {
     id          : any
@@ -15,7 +16,7 @@ export interface IRadiology {
     report      : string
     diagnosisType   : IDiagnosisType
     description : string
-    //attachment  : Byte[]
+    attachment  : Byte[]
 
     status      : string
 

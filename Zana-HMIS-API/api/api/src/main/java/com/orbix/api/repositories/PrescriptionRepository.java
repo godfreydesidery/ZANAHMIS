@@ -11,6 +11,7 @@ import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.NonConsultation;
+import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.Prescription;
 
 /**
@@ -83,5 +84,11 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
 	 * @return
 	 */
 	List<Prescription> findAllByAdmissionIn(List<Admission> adm);
+
+	/**
+	 * @param patient
+	 * @return
+	 */
+	List<Prescription> findAllByPatient(Patient patient);
 
 }

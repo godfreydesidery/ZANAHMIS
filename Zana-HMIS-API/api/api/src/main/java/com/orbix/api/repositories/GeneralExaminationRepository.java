@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,5 +24,11 @@ public interface GeneralExaminationRepository extends JpaRepository<GeneralExami
 	 * @return
 	 */
 	Optional<GeneralExamination> findByConsultation(Consultation consultation);
+
+	/**
+	 * @param cons
+	 * @return
+	 */
+	List<GeneralExamination> findAllByConsultationIn(List<Consultation> cons);
 
 }

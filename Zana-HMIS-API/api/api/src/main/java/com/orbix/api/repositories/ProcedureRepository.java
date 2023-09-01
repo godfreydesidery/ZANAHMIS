@@ -68,6 +68,12 @@ public interface ProcedureRepository extends JpaRepository<Procedure, Long> {
 	 */
 	boolean existsByNonConsultationAndProcedureType(NonConsultation nonConsultation, ProcedureType procedureType);
 
+	/**
+	 * @param patient
+	 * @return
+	 */
+	List<Procedure> findAllByPatient(Patient patient);
+
 
 
 }

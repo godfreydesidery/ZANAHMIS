@@ -15,7 +15,5 @@ export interface IClinicalNote {
 
     consultation            :IConsultation
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created       : string
 }

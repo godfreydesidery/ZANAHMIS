@@ -157,8 +157,12 @@ export class DoctorCrackingComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.id = localStorage.getItem('consultation-id')
-    localStorage.removeItem('consultation-id')
+    //localStorage.removeItem('consultation-id')
     await this.refresh()    
+  }
+
+  async setGlobalPatientId(){
+    localStorage.setItem('patient-id', this.consultation.patient.id)
   }
 
   async refresh(){
@@ -339,7 +343,7 @@ export class DoctorCrackingComponent implements OnInit {
 
         this.gEId = data?.generalExamination.id
         this.gEPressure = data!.generalExamination.pressure
-        this.gETemperature = data!.generalExamination.temparature
+        this.gETemperature = data!.generalExamination.temperature
         this.gEWeight = data!.generalExamination.weight
         this.gEPulseRate = data!.generalExamination.pulseRate
         this.gEHeight = data!.generalExamination.height

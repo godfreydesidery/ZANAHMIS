@@ -6,6 +6,12 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './auth.service';
 import { DataService } from './services/data.service';
+import { PosReceiptPrinterService } from './services/pos-receipt-printer.service';
+
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import { ReceiptItem } from './domain/receipt-item';
+var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
+const fs = require('file-saver');
 
 const API_URL = environment.apiUrl;
 
@@ -28,7 +34,8 @@ export class AppComponent {
     private auth : AuthService,
     private titleService: Title,
     private spinner: NgxSpinnerService,
-    private data : DataService) { }
+    private data : DataService,
+    private printer : PosReceiptPrinterService) { (window as any).pdfMake.vfs = pdfFonts.pdfMake.vfs; }
 
   ngOnInit(): void {
     this.ping()
@@ -126,6 +133,123 @@ export class AppComponent {
       })  
       
     }
+
+    print1() {
+
+      const docDefinition : any = {
+        content : [
+          this.pos()
+        ]
+      }
+      const win = window.open('', "tempWinForPdf");
+       
+    pdfMake.createPdf(docDefinition).print({}, win);
+    win!.onfocus = function () { setTimeout(function () { win!.close(); }, 10000); }
+
+    }
+
+
+
+
+    pos() : string{
+
+var COMPANYNAME : string = 'Zana health'
+
+
+
+
+      var space : String = ''
+            for (let i = 1; i <= (40 - COMPANYNAME.length)/ 2; i++) {
+              space = space + " "
+            }
+                
+            var companyName : string = space + COMPANYNAME
+            space = ""
+            
+            
+            var email : string = space + "email"
+
+            var fDateTime : string
+            var strOutputData : string = ""
+            var CRLF
+            var ESC
+
+            fDateTime = Date.now.toString() 
+
+            CRLF = 'Chr(13)' + 'Chr(10)'
+            ESC = 'Chr(&H1B)'
+
+
+
+            strOutputData = strOutputData + companyName + CRLF
+
+
+            strOutputData = strOutputData + email + CRLF + CRLF
+            strOutputData = strOutputData + "       ***  Sales Receipt  ***" + CRLF
+
+            strOutputData = strOutputData + "TIN:        " + CRLF
+            strOutputData = strOutputData + "VRN:        " + CRLF
+            strOutputData = strOutputData + "Till No:    " + CRLF
+            strOutputData = strOutputData + "Receipt No: " + CRLF
+
+            strOutputData = strOutputData + CRLF
+
+            strOutputData = strOutputData + "CODE        QTY   PRICE@     AMOUNT" + CRLF
+            strOutputData = strOutputData + "DESCRIPTION" + CRLF
+            strOutputData = strOutputData + "====================================" + CRLF
+
+            /*For i As Integer = 0 To descr.Length - 1
+                strOutputData = strOutputData + itemCode(i) + " x " + qty(i) + "  " + price(i) + "  " + amount(i) + CRLF
+                strOutputData = strOutputData + descr(i) + CRLF
+            Next*/
+            strOutputData = strOutputData + "------------------------------------" + CRLF
+
+            strOutputData = strOutputData + "Sub Total                   " + CRLF
+            strOutputData = strOutputData + "Tax                         " + CRLF
+            strOutputData = strOutputData + "Total Amount                " + CRLF
+            strOutputData = strOutputData + "====================================" + CRLF
+            strOutputData = strOutputData + "Cash              " + CRLF
+            strOutputData = strOutputData + "Balance           " + CRLF
+            strOutputData = strOutputData + "====================================" + CRLF
+            strOutputData = strOutputData + "        You are Welcomed !" + CRLF
+            strOutputData = strOutputData + "Sale Date&Time : " + fDateTime + CRLF + CRLF
+            strOutputData = strOutputData + CRLF
+            strOutputData = strOutputData + "  Served by: " + CRLF
+            strOutputData = strOutputData + '(Chr(&H1D) & "V" & Chr(66) & Chr(0))'
+
+
+
+
+return strOutputData
+
+
+
+
+    }
+
+    print(){
+      var items : ReceiptItem[] = []
+      var item : ReceiptItem = new ReceiptItem()
+      item.code = 'testcode'
+      item.name = 'test name'
+      item.price = 1000
+      item.qty = 2
+
+      items.push(item)
+
+      this.printer.print(items, '5342', 5000)
+
+    }
+
+
+
+
+
+
+
+
+
+    
   
 }
 
@@ -135,4 +259,8 @@ interface IDayData{
 
 interface ICompanyData{
   companyName : String
+}
+
+function jspmWSStatus() {
+  throw new Error('Function not implemented.');
 }
