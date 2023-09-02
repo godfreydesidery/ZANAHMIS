@@ -275,29 +275,46 @@ export class DataService {
     return address
   }
 
-  async getAddress2(){
+  async getReceiptHeader(receiptNo : string){
     await this.getCompanyProfile()
     var cName = this.companyName
     var cPostalAddress = 'P.O. Box '+this.postCode
     var cPhysicalAddress = this.physicalAddress
-    var cTelephone = 'Tel: '+this.telephone
-    var cMobile = 'Mob: '+this.mobile
+    var cTelephone = this.telephone
+    var cMobile = this.mobile
     var cFax = 'Fax: '+this.fax
-    var cEmail = 'Email: '+this.email
+    var cEmail = this.email
     var cWebsite = this.website
     var tin = 'TIN: '+this.tin
     var vrn = 'VRN: '+this.vrn
     
-    var address = [
-      {text : cName, fontSize : 12, bold : true, alignment : 'right'},
-      {text : cPostalAddress, fontSize : 9, alignment : 'right'},
-      {text : cPhysicalAddress, fontSize : 9, alignment : 'right'},
-      {text : cTelephone, fontSize : 9, alignment : 'right'},
-      {text : cEmail, fontSize : 9, italic : true, alignment : 'right'},
-      {text : cWebsite, fontSize : 9, italic : true, alignment : 'right'},
-      {text : tin, fontSize : 9, italic : true, alignment : 'right'},
-      {text : vrn, fontSize : 9, italic : true, alignment : 'right'}
-    ]
+    /*var address = [
+      {text : cName, fontSize : 12, bold : true, alignment : 'center', width : 200},
+      {text : cPostalAddress, fontSize : 9, alignment : 'center', width : 200},
+      {text : cPhysicalAddress, fontSize : 9, alignment : 'center', width : 200},
+      {text : cTelephone, fontSize : 9, alignment : 'center', width : 200},
+      {text : cEmail, fontSize : 9, italic : true, alignment : 'center', width : 200},
+      {text : cWebsite, fontSize : 9, italic : true, alignment : 'center', width : 200},
+      {text : tin, fontSize : 9, italic : true, alignment : 'center', width : 200},
+      {text : vrn, fontSize : 9, italic : true, alignment : 'center', width : 200},
+    ]*/
+
+    var address = {
+      headerRows : 0,
+      widths : [200],
+      body : [
+        [{text : 'Receipt#: '+receiptNo, fontSize : 12, bold : true, alignment : 'right'}],
+        [{text : ' ', fontSize : 7, bold : true, alignment : 'center'}],
+        [{text : cName, fontSize : 12, bold : true, alignment : 'center'}],
+        [{text : cPostalAddress, fontSize : 9, alignment : 'center'}],
+        [{text : cPhysicalAddress, fontSize : 9, alignment : 'center'}],
+        [{text : cTelephone, fontSize : 9, alignment : 'center'}],
+        [{text : cEmail, fontSize : 9, italic : true, alignment : 'center'}],
+        //[{text : cWebsite, fontSize : 9, italic : true, alignment : 'center'}],
+        //[{text : tin, fontSize : 9, italic : true, alignment : 'center'}],
+        //[{text : vrn, fontSize : 9, italic : true, alignment : 'center'}]
+      ]
+    }
     return address
   }
 

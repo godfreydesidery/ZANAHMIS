@@ -59,7 +59,7 @@ public class UpdatePatient implements Runnable{
 				List<String> conStatuses = new ArrayList<>();
 				conStatuses.add("PENDING");
 				conStatuses.add("IN-PROCESS");
-				
+				conStatuses.add("TRANSFERED");
 				List<Consultation> cs = consultationRepository.findAllByStatusIn(conStatuses);
 				
 				for(Consultation c : cs) {

@@ -264,10 +264,11 @@ export class RegistrationPaymentComponent implements OnInit {
 
   printReceipt(){
     var items : ReceiptItem[] = []
-    var item : ReceiptItem = new ReceiptItem()
+    var item : ReceiptItem
 
 
     if(this.registrationBill != null){
+      item  = new ReceiptItem()
       item.code = this.registrationBill.id
       item.name = this.registrationBill.description
       item.price = this.registrationBill.amount
@@ -276,6 +277,7 @@ export class RegistrationPaymentComponent implements OnInit {
     }
 
     if(this.consultationBill != null){
+      item  = new ReceiptItem()
       item.code = this.consultationBill.id
       item.name = this.consultationBill.description
       item.price = this.consultationBill.amount

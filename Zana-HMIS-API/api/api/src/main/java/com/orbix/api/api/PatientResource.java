@@ -237,16 +237,18 @@ public class PatientResource {
 		/**
 		 * From OUTPATIENT to OUTSIDER
 		 */
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		statuses.add("IN-PROCESS");
+		statuses.add("TRANSFERED");
+		
 		if(type.equals("OUTSIDER")) {
 			if(p.get().getType().equals("OUTSIDER")) {
 				throw new InvalidOperationException("Can not transform to the same type");
 			}
-			List<String> statuses = new ArrayList<>();
-			statuses.add("PENDING");
-			statuses.add("IN-PROCESS");
-			statuses.add("TRANSFERED");
+			
 			List<Consultation> cs = consultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
-			if(!cs.isEmpty()) {
+			if(cs.isEmpty() == false) {
 				throw new InvalidOperationException("Can not change patient type, the patient has an active consultation.");
 			}else {
 				p.get().setType("OUTSIDER");
@@ -256,17 +258,14 @@ public class PatientResource {
 			if(p.get().getType().equals("OUTPATIENT")) {
 				throw new InvalidOperationException("Can not transform to the same type");
 			}
-			List<String> statuses = new ArrayList<>();
-			statuses.add("PENDING");
-			statuses.add("IN-PROCESS");
 			List<NonConsultation> ncs = nonConsultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
 			
-			//if(!ncs.isEmpty()) {
-				//throw new InvalidOperationException("Can not change patient type, the has pending services. Please consider removing the services or clearing with the patient.");
-			//}else {
+			if(ncs.isEmpty() == false) {
+				throw new InvalidOperationException("Can not change patient type, the has pending services. Please consider clearing with the patient.");
+			}else {
 				p.get().setType("OUTPATIENT");
 				patient = patientRepository.save(p.get());
-			//}
+			}
 		}				
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/change_type").toUriString());
 		return ResponseEntity.created(uri).body(patient);
@@ -1521,7 +1520,7 @@ public class PatientResource {
 			@RequestParam Long id, 
 			HttpServletRequest request){
 		Optional<Prescription> pr = prescriptionRepository.findById(id);
-		if(!pr.get().getStatus().equals("PENDING")) {
+		if(!(pr.get().getStatus().equals("PENDING") || pr.get().getStatus().equals("NOT-GIVEN"))) {
 			throw new InvalidOperationException("Could not delete, only a PENDING prescription can be deleted");
 		}
 		Prescription prescription = pr.get();
@@ -1529,7 +1528,7 @@ public class PatientResource {
 		PatientBill patientBill = patientBillRepository.findById(pr.get().getPatientBill().getId()).get();
 		
 		Optional<PatientPaymentDetail> pd = patientPaymentDetailRepository.findByPatientBill(patientBill);
-		if(pd.isPresent() && pd.get().getStatus().equals("RECEIVED")) {
+		if(pd.isPresent() && pd.get().getStatus().equals("GIVEN")) {
 			//disable deleting a paid test first, in the mean time
 			//throw new InvalidOperationException("Can not delete a paid prescription, please contact system administrator");
 			
@@ -1879,12 +1878,14 @@ public class PatientResource {
 			nonConsultation.setCreatedby(userService.getUserId(request));
 			nonConsultation.setCreatedOn(dayService.getDayId());
 			nonConsultation.setCreatedAt(dayService.getTimeStamp());
+			
 			nonConsultation.setVisit(visit);
 			nonConsultation.setPatient(p.get());
 			nonConsultation.setInsurancePlan(p.get().getInsurancePlan());
 			nonConsultation.setMembershipNo(p.get().getMembershipNo());
 			nonConsultation.setPaymentType(p.get().getPaymentType());
 			nonConsultation.setStatus("PENDING");
+			
 			nonConsultation = nonConsultationRepository.save(nonConsultation);
 		}else {
 			nonConsultation = nc.get();

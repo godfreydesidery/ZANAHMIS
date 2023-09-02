@@ -291,16 +291,16 @@ export class LabTestPaymentComponent implements OnInit {
 
   printReceipt(){
     var items : ReceiptItem[] = []
-    var item : ReceiptItem = new ReceiptItem()
+    var item : ReceiptItem
 
     this.labTestBills.forEach(element => {
+      item = new ReceiptItem()
       item.code = element.id
       item.name = element.description
       item.price = element.amount
       item.qty = element.qty
+      items.push(item)
     })
-
-    items.push(item)
 
     this.printer.print(items, 'NA', 5000)
 

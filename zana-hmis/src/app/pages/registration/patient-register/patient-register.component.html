@@ -16,7 +16,7 @@
                             <a class="btn btn-primary" (click)="existingPatientPrompt()">Existing Patient</a>  
                         </div>
                         <div class="btn"> 
-                            <a class="btn btn-primary" routerLink="/patient-list"> <i class="fa fa-list"></i>Today List</a>  
+                            <!--<a class="btn btn-primary" routerLink="/patient-list"> <i class="fa fa-list"></i>Today List</a>-->  
                         </div>
                     </div>
                     <div class="panel-body">
@@ -151,13 +151,18 @@
                                 <div class="col-sm-12">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <h4 class="text-primary"><b>Search Patient</b></h4>
+                                            <h4 class="text-primary"><b>Search Patient(Enter 4 characters)</b></h4>
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="row">
                                                 <div class="col-xs-6">
-                                                    <input type="text" class="form-control" [(ngModel)]="searchKey" (input)="searchBySearchKey(searchKey)"  list="search_keys" [readonly]="lockSearchKey" placeholder="Search by File#, name or phone">
-                                                    <datalist id="search_keys" style="padding: 0px;" >
+                                                    <input type="text" class="form-control" [(ngModel)]="searchKey" (ngModelChange)="filterSearchKeys($event)" [readonly]="lockSearchKey" placeholder="Search by File#, name or phone">
+                                                    <div class="row" *ngIf="lockSearchKey === false && searchKey.length > 0">
+                                                        <div class="col-sm-12" *ngFor="let s of searchKeysToDisplay">
+                                                            <button class="btn btn-default form-control"  (click)="searchBySearchKey(s)" style="text-align: left; border-style: none;">{{s}}</button>
+                                                        </div>
+                                                    </div>
+                                                    <datalist id="search_keys">
                                                         <option *ngFor="let s of searchKeys" [ngValue]="s">{{s}}</option>
                                                     </datalist> 
                                                 </div>
@@ -181,12 +186,12 @@
                                                 <h4 class="text-primary"><b>Patient Details</b>   <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#edit-modal" style="margin-bottom: 2mm;">Edit Patient</button></h4>
                                                 <table class="table table-bordered table-small table-striped" style="text-align: center;">
                                                     <tbody>
-                                                        <tr><td>Full Name</td><td>{{firstName}}</td></tr>
+                                                        <tr><td>First Name</td><td>{{firstName}}</td></tr>
                                                         <tr><td>Last Name</td><td>{{lastName}}</td></tr>
                                                         <tr><td>Other Names</td><td>{{middleName}}</td></tr>
                                                         <tr><td>File No</td><td>{{no}}</td></tr>
                                                         <tr><td>Phone No</td><td>{{phoneNo}}</td></tr>
-                                                        <tr><td>Date of Birth</td><td>{{dateOfBirth}}</td></tr>  
+                                                        <tr><td>Date of Birth</td><td>{{dateOfBirth | date}}</td></tr>  
                                                         <tr><td>Gender</td><td>{{gender}}</td></tr>  
                                                         <tr><td>Address</td><td>{{address}}</td></tr>
                                                         <tr><td>Country Name</td><td>{{nationality}}</td></tr> 

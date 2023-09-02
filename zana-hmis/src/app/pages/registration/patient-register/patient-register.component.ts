@@ -54,6 +54,7 @@ export class PatientRegisterComponent implements OnInit {
   insurancePlanName : string = ''
 
   searchKeys : string[] = []
+  searchKeysToDisplay : string[] = []
   clinicNames : string[] = []
   clinicianNames : string[] = []
 
@@ -245,7 +246,7 @@ export class PatientRegisterComponent implements OnInit {
       middleName          : this.middleName,
       lastName            : this.lastName,
       gender              : this.gender,
-      type         : this.type,
+      type                : this.type,
       dateOfBirth         : this.dateOfBirth,
       paymentType         : this.paymentType,
       membershipNo        : this.membershipNo,
@@ -472,6 +473,9 @@ export class PatientRegisterComponent implements OnInit {
     .toPromise()
     .then(
       data => {
+
+        this.searchKey = key
+
         this.id = data!['id']
         this.no = data!['no']
         this.firstName = data!['firstName']
@@ -1221,6 +1225,22 @@ export class PatientRegisterComponent implements OnInit {
       this.procedureMinutes = 0
       this.procedureType = 'NON-THEATRE'
     }
+  }
+
+  filterSearchKeys(value : string){
+
+    this.searchKeysToDisplay = []
+    if(value.length < 4){
+      return
+    }
+
+    this.searchKeys.forEach(element => {
+      var elementToLower = element.toLowerCase()
+      var valueToLower = value.toLowerCase()
+      if(elementToLower.includes(valueToLower)){
+        this.searchKeysToDisplay.push(element)
+      }
+    })
   }
 
 }
