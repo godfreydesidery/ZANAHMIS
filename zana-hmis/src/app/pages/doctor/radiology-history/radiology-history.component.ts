@@ -75,4 +75,17 @@ export class RadiologyHistoryComponent {
       }
     )
   }
+
+  public grant(privilege : string[]) : boolean{
+    /**Allow user to perform an action if the user has that priviledge */
+    var granted : boolean = false
+    privilege.forEach(
+      element => {
+        if(this.auth.checkPrivilege(element)){
+          granted = true
+        }
+      }
+    )
+    return granted
+  }
 }

@@ -327,25 +327,39 @@ onUpload() {
     });
     
 }
-//Gets called when the user clicks on retieve image button to get the image from back end
-async getLogo() {
-//Make a call to Sprinf Boot to get the Image Bytes.
-//this.spinner.show()
-await this.http.get(API_URL+'/company_profile/get_logo')
-//.pipe(finalize(() => this.spinner.hide()))
-.toPromise()
-  .then(
-    res => {
-      this.retrieveResponse = res
-      this.base64Data = this.retrieveResponse.logo
-      this.retrievedImage = 'data:image/png;base64,'+this.base64Data
-      console.log(this.retrievedImage)
-    }
-  )
-  .catch(error => {
-    console.log(error)
-  })  
-  
-}
+  //Gets called when the user clicks on retieve image button to get the image from back end
+  async getLogo() {
+  //Make a call to Sprinf Boot to get the Image Bytes.
+  //this.spinner.show()
+  await this.http.get(API_URL+'/company_profile/get_logo')
+  //.pipe(finalize(() => this.spinner.hide()))
+  .toPromise()
+    .then(
+      res => {
+        this.retrieveResponse = res
+        this.base64Data = this.retrieveResponse.logo
+        this.retrievedImage = 'data:image/png;base64,'+this.base64Data
+        console.log(this.retrievedImage)
+      }
+    )
+    .catch(error => {
+      console.log(error)
+    })  
+    
+  }
+
+
+  public grant(privilege : string[]) : boolean{
+    /**Allow user to perform an action if the user has that priviledge */
+    var granted : boolean = false
+    privilege.forEach(
+      element => {
+        if(this.auth.checkPrivilege(element)){
+          granted = true
+        }
+      }
+    )
+    return granted
+  }
 
 }

@@ -11,14 +11,14 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <a class="btn btn-primary btn-outline" style="margin-right: 1mm;" routerLink="/pharmacy-outpatient-list">Outpatient List</a>
+                    <!--<a class="btn btn-primary btn-outline" style="margin-right: 1mm;" routerLink="/pharmacy-outpatient-list">Outpatient List</a>
                     <a class="btn btn-primary btn-outline" style="margin-right: 1mm;" routerLink="/pharmacy-inpatient-list">Inpatient List</a>
-                    <a class="btn btn-primary btn-outline" style="margin-right: 1mm;" routerLink="/pharmacy-outsider-list">Outsider List</a>
+                    <a class="btn btn-primary btn-outline" style="margin-right: 1mm;" routerLink="/pharmacy-outsider-list">Outsider List</a>-->
                 </div>
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-12 alert alert-primary" role="alert">
-                            <h4>Name: <b>{{patient.firstName}} {{patient.middleName}} {{patient.lastName}}</b>, File No: <b>{{patient.no}}</b>, Date of birth: <b>{{patient.dateOfBirth | date}}</b>, {{patient.gender}}, {{patient.paymentType}}</h4>
+                            <h4 class="text-primary">Name: <b>{{patient.firstName}} {{patient.middleName}} {{patient.lastName}}</b>, File No: <b>{{patient.no}}</b>, Date of birth: <b>{{patient.dateOfBirth | date}}</b>, Age: <b>{{patient.dateOfBirth | age}}</b>, {{patient.gender}}, {{patient.paymentType}}</h4>
                         </div>
                         <hr>
                     </div>
@@ -35,7 +35,9 @@
                                         <td>qty</td>
                                         <td>Amount</td>-->
                                         <td>Status</td>
-                                        <td>Action</td>
+                                        <td>Accept</td>
+                                        <td>Procedure Note</td>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -50,11 +52,21 @@
                                         <td>{{procedure.status}}</td>
                                         <td>
                                             <button class="btn btn-default btn-rounded" (click)="acceptProcedure(procedure)">Accept</button>
-                                            <button class="btn btn-default btn-rounded" (click)="rejectProcedure(procedure)">Reject</button>
-                                            <button class="btn btn-default btn-rounded" (click)="holdProcedure(procedure)">Hold</button>
-                                            <button class="btn btn-default btn-rounded" (click)="collectProcedure(procedure)">Collect</button>
-                                            <button class="btn btn-primary" (click)="verifyProcedure(procedure)">Verify</button>
+                                            <!--<button class="btn btn-default btn-rounded" (click)="rejectProcedure(procedure)">Reject</button>-->
+                                            <!--<button class="btn btn-default btn-rounded" (click)="holdProcedure(procedure)">Hold</button>
+                                            <button class="btn btn-default btn-rounded" (click)="collectProcedure(procedure)">Collect</button>-->
+                                            <!--<button class="btn btn-primary" (click)="verifyProcedure(procedure)">Verify</button>-->
                                         </td>
+                                        <td>
+                                            <div class="row" *ngIf="procedure.status === 'ACCEPTED'">
+                                                <div class="col-sm-12">
+                                                    <textarea class="form-contorl" [(ngModel)]="procedure.note" style="height: 5cm;">{{procedure?.note}}</textarea>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <button class="btn btn-primary" (click)="updateProcedure(procedure)">Save</button>
+                                                </div>
+                                            </div>
+                                        </td>    
                                     </tr>
                                 </tbody>
                             </table>

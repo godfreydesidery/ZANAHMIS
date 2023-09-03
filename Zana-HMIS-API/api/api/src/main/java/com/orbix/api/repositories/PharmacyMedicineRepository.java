@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,5 +24,16 @@ public interface PharmacyMedicineRepository extends JpaRepository <PharmacyMedic
 	 * @return
 	 */
 	Optional<PharmacyMedicine> findByPharmacyAndMedicine(Pharmacy pharmacy, Medicine medicine);
+
+	/**
+	 * @param pharmacy
+	 * @return
+	 */
+	List<PharmacyMedicine> findAllByPharmacy(Pharmacy pharmacy);
+
+	/**
+	 * @param pharmacy
+	 * @return
+	 */
 
 }

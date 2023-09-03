@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,7 +68,7 @@ public class DiagnosisTypeResource {
 	}
 	
 	@PostMapping("/diagnosis_types/save")
-	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
 	public ResponseEntity<DiagnosisType>save(
 			@RequestBody DiagnosisType diagnosisType,
 			HttpServletRequest request){

@@ -204,6 +204,12 @@ protected ConfigurableApplicationContext springContext;
 				}
 			}
 			try {
+				userService.addPrivilegeToRole("ROOT", "ADMIN-A");
+				userService.addPrivilegeToRole("ROOT", "ADMIN-C");
+				userService.addPrivilegeToRole("ROOT", "ADMIN-R");
+				userService.addPrivilegeToRole("ROOT", "ADMIN-U");
+				userService.addPrivilegeToRole("ROOT", "ADMIN-D");
+				
 				userService.addPrivilegeToRole("ROOT", "USER-A");
 				userService.addPrivilegeToRole("ROOT", "USER-C");
 				userService.addPrivilegeToRole("ROOT", "USER-R");

@@ -58,32 +58,17 @@ export class LabOutpatientListComponent implements OnInit {
     )
   }
 
-}
+  public grant(privilege : string[]) : boolean{
+    /**Allow user to perform an action if the user has that priviledge */
+    var granted : boolean = false
+    privilege.forEach(
+      element => {
+        if(this.auth.checkPrivilege(element)){
+          granted = true
+        }
+      }
+    )
+    return granted
+  }
 
-export interface IPatient1 {
-  id : any
-  no : string
-  firstName : string
-  middleName : string
-  lastName : string
-  dateOfBirth :Date
-  gender : string
-  paymentType : string
-  /*memberShipNo : string
-  phoneNo : string		
-	address : string
-	email : string
-	nationality : string
-	nationalId : string	
-	passportNo : string
-  kinFullName : string
-	kinRelationship : string
-	kinPhoneNo : string
-  patientRecordMode : string
-  paymentMode : string
-  insurancePlan : string 
-
-  registrationFee : number
-  registrationFeeStatus : string
-  cardValidationStatus : string*/
 }

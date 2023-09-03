@@ -38,8 +38,8 @@ export class PatientProcedureComponent {
     private msgBox : MsgBoxService) { }
 
   ngOnInit(): void {
-    this.id = localStorage.getItem('pharmacy-patient-id')
-    localStorage.removeItem('pharmacy-patient-id')
+    this.id = localStorage.getItem('procedure-patient-id')
+    localStorage.removeItem('procedure-patient-id')
     this.loadPatient(this.id)
     this.loadProceduresByPatient(this.id)
   }
@@ -111,6 +111,29 @@ export class PatientProcedureComponent {
     )
     this.loadProceduresByPatient(this.id)
   }
+
+  async updateProcedure(procedure : IProcedure){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    
+    this.spinner.show()
+    await this.http.post<boolean>(API_URL+'/patients/update_procedure', procedure, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Updated successifully')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadProceduresByPatient(this.id)
+  }
+
 
   async rejectProcedure(procedure : IProcedure){
     let options = {
@@ -198,5 +221,18 @@ export class PatientProcedureComponent {
       }
     )
     this.loadProceduresByPatient(this.id)
+  }
+
+  public grant(privilege : string[]) : boolean{
+    /**Allow user to perform an action if the user has that priviledge */
+    var granted : boolean = false
+    privilege.forEach(
+      element => {
+        if(this.auth.checkPrivilege(element)){
+          granted = true
+        }
+      }
+    )
+    return granted
   }
 }

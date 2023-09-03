@@ -26,7 +26,5 @@ export interface IPatient {
     kinPhoneNo      : string
     active          : boolean
     insurancePlan   : IInsurancePlan
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created       : string
 }

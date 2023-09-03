@@ -291,7 +291,6 @@ export class AccessManagementComponent implements OnInit {
       }
     )
     return granted
-    
   }
 
   loadPrivModel() : boolean{
@@ -312,10 +311,8 @@ export class AccessManagementComponent implements OnInit {
     })
     return false
   }
-
   privModels : IIPrivilege[] = []
  
-
 }
 
 export class AccessForm{

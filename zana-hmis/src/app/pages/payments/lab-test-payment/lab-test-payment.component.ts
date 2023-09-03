@@ -10,6 +10,7 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import { ReceiptItem } from 'src/app/domain/receipt-item';
 import { PosReceiptPrinterService } from 'src/app/services/pos-receipt-printer.service';
 import { IPatientBill } from 'src/app/domain/patient-bill';
+import { IPatient } from 'src/app/domain/patient';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -306,10 +307,22 @@ export class LabTestPaymentComponent implements OnInit {
 
   }
 
+  public grant(privilege : string[]) : boolean{
+    /**Allow user to perform an action if the user has that priviledge */
+    var granted : boolean = false
+    privilege.forEach(
+      element => {
+        if(this.auth.checkPrivilege(element)){
+          granted = true
+        }
+      }
+    )
+    return granted
+  }
 
 }
 
-export interface IPatient {
+export interface IPatientA {
   id : any
   no : string
   firstName : string

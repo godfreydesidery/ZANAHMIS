@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -203,6 +204,7 @@ public class PatientBillResource {
 	}
 	
 	@PostMapping("/bills/confirm_bills_payment")
+	@PreAuthorize("hasAnyAuthority('BILL-A')")
 	public ResponseEntity<PatientBill> confirmBillsPayment(
 			@RequestBody List<PatientBill> bills,
 			@RequestParam(name = "total_amount") double totalAmount,

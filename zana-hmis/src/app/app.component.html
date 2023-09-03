@@ -65,10 +65,10 @@
               <!-- sidebar menu -->
                 <ul class="sidebar-menu">
                     <li class="active">
-                      <a href="index.html"><i class="fa fa-hospital-o"></i><span>Dashboard</span>
+                      <a href="index.html"><i class="fa fa-hospital-o"></i><span>My Dashboard</span>
                       </a>
                     </li>
-                    <li class="treeview">
+                    <li class="treeview" *ngIf="grant(['PATIENT-A','PATIENT-C','PATIENT-U'])">
                         <a href="#">
                             <i class="fa fa-user-md"></i><span>Patient</span>
                             <span class="pull-right-container">
@@ -81,7 +81,7 @@
                             <li><a href="#">NHIF Patient List</a></li>-->
                         </ul>
                     </li>
-                    <li class="treeview">
+                    <li class="treeview" *ngIf="grant(['CLINIC_SERVICE-A'])">
                         <a href="#">
                             <i class="fa fa-user-md"></i><span>Doctor</span>
                             <span class="pull-right-container">
@@ -91,7 +91,7 @@
                         <ul class="treeview-menu">
                             <li><a routerLink="/list-from-reception">List From Reception</a></li>
                             <li><a routerLink="/my-consultation">My Consultations</a></li>
-                            <li>
+                            <!--<li>
                                 <a href="#">
                                     <i class="fa fa-user-md"></i><span>Procedure</span>
                                     <span class="pull-right-container">
@@ -103,12 +103,12 @@
                                     <li><a routerLink="/procedure-inpatient-list">Inpatient List</a></li>
                                     <li><a routerLink="/procedure-outsider-list">Outsider List</a></li>
                                 </ul>
-                            </li>
+                            </li>-->
                         </ul>
                         
                     </li>
 
-                    <li class="treeview">
+                    <li class="treeview" *ngIf="grant(['LAB_SERVICE-A'])">
                         <a href="#">
                             <i class="fa fa-user-md"></i><span>Laboratory</span>
                             <span class="pull-right-container">
@@ -121,7 +121,7 @@
                             <li><a routerLink="/lab-outsider-list">Outsider List</a></li>
                         </ul>
                     </li>
-                    <li class="treeview">
+                    <li class="treeview" *ngIf="grant(['RADIOLOGY_SERVICE-A'])">
                         <a href="#">
                             <i class="fa fa-user-md"></i><span>Radiology</span>
                             <span class="pull-right-container">
@@ -134,7 +134,7 @@
                             <li><a routerLink="/radiology-outsider-list">Outsider List</a></li>
                         </ul>
                     </li>
-                    <li class="treeview">
+                    <li class="treeview" *ngIf="grant(['PHARMACY_SERVICE-A'])">
                         <a href="#">
                             <i class="fa fa-user-md"></i><span>Pharmacy</span>
                             <span class="pull-right-container">
@@ -145,7 +145,7 @@
                             <li><a routerLink="/select-pharmacy">Select Pharmacy</a></li>
                         </ul>
                     </li>
-                    <li class="treeview">
+                    <li class="treeview" *ngIf="grant(['BILL-A'])">
                         <a href="#">
                             <i class="fa fa-user-md"></i><span>Cashier</span>
                             <span class="pull-right-container">
@@ -159,11 +159,11 @@
                             <li><a routerLink="/radiology-payment">Radiology</a></li>
                             <li><a routerLink="/medication-payment">Medication</a></li>
                             <li><a routerLink="/procedure-payment">Procedure</a></li>
-                            <li><a href="#">Invoice</a></li>
+                            <!--<li><a href="#">Invoice</a></li>-->
                             <li><a routerLink="/registration-price">Price View</a></li>
                         </ul>
                     </li>
-                    <li class="treeview">
+                    <li class="treeview" *ngIf="grant(['STORE_SERVICE-A'])">
                         <a href="#">
                             <i class="fa fa-user-md"></i><span>Store</span>
                             <span class="pull-right-container">
@@ -186,7 +186,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="treeview">
+                    <li class="treeview" *ngIf="grant(['ADMIN-A'])">
                         <a href="#">
                             <i class="fa fa-user-md"></i><span>Admin</span>
                             <span class="pull-right-container">
@@ -333,7 +333,7 @@
                         </ul>
                     </li>
                   
-                  <li class="treeview">
+                  <li class="treeview" *ngIf="grant(['REPORT_SERVICE-A'])">
                       <a href="#">
                           <i class="fa fa-file-text"></i><span>Report</span>
                           <span class="pull-right-container">

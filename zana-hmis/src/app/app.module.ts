@@ -93,7 +93,7 @@ import { ProcedureHistoryComponent } from './pages/doctor/procedure-history/proc
 import { PrescriptionHistoryComponent } from './pages/doctor/prescription-history/prescription-history.component';
 import { WorkingDiagnosisHistoryComponent } from './pages/doctor/working-diagnosis-history/working-diagnosis-history.component';
 import { FinalDiagnosisHistoryComponent } from './pages/doctor/final-diagnosis-history/final-diagnosis-history.component';
-
+import { PharmacyMedicineStockStatusComponent } from './pages/pharmacy/pharmacy-medicine-stock-status/pharmacy-medicine-stock-status.component';
 
 @NgModule({
   declarations: [
@@ -179,6 +179,7 @@ import { FinalDiagnosisHistoryComponent } from './pages/doctor/final-diagnosis-h
     RadiologyHistoryComponent,
     ProcedureHistoryComponent,
     PrescriptionHistoryComponent,
+    PharmacyMedicineStockStatusComponent,
   ],
   imports: [
     HttpClientModule,
@@ -239,6 +240,7 @@ import { FinalDiagnosisHistoryComponent } from './pages/doctor/final-diagnosis-h
     {path : 'lab-test-price', component : LabTestPriceComponent},
     {path : 'procedure-price', component : ProcedurePriceComponent},
     {path : 'radiology-price', component : RadiologyPriceComponent},
+    {path : 'medicine-price', component : MedicinePriceComponent},
     {path : 'select-pharmacy', component : SelectPharmacyComponent},
     {path : 'pharmacy-outpatient-list', component : PharmacyOutpatientListComponent},
     {path : 'pharmacy-inpatient-list', component : PharmacyInpatientListComponent},
@@ -252,6 +254,7 @@ import { FinalDiagnosisHistoryComponent } from './pages/doctor/final-diagnosis-h
     {path : 'pharmacy-to-store-r-o-list', component : PharmacyToStoreROListComponent},
     {path : 'store-to-pharmacy-t-o', component : StoreToPharmacyTOComponent},
     {path : 'store-to-pharmacy-r-n', component : StoreToPharmacyRNComponent},
+    {path : 'pharmacy-medicine-stock-status', component : PharmacyMedicineStockStatusComponent},
     {path : 'item-medicine-conversion-coefficient', component : ItemMedicineConversionCoefficientComponent},
     {path : 'report-template', component : ReportTemplateComponent},
     {path : 'patient-history-menu', component : PatientHistoryMenuComponent},
@@ -263,6 +266,7 @@ import { FinalDiagnosisHistoryComponent } from './pages/doctor/final-diagnosis-h
     {path : 'prescription-history', component : PrescriptionHistoryComponent},
     {path : 'working-diagnosis-history', component : WorkingDiagnosisHistoryComponent},
     {path : 'final-diagnosis-history', component : FinalDiagnosisHistoryComponent},
+
     ])
   ],
   schemas: [ 

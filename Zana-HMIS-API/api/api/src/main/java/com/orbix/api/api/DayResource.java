@@ -36,10 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 public class DayResource {
 	
-
 	private final UserService userService;
 	private final DayService dayService;
-	
 	
 	@GetMapping("/days/get_bussiness_date")
 	public DayData getBussinessDate(HttpServletRequest request){
@@ -49,7 +47,7 @@ public class DayResource {
 	}
 	
 	@GetMapping("/days/end_day")
-	@PreAuthorize("hasAnyAuthority('DAY-CREATE','DAY-UPDATE')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-A','DAY-A')")
 	public boolean endDay(HttpServletRequest request){		
 		return dayService.endDay();
 	}

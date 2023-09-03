@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -180,7 +181,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/register")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C')")
 	public ResponseEntity<Patient>registerPatient(
 			@RequestBody Patient patient,
 			HttpServletRequest request){
@@ -202,7 +203,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/update")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-U')")
 	public ResponseEntity<Patient>updatePatient(
 			@RequestBody Patient patient,
 			HttpServletRequest request){
@@ -222,7 +223,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/change_type")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-U')")
 	public ResponseEntity<Patient>changeType(
 			@RequestBody Patient patient,
 			@RequestParam(name = "type") String type,
@@ -272,7 +273,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/do_consultation")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
 	public ResponseEntity<Patient>consultation(
 
 			@RequestParam Long patient_id, @RequestParam String clinic_name, @RequestParam String clinician_name, 
@@ -287,7 +288,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/cancel_consultation")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
 	public ResponseEntity<Boolean>cancelConsultation(
 			@RequestParam Long id, 
 			HttpServletRequest request){
@@ -362,7 +363,6 @@ public class PatientResource {
 	}
 	
 	@GetMapping("/patients/get_active_consultations")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<List<Consultation>>getActiveConsultations(
 			@RequestParam Long patient_id,
 			HttpServletRequest request){
@@ -379,7 +379,6 @@ public class PatientResource {
 	}
 	
 	@GetMapping("/patients/last_visit_date_time")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<LocalDateTime>getLastVisitDateTime(
 			@RequestParam Long patient_id,
 			HttpServletRequest request){
@@ -765,8 +764,6 @@ public class PatientResource {
 			}
 		}
 		
-		
-		
 		if(labTest.getId() == null) {
 			labTest.setCreatedby(userService.getUser(request).getId());
 			labTest.setCreatedOn(dayService.getDay().getId());
@@ -782,7 +779,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/save_radiology")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
 	public ResponseEntity<Radiology>saveRadiology(
 			@RequestBody Radiology radiology,
 			@RequestParam Long consultation_id, @RequestParam Long non_consultation_id, 
@@ -817,41 +814,38 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/radiologies/save_reason_for_rejection")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
-		public void saveRejectComment(
-				@RequestBody Radiology radiology,
-				HttpServletRequest request){
-			Optional<Radiology> r = radiologyRepository.findById(radiology.getId());
-			if(r.isEmpty()) {
-				throw new NotFoundException("Radiology not found");
-			}
-			if(r.get().getStatus().equals("REJECTED")) {
-				r.get().setRejectComment(radiology.getRejectComment());
-				radiologyRepository.save(r.get());
-			}else {
-				throw new InvalidOperationException("Could not save. Only allowed for rejected tests");
-			}
+	public void saveRejectComment(
+			@RequestBody Radiology radiology,
+			HttpServletRequest request){
+		Optional<Radiology> r = radiologyRepository.findById(radiology.getId());
+		if(r.isEmpty()) {
+			throw new NotFoundException("Radiology not found");
 		}
+		if(r.get().getStatus().equals("REJECTED")) {
+			r.get().setRejectComment(radiology.getRejectComment());
+			radiologyRepository.save(r.get());
+		}else {
+			throw new InvalidOperationException("Could not save. Only allowed for rejected tests");
+		}
+	}
 	
 	@PostMapping("/patients/lab_tests/save_reason_for_rejection")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
-		public void saveLabTestRejectComment(
-				@RequestBody LabTest test,
-				HttpServletRequest request){
-			Optional<LabTest> r = labTestRepository.findById(test.getId());
-			if(r.isEmpty()) {
-				throw new NotFoundException("Lab Test not found");
-			}
-			if(r.get().getStatus().equals("REJECTED")) {
-				r.get().setRejectComment(test.getRejectComment());
-				labTestRepository.save(r.get());
-			}else {
-				throw new InvalidOperationException("Could not save. Only allowed for rejected tests");
-			}
+	public void saveLabTestRejectComment(
+			@RequestBody LabTest test,
+			HttpServletRequest request){
+		Optional<LabTest> r = labTestRepository.findById(test.getId());
+		if(r.isEmpty()) {
+			throw new NotFoundException("Lab Test not found");
 		}
+		if(r.get().getStatus().equals("REJECTED")) {
+			r.get().setRejectComment(test.getRejectComment());
+			labTestRepository.save(r.get());
+		}else {
+			throw new InvalidOperationException("Could not save. Only allowed for rejected tests");
+		}
+	}
 	
 	@PostMapping("/patients/save_procedure")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<Procedure>saveProcedure(
 			@RequestBody Procedure procedure,
 			@RequestParam Long consultation_id, @RequestParam Long non_consultation_id, 
@@ -886,7 +880,6 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/save_prescription")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<Prescription>savePrescription(
 			@RequestBody Prescription prescription,
 			@RequestParam Long consultation_id, @RequestParam Long non_consultation_id, 
@@ -1225,7 +1218,6 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/delete_lab_test")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<Boolean>deleteLabTest(
 			@RequestParam Long id, 
 			HttpServletRequest request){
@@ -1294,7 +1286,6 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/radiologies/add_report")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public void addReport(
 			@RequestBody Radiology radiology,
 			HttpServletRequest request){
@@ -1345,7 +1336,6 @@ public class PatientResource {
 	
 	
 	@PostMapping("/patients/lab_tests/add_report")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public void addLabTestReport(
 			@RequestBody LabTest labTest,
 			HttpServletRequest request){
@@ -1362,7 +1352,6 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/procedures/add_note")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public void addProcedureNote(
 			@RequestBody Procedure procedure,
 			HttpServletRequest request){
@@ -1379,7 +1368,6 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/delete_radiology")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<Boolean>deleteRadiology(
 			@RequestParam Long id, 
 			HttpServletRequest request){
@@ -1447,7 +1435,6 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/delete_procedure")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<Boolean>deleteProcedure(
 			@RequestParam Long id, 
 			HttpServletRequest request){
@@ -1515,7 +1502,6 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/delete_prescription")
-	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
 	public ResponseEntity<Boolean>deletePrescription(
 			@RequestParam Long id, 
 			HttpServletRequest request){
@@ -1649,6 +1635,40 @@ public class PatientResource {
 		}
 		HashSet<Patient> h = new HashSet<Patient>(patients);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_radiology_outpatient_list").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
+	}
+	
+	@GetMapping("/patients/get_procedure_outpatient_list") 
+	public ResponseEntity<List<Patient>> getProcedureOutpatientList(
+			HttpServletRequest request){
+		
+		List<Consultation> cs = consultationRepository.findAllByStatus("IN-PROCESS");
+		List<Procedure> procedures = procedureRepository.findAllByConsultationIn(cs);			
+		List<Patient> patients = new ArrayList<>();		
+		for(Procedure p : procedures) {
+			if(p.getPatient().getType().equals("OUTPATIENT") && (p.getPatientBill().getStatus().equals("PAID") || p.getPatientBill().getStatus().equals("COVERED"))) {
+				patients.add(p.getPatient());
+			}
+		}
+		HashSet<Patient> h = new HashSet<Patient>(patients);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_lab_outpatient_list").toUriString());
+		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
+	}
+	
+	@GetMapping("/patients/get_procedure_outsider_list") 
+	public ResponseEntity<List<Patient>> getProcedureOutsiderList(
+			HttpServletRequest request){
+		
+		List<NonConsultation> ncs = nonConsultationRepository.findAllByStatus("IN-PROCESS");
+		List<Procedure> procedures = procedureRepository.findAllByNonConsultationIn(ncs);			
+		List<Patient> patients = new ArrayList<>();		
+		for(Procedure p : procedures) {
+			if(p.getPatient().getType().equals("OUTSIDER") && (p.getPatientBill().getStatus().equals("PAID") || p.getPatientBill().getStatus().equals("COVERED"))) {
+				patients.add(p.getPatient());
+			}
+		}
+		HashSet<Patient> h = new HashSet<Patient>(patients);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_lab_outsider_list").toUriString());
 		return ResponseEntity.created(uri).body(new ArrayList<Patient>(h));
 	}
 	
@@ -1833,6 +1853,49 @@ public class PatientResource {
 		
 		t.get().setStatus("PENDING");
 		labTestRepository.save(t.get());
+		return true;
+	}	
+	
+	@PostMapping("/patients/accept_procedure") 
+	public boolean acceptProcedure(
+			@RequestBody LProcedure pro,
+			HttpServletRequest request){
+		Optional<Procedure> p = procedureRepository.findById(pro.getId());
+		if(!p.isPresent()) {
+			throw new NotFoundException("Procedure not found");
+		}
+		if(!(p.get().getStatus().equals("PENDING") || p.get().getStatus().equals("REJECTED"))) {
+			throw new InvalidOperationException("Could not accept, only PENDING or REJECTED tests can be accepted");
+		}
+		
+		p.get().setAcceptedby(userService.getUserId(request));
+		p.get().setAcceptedOn(dayService.getDayId());
+		p.get().setAcceptedAt(dayService.getTimeStamp());
+		
+		p.get().setRejectedby(null);
+		p.get().setRejectedOn(null);
+		p.get().setRejectedAt(null);
+		p.get().setRejectComment("");
+		
+		p.get().setStatus("ACCEPTED");
+		procedureRepository.save(p.get());
+		return true;
+	}
+	
+	@PostMapping("/patients/update_procedure") 
+	public boolean updateProcedure(
+			@RequestBody LProcedure pro,
+			HttpServletRequest request){
+		Optional<Procedure> p = procedureRepository.findById(pro.getId());
+		if(!p.isPresent()) {
+			throw new NotFoundException("Procedure not found");
+		}
+		if(!(p.get().getStatus().equals("ACCEPTED"))) {
+			throw new InvalidOperationException("Could not update, only accepted procedure can be updated");
+		}
+		
+		p.get().setNote(pro.getNote());
+		procedureRepository.save(p.get());
 		return true;
 	}	
 	
@@ -2043,8 +2106,8 @@ public class PatientResource {
 			throw new InvalidOperationException("Could not verify, only ACCEPTED radiologies can be verified");
 		}
 		radiology.get().setResult(radio.getResult());
-		radiology.get().setDiagnosisType(radio.getDiagnosisType());
-		radiology.get().setDescription(radio.getDescription());
+		//radiology.get().setDiagnosisType(radio.getDiagnosisType());
+		//radiology.get().setDescription(radio.getDescription());
 		radiology.get().setAttachment(radio.getAttachment());
 				
 		radiology.get().setVerifiedby(userService.getUserId(request));
@@ -2214,6 +2277,70 @@ public class PatientResource {
 		}
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_prescriptions_by_patient_id").toUriString());
 		return ResponseEntity.created(uri).body(prescriptionsToReturn);
+	}
+	
+	@GetMapping("/patients/get_procedures_by_patient_id") 
+	public ResponseEntity<List<ProcedureModel>> getProcedureByPatientId(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		Optional<Patient> p = patientRepository.findById(id);
+		if(!p.isPresent()) {
+			return null;
+		}
+		List<Consultation> cs = consultationRepository.findAllByPatientAndStatus(p.get(), "IN-PROCESS");
+		List<NonConsultation> ncs = nonConsultationRepository.findAllByPatientAndStatus(p.get(), "IN-PROCESS");
+		List<Procedure> procedures = procedureRepository.findAllByConsultationInOrNonConsultationIn(cs, ncs);
+		
+		List<ProcedureModel> proceduresToReturn = new ArrayList<>();
+		for(Procedure procedure : procedures) {
+			if(procedure.getPatientBill().getStatus().equals("PAID") || procedure.getPatientBill().getStatus().equals("COVERED")) {
+				ProcedureModel pro = new ProcedureModel();
+				pro.setId(procedure.getId());
+				pro.setDiagnosisType(procedure.getDiagnosisType());
+				pro.setNote(procedure.getNote());
+				pro.setProcedureType(procedure.getProcedureType());
+				pro.setPatient(procedure.getPatient());
+				pro.setPatientBill(procedure.getPatientBill());
+				pro.setStatus(procedure.getStatus());
+				
+				
+				if(procedure.getCreatedAt() != null) {
+					pro.setCreated(procedure.getCreatedAt().toString()+" | "+userService.getUserById(procedure.getCreatedby()).getNickname());
+				}else {
+					pro.setCreated("");
+				}
+				if(procedure.getOrderedAt() != null) {
+					pro.setOrdered(procedure.getOrderedAt().toString()+" | "+userService.getUserById(procedure.getOrderedby()).getNickname());
+				}else {
+					pro.setOrdered("");
+				}
+				if(procedure.getRejectedAt() != null) {
+					pro.setRejected(procedure.getRejectedAt().toString()+" | "+userService.getUserById(procedure.getRejectedby()).getNickname() + " | "+procedure.getRejectComment());
+				}else {
+					pro.setRejected("");
+				}
+				pro.setRejectComment(procedure.getRejectComment());			
+				if(procedure.getAcceptedAt() != null) {
+					pro.setAccepted(procedure.getAcceptedAt().toString()+" | "+userService.getUserById(procedure.getAcceptedby()).getNickname());
+				}else {
+					pro.setAccepted("");
+				}
+				if(procedure.getHeldAt() != null) {
+					pro.setHeld(procedure.getHeldAt().toString()+" | "+userService.getUserById(procedure.getHeldby()).getNickname());
+				}else {
+					pro.setHeld("");
+				}		
+				if(procedure.getVerifiedAt() != null) {
+					pro.setVerified(procedure.getVerifiedAt().toString()+" | "+userService.getUserById(procedure.getVerifiedby()).getNickname());
+				}else {
+					pro.setVerified("");
+				}
+				
+				proceduresToReturn.add(pro);				
+			}
+		}
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_procedures_by_patient_id").toUriString());
+		return ResponseEntity.created(uri).body(proceduresToReturn);
 	}
 	
 	@GetMapping("/patients/get_all_clinical_notes_by_patient_id") 
@@ -2657,5 +2784,11 @@ class LRadiology {
 	private String description;
 	private Byte[] attachment;
 	private DiagnosisType diagnosisType;
+}
+
+@Data
+class LProcedure {
+	private Long id;
+	private String note;
 }
 

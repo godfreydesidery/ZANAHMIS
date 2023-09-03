@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IPatient } from 'src/app/domain/patient';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -160,7 +161,6 @@ export class PatientPaymentComponent implements OnInit {
           this.lastName = data!['lastName']
           this.gender = data!['gender']
           this.paymentType = data!['paymentType']
-          this.memberShipNo = data!['memberShipNo']
           this.phoneNo = data!['phoneNo']
           this.address = data!['address']
           this.email = data!['email']
@@ -170,10 +170,6 @@ export class PatientPaymentComponent implements OnInit {
           this.kinFullName = data!['kinFullName']
           this.kinRelationship = data!['kinRelationship']
           this.kinPhoneNo = data!['kinPhoneNo']
-
-          this.registrationFeeStatus = data!['registrationFeeStatus']
-          this.cardValidationStatus = data!['cardValidationStatus']
-          
 
           this.patientRecordMode = ''
         }
@@ -188,9 +184,22 @@ export class PatientPaymentComponent implements OnInit {
     }
   }
 
+  public grant(privilege : string[]) : boolean{
+    /**Allow user to perform an action if the user has that priviledge */
+    var granted : boolean = false
+    privilege.forEach(
+      element => {
+        if(this.auth.checkPrivilege(element)){
+          granted = true
+        }
+      }
+    )
+    return granted
+  }
+
 }
 
-export interface IPatient {
+export interface IPatient1 {
   id : any
   no : string
   firstName : string

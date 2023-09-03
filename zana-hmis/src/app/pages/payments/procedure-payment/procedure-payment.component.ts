@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IPatient } from 'src/app/domain/patient';
 import { ReceiptItem } from 'src/app/domain/receipt-item';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { PosReceiptPrinterService } from 'src/app/services/pos-receipt-printer.service';
@@ -287,9 +288,22 @@ export class ProcedurePaymentComponent implements OnInit {
 
   }
 
+  public grant(privilege : string[]) : boolean{
+    /**Allow user to perform an action if the user has that priviledge */
+    var granted : boolean = false
+    privilege.forEach(
+      element => {
+        if(this.auth.checkPrivilege(element)){
+          granted = true
+        }
+      }
+    )
+    return granted
+  }
+
 }
 
-export interface IPatient {
+export interface IPatient1 {
   id : any
   no : string
   firstName : string

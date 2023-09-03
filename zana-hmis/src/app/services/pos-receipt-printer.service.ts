@@ -61,14 +61,11 @@ export class PosReceiptPrinterService {
     }
     const win = window.open('', "tempWinForPdf")
     pdfMake.createPdf(docDefinition).print({}, win)
-    //win!.onfocus = function () { setTimeout(function () { win!.close(); }, 10000); } 
+    win!.onfocus = function () { setTimeout(function () { win!.close(); }, 10000); } 
     
   }
 
   print = async (items : ReceiptItem[], receiptNo :string, cash : number) => {
-
-
-
 
     var companyName = localStorage.getItem('company-name')!
 
@@ -167,15 +164,9 @@ export class PosReceiptPrinterService {
           },                    
         ]     
       }
-    pdfMake.createPdf(docDefinition).open(); 
-
-
-
-
-
-
-
-
+      const win = window.open('', "tempWinForPdf")
+      pdfMake.createPdf(docDefinition).print({}, win)
+      win!.onfocus = function () { setTimeout(function () { win!.close(); }, 10000); } 
   }
 
   

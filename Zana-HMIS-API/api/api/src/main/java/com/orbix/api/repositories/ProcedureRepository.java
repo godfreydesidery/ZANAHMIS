@@ -74,6 +74,25 @@ public interface ProcedureRepository extends JpaRepository<Procedure, Long> {
 	 */
 	List<Procedure> findAllByPatient(Patient patient);
 
+	/**
+	 * @param cs
+	 * @return
+	 */
+	List<Procedure> findAllByConsultationIn(List<Consultation> cs);
+
+	/**
+	 * @param ncs
+	 * @return
+	 */
+	List<Procedure> findAllByNonConsultationIn(List<NonConsultation> ncs);
+
+	/**
+	 * @param cs
+	 * @param ncs
+	 * @return
+	 */
+	List<Procedure> findAllByConsultationInOrNonConsultationIn(List<Consultation> cs, List<NonConsultation> ncs);
+
 
 
 }

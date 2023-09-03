@@ -59,5 +59,18 @@ export class RadiologyOutpatientListComponent {
           this.msgBox.showErrorMessage('Could not load patients')
         }
       )
-    }  
+    } 
+    
+    public grant(privilege : string[]) : boolean{
+      /**Allow user to perform an action if the user has that priviledge */
+      var granted : boolean = false
+      privilege.forEach(
+        element => {
+          if(this.auth.checkPrivilege(element)){
+            granted = true
+          }
+        }
+      )
+      return granted
+    }
 }

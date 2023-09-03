@@ -66,8 +66,6 @@ public class ConversionCoefficientResource {
 		return ResponseEntity.ok().body(itemMedicineCoefficientRepository.findById(id).get());
 	}
 	
-	
-	
 	@PostMapping("/item_medicine_coefficients/save")
 	//@PreAuthorize("hasAnyAuthority('ROLE-CREATE')")
 	public ResponseEntity<ItemMedicineCoefficient>save(
