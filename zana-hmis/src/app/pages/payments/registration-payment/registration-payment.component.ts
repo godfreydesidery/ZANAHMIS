@@ -18,10 +18,10 @@ const API_URL = environment.apiUrl;
 })
 export class RegistrationPaymentComponent implements OnInit {
 
-  searchKeys : string[] = []
+  //searchKeys : string[] = []
   searchKey : string = ''
 
-  id : any
+  id : any = null
   no : string = ''
   firstName : string = ''
   middleName : string = ''
@@ -60,6 +60,8 @@ export class RegistrationPaymentComponent implements OnInit {
 
   amountReceived : number = 0
 
+  lockSearchKey : boolean = false
+
   constructor(
               private auth : AuthService,
               private http : HttpClient,
@@ -96,6 +98,24 @@ export class RegistrationPaymentComponent implements OnInit {
     )
   }
 
+  searchKeysToDisplay : string[] = []
+  searchKeys : string[] = []
+  filterSearchKeys(value : string){
+
+    this.searchKeysToDisplay = []
+    if(value.length < 4){
+      return
+    }
+
+    this.searchKeys.forEach(element => {
+      var elementToLower = element.toLowerCase()
+      var valueToLower = value.toLowerCase()
+      if(elementToLower.includes(valueToLower)){
+        this.searchKeysToDisplay.push(element)
+      }
+    })
+  }
+
 
   async searchBySearchKey(key : string): Promise<void> {
     
@@ -122,6 +142,9 @@ export class RegistrationPaymentComponent implements OnInit {
     .toPromise()
     .then(
       data => {
+
+        this.searchKey = key
+
         this.id = data!['id']
         this.no = data!['no']
         this.firstName = data!['firstName']
@@ -130,6 +153,8 @@ export class RegistrationPaymentComponent implements OnInit {
         this.dateOfBirth = data!['dateOfBirth']
         this.phoneNo = data!['phoneNo']
         this.address = data!['address']
+
+        this.lockSearchKey = true
 
         this.total = 0
         this.loadRegistrationBill()
@@ -168,6 +193,8 @@ export class RegistrationPaymentComponent implements OnInit {
     this.kinPhoneNo = ''
     this.amountReceived = 0
     this.total = 0
+
+    this.lockSearchKey = false
     
   }
 

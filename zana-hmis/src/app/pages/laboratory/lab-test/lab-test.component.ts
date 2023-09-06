@@ -1,15 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { ILabTest } from 'src/app/domain/lab-test';
-import { ILabTestType } from 'src/app/domain/lab-test-type';
-import { ILabTestTypeRange } from 'src/app/domain/lab-test-type-range';
 import { IPatient } from 'src/app/domain/patient';
-import { IPatientBill } from 'src/app/domain/patient-bill';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 

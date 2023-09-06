@@ -94,6 +94,9 @@ import { PrescriptionHistoryComponent } from './pages/doctor/prescription-histor
 import { WorkingDiagnosisHistoryComponent } from './pages/doctor/working-diagnosis-history/working-diagnosis-history.component';
 import { FinalDiagnosisHistoryComponent } from './pages/doctor/final-diagnosis-history/final-diagnosis-history.component';
 import { PharmacyMedicineStockStatusComponent } from './pages/pharmacy/pharmacy-medicine-stock-status/pharmacy-medicine-stock-status.component';
+import { LabTestReportComponent } from './pages/laboratory/reports/lab-test-report/lab-test-report.component';
+import { LabTestStatisticsReportComponent } from './pages/laboratory/reports/lab-test-statistics-report/lab-test-statistics-report.component';
+import { LabSampleCollectionReportComponent } from './pages/laboratory/reports/lab-sample-collection-report/lab-sample-collection-report.component';
 
 @NgModule({
   declarations: [
@@ -180,6 +183,9 @@ import { PharmacyMedicineStockStatusComponent } from './pages/pharmacy/pharmacy-
     ProcedureHistoryComponent,
     PrescriptionHistoryComponent,
     PharmacyMedicineStockStatusComponent,
+    LabTestReportComponent,
+    LabTestStatisticsReportComponent,
+    LabSampleCollectionReportComponent,
   ],
   imports: [
     HttpClientModule,
@@ -229,6 +235,9 @@ import { PharmacyMedicineStockStatusComponent } from './pages/pharmacy/pharmacy-
     {path : 'lab-outpatient-list', component : LabOutpatientListComponent},
     {path : 'lab-inpatient-list', component : LabInpatientListComponent},
     {path : 'lab-outsider-list', component : LabOutsiderListComponent},
+    {path : 'lab-test-report', component : LabTestReportComponent},
+    {path : 'lab-test-statistics-report', component : LabTestStatisticsReportComponent},
+    {path : 'lab-sample-collection-report', component : LabSampleCollectionReportComponent},
     {path : 'radiology-outpatient-list', component : RadiologyOutpatientListComponent},
     {path : 'radiology-inpatient-list', component : RadiologyInpatientListComponent},
     {path : 'radiology-outsider-list', component : RadiologyOutsiderListComponent},

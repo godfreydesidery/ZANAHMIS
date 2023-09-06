@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
@@ -18,7 +18,7 @@ const API_URL = environment.apiUrl;
 })
 export class ListFromReceptionComponent implements OnInit {
 
-  clinicianId : any
+  clinicianId : any = null
 
   consultations : IConsultation[] = []
 
@@ -31,7 +31,11 @@ export class ListFromReceptionComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.loadClinician()
-    await this.loadListFromReception(this.clinicianId)
+    if(this.clinicianId != null){
+      await this.loadListFromReception(this.clinicianId)
+    }else{
+      this.msgBox.showErrorMessage('User not found in doctors register')
+    }
   }
 
   async loadClinician(){    
@@ -50,7 +54,7 @@ export class ListFromReceptionComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load clinician')
+        this.msgBox.showErrorMessage('Could not load doctor')
         console.log(error)
       }
     )

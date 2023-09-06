@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
@@ -222,7 +222,7 @@ export class PatientPharmacyComponent {
       }
     })
     this.spinner.show()
-    await this.http.post<boolean>(API_URL+'/patients/issue_medicine', prescriptions, options)
+    await this.http.post<boolean>(API_URL+'/patients/issue_medicine?pharmacy_id='+this.pharmacyId, prescriptions, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(

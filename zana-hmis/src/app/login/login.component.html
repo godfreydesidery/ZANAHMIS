@@ -1,4 +1,4 @@
-<div class="login-wrapper">
+<div class="login-wrapper" style="background-image: url('assets/images/login-bg.jpg'); background-repeat: no-repeat; background-attachment: fixed; background-size: cover; height: 100%; width: 100%;">
     <div>
         <div class="row" style="margin-top: 10%;">
             <div class="col-sm-4"></div>
@@ -54,7 +54,7 @@
                                 <button class="btn btn-primary form-control" (click)="loginUser()" style="height: 15mm;">Login</button>
                             </div>
                             <div class="col-xs-6">
-                                <button class="btn btn-danger btn-outline form-control" style="height: 15mm;">Reset</button>
+                                <button class="btn btn-danger btn-outline form-control" (click)="clearFields()" style="height: 15mm;" >Reset</button>
                             </div>
                         </div>
                        

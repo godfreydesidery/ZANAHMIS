@@ -151,12 +151,11 @@
                                 <div class="col-sm-12">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <h4 class="text-primary"><b>Search Patient(Enter 4 characters)</b></h4>
-                                        </div>
-                                        <div class="col-sm-12">
                                             <div class="row">
+                                                <div class="col-xs-3"></div>
                                                 <div class="col-xs-6">
-                                                    <input type="text" class="form-control" [(ngModel)]="searchKey" (ngModelChange)="filterSearchKeys($event)" [readonly]="lockSearchKey" placeholder="Search by File#, name or phone">
+                                                    <h4 class="text-primary"><b>Search Patient(Enter 4 characters)</b></h4>
+                                                    <input type="text" class="form-control" [(ngModel)]="searchKey" (ngModelChange)="filterSearchKeys($event)" [readonly]="lockSearchKey" placeholder="Search by File#, name or phone" style="max-width: 13cm;">
                                                     <div class="row" *ngIf="lockSearchKey === false && searchKey.length > 0">
                                                         <div class="col-sm-12" *ngFor="let s of searchKeysToDisplay">
                                                             <button class="btn btn-default form-control"  (click)="searchBySearchKey(s)" style="text-align: left; border-style: none;">{{s}}</button>
@@ -167,6 +166,7 @@
                                                     </datalist> 
                                                 </div>
                                                 <div class="col-xs-3">
+                                                    <br><br>
                                                     <button class="btn btn-deafult btn-outline" (click)="existingPatientPrompt()">Reset</button>
                                                 </div>
                                             </div>
@@ -289,7 +289,7 @@
                                                                 <td>{{consultation.clinic.name}}</td>
                                                                 <td>{{consultation.clinician.nickname}}</td>
                                                                 <td>{{consultation.status}}</td>
-                                                                <td><button class="btn btn-danger" *ngIf="consultation.status === 'PENDING'" (click)="cancelConsultation(consultation.id)">Cancel Consultation</button><span  *ngIf="consultation.status != 'PENDING'">No Action Required</span></td>
+                                                                <td><button class="btn btn-danger form-control" *ngIf="consultation.status === 'PENDING'" (click)="cancelConsultation(consultation.id)"><i class="glyphicon glyphicon-trash"></i> </button><span  *ngIf="consultation.status != 'PENDING'">No Action Required</span></td>
                                                             </tr>
                                                         </tbody>
                                                     </table>

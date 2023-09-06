@@ -28,14 +28,14 @@
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <textarea class="form-control" [(ngModel)]="cNMainComplain" placeholder="Main Complain"></textarea>
-                                            <textarea class="form-control" [(ngModel)]="cNPresentIllnessHistory" placeholder="History of Present Illness"></textarea>
+                                            <textarea class="form-control" [(ngModel)]="cNMainComplain" placeholder="Main Complain" style="height: 7cm;"></textarea>
+                                            <!--<textarea class="form-control" [(ngModel)]="cNPresentIllnessHistory" placeholder="History of Present Illness"></textarea>
                                             <textarea class="form-control" [(ngModel)]="cNPastMedicalHistory" placeholder="Past Medical History"></textarea>
                                             <textarea class="form-control" [(ngModel)]="cNFamilyAndSocialHistory" placeholder="Family and Social History"></textarea>
                                             <textarea class="form-control" [(ngModel)]="cNDrugsAndAllergyHistory" placeholder="Drugs and Allergy History"></textarea>
                                             <textarea class="form-control" [(ngModel)]="cNReviewOfOtherSystems" placeholder="Review of Other Systems"></textarea>
                                             <textarea class="form-control" [(ngModel)]="cNPhysicalExamination" placeholder="Physical Examination"></textarea>
-                                            <textarea class="form-control" [(ngModel)]="cNManagementPlan" placeholder="Management Plan"></textarea>
+                                            <textarea class="form-control" [(ngModel)]="cNManagementPlan" placeholder="Management Plan"></textarea>-->
                                         </div>
                                     </div>
                                 </div>
@@ -101,7 +101,7 @@
                                                         <td>{{workingDiagnosis.diagnosisType?.code}}</td>
                                                         <td>{{workingDiagnosis.diagnosisType?.name}}</td>
                                                         <td>{{workingDiagnosis.description}}</td>
-                                                        <td><a (click)="deleteWorkingDiagnosis(workingDiagnosis.id)"><i class="fa fa-trash"></i></a></td>
+                                                        <td><a (click)="deleteWorkingDiagnosis(workingDiagnosis.id)"><i class="fa fa-trash text-danger"></i></a></td>
                                                     </tr>
                                                 </tbody>
                                             </table>    
@@ -128,7 +128,7 @@
                                                         <td>{{finalDiagnosis.diagnosisType?.code}}</td>
                                                         <td>{{finalDiagnosis.diagnosisType?.name}}</td>
                                                         <td>{{finalDiagnosis.description}}</td>
-                                                        <td><a (click)="deleteFinalDiagnosis(finalDiagnosis.id)"><i class="fa fa-trash"></i></a></td>
+                                                        <td><a (click)="deleteFinalDiagnosis(finalDiagnosis.id)"><i class="fa fa-trash text-danger"></i></a></td>
                                                     </tr>
                                                 </tbody>
                                             </table>    
@@ -147,7 +147,7 @@
                                     <div class="col-sm-12">
                                         <label>Laboratory</label>
                                         <button class="btn btn-primary pull-right" (click)="clearLabTest()" data-toggle="modal" data-target="#assign-lab-test-modal" style="margin-right: 2mm;">Assign Lab Test</button>
-                                        <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#lab-test-result-modal" style="margin-right: 2mm;">View Result</button>
+                                        <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#lab-test-result-modal" style="margin-right: 2mm;"><i class="hvr-buzz-out fa fa-medkit"></i> View Result</button>
                                     </div>
                                 </div>
                                 <div class="jumbotron jumbotron-fluid">
@@ -180,7 +180,7 @@
                                                         </td>
                                                         <td>
                                                             
-                                                            <a (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash"></i></a>
+                                                            <a (click)="deleteLabTest(labTest.id)"><i class="fa fa-trash text-danger"></i></a>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -195,7 +195,7 @@
                                     <div class="col-sm-12">
                                         <label>Radiology</label>
                                         <button class="btn btn-primary pull-right" (click)="clearRadiology()" data-toggle="modal" data-target="#assign-radiology-modal" style="margin-right: 2mm;">Assign Radiology</button>
-                                        <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#radiology-result-modal" style="margin-right: 2mm;">View Result</button>
+                                        <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#radiology-result-modal" style="margin-right: 2mm;"><i class="hvr-buzz-out fa fa-medkit"></i> View Result</button>
                                     </div>
                                 </div>
                                 <div class="jumbotron jumbotron-fluid">                               
@@ -228,7 +228,7 @@
                                                         </td>
                                                         <td>
                                                              
-                                                            <a (click)="deleteRadiology(radiology?.id)"><i class="fa fa-trash"></i></a>
+                                                            <a (click)="deleteRadiology(radiology?.id)"><i class="fa fa-trash text-danger"></i></a>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -246,7 +246,7 @@
                                     <div class="col-sm-4"></div>
                                     <div class="col-sm-4">
                                         <h4>Select Medicine</h4>
-                                        <select class="form-control" [(ngModel)]="medicineName">
+                                        <select class="form-control" [(ngModel)]="medicineName" (change)="getMedicineUnit(medicineName)">
                                             <option></option>
                                             <option *ngFor="let name of medicineNames">{{name}}</option>
                                         </select>
@@ -288,7 +288,7 @@
                                                         <span *ngIf="prescription.patientBill?.status != 'COVERED' && consultation.paymentType ==='INSURANCE'">{{prescription.patientBill?.status}}(NOT COVERED)</span>
                                                     </td>
                                                     <td>{{prescription.status}}</td>
-                                                    <td><a (click)="deletePrescription(prescription.id)"><i class="fa fa-trash"></i></a></td>
+                                                    <td><a (click)="deletePrescription(prescription.id)"><i class="fa fa-trash text-danger"></i></a></td>
                                                 </tr>
                                                 <tr *ngIf="medicineName != ''">
                                                     <td>{{medicineName}}</td>
@@ -341,6 +341,126 @@
                             </div>
                         </div>
                         <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="jumbotron jumbotron-fluid">
+                                        <div class="row">
+                                            <div class="col-sm-5">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <button class="btn btn-primary" (click)="clearProcedure()">Add Procedure</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-8">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <h4>Select Procedure Type</h4>
+                                                                <select class="form-control" [(ngModel)]="procedureTypeName">
+                                                                    <option></option>
+                                                                    <option *ngFor="let name of procedureTypeNames">{{name}}</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-sm-12">
+                                                                <h4>Select Diagnosis</h4>
+                                                                <select class="form-control" [(ngModel)]="diagnosisTypeName">
+                                                                    <option></option>
+                                                                    <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button (click)="toggleTheatre()" style="width: 4cm; height: 4cm; background-color: rgba(244, 248, 247, 0.921);border-style: groove;">Need Theatre?</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row" *ngIf="procedureNeedTheatre === true">
+                                                    <div  class="col-sm-12">
+                                                        <h4>Select Theatre</h4>
+                                                        <select class="form-control" [(ngModel)]="theatreName">
+                                                            <option></option>
+                                                            <option *ngFor="let name of theatreNames">{{name}}</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <h4>Time</h4>
+                                                        <input type="time" class="form-control" [(ngModel)]="procedureTime">
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <h4>Date</h4>
+                                                        <input type="date" class="form-control" [(ngModel)]="procedureDate">
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <h4>Hours</h4>
+                                                        <input type="number" class="form-control" [(ngModel)]="procedureHours">
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <h4>Minutes</h4>
+                                                        <input type="number" class="form-control" [(ngModel)]="procedureMinutes">
+                                                    </div>
+                                                </div>            
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <hr>
+                                                        <button type="button" class="btn btn-success pull-right" (click)="saveProcedure()" data-dismiss="modal">Save Procedure</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-7">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-hover  table-striped">
+                                                        <thead class="success">
+                                                        <tr>
+                                                            <th>Procedure</th>
+                                                            <th>Diagnosis</th>
+                                                            <!--<th>Theatre</th>
+                                                            <th>Time</th>
+                                                            <th>Date</th>
+                                                            <th>Hours</th>
+                                                            <th>Minutes</th>-->
+                                                            <th>Price</th>
+                                                            <th>Payment</th>
+                                                            <th>Status</th>
+                                                            <th>Procedure Note</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr *ngFor="let procedure of procedures">
+                                                                <td>{{procedure.procedureType?.name}}</td>
+                                                                <td>{{procedure.diagnosisType?.name}}</td>
+                                                                <!--<td>{{procedure.theatre?.name}}</td>
+                                                                <td>{{procedure.time}}</td>
+                                                                <td>{{procedure.date | date}}</td>
+                                                                <td>{{procedure.hours}}</td>
+                                                                <td>{{procedure.minutes}}</td>-->
+                                                                <td style="text-align: right;"><span *ngIf="procedure.patientBill?.status != 'COVERED'">{{procedure.patientBill?.amount | currency:'':''}}</span><span *ngIf="procedure.patientBill?.status === 'COVERED'">---</span></td>
+                                                                <td>
+                                                                    <span *ngIf="procedure.patientBill?.status === 'COVERED' && consultation.paymentType ==='INSURANCE'">{{procedure.patientBill?.status}}</span>
+                                                                    <span *ngIf="procedure.patientBill?.status != 'COVERED' && consultation.paymentType !='INSURANCE'">{{procedure.patientBill?.status}}</span>
+                                                                    <span *ngIf="procedure.patientBill?.status != 'COVERED' && consultation.paymentType ==='INSURANCE'">{{procedure.patientBill?.status}}(NOT COVERED)</span>
+                                                                </td>
+                                                                <td>{{procedure.status}}</td>
+                                                                <td>
+                                                                    <a (click)="showProcedureNote(procedure.id, procedure.procedureType.name, procedure.note)" *ngIf="(procedure.patientBill?.status === 'COVERED' || procedure.patientBill?.status === 'PAID') && procedure.note === null" data-toggle="modal" data-target="#add-procedure-note-to-procedure-modal"><i class="fa fa-file"></i></a>
+                                                                    <a (click)="showProcedureNote(procedure.id, procedure.procedureType.name, procedure.note)" *ngIf="(procedure.patientBill?.status === 'COVERED' || procedure.patientBill?.status === 'PAID') && procedure.note != null" data-toggle="modal" data-target="#add-procedure-note-to-procedure-modal"><i class="fa fa-pencil"></i></a>
+                                                                </td>
+                                                                <td>
+                                                                    <a (click)="deleteProcedure(procedure.id)"><i class="fa fa-trash text-danger"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+                        <!--<div class="col-sm-12">
                             <hr>
                             <button class="btn btn-primary pull-right" (click)="clearProcedure()" data-toggle="modal" data-target="#assign-procedure-modal">Assign Procedure</button>
                             <br>
@@ -396,7 +516,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
                     
                 </div> 
@@ -487,7 +607,7 @@
 </div>
 
 <div class="modal fade modal-success" id="lab-test-result-modal" tabindex="-2" role="dialog">
-    <div class="modal-dialog modal-lg" role="document" style="width: 100%;">
+    <div class="modal-dialog modal-md" role="document" style="width: 80%;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -655,7 +775,7 @@
 
 
 <div class="modal fade modal-success" id="radiology-result-modal" tabindex="-2" role="dialog">
-    <div class="modal-dialog modal-lg" role="document" style="width: 100%;">
+    <div class="modal-dialog modal-lg" role="document" style="width: 80%;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

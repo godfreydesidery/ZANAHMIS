@@ -1,14 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IProcedure } from 'src/app/domain/procedure';
-import { IMedicine } from 'src/app/domain/medicine';
 import { IPatient } from 'src/app/domain/patient';
-import { IPatientBill } from 'src/app/domain/patient-bill';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 

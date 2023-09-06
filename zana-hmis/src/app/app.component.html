@@ -1,4 +1,4 @@
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini" style="background-color: rgb(210, 211, 212);">
 
   <div *ngIf="isLoggedIn===false">
       <app-login></app-login>
@@ -6,16 +6,19 @@
 
 
   <!-- Site wrapper -->
+  <div style="margin-left: 3cm; margin-right: 3cm; margin-bottom: 1cm; border-radius: 3mm;">
+
+  
   <div class="wrapper" *ngIf="isLoggedIn===true">
       <header class="main-header">
-          <a href="index.html" class="logo"> <!-- Logo -->
+          <a href="index.html" class="logo" style="background-color: transparent;"> <!-- Logo -->
               <span class="logo-mini">
                   <!--<b>A</b>H-admin-->
                   <!--<img src="assets/dist/img/mini-logo.png" alt="">-->
               </span>
-              <span class="logo-lg" style="margin-top: 4mm;">
+              <span class="logo-lg" style="margin: 1mm;">
                   <!--<b>Admin</b>H-admin-->
-                  <img *ngIf="retrievedImage" class="img-fluid img-thumbnail" [src]="retrievedImage" style="width: 3cm;">
+                  <img *ngIf="retrievedImage" class="img-fluid img-thumbnail" [src]="retrievedImage" style="width: 100%; height: 100%;">
                   <!--<img src="assets/dist/img/zana-logo.png" alt="">-->
               </span>
           </a>
@@ -49,6 +52,7 @@
       <!-- =============================================== -->
       <!-- Left side column. contains the sidebar -->
       <aside class="main-sidebar">
+          <br>
           <!-- sidebar -->
           <div class="sidebar">
               <!-- Sidebar user panel -->
@@ -64,7 +68,7 @@
               
               <!-- sidebar menu -->
                 <ul class="sidebar-menu">
-                    <li class="active">
+                    <li>
                       <a href="index.html"><i class="fa fa-hospital-o"></i><span>My Dashboard</span>
                       </a>
                     </li>
@@ -119,6 +123,19 @@
                             <li><a routerLink="/lab-outpatient-list">Outpatient List</a></li>
                             <li><a routerLink="/lab-inpatient-list">Inpatient List</a></li>
                             <li><a routerLink="/lab-outsider-list">Outsider List</a></li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-user-md"></i><span>Reports</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a routerLink="/lab-test-report">Test Report</a></li>
+                                    <li><a routerLink="/lab-test-statistics-report">Test Statistics Report</a></li>
+                                    <li><a routerLink="/lab-sample-collection-report">Sample Collection Report</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
                     <li class="treeview" *ngIf="grant(['RADIOLOGY_SERVICE-A'])">
@@ -372,5 +389,7 @@
           <strong>Copyright &copy; 2023 <a href="#">Zana Health Care</a>.</strong> All rights reserved.
       </footer>
   </div> <!-- ./wrapper -->
+  </div>
 </body>
-<ngx-spinner>Processing, Please wait...</ngx-spinner>
+<ngx-spinner>Zana. Process loading, Please wait...</ngx-spinner>
+

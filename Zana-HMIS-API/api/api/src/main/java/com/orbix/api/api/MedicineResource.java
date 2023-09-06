@@ -6,6 +6,7 @@ package com.orbix.api.api;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -22,9 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.Medicine;
+import com.orbix.api.domain.PharmacyMedicine;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.MedicineRepository;
+import com.orbix.api.repositories.PharmacyMedicineRepository;
 import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.service.DayService;
 import com.orbix.api.service.InsurancePlanService;
@@ -48,6 +51,7 @@ public class MedicineResource {
 	private final MedicineService medicineService;
 	private final UserService userService;
 	private final DayService dayService;
+	private final PharmacyMedicineRepository pharmacyMedicineRepository;
 	
 	
 	@GetMapping("/medicines")
@@ -94,4 +98,21 @@ public class MedicineResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/medicines/save").toUriString());
 		return ResponseEntity.created(uri).body(medicineService.save(medicine, request));
 	}
+	
+	@PostMapping("/medicines/get_available_units")
+	public double getMedicineUnits(
+			@RequestBody Medicine med,
+			HttpServletRequest request){
+		double unit = 0;
+		Optional<Medicine> medicine = medicineRepository.findByName(med.getName());
+		if(medicine.isEmpty()) {
+			return 0;
+		}
+		List<PharmacyMedicine> pms = pharmacyMedicineRepository.findAllByMedicine(medicine.get());
+		for(PharmacyMedicine pm : pms) {
+			unit = unit + pm.getStock();
+		}
+		return unit;
+	}
+	
 }

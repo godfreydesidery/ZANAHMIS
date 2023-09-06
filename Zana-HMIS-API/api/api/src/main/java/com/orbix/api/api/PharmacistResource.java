@@ -87,8 +87,11 @@ public class PharmacistResource {
 	public ResponseEntity<Long> loadPharmacistByUsername(
 			@RequestParam(name = "username") String username,
 			HttpServletRequest request){
-		User user = userRepository.findByUsername(username);
-		Optional<Pharmacist> c = pharmacistRepository.findByUser(user);
+		Optional<User> user = userRepository.findByUsername(username);
+		if(user.isEmpty()) {
+			throw new NotFoundException("Usrr not found");
+		}
+		Optional<Pharmacist> c = pharmacistRepository.findByUser(user.get());
 		if(!c.isPresent()) {
 			throw new NotFoundException("User Account not associated with pharmacist");
 		}		

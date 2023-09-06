@@ -122,6 +122,7 @@ D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\doma
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\ProcedureTypeInsurancePlanRepository.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\api\ItemResource.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\PharmacyToStoreRORepository.java
+D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\PharmacyStockCard.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\AdmissionBedRepository.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\PatientInvoiceRepository.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\MedicineService.java
@@ -274,3 +275,4 @@ D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\exce
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\api\InsuranceProviderResource.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\models\StoreToPharmacyRNModel.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\LabTest.java
+D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\PharmacyStockCardRepository.java

@@ -4,6 +4,7 @@
 package com.orbix.api.api;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,15 +25,20 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Clinic;
+import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyMedicine;
+import com.orbix.api.domain.PharmacyStockCard;
+import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.PharmacyMedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
+import com.orbix.api.repositories.PharmacyStockCardRepository;
 import com.orbix.api.service.PharmacyService;
 import com.orbix.api.service.DayService;
 import com.orbix.api.service.UserService;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -49,6 +55,7 @@ public class PharmacyResource {
 	private final PharmacyRepository pharmacyRepository;
 	private final PharmacyService pharmacyService;
 	private final PharmacyMedicineRepository pharmacyMedicineRepository;
+	private final PharmacyStockCardRepository pharmacyStockCardRepository;
 	
 
 	private final UserService userService;
@@ -106,5 +113,41 @@ public class PharmacyResource {
 		return ResponseEntity.ok().body(pharmacyMedicines);
 	}
 	
+	@PostMapping("/pharmacies/update_stock")
+	public void updateStock(
+			@RequestBody LPharmacyMedicine pm,
+			HttpServletRequest request){
+		
+		PharmacyMedicine pharmacyMedicine = pharmacyMedicineRepository.findById(pm.getId()).get();
+		Pharmacy pharmacy = pharmacyMedicine.getPharmacy();
+		Medicine medicine = pharmacyMedicine.getMedicine();
+		if(pm.getStock() < 0) {
+			throw new InvalidOperationException("Negative value is not allowed");
+		}
+		pharmacyMedicine.setStock(pm.getStock());
+		pharmacyMedicineRepository.save(pharmacyMedicine);
+		
+		PharmacyStockCard pharmacyStockCard = new PharmacyStockCard();
+		pharmacyStockCard.setMedicine(medicine);
+		pharmacyStockCard.setPharmacy(pharmacy);
+		pharmacyStockCard.setQtyIn(pm.getStock());
+		pharmacyStockCard.setQtyOut(0);
+		pharmacyStockCard.setBalance(pm.getStock());
+		pharmacyStockCard.setReference("Stock Update");
+		
+		pharmacyStockCard.setCreatedBy(userService.getUserId(request));
+		pharmacyStockCard.setCreatedOn(dayService.getDayId());
+		pharmacyStockCard.setCreatedAt(LocalDateTime.now());
+		
+		pharmacyStockCardRepository.save(pharmacyStockCard);
+		
+	}
 	
 }
+
+@Data
+class LPharmacyMedicine {
+	Long id;
+	double stock;
+}
+

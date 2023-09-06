@@ -1,6 +1,6 @@
 import { Byte } from 'src/custom-packages/util';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from 'src/app/auth.service';
 import { environment } from 'src/environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';

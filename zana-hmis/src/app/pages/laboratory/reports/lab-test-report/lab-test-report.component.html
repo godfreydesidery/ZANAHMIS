@@ -1,0 +1,47 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="header-title">
+        <h1>Lab Tests Report</h1>
+    </div>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <!-- Form controls -->
+        <div class="col-sm-12">
+            <div class="panel panel-bd lobidrag">
+                <div class="panel-heading">
+                    <button type="button" class="btn btn-success btn-outline" (click)="exportToPdf()"><i class="fa fa-file-pdf-o"></i> Pdf</button>
+                    <button type="button" class="btn btn-success btn-outline" (click)="exportToSpreadsheet()"><i class="fa fa-file-excel-o"></i> Excel</button>
+                    <button type="button" class="btn btn-success btn-outline" (click)="exportToSpreadsheet()"><i class="fa fa-print"></i> Print</button>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                    <h4>From</h4>
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="date" class="form-control">
+                                </div>
+                                <div class="col-sm-1">
+                                    <h4>To</h4>
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="date" class="form-control">
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-primary btn-outline">Run Report</button>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-primary btn-outline">Clear</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>     
+</section> <!-- /.content -->

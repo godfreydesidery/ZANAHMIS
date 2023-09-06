@@ -1,13 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
-import { IConsultation } from 'src/app/domain/consultation';
-import { IMedicine } from 'src/app/domain/medicine';
-import { IPatient } from 'src/app/domain/patient';
 import { IPharmacyMedicine } from 'src/app/domain/pharmacy-medicine';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
@@ -20,6 +17,13 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./pharmacy-medicine-stock-status.component.scss']
 })
 export class PharmacyMedicineStockStatusComponent {
+
+  id : any = null
+  pharmacyMedicineCode : string = ''
+  pharmacyMedicineName : string = ''
+  pharmacyMedicineStock : number = 0
+
+
 
   pharmacyName = localStorage.getItem('selected-pharmacy-name')
 
@@ -40,6 +44,7 @@ export class PharmacyMedicineStockStatusComponent {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
+    
     this.spinner.show()
     await this.http.get<IPharmacyMedicine[]>(API_URL+'/pharmacies/get_pharmacy_medicine_list?pharmacy_name='+this.pharmacyName, options)
     .pipe(finalize(() => this.spinner.hide()))
@@ -47,6 +52,7 @@ export class PharmacyMedicineStockStatusComponent {
     .then(
       data => {
         console.log(data)
+        this.pharmacyMedicines = []
         data?.forEach(element => {
           this.pharmacyMedicines.push(element)
         })
@@ -59,6 +65,40 @@ export class PharmacyMedicineStockStatusComponent {
         console.log(error)
       }
     )
+  }
+
+  setValues(id : any, code : string, name : string, stock : number){
+    this.id = id
+    this.pharmacyMedicineCode = code
+    this.pharmacyMedicineName = name
+    this.pharmacyMedicineStock = stock
+  }
+
+  async updateStock(){    
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var pm = {
+      id : this.id,
+      stock : this.pharmacyMedicineStock
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/pharmacies/update_stock', pm, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Updated successifully')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+    this.loadPharmacyMedicines()
   }
 
 }

@@ -129,7 +129,7 @@ export class UserProfileComponent implements OnInit {
       .catch(
         error => {
           console.log(error)
-          this.msgBox.showErrorMessage('Could not create user')
+          this.msgBox.showErrorMessage('Could not create user. '+error['error'])
         }
       )   
     }else{
@@ -148,7 +148,7 @@ export class UserProfileComponent implements OnInit {
       .catch(
         error => {
           console.log(error);
-          this.msgBox.showErrorMessage('Could not update user')
+          this.msgBox.showErrorMessage('Could not update user. '+error['error'])
         }
       )  
     }

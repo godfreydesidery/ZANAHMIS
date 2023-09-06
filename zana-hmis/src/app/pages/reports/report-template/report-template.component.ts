@@ -1,21 +1,11 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Pipe,PipeTransform } from '@angular/core';
-import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
-import { IClinician } from 'src/app/domain/clinician';
-import { IConsultation } from 'src/app/domain/consultation';
-import { IInsurancePlan } from 'src/app/domain/insurance-plan';
-import { ILabTest } from 'src/app/domain/lab-test';
-import { IPatient } from 'src/app/domain/patient';
-import { IProcedure } from 'src/app/domain/procedure';
-import { IRadiology } from 'src/app/domain/radiology';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 import { Workbook } from 'exceljs';
-import { trigger, state, style, transition, animate } from '@angular/animations';
 import { formatDate } from '@angular/common';
 import { DataService } from 'src/app/services/data.service';
 

@@ -15,7 +15,7 @@ import com.orbix.api.domain.User;
  *
  */
 public interface UserRepository extends JpaRepository<User, Long> {
-	User findByUsername(String username);
+	Optional<User> findByUsername(String username);
 	
 	@Query("SELECT u.nickname FROM User u WHERE u.id =:id")
 	String getNickname(Long id);

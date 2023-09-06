@@ -22,13 +22,17 @@
                                 <td>Code</td>
                                 <td>Name</td>
                                 <td>Qty</td>
+                                <td>Action</td>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let medicine of pharmacyMedicines">
-                                <td>{{medicine?.medicine?.code}}</td>
-                                <td>{{medicine?.medicine?.name}}</td>
-                                <td>{{medicine?.stock}}</td>
+                            <tr *ngFor="let pharmacyMedicine of pharmacyMedicines">
+                                <td>{{pharmacyMedicine?.medicine?.code}}</td>
+                                <td>{{pharmacyMedicine?.medicine?.name}}</td>
+                                <td>{{pharmacyMedicine?.stock}}</td>
+                                <td>
+                                    <button type="button" class="btn btn-success btn-outline" (click)="setValues(pharmacyMedicine.id, pharmacyMedicine.medicine.code, pharmacyMedicine.medicine.name, pharmacyMedicine.stock)" data-toggle="modal" data-target="#edit-qty-modal"><i class="glyphicon glyphicon-pencil"></i> Change Stock</button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -39,3 +43,47 @@
     </div>
      
 </section> <!-- /.content -->
+
+
+<!-- Modal success -->
+<div class="modal fade modal-success" id="edit-qty-modal" tabindex="-1" role="dialog" >
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">Update Stock</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" [(ngModel)]="id">
+                    <div class="col-sm-4">
+                        <h4>Code</h4>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" [(ngModel)]="pharmacyMedicineCode" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h4>Name</h4>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" [(ngModel)]="pharmacyMedicineName" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h4>Stock</h4>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" [(ngModel)]="pharmacyMedicineStock" style="text-align: center;">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success pull-right" (click)="updateStock()" data-dismiss="modal">Update</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

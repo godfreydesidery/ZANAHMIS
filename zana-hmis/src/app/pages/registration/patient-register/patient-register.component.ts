@@ -1,6 +1,5 @@
 import { Time } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Pipe,PipeTransform } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';

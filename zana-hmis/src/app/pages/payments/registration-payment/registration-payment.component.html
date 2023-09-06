@@ -21,20 +21,22 @@
                     
                     <div>
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <label>Search Patient</label>
-                                    </div>
-                                    <div class="col-sm-12">
                                         <div class="row">
-                                            <div class="col-xs-9">
-                                                <input type="text" class="form-control" [(ngModel)]="searchKey" list="search_keys" (input)="searchBySearchKey(searchKey)" placeholder="Search by File#, Names or Phone No">
-                                                <datalist id="search_keys" style="padding: 0px;">
-                                                    <option *ngFor="let s of searchKeys" [ngValue]="s">{{s}}</option>
-                                                </datalist> 
+                                            <div class="col-xs-3"></div>
+                                            <div class="col-xs-6">
+                                                <h4 class="text-primary">Search Patient</h4>
+                                                <input type="text" class="form-control" [(ngModel)]="searchKey" (ngModelChange)="filterSearchKeys($event)" [readonly]="lockSearchKey" placeholder="Search by File#, Names or Phone No">
+                                                <div class="row" *ngIf="lockSearchKey === false && searchKey.length > 0">
+                                                    <div class="col-sm-12" *ngFor="let s of searchKeysToDisplay">
+                                                        <button class="btn btn-default form-control"  (click)="searchBySearchKey(s)" style="text-align: left; border-style: none;">{{s}}</button>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-xs-3">
+                                                <br><br>
                                                 <button class="btn btn-deafult btn-outline" (click)="reset()">Reset</button>
                                             </div>
                                         </div>
@@ -64,6 +66,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-6" *ngIf="id != null" >
+                                <br>
                                 <div *ngIf="consultationBill != null || registrationBill != null">
                                     <span>Bills</span>
                                     <table class="table table-bordered table-small">

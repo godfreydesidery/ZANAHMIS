@@ -3,6 +3,7 @@
  */
 package com.orbix.api.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,11 +15,13 @@ import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyMedicine;
+import com.orbix.api.domain.PharmacyStockCard;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PharmacyMedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
+import com.orbix.api.repositories.PharmacyStockCardRepository;
 import com.orbix.api.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -40,6 +43,8 @@ public class MedicineServiceImpl implements MedicineService{
 	private final MedicineRepository medicineRepository;
 	private final PharmacyRepository pharmacyRepository;
 	private final PharmacyMedicineRepository pharmacyMedicineRepository;
+	
+	private final PharmacyStockCardRepository pharmacyStockCardRepository;
 	
 	@Override
 	public Medicine save(Medicine medicine, HttpServletRequest request) {
@@ -63,7 +68,21 @@ public class MedicineServiceImpl implements MedicineService{
 				pm.setMedicine(medicine);
 				pm.setPharmacy(pharmacy);
 				pm.setStock(0);
-				pharmacyMedicineRepository.save(pm);
+				pm = pharmacyMedicineRepository.save(pm);
+				
+				PharmacyStockCard pharmacyStockCard = new PharmacyStockCard();
+				pharmacyStockCard.setMedicine(medicine);
+				pharmacyStockCard.setPharmacy(pharmacy);
+				pharmacyStockCard.setQtyIn(pm.getStock());
+				pharmacyStockCard.setQtyOut(0);
+				pharmacyStockCard.setBalance(0);
+				pharmacyStockCard.setReference("Opening stock, medicine creation");
+				
+				pharmacyStockCard.setCreatedBy(userService.getUserId(request));
+				pharmacyStockCard.setCreatedOn(dayService.getDayId());
+				pharmacyStockCard.setCreatedAt(LocalDateTime.now());
+				
+				pharmacyStockCardRepository.save(pharmacyStockCard);
 			}			
 		}	
 		

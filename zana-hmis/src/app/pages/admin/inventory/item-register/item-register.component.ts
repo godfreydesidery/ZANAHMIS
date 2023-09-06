@@ -3,8 +3,6 @@ import { Component } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
-import { IClinic } from 'src/app/domain/clinic';
-import { IClinician } from 'src/app/domain/clinician';
 import { IItem } from 'src/app/domain/item';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';

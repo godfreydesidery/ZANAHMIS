@@ -40,6 +40,7 @@ import com.orbix.api.domain.PatientInvoiceDetail;
 import com.orbix.api.domain.PatientPaymentDetail;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyMedicine;
+import com.orbix.api.domain.PharmacyStockCard;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.Medicine;
@@ -90,6 +91,7 @@ import com.orbix.api.repositories.PatientPaymentRepository;
 import com.orbix.api.repositories.PatientRepository;
 import com.orbix.api.repositories.PharmacyMedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
+import com.orbix.api.repositories.PharmacyStockCardRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.ProcedureTypeRepository;
@@ -151,7 +153,7 @@ public class PatientResource {
 	private final PharmacyMedicineRepository pharmacyMedicineRepository;
 	private final PatientCreditNoteService patientCreditNoteService;
 	private final CompanyProfileRepository companyProfileRepository;
-	
+	private final PharmacyStockCardRepository pharmacyStockCardRepository;
 	
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(
@@ -397,6 +399,9 @@ public class PatientResource {
 	public ResponseEntity<List<Consultation>> loadPendingConsultationsByClinician(
 			@RequestParam(name = "clinician_id") Long clinicianId,
 			HttpServletRequest request){
+		if(clinicianId == null) {
+			throw new NotFoundException("User not present in doctors register");
+		}
 		Optional<Clinician> c = clinicianRepository.findById(clinicianId);
 		
 		List<String> statuses = new ArrayList<>();
@@ -418,6 +423,9 @@ public class PatientResource {
 	public ResponseEntity<List<Consultation>> loadInProcessConsultationsByClinician(
 			@RequestParam(name = "clinician_id") Long clinicianId,
 			HttpServletRequest request){
+		if(clinicianId == null) {
+			throw new NotFoundException("User not present in doctors register");
+		}
 		Optional<Clinician> c = clinicianRepository.findById(clinicianId);
 		if(!c.isPresent()) {
 			throw new NotFoundException("Clinician not found");
@@ -1303,14 +1311,24 @@ public class PatientResource {
 	
 	@PostMapping("/patients/issue_medicine")
 	public boolean issueMedicine(
-			@RequestBody List<Prescription> prescriptions, 
+			@RequestBody List<Prescription> prescriptions,
+			@RequestParam(name = "pharmacy_id") Long pharmacyId, 
 			HttpServletRequest request) {
+		
+		boolean success = true;
+		
+		Optional<Pharmacy> ph = pharmacyRepository.findById(pharmacyId);
+		if(ph.isEmpty()) {
+			throw new NotFoundException("Pharmacy not found");
+		}
+		
 		for(Prescription prescription : prescriptions) {
 			Optional<Prescription> pres = prescriptionRepository.findById(prescription.getId());
 			if(pres.isEmpty()) {
 				throw new NotFoundException("Prescription with id "+prescription.getId().toString()+" not found in database");
 			}
-			if(!(pres.get().getStatus().equals("PENDING") || pres.get().getStatus().equals("NOT-GIVEN"))) {
+			if(!pres.get().getStatus().equals("NOT-GIVEN")) {
+				success = false;
 				throw new InvalidOperationException("Could not issue medicine. Prescription with id "+prescription.getId().toString()+" is not a pending prescription");
 			}
 			if(pres.get().getBalance() > prescription.getIssued() || prescription.getIssued() <= 0) {
@@ -1329,9 +1347,37 @@ public class PatientResource {
 			pres.get().setApprovedAt(dayService.getTimeStamp());
 			
 			prescriptionRepository.save(pres.get());
+			
+			PharmacyMedicine pharmacyMedicine = pharmacyMedicineRepository.findByPharmacyAndMedicine(ph.get(), pres.get().getMedicine()).get();
+			
+			Pharmacy pharmacy = pharmacyMedicine.getPharmacy();
+			Medicine medicine = pharmacyMedicine.getMedicine();
+			if(pharmacyMedicine.getStock() < pres.get().getQty()) {
+				throw new InvalidOperationException("Can not issue, insufficient stock in : "+pres.get().getMedicine().getName());
+			}
+			
+			double newStock = pharmacyMedicine.getStock() - pres.get().getQty();
+			
+			pharmacyMedicine.setStock(newStock);
+			pharmacyMedicineRepository.save(pharmacyMedicine);
+			
+			PharmacyStockCard pharmacyStockCard = new PharmacyStockCard();
+			pharmacyStockCard.setMedicine(medicine);
+			pharmacyStockCard.setPharmacy(pharmacy);
+			pharmacyStockCard.setQtyIn(0);
+			pharmacyStockCard.setQtyOut(pres.get().getQty());
+			pharmacyStockCard.setBalance(newStock);
+			pharmacyStockCard.setReference("Issued in prescription: id "+pres.get().getId().toString());
+			
+			pharmacyStockCard.setCreatedBy(userService.getUserId(request));
+			pharmacyStockCard.setCreatedOn(dayService.getDayId());
+			pharmacyStockCard.setCreatedAt(LocalDateTime.now());
+			
+			pharmacyStockCardRepository.save(pharmacyStockCard);
+			
 		}
 		
-		return true;
+		return success;
 	}
 	
 	

@@ -318,7 +318,7 @@ public class UserResource {
 	public boolean addPrivilegeToRole(
 			@RequestBody AccessModel form,
 			HttpServletRequest request){	
-		Role role = roleRepository.findByName(form.getRole());
+		Role role = roleRepository.findByName(form.getRole()).get();
 		Collection<Privilege> privileges = new ArrayList<>(role.getPrivileges());
 		
 		for(Privilege p : privileges) {

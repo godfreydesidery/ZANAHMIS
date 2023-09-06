@@ -1,21 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
-import { IPrescription } from 'src/app/domain/prescription';
 import { IMedicine } from 'src/app/domain/medicine';
-import { IPatient } from 'src/app/domain/patient';
-import { IPatientBill } from 'src/app/domain/patient-bill';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 import { IPharmacyToStoreRO } from 'src/app/domain/pharmacy-to-store-r-o';
-import { IPharmacyToStoreRODetail } from 'src/app/domain/pharmacy-to-store-r-o-detail';
 import { IStoreToPharmacyRN } from 'src/app/domain/store-to-pharmacy-r-n';
-import { IStoreToPharmacyBatch } from 'src/app/domain/store-to-pharmacy-batch';
-import { IStoreToPharmacyRNDetail } from 'src/app/domain/store-to-pharmacy-r-n-detail';
 
 const API_URL = environment.apiUrl;
 

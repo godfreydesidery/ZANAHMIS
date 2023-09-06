@@ -113,8 +113,12 @@ public class ClinicianResource {
 	public ResponseEntity<Long> loadClinicianByUsername(
 			@RequestParam(name = "username") String username,
 			HttpServletRequest request){
-		User user = userRepository.findByUsername(username);
-		Optional<Clinician> c = clinicianRepository.findByUser(user);
+		Optional<User> user = userRepository.findByUsername(username);
+		if(user.isEmpty()) {
+			throw new NotFoundException("User Not found");
+		}
+		
+		Optional<Clinician> c = clinicianRepository.findByUser(user.get());
 		if(!c.isPresent()) {
 			throw new NotFoundException("User Account not associated with clinician");
 		}		

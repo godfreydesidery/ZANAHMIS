@@ -3,6 +3,7 @@
  */
 package com.orbix.api.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +16,10 @@ import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyMedicine;
+import com.orbix.api.domain.PharmacyStockCard;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.PharmacyRepository;
+import com.orbix.api.repositories.PharmacyStockCardRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PharmacyMedicineRepository;
@@ -42,6 +45,7 @@ public class PharmacyServiceImpl implements PharmacyService{
 	private final PharmacyRepository pharmacyRepository;
 	private final MedicineRepository medicineRepository;
 	private final PharmacyMedicineRepository pharmacyMedicineRepository;
+	private final PharmacyStockCardRepository pharmacyStockCardRepository;
 	
 	@Override
 	public Pharmacy save(Pharmacy pharmacy, HttpServletRequest request) {
@@ -69,6 +73,20 @@ public class PharmacyServiceImpl implements PharmacyService{
 				pm.setPharmacy(pharmacy);
 				pm.setStock(0);
 				pharmacyMedicineRepository.save(pm);
+				
+				PharmacyStockCard pharmacyStockCard = new PharmacyStockCard();
+				pharmacyStockCard.setMedicine(medicine);
+				pharmacyStockCard.setPharmacy(pharmacy);
+				pharmacyStockCard.setQtyIn(pm.getStock());
+				pharmacyStockCard.setQtyOut(0);
+				pharmacyStockCard.setBalance(0);
+				pharmacyStockCard.setReference("Opening stock, pharmacy registration");
+				
+				pharmacyStockCard.setCreatedBy(userService.getUserId(request));
+				pharmacyStockCard.setCreatedOn(dayService.getDayId());
+				pharmacyStockCard.setCreatedAt(LocalDateTime.now());
+				
+				pharmacyStockCardRepository.save(pharmacyStockCard);
 			}			
 		}		
 		log.info("Saving new pharmacy to the database");

@@ -6,7 +6,6 @@ import { AuthService } from 'src/app/auth.service';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
-import * as pdfMake from 'pdfmake/build/pdfmake';
 import { ReceiptItem } from 'src/app/domain/receipt-item';
 import { PosReceiptPrinterService } from 'src/app/services/pos-receipt-printer.service';
 import { IPatientBill } from 'src/app/domain/patient-bill';
@@ -22,10 +21,11 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./lab-test-payment.component.scss']
 })
 export class LabTestPaymentComponent implements OnInit {
-  searchKeys : string[] = []
+  //searchKeysToDisplay : string[] = []
+  //searchKeys : string[] = []
   searchKey : string = ''
 
-  id : any
+  id : any = null
   no : string = ''
   firstName : string = ''
   middleName : string = ''
@@ -63,6 +63,8 @@ export class LabTestPaymentComponent implements OnInit {
 
   amountReceived : number = 0
 
+  lockSearchKey : boolean = false
+
   constructor(
               private auth : AuthService,
               private http : HttpClient,
@@ -99,6 +101,24 @@ export class LabTestPaymentComponent implements OnInit {
     )
   }
 
+  searchKeysToDisplay : string[] = []
+  searchKeys : string[] = []
+  filterSearchKeys(value : string){
+
+    this.searchKeysToDisplay = []
+    if(value.length < 4){
+      return
+    }
+
+    this.searchKeys.forEach(element => {
+      var elementToLower = element.toLowerCase()
+      var valueToLower = value.toLowerCase()
+      if(elementToLower.includes(valueToLower)){
+        this.searchKeysToDisplay.push(element)
+      }
+    })
+  }
+
 
   async searchBySearchKey(key : string): Promise<void> {
     
@@ -124,6 +144,9 @@ export class LabTestPaymentComponent implements OnInit {
     .toPromise()
     .then(
       data => {
+
+        this.searchKey = key
+
         this.id = data!['id']
         this.no = data!['no']
         this.firstName = data!['firstName']
@@ -132,6 +155,8 @@ export class LabTestPaymentComponent implements OnInit {
         this.dateOfBirth = data!['dateOfBirth']
         this.phoneNo = data!['phoneNo']
         this.address = data!['address']
+
+        this.lockSearchKey = true
 
         this.total = 0
         this.loadRegistrationBill()
@@ -168,6 +193,8 @@ export class LabTestPaymentComponent implements OnInit {
     this.kinPhoneNo = ''
     this.amountReceived = 0
     this.total = 0
+
+    this.lockSearchKey = false
     
   }
 
@@ -320,31 +347,6 @@ export class LabTestPaymentComponent implements OnInit {
     return granted
   }
 
-}
-
-export interface IPatientA {
-  id : any
-  no : string
-  firstName : string
-  middleName : string
-  lastName : string
-  dateOfBirth :Date
-  gender : string
-  type : string
-  paymentType : string
-  memberShipNo : string
-  phoneNo : string		
-	address : string
-	email : string
-	nationality : string
-	nationalId : string	
-	passportNo : string
-  kinFullName : string
-	kinRelationship : string
-	kinPhoneNo : string
-  patientRecordMode : string
-  paymentMode : string
-  insurancePlan : string 
 }
 
 export interface IBill{

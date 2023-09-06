@@ -60,21 +60,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {		
-		User user = userRepository.findByUsername(username);
+		Optional<User> u = userRepository.findByUsername(username);
 		System.out.println(username);
-		if(user == null) {
+		if(u.isEmpty()) {
 			log.error("User not found in the database");
 			throw new NotFoundException("User not found in database");
 		}else {
 			log.info("User found in database: {}", username);
 		}
 		Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-		user.getRoles().forEach(role -> {
+		u.get().getRoles().forEach(role -> {
 			role.getPrivileges().forEach(privilege -> {
 				authorities.add(new SimpleGrantedAuthority(privilege.getName()));
 			});
 		});
-		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+		return new org.springframework.security.core.userdetails.User(u.get().getUsername(), u.get().getPassword(), authorities);
 	}
 	
 	@Override
@@ -82,6 +82,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		validateUser(user);
 		log.info("Saving user to the database");
 		if(user.getId() == null) {
+			if(user.getUsername().equalsIgnoreCase("root")) {
+				Optional<User> u = userRepository.findByUsername("root");
+				if(u.isPresent()) {
+					throw new InvalidOperationException("root already exist");
+				}
+			}
 			user.setCode(this.requestUserCode().getCode());
 			user.setPassword(passwordEncoder.encode(user.getPassword()));			
 		}else {
@@ -104,7 +110,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		 * Validate Username, username should be >=6 and <=16 in length
 		 */
 		if((user.getUsername().length() < 6 || user.getUsername().length() > 50) && !user.getUsername().equalsIgnoreCase("root")) {
-			throw new InvalidEntryException("Length of username should be more than 5 and less than 51");
+			throw new InvalidEntryException("Invalid length in username, length should be between 6 and 50");
 		}
 		/**
 		 * Validate password, password should have a valid length
@@ -138,14 +144,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public Role saveRole(Role role, HttpServletRequest request) {
+		if(role.getName().equalsIgnoreCase("ROOT")) {
+			Optional<Role> r = roleRepository.findByName("ROOT");
+			if(r.isPresent()) {
+				throw new InvalidOperationException("Can not modify the ROOT role");
+			}
+		}
 		log.info("Saving new role to the database");
 		return roleRepository.save(role);
 	}
 
 	@Override
 	public void addRoleToUser(String username, String rolename, HttpServletRequest request) {
-		User user = userRepository.findByUsername(username);
-		Role role = roleRepository.findByName(rolename);
+		User user = userRepository.findByUsername(username).get();
+		Role role = roleRepository.findByName(rolename).get();
 		try {
 			user.getRoles().add(role);	
 		}catch(Exception e) {
@@ -155,7 +167,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public User getUser(String username) {
-		return userRepository.findByUsername(username);
+		return userRepository.findByUsername(username).get();
 	}
 
 	@Override
@@ -166,13 +178,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public Privilege savePrivilege(Privilege privilege, HttpServletRequest request) {
+		
+		Optional<Privilege> p = privilegeRepository.findByName(privilege.getName());
+		if(p.isPresent()) {
+			throw new InvalidOperationException("Privilege already exist");
+		}
+		
 		log.info("Saving new privilege to the database");
 		return privilegeRepository.save(privilege);
 	}
 
 	@Override
 	public void addPrivilegeToRole(String roleName, String privilegeName) {
-		Role role = roleRepository.findByName(roleName);
+		Role role = roleRepository.findByName(roleName).get();
 		Optional<Privilege> p = privilegeRepository.findByName(privilegeName);
 		
 		try {
@@ -186,7 +204,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	
 	@Override
 	public void removePrivilegeFromRole(String roleName, String privilegeName) {
-		Role role = roleRepository.findByName(roleName);
+		Role role = roleRepository.findByName(roleName).get();
 		Optional<Privilege> p = privilegeRepository.findByName(privilegeName);
 		
 		try {
@@ -226,7 +244,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public Role getRole(String name) {
-		return roleRepository.findByName(name);
+		return roleRepository.findByName(name).get();
 	}
 
 	@Override
@@ -283,7 +301,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public List<String> getPrivileges(String roleName) {
-		Collection<Privilege> privileges = roleRepository.findByName(roleName).getPrivileges();
+		Collection<Privilege> privileges = roleRepository.findByName(roleName).get().getPrivileges();
 		List<String> privilegesList = new ArrayList<String>();
 		for(Privilege privilege : privileges) {
 			privilegesList.add(privilege.getName());
@@ -321,7 +339,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		Shortcut shortcut = new Shortcut();
 		
 		try {
-			User user = userRepository.findByUsername(username);
+			User user = userRepository.findByUsername(username).get();
 			shortcut.setUser(user);
 			shortcut.setName(name);
 			shortcut.setLink(link);
@@ -340,7 +358,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public boolean removeShortcut(String username, String name) {			
 		try {
-			User user = userRepository.findByUsername(username);
+			User user = userRepository.findByUsername(username).get();
 			
 			Optional<Shortcut> shortcut = shortcutRepository.findByNameAndUser(name, user);
 			if(shortcut.isPresent()) {
@@ -357,7 +375,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public List<Shortcut> loadShortcuts(String username) {
 		try {
-			User user = userRepository.findByUsername(username);
+			User user = userRepository.findByUsername(username).get();
 			return shortcutRepository.findByUser(user);
 		}catch(Exception e) {
 			throw new InvalidOperationException("Could not load shortcuts");
@@ -366,12 +384,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public Long getUserId(HttpServletRequest request) {
-		return userRepository.findByUsername(request.getUserPrincipal().getName()).getId();
+		return userRepository.findByUsername(request.getUserPrincipal().getName()).get().getId();
 	}
 	
 	@Override
 	public User getUser(HttpServletRequest request) {
-		return userRepository.findByUsername(request.getUserPrincipal().getName());
+		return userRepository.findByUsername(request.getUserPrincipal().getName()).get();
 	}
 	
 	public RecordModel requestUserCode() {
