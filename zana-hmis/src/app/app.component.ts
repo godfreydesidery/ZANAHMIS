@@ -41,7 +41,7 @@ export class AppComponent {
     this.ping()
     this.loadCompanyName()
 
-    this.router.navigate([''])//Navigates to home if url is entered on address bar
+    this.router.navigate(['dashboard'])//Navigates to home if url is entered on address bar
     var currentUser = null
     if(localStorage.getItem('user-name') != null){
       this.userName = localStorage.getItem('user-name')!

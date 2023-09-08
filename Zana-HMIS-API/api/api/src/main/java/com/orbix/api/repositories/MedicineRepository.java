@@ -34,6 +34,12 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 	 */
 	Optional<Medicine> findByCode(String code);
 
+	/**
+	 * @param value
+	 * @return
+	 */
+	List<Medicine> findAllByNameContaining(String value);
+
 	
 
 }

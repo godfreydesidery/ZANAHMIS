@@ -275,6 +275,7 @@ import { LabSampleCollectionReportComponent } from './pages/laboratory/reports/l
     {path : 'prescription-history', component : PrescriptionHistoryComponent},
     {path : 'working-diagnosis-history', component : WorkingDiagnosisHistoryComponent},
     {path : 'final-diagnosis-history', component : FinalDiagnosisHistoryComponent},
+    {path : 'dashboard', component : DashboardComponent},
 
     ])
   ],

@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.DiagnosisType;
+import com.orbix.api.domain.ProcedureType;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
 import com.orbix.api.service.InsurancePlanService;
@@ -67,6 +68,8 @@ public class DiagnosisTypeResource {
 		return ResponseEntity.ok().body(names);
 	}
 	
+	
+	
 	@PostMapping("/diagnosis_types/save")
 	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
 	public ResponseEntity<DiagnosisType>save(
@@ -76,6 +79,15 @@ public class DiagnosisTypeResource {
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/diagnosis_types/save").toUriString());
 		return ResponseEntity.created(uri).body(diagnosisTypeService.save(diagnosisType, request));
+	}
+	
+	@GetMapping("/diagnosis_types/load_diagnosis_types_like")
+	public ResponseEntity<List<DiagnosisType>> getDiagnosisTypeNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<DiagnosisType> diagnosisTypes = new ArrayList<DiagnosisType>();
+		diagnosisTypes = diagnosisTypeRepository.findAllByNameContaining(value);
+		return ResponseEntity.ok().body(diagnosisTypes);
 	}
 }
 

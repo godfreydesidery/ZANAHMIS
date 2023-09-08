@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.ProcedureType;
 import com.orbix.api.domain.ProcedureType;
 import com.orbix.api.repositories.ProcedureTypeRepository;
@@ -77,5 +78,14 @@ public class ProcedureTypeResource {
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/procedure_types/save").toUriString());
 		return ResponseEntity.created(uri).body(procedureTypeService.save(procedureType, request));
+	}
+	
+	@GetMapping("/procedure_types/load_procedure_types_like")
+	public ResponseEntity<List<ProcedureType>> getProcedureTypeNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<ProcedureType> procedureTypes = new ArrayList<ProcedureType>();
+		procedureTypes = procedureTypeRepository.findAllByNameContaining(value);
+		return ResponseEntity.ok().body(procedureTypes);
 	}
 }

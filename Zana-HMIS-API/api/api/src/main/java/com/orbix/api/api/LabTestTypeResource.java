@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.LabTestType;
+import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.service.ClinicService;
@@ -77,5 +78,14 @@ public class LabTestTypeResource {
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/lab_test_types/save").toUriString());
 		return ResponseEntity.created(uri).body(labTestTypeService.save(labTestType, request));
-	}	
+	}
+	
+	@GetMapping("/lab_test_types/load_lab_test_types_like")
+	public ResponseEntity<List<LabTestType>> getLabTestTypeNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<LabTestType> labTestTypes = new ArrayList<LabTestType>();
+		labTestTypes = labTestTypeRepository.findAllByNameContaining(value);
+		return ResponseEntity.ok().body(labTestTypes);
+	}
 }

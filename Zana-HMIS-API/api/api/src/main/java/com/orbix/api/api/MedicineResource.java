@@ -89,6 +89,15 @@ public class MedicineResource {
 		return ResponseEntity.ok().body(names);
 	}
 	
+	@GetMapping("/medicines/load_medicines_like")
+	public ResponseEntity<List<Medicine>> getMedicineNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<Medicine> medicines = new ArrayList<Medicine>();
+		medicines = medicineRepository.findAllByNameContaining(value);
+		return ResponseEntity.ok().body(medicines);
+	}
+	
 	@PostMapping("/medicines/save")
 	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
 	public ResponseEntity<Medicine>save(

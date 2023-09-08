@@ -604,13 +604,13 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public LabTest saveLabTest(LabTest test, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request) {
 		Patient patient = new Patient();
-		Optional<LabTestType> ltt = labTestTypeRepository.findByName(test.getLabTestType().getName());
+		Optional<LabTestType> ltt = labTestTypeRepository.findById(test.getLabTestType().getId());
 		 
 		if(!ltt.isPresent()) {
 			throw new NotFoundException("Lab Test type not found");
 		}
 		
-		Optional<DiagnosisType> dt = diagnosisTypeRepository.findByName(test.getDiagnosisType().getName());
+		Optional<DiagnosisType> dt = diagnosisTypeRepository.findById(test.getDiagnosisType().getId());
 		if(!dt.isPresent() && !test.getDiagnosisType().getName().equals(""))	{
 			throw new NotFoundException("Lab Test type not found");
 		}
@@ -730,12 +730,12 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public Radiology saveRadiology(Radiology radio, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request) {
 		Patient patient = new Patient();
-		Optional<RadiologyType> rt = radiologyTypeRepository.findByName(radio.getRadiologyType().getName());
+		Optional<RadiologyType> rt = radiologyTypeRepository.findById(radio.getRadiologyType().getId());
 				 
 		if(!rt.isPresent()) {
 			throw new NotFoundException("Radiology type not found");
 		}
-		Optional<DiagnosisType> dt = diagnosisTypeRepository.findByName(radio.getDiagnosisType().getName());
+		Optional<DiagnosisType> dt = diagnosisTypeRepository.findById(radio.getDiagnosisType().getId());
 		if(!dt.isPresent() && !radio.getDiagnosisType().getName().equals(""))	{
 			throw new NotFoundException("Diagnosis type not found");
 		}
@@ -854,7 +854,7 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public Procedure saveProcedure(Procedure procedure, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request) {
 		Patient patient = new Patient();
-		Optional<ProcedureType> pr = procedureTypeRepository.findByName(procedure.getProcedureType().getName());
+		Optional<ProcedureType> pr = procedureTypeRepository.findById(procedure.getProcedureType().getId());
 		if(procedure.getType().equals("THEATRE")) {
 			Optional<Theatre> th = theatreRepository.findByName(procedure.getTheatre().getName());
 			if(th.isEmpty()) {
@@ -866,7 +866,7 @@ public class PatientServiceImpl implements PatientService {
 			procedure.setTheatre(null);
 		}
 		if(!procedure.getDiagnosisType().getName().equals("")) {
-			Optional<DiagnosisType> dt = diagnosisTypeRepository.findByName(procedure.getDiagnosisType().getName());
+			Optional<DiagnosisType> dt = diagnosisTypeRepository.findById(procedure.getDiagnosisType().getId());
 			if(dt.isEmpty()) {
 				throw new NotFoundException("Diagnosis Type not found");
 			}else {

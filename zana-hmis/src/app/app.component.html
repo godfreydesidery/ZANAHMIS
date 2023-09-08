@@ -6,7 +6,7 @@
 
 
   <!-- Site wrapper -->
-  <div style="margin-left: 3cm; margin-right: 3cm; margin-bottom: 1cm; border-radius: 3mm;">
+  <div style="margin-left: 3%; margin-right: 3%; margin-bottom: 1%; border-radius: 3mm;">
 
   
   <div class="wrapper" *ngIf="isLoggedIn===true">
@@ -69,8 +69,7 @@
               <!-- sidebar menu -->
                 <ul class="sidebar-menu">
                     <li>
-                      <a href="index.html"><i class="fa fa-hospital-o"></i><span>My Dashboard</span>
-                      </a>
+                      <a routerLink="/dashboard"><i class="fa fa-hospital-o"></i><span>My Dashboard</span></a>
                     </li>
                     <li class="treeview" *ngIf="grant(['PATIENT-A','PATIENT-C','PATIENT-U'])">
                         <a href="#">
@@ -372,7 +371,6 @@
       <!-- Content Wrapper. Contains page content -->
       <div class="content-wrapper">
           <router-outlet></router-outlet>
-
 <div id="iframeContainer"></div>
 
 

@@ -27,4 +27,10 @@ public interface DiagnosisTypeRepository extends JpaRepository<DiagnosisType, Lo
 	@Query("SELECT d.name FROM DiagnosisType d")
 	List<String> getNames();
 
+	/**
+	 * @param value
+	 * @return
+	 */
+	List<DiagnosisType> findAllByNameContaining(String value);
+
 }

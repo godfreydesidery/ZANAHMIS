@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.orbix.api.domain.ProcedureType;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.repositories.RadiologyTypeRepository;
@@ -77,5 +78,14 @@ public class RadiologyTypeResource {
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/radiology_types/save").toUriString());
 		return ResponseEntity.created(uri).body(radiologyTypeService.save(radiologyType, request));
+	}
+	
+	@GetMapping("/radiology_types/load_radiology_types_like")
+	public ResponseEntity<List<RadiologyType>> getRadiologyTypeNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<RadiologyType> radiologyTypes = new ArrayList<RadiologyType>();
+		radiologyTypes = radiologyTypeRepository.findAllByNameContaining(value);
+		return ResponseEntity.ok().body(radiologyTypes);
 	}
 }

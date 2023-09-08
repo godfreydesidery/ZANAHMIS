@@ -6,12 +6,17 @@ import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IClinicalNote } from 'src/app/domain/clinical-note';
 import { IConsultation } from 'src/app/domain/consultation';
+import { IDiagnosisType } from 'src/app/domain/diagnosis-type';
 import { IFinalDiagnosis } from 'src/app/domain/final-diagnosis';
 import { IGeneralExamination } from 'src/app/domain/general-examination';
 import { ILabTest } from 'src/app/domain/lab-test';
+import { ILabTestType } from 'src/app/domain/lab-test-type';
+import { IMedicine } from 'src/app/domain/medicine';
 import { IPrescription } from 'src/app/domain/prescription';
 import { IProcedure } from 'src/app/domain/procedure';
+import { IProcedureType } from 'src/app/domain/procedure-type';
 import { IRadiology } from 'src/app/domain/radiology';
+import { IRadiologyType } from 'src/app/domain/radiology-type';
 import { IWorkingDiagnosis } from 'src/app/domain/working-diagnosis';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
@@ -61,7 +66,6 @@ export class DoctorCrackingComponent implements OnInit {
   /**
    * Diagnosis type
    */
-  diagnosisTypeName : string = ''
 
   diagnosisDescription : string = ''
 
@@ -83,6 +87,8 @@ export class DoctorCrackingComponent implements OnInit {
   procedureTypeNames : string[] = []
   medicineNames : string[] = []
 
+  
+
   workingDiagnosises : IWorkingDiagnosis[] = []
   finalDiagnosises : IFinalDiagnosis[] = []
 
@@ -93,22 +99,19 @@ export class DoctorCrackingComponent implements OnInit {
 
   labTests : ILabTest[] = []
   labTestId : any
-  labTestTypeName : string = ''
   labTestDiagnosis : string = ''
   labTestDescription : string = ''
   labTestReport : string = ''
 
   radiologies : IRadiology[] = []
   radiologyId : any
-  radiologyTypeName : string = ''
   radiologyDiagnosis : string = ''
   radiologyDescription : string = ''
   radiologyReport : string = ''
 
 
-  procedureTypeName : string = ''
 
-  medicineName : string = ''
+  
 
   prescriptionUnit        : number = 0
   prescriptionDosage      : string = ''
@@ -118,7 +121,7 @@ export class DoctorCrackingComponent implements OnInit {
   prescriptionPrice       : number = 0
   prescriptionQty         : number = 0
 
-  procedureId : any
+  procedureId : any = null
   procedureNote : string = ''
   procedureType : string = ''
   procedureNeedTheatre : boolean = false
@@ -157,20 +160,14 @@ export class DoctorCrackingComponent implements OnInit {
   async refresh(){
     await this.loadConsultation(this.id)
     await this.loadClinicalNoteByConsultationId(this.id)
-    await this.loadGeneralExaminationByConsultationId(this.id)
-    await this.loadDiagnosisTypeNames()
-    await this.loadLabTestTypeNames()
-    await this.loadRadiologyTypeNames()
-    await this.loadProcedureTypeNames()
+    await this.loadGeneralExaminationByConsultationId(this.id)  
     await this.loadTheatreNames()
-    await this.loadMedicineNames()
     await this.loadWorkingDiagnosis(this.id)
     await this.loadFinalDiagnosis(this.id)
     await this.loadLabTest(this.id, 0)
     await this.loadRadiologies(this.id, 0)
     await this.loadProcedures(this.id, 0)
-    await this.loadPrescriptions(this.id, 0)
-    
+    await this.loadPrescriptions(this.id, 0)  
   }
 
   toggleTheatre(){
@@ -363,8 +360,8 @@ export class DoctorCrackingComponent implements OnInit {
     var diagnosis : any = {
       description : this.diagnosisDescription,
       diagnosisType : {
-        id : null,
-        code : '',
+        id : this.diagnosisTypeId,
+        code : this.diagnosisTypeCode,
         name : this.diagnosisTypeName
       },
       consultation : {
@@ -377,6 +374,7 @@ export class DoctorCrackingComponent implements OnInit {
     .toPromise()
     .then(
       () => {
+        this.clearDiagnosis()
         this.msgBox.showSuccessMessage('Working Diagnosis Saved successifully')
       }
     )
@@ -396,8 +394,8 @@ export class DoctorCrackingComponent implements OnInit {
     var diagnosis : any = {
       description : this.diagnosisDescription,
       diagnosisType : {
-        id : null,
-        code : '',
+        id : this.diagnosisTypeId,
+        code : this.diagnosisTypeCode,
         name : this.diagnosisTypeName
       },
       consultation : {
@@ -410,6 +408,7 @@ export class DoctorCrackingComponent implements OnInit {
     .toPromise()
     .then(
       () => {
+        this.clearDiagnosis()
         this.msgBox.showSuccessMessage('Saved successifully')
       }
     )
@@ -537,21 +536,29 @@ export class DoctorCrackingComponent implements OnInit {
   }
 
   clearDiagnosis(){
+    this.diagnosisTypeId = null
+    this.diagnosisTypeCode = ''
     this.diagnosisTypeName = ''
     this.diagnosisDescription = ''
   }
 
   clearLabTest(){
+    this.labTestTypeId = null
+    this.labTestTypeCode = ''
     this.labTestTypeName = ''
     this.diagnosisTypeName = ''
   }
 
   clearRadiology(){
+    this.radiologyTypeId = null
+    this.radiologyTypeCode = ''
     this.radiologyTypeName = ''
     this.diagnosisTypeName = ''
   }
 
   clearProcedure(){
+    this.procedureTypeId = null
+    this.procedureTypeCode = ''
     this.procedureTypeName = ''
     this.diagnosisTypeName = ''
 
@@ -564,6 +571,8 @@ export class DoctorCrackingComponent implements OnInit {
   }
 
   clearPrescription(){
+    this.medicineId = null
+    this.medicineCode = ''
     this.medicineName = ''
 
     this.prescriptionUnit         = 0
@@ -729,11 +738,15 @@ export class DoctorCrackingComponent implements OnInit {
     }
     var labTest  = {
       labTestType : {
-        id : null,
-        code : '',
+        id : this.labTestTypeId,
+        code : this.labTestTypeCode,
         name : this.labTestTypeName
       },
-      diagnosisType : {name : this.diagnosisTypeName},   
+      diagnosisType : {
+        id : this.diagnosisTypeId,
+        code : this.diagnosisTypeCode,
+        name : this.diagnosisTypeName
+      },   
       description : this.labTestDescription     
     }
     this.spinner.show()
@@ -762,11 +775,14 @@ export class DoctorCrackingComponent implements OnInit {
     }
     var radiology  = {
       radiologyType : {
-        id : null,
-        code : '',
-        name : this.radiologyTypeName,
+        id    : this.radiologyTypeId,
+        code  : this.radiologyTypeName,
+        name  : this.radiologyTypeName,
       },
-      diagnosisType : {name : this.diagnosisTypeName},   
+      diagnosisType : {
+        id    : this.diagnosisTypeId,
+        code  : this.diagnosisTypeCode,
+        name  : this.diagnosisTypeName},   
       description : this.radiologyDescription       
     }
     this.spinner.show()
@@ -857,13 +873,17 @@ export class DoctorCrackingComponent implements OnInit {
     }
     var procedure = {
       procedureType : {
-        id    : null,
-        code  : '',
+        id    : this.procedureTypeId,
+        code  : this.procedureTypeName,
         name  : this.procedureTypeName
       },
       type      : this.procedureType,
       theatre   : { name : this.theatreName },
-      diagnosisType : { name : this.diagnosisTypeName},
+      diagnosisType : { 
+        id   : this.diagnosisTypeId,
+        code : this.diagnosisTypeCode,
+        name : this.diagnosisTypeName
+      },
       time      : this.procedureTime,
       date      : this.procedureDate,
       hours     : this.procedureHours,
@@ -930,8 +950,8 @@ export class DoctorCrackingComponent implements OnInit {
     }
     var prescription = {
       medicine : {
-        id : null,
-        code : '',
+        id : this.medicineId,
+        code : this.medicineCode,
         name : this.medicineName
       },
       dosage    : this.prescriptionDosage,
@@ -1168,6 +1188,263 @@ export class DoctorCrackingComponent implements OnInit {
     )
     return granted
   }
+  
+  diagnosisTypeId : any =  null
+  diagnosisTypeCode : string = ''
+  diagnosisTypeName : string = ''
+  diagnosisTypes : IDiagnosisType[] = []
+  async loadDiagnosisTypesLike(value : string){
+    this.diagnosisTypes = []
+    if(value.length < 3){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IDiagnosisType[]>(API_URL+'/diagnosis_types/load_diagnosis_types_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.diagnosisTypes = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getDiagnosisType(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.diagnosisTypes = []
+    this.spinner.show()
+    await this.http.get<IProcedureType>(API_URL+'/diagnosis_types/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.diagnosisTypeId = data?.id
+        this.diagnosisTypeCode = data!.code
+        this.diagnosisTypeName = data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
+
+  labTestTypeId : any =  null
+  labTestTypeCode : string = ''
+  labTestTypeName : string = ''
+  labTestTypes : ILabTestType[] = []
+  async loadLabTestTypesLike(value : string){
+    if(value.length < 3){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.labTestTypes = []
+    await this.http.get<ILabTestType[]>(API_URL+'/lab_test_types/load_lab_test_types_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.labTestTypes = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getLabTestType(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.labTestTypes = []
+    this.spinner.show()
+    await this.http.get<IProcedureType>(API_URL+'/lab_test_types/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.labTestTypeId    = data?.id
+        this.labTestTypeCode  = data!.code
+        this.labTestTypeName  = data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
+
+
+  radiologyTypeId : any =  null
+  radiologyTypeCode : string = ''
+  radiologyTypeName : string = ''
+  radiologyTypes : IRadiologyType[] = []
+  async loadRadiologyTypesLike(value : string){
+    if(value.length < 3){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.radiologyTypes = []
+    await this.http.get<IRadiologyType[]>(API_URL+'/radiology_types/load_radiology_types_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.radiologyTypes = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getRadiologyType(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.radiologyTypes = []
+    this.spinner.show()
+    await this.http.get<IProcedureType>(API_URL+'/radiology_types/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.radiologyTypeId = data?.id
+        this.radiologyTypeCode = data!.code
+        this.radiologyTypeName = data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
+
+  procedureTypeId : any =  null
+  procedureTypeCode : string = ''
+  procedureTypeName : string = ''
+  procedureTypes : IProcedureType[] = []
+  async loadProcedureTypesLike(value : string){
+    this.procedureTypes = []
+    if(value.length < 3){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IProcedureType[]>(API_URL+'/procedure_types/load_procedure_types_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.procedureTypes = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getProcedureType(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.procedureTypes = []
+    this.spinner.show()
+    await this.http.get<IProcedureType>(API_URL+'/procedure_types/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.procedureTypeId = data?.id
+        this.procedureTypeCode = data!.code
+        this.procedureTypeName = data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
+
+  medicineId : any =  null
+  medicineCode : string = ''
+  medicineName : string = ''
+  medicines : IMedicine[] = []
+  async loadMedicinesLike(value : string){
+    this.medicines = []
+    if(value.length < 3){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IMedicine[]>(API_URL+'/medicines/load_medicines_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        //data?.forEach(element => {
+          //this.medicines.push(element)
+        //})
+        this.medicines = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  async getMedicine(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.medicines = []
+    this.spinner.show()
+    await this.http.get<IMedicine>(API_URL+'/medicines/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.medicineId = data?.id
+        this.medicineCode = data!.code
+        this.medicineName = data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
+
+
 
 }
 

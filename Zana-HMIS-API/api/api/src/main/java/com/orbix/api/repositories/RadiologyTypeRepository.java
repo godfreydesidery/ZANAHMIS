@@ -27,4 +27,10 @@ public interface RadiologyTypeRepository extends JpaRepository<RadiologyType, Lo
 	@Query("SELECT r.name FROM RadiologyType r")
 	List<String> getNames();
 
+	/**
+	 * @param value
+	 * @return
+	 */
+	List<RadiologyType> findAllByNameContaining(String value);
+
 }

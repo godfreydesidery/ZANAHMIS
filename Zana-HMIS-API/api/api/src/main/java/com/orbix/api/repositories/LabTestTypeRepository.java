@@ -27,4 +27,10 @@ public interface LabTestTypeRepository extends JpaRepository<LabTestType, Long> 
 
 	@Query("SELECT t.name FROM LabTestType t")
 	List<String> getNames();
+
+	/**
+	 * @param value
+	 * @return
+	 */
+	List<LabTestType> findAllByNameContaining(String value);
 }

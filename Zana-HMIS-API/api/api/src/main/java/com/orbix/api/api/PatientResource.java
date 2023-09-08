@@ -626,7 +626,7 @@ public class PatientResource {
 		if(!c.isPresent()) {
 			throw new NotFoundException("Consultation not found");
 		}
-		Optional<DiagnosisType> dt = diagnosisTypeRepository.findByName(diagnosis.getDiagnosisType().getName());
+		Optional<DiagnosisType> dt = diagnosisTypeRepository.findById(diagnosis.getDiagnosisType().getId());
 		if(!dt.isPresent()) {
 			throw new NotFoundException("Diagnosis type not found");
 		}
@@ -686,7 +686,7 @@ public class PatientResource {
 		if(!c.isPresent()) {
 			throw new NotFoundException("Consultation not found");
 		}
-		Optional<DiagnosisType> dt = diagnosisTypeRepository.findByName(diagnosis.getDiagnosisType().getName());
+		Optional<DiagnosisType> dt = diagnosisTypeRepository.findById(diagnosis.getDiagnosisType().getId());
 		if(!dt.isPresent()) {
 			throw new NotFoundException("Diagnosis type not found");
 		}
@@ -761,7 +761,7 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
-		Optional<LabTestType> lt = labTestTypeRepository.findByName(labTest.getLabTestType().getName());
+		Optional<LabTestType> lt = labTestTypeRepository.findById(labTest.getLabTestType().getId());
 		if(c.isPresent()) {
 			if(labTestRepository.existsByConsultationAndLabTestType(c.get(), lt.get())) {
 				throw new InvalidOperationException("Duplicate Lab Test Types is not allowed");
@@ -795,7 +795,7 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
-		Optional<RadiologyType> lt = radiologyTypeRepository.findByName(radiology.getRadiologyType().getName());
+		Optional<RadiologyType> lt = radiologyTypeRepository.findById(radiology.getRadiologyType().getId());
 		if(c.isPresent()) {
 			if(radiologyRepository.existsByConsultationAndRadiologyType(c.get(), lt.get())) {
 				throw new InvalidOperationException("Duplicate Radiology Types is not allowed");
@@ -861,7 +861,7 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
-		Optional<ProcedureType> lt = procedureTypeRepository.findByName(procedure.getProcedureType().getName());
+		Optional<ProcedureType> lt = procedureTypeRepository.findById(procedure.getProcedureType().getId());
 		
 		if(c.isPresent()) {
 			if(procedureRepository.existsByConsultationAndProcedureType(c.get(), lt.get())) {
@@ -895,9 +895,9 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(consultation_id);
 		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
 		
-		Optional<Medicine> lt = medicineRepository.findByName(prescription.getMedicine().getName());
+		Optional<Medicine> lt = medicineRepository.findById(prescription.getMedicine().getId());
 		if(prescriptionRepository.existsByConsultationAndMedicine(c.get(), lt.get())) {
-			throw new InvalidOperationException("Duplicate Medicine types is not allowed");
+			throw new InvalidOperationException("Duplicate drug is not allowed. Consider editing qty");
 		}
 		
 		if(prescription.getId() == null) {

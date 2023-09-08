@@ -27,4 +27,10 @@ public interface ProcedureTypeRepository extends JpaRepository<ProcedureType, Lo
 	@Query("SELECT p.name FROM ProcedureType p")
 	List<String> getNames();
 
+	/**
+	 * @param value
+	 * @return
+	 */
+	List<ProcedureType> findAllByNameContaining(String value);
+
 }
