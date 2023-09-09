@@ -66,11 +66,10 @@
                                         </div>
                                         <div class="col-sm-4 form-group">
                                             <h4 class="text-primary">Nationality</h4>
-                                            <select class="form-control" [(ngModel)]="nationality">
-                                                <option></option>
-                                                <option>Tanzania</option>
-                                                <option>Kenya</option>
-                                            </select>
+                                            <input type="text" [(ngModel)]="nationality" name="nationality" list="nationalities" class="form-control">   
+                                            <datalist id="nationalities" style="padding: 0px;">
+                                                <option *ngFor="let d of nationalities" [ngValue]="d">{{d}}</option>
+                                            </datalist> 
                                         </div>
                                         <div class="col-sm-4 form-group">
                                             <h4 class="text-primary">ID No</h4>
@@ -448,11 +447,10 @@
                             
                             <div class="col-sm-4 form-group">
                                 <h4 class="text-primary">Nationality</h4>
-                                <select class="form-control" [(ngModel)]="nationality">
-                                    <option></option>
-                                    <option>Tanzania</option>
-                                    <option>Kenya</option>
-                                </select>
+                                <input type="text" [(ngModel)]="nationality" list="nationalities2" required class="form-control">   
+                                <datalist id="nationalities2" style="padding: 0px;">
+                                    <option *ngFor="let d of nationalities" [ngValue]="d">{{d}}</option>
+                                </datalist>
                             </div>
                             <div class="col-sm-4 form-group">
                                 <h4 class="text-primary">ID No</h4>

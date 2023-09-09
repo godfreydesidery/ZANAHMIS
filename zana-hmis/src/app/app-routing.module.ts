@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './auth-guard';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { CompanyProfileComponent } from './pages/admin/company/company-profile/company-profile.component';
 import { ConsultationPlanComponent } from './pages/admin/insurance-management/insurance-plan-pricing/consultation-plan/consultation-plan.component';
 import { LabTestPlanComponent } from './pages/admin/insurance-management/insurance-plan-pricing/lab-test-plan/lab-test-plan.component';
@@ -82,6 +83,7 @@ import { PharmacyToStoreROListComponent } from './pages/store/pharmacy-to-store-
 import { StoreToPharmacyTOComponent } from './pages/store/store-to-pharmacy-t-o/store-to-pharmacy-t-o.component';
 
 const routes: Routes = [
+  {path : 'dashboard', component : DashboardComponent, canActivate: [AuthGuard]},
   {path : 'company-profile', component : CompanyProfileComponent, canActivate: [AuthGuard]},
     {path : 'patient-register', component : PatientRegisterComponent, canActivate: [AuthGuard]},
     {path : 'patient-list', component : PatientListComponent, canActivate: [AuthGuard]},
