@@ -153,19 +153,18 @@
                                             <div class="row">
                                                 <div class="col-xs-3"></div>
                                                 <div class="col-xs-6">
-                                                    <h4 class="text-primary"><b>Search Patient(Enter 4 characters)</b></h4>
-                                                    <input type="text" class="form-control" [(ngModel)]="searchKey" (ngModelChange)="filterSearchKeys($event)" [readonly]="lockSearchKey" placeholder="Search by File#, name or phone" style="max-width: 13cm;">
-                                                    <div class="row" *ngIf="lockSearchKey === false && searchKey.length > 0">
-                                                        <div class="col-sm-12" *ngFor="let s of searchKeysToDisplay">
-                                                            <button class="btn btn-default form-control"  (click)="searchBySearchKey(s)" style="text-align: left; border-style: none;">{{s}}</button>
+                                                    <h4 class="text-primary"><b>Search Patient(Enter 4 characters)<br> Name, File No or Phone</b></h4>
+                                                    <input type="text" class="form-control" [(ngModel)]="searchKey" (ngModelChange)="loadPatientsLike($event)" [readonly]="lockSearchKey" style="max-width: 15cm;" placeholder="Search...">
+                                                    <div class="row" *ngIf="lockSearchKey === false && patients.length > 0">
+                                                        <div class="col-sm-12">
+                                                            <select class="form-control" multiple="multiple" style="max-width: 15cm">
+                                                                <option *ngFor="let p of patients" (click)="getPatient(p.id)" style="height: 1cm; cursor: pointer; font-size: large;"><b>{{p.firstName}} {{p.middleName}} {{p.lastName}} | </b> FileNo: <b>{{p.no}}</b></option>
+                                                            </select>
                                                         </div>
                                                     </div>
-                                                    <datalist id="search_keys">
-                                                        <option *ngFor="let s of searchKeys" [ngValue]="s">{{s}}</option>
-                                                    </datalist> 
                                                 </div>
                                                 <div class="col-xs-3">
-                                                    <br><br>
+                                                    <br><br><br>
                                                     <button class="btn btn-deafult btn-outline" (click)="existingPatientPrompt()">Reset</button>
                                                 </div>
                                             </div>

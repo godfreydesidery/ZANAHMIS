@@ -105,7 +105,7 @@ public class ItemResource {
 	public ResponseEntity<Item>save(
 			@RequestBody Item item,
 			HttpServletRequest request){
-		item.setName(Sanitizer.sanitizeString(item.getName()));
+		item.setName(item.getName());
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/items/save").toUriString());
 		return ResponseEntity.created(uri).body(itemService.save(item, request));

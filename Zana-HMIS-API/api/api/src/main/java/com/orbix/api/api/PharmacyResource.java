@@ -92,7 +92,7 @@ public class PharmacyResource {
 	public ResponseEntity<Pharmacy>save(
 			@RequestBody Pharmacy pharmacy,
 			HttpServletRequest request){
-		pharmacy.setName(Sanitizer.sanitizeString(pharmacy.getName()));
+		pharmacy.setName(pharmacy.getName());
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/pharmacies/save").toUriString());
 		return ResponseEntity.created(uri).body(pharmacyService.save(pharmacy, request));

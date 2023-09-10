@@ -75,7 +75,7 @@ public class ClinicResource {
 	public ResponseEntity<Clinic>save(
 			@RequestBody Clinic clinic,
 			HttpServletRequest request){
-		clinic.setName(Sanitizer.sanitizeString(clinic.getName()));
+		clinic.setName(clinic.getName());
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/clinics/save").toUriString());
 		return ResponseEntity.created(uri).body(clinicService.save(clinic, request));

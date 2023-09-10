@@ -2805,6 +2805,16 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(models);
 	}
 	
+	@GetMapping("/patients/load_patients_like")
+	public ResponseEntity<List<Patient>> getPatientNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<Patient> patients = new ArrayList<Patient>();
+		
+		patients = patientRepository.findAllByNoContainingOrFirstNameContainingOrMiddleNameContainingOrLastNameContainingOrPhoneNoContaining(value, value, value, value, value);
+		return ResponseEntity.ok().body(patients);
+	}
+	
 }
 
 @Data

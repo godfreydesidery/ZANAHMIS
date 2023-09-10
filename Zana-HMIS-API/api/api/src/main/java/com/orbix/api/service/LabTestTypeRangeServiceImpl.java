@@ -38,7 +38,7 @@ public class LabTestTypeRangeServiceImpl implements LabTestTypeRangeService{
 	@Override
 	public LabTestTypeRange save(LabTestTypeRange labTestTypeRange, HttpServletRequest request) {
 		
-		labTestTypeRange.setName(Sanitizer.sanitizeString(labTestTypeRange.getName()));
+		labTestTypeRange.setName(labTestTypeRange.getName());
 		
 		labTestTypeRange.setCreatedby(userService.getUser(request).getId());
 		labTestTypeRange.setCreatedOn(dayService.getDay().getId());

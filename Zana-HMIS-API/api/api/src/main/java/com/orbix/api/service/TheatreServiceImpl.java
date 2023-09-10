@@ -39,7 +39,7 @@ public class TheatreServiceImpl implements TheatreService {
 	@Override
 	public Theatre save(Theatre theatre, HttpServletRequest request) {
 		
-		theatre.setName(Sanitizer.sanitizeString(theatre.getName()));
+		theatre.setName(theatre.getName());
 		
 		if(theatre.getId() == null) {
 			theatre.setCreatedby(userService.getUser(request).getId());

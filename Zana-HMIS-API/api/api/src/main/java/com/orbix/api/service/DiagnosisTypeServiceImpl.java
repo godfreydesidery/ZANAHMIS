@@ -38,7 +38,7 @@ public class DiagnosisTypeServiceImpl implements DiagnosisTypeService{
 	@Override
 	public DiagnosisType save(DiagnosisType diagnosisType, HttpServletRequest request) {
 		
-		diagnosisType.setName(Sanitizer.sanitizeString(diagnosisType.getName()));
+		diagnosisType.setName(diagnosisType.getName());
 		
 		if(diagnosisType.getId() == null) {
 			diagnosisType.setCreatedby(userService.getUser(request).getId());

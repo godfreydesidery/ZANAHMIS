@@ -39,7 +39,7 @@ public class RadiologyTypeServiceImpl implements RadiologyTypeService{
 	public RadiologyType save(RadiologyType radiologyType, HttpServletRequest request) {
 		
 
-		radiologyType.setName(Sanitizer.sanitizeString(radiologyType.getName()));
+		radiologyType.setName(radiologyType.getName());
 		
 		if(radiologyType.getId() == null) {
 			radiologyType.setCreatedby(userService.getUser(request).getId());

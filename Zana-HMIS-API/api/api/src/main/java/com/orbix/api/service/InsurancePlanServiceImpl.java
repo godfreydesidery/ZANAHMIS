@@ -37,7 +37,7 @@ public class InsurancePlanServiceImpl implements InsurancePlanService{
 	
 	@Override
 	public InsurancePlan save(InsurancePlan insurancePlan, HttpServletRequest request) {
-		insurancePlan.setName(Sanitizer.sanitizeString(insurancePlan.getName()));
+		insurancePlan.setName(insurancePlan.getName());
 		
 		
 		

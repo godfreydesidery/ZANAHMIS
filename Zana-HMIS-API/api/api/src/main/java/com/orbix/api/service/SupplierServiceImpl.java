@@ -39,7 +39,7 @@ public class SupplierServiceImpl implements SupplierService {
 	public Supplier save(Supplier supplier, HttpServletRequest request) {
 		
 		supplier.setCode(Sanitizer.sanitizeString(supplier.getCode().replace(" ", "")));
-		supplier.setName(Sanitizer.sanitizeString(supplier.getName()));
+		supplier.setName(supplier.getName());
 		
 		if(supplier.getId() == null) {
 			supplier.setCreatedBy(userService.getUser(request).getId());

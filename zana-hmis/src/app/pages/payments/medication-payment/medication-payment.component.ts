@@ -191,6 +191,8 @@ export class MedicationPaymentComponent implements OnInit {
     this.total = 0
 
     this.lockSearchKey = false
+
+    this.patients = []
     
   }
 
@@ -333,6 +335,90 @@ export class MedicationPaymentComponent implements OnInit {
       }
     )
     return granted
+  }
+
+  patientId : any =  null
+  patientNo : string = ''
+  patientFirstName : string = ''
+  patientMiddleName : string = ''
+  patientLastName : string = ''
+  patientPhoneNo : string = ''
+
+  patients : IPatient[] = []
+  async loadPatientsLike(value : string){
+    this.patients = []
+    if(value.length < 3){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IPatient[]>(API_URL+'/patients/load_patients_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.patients = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getPatient(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.patients = []
+    this.spinner.show()
+    await this.http.get<IPatient>(API_URL+'/patients/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.patientId    = data?.id
+        this.patientNo = data!.no
+        this.patientFirstName = data!.firstName
+        this.patientMiddleName = data!.middleName
+        this.patientLastName = data!.lastName
+        this.patientPhoneNo = data!.phoneNo
+
+        this.searchKey = 'Name: '+ this.patientFirstName + ' ' +  this.patientMiddleName + ' ' + this.patientLastName + ' ' + 'File No: '+this.patientNo
+
+        this.id = data!['id']
+        this.no = data!['no']
+        this.firstName = data!['firstName']
+        this.middleName = data!['middleName']
+        this.lastName = data!['lastName']
+        this.gender = data!['gender']
+        this.dateOfBirth =data!['dateOfBirth']
+        this.paymentType = data!['paymentType']
+        //this.type = data!['type']
+        //this.membershipNo = data!['membershipNo']
+        this.phoneNo = data!['phoneNo']
+        this.address = data!['address']
+        this.email = data!['email']
+        this.nationality = data!['nationality']
+        this.nationalId = data!['nationalId']
+        this.passportNo = data!['passportNo']
+        this.kinFullName = data!['kinFullName']
+        this.kinRelationship = data!['kinRelationship']
+        this.kinPhoneNo = data!['kinPhoneNo']
+
+        //this.insurancePlanName = data!['insurancePlan']?.name
+
+        this.lockSearchKey = true
+      }
+    )
+    .catch(
+      error => {
+        this.clear()
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
   }
 
 }

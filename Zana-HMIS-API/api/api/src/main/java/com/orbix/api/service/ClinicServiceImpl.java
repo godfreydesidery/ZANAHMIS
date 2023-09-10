@@ -43,7 +43,7 @@ public class ClinicServiceImpl implements ClinicService{
 	@Override
 	public Clinic save(Clinic clinic, HttpServletRequest request) {
 		
-		clinic.setName(Sanitizer.sanitizeString(clinic.getName()));
+		clinic.setName(clinic.getName());
 		
 		if(clinic.getId() == null) {
 			clinic.setCreatedby(userService.getUser(request).getId());

@@ -97,6 +97,8 @@ import { PharmacyMedicineStockStatusComponent } from './pages/pharmacy/pharmacy-
 import { LabTestReportComponent } from './pages/laboratory/reports/lab-test-report/lab-test-report.component';
 import { LabTestStatisticsReportComponent } from './pages/laboratory/reports/lab-test-statistics-report/lab-test-statistics-report.component';
 import { LabSampleCollectionReportComponent } from './pages/laboratory/reports/lab-sample-collection-report/lab-sample-collection-report.component';
+import { ShowTimePipe } from './pipes/show_time.pipe';
+import { ShowUserPipe } from './pipes/show_user.pipe';
 
 @NgModule({
   declarations: [
@@ -162,6 +164,8 @@ import { LabSampleCollectionReportComponent } from './pages/laboratory/reports/l
     PatientPharmacyComponent,
     PatientProcedureComponent,
     AgePipe,
+    ShowTimePipe,
+    ShowUserPipe,
     TheatreComponent,
     ItemRegisterComponent,
     SupplierRegisterComponent,
@@ -285,6 +289,7 @@ import { LabSampleCollectionReportComponent } from './pages/laboratory/reports/l
    ],
   providers: [
     DatePipe,
+    ShowTimePipe,
     JwtHelperService,
   ],
   bootstrap: [AppComponent]

@@ -50,7 +50,7 @@ public class PharmacyServiceImpl implements PharmacyService{
 	@Override
 	public Pharmacy save(Pharmacy pharmacy, HttpServletRequest request) {
 		
-		pharmacy.setName(Sanitizer.sanitizeString(pharmacy.getName()));
+		pharmacy.setName(pharmacy.getName());
 		
 		if(pharmacy.getId() == null) {
 			pharmacy.setCreatedby(userService.getUser(request).getId());

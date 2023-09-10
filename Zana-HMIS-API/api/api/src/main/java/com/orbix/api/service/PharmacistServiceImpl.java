@@ -53,7 +53,7 @@ public class PharmacistServiceImpl implements PharmacistService{
 		pharmacist.setNickname(u.get().getNickname());
 		pharmacist.setUser(u.get());
 
-		pharmacist.setNickname(Sanitizer.sanitizeString(pharmacist.getFirstName()+ " "+pharmacist.getMiddleName()+ " "+pharmacist.getLastName()+" "+pharmacist.getCode()));
+		pharmacist.setNickname(pharmacist.getFirstName()+ " "+pharmacist.getMiddleName()+ " "+pharmacist.getLastName()+" "+pharmacist.getCode());
 		
 		if(pharmacist.getId() == null) {
 			pharmacist.setCreatedby(userService.getUser(request).getId());

@@ -97,7 +97,7 @@ public class SupplierResource {
 	public ResponseEntity<Supplier>save(
 			@RequestBody Supplier supplier,
 			HttpServletRequest request){
-		supplier.setName(Sanitizer.sanitizeString(supplier.getName()));
+		supplier.setName(supplier.getName());
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/suppliers/save").toUriString());
 		return ResponseEntity.created(uri).body(supplierService.save(supplier, request));

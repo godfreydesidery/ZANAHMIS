@@ -79,7 +79,7 @@ public class TheatreResource {
 	public ResponseEntity<Theatre>save(
 			@RequestBody Theatre theatre,
 			HttpServletRequest request){
-		theatre.setName(Sanitizer.sanitizeString(theatre.getName()));
+		theatre.setName(theatre.getName());
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/theatres/save").toUriString());
 		return ResponseEntity.created(uri).body(theatreService.save(theatre, request));

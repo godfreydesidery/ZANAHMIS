@@ -57,7 +57,7 @@ public class LabTestTypeServiceImpl implements LabTestTypeService{
 			testType.setActive(true);
 		}
 		
-		testType.setName(Sanitizer.sanitizeString(labTestType.getName()));
+		testType.setName(labTestType.getName());
 		
 		
 		

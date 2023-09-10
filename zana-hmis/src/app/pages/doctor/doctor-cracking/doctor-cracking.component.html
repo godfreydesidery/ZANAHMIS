@@ -249,9 +249,12 @@
                                         <h4>Search Medicine (Enter 3 Characters to search)</h4>
                                         <input type="text" class="form-control" [(ngModel)]="medicineName" (ngModelChange)="loadMedicinesLike($event)">
                                         <div class="row"  *ngIf="medicines.length > 0">
-                                            <div class="col-sm-12">
+                                            <select class="form-control" multiple="multiple">
+                                                <option *ngFor="let med of medicines" (click)="getMedicine(med.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{med.name}}</option>
+                                            </select>
+                                            <!--<div class="col-sm-12">
                                                 <button class="form-control btn btn-primary btn-outline" *ngFor="let med of medicines" (click)="getMedicine(med.id)" style="text-align: left;">{{med.name}}</button>
-                                            </div>
+                                            </div>-->
                                         </div>
 
                                     </div>
@@ -368,7 +371,10 @@
                                                                 <input type="text" class="form-control" [(ngModel)]="procedureTypeName" (ngModelChange)="loadProcedureTypesLike($event)">
                                                                 <div class="row"  *ngIf="procedureTypes.length > 0">
                                                                     <div class="col-sm-12">
-                                                                        <button class="form-control btn btn-primary btn-outline" *ngFor="let pro of procedureTypes" (click)="getProcedureType(pro.id)" style="text-align: left;">{{pro.name}}</button>
+                                                                        <select class="form-control" multiple="multiple">
+                                                                            <option *ngFor="let pro of procedureTypes" (click)="getProcedureType(pro.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{pro.name}}</option>
+                                                                        </select>
+                                                                        <!--<button class="form-control btn btn-primary btn-outline" *ngFor="let pro of procedureTypes" (click)="getProcedureType(pro.id)" style="text-align: left;">{{pro.name}}</button>-->
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -382,7 +388,10 @@
                                                                 <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                                                                 <div class="row"  *ngIf="diagnosisTypes.length > 0">
                                                                     <div class="col-sm-12">
-                                                                        <button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>
+                                                                        <select class="form-control" multiple="multiple">
+                                                                            <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.name}}</option>
+                                                                        </select>
+                                                                        <!--<button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>-->
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -566,7 +575,10 @@
                         <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                         <div class="row"  *ngIf="diagnosisTypes.length > 0">
                             <div class="col-sm-12">
-                                <button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>
+                                <select class="form-control" multiple="multiple">
+                                    <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.name}}</option>
+                                </select>
+                                <!--<button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>-->
                             </div>
                         </div>
                     </div>
@@ -602,7 +614,11 @@
                         <input type="text" class="form-control" [(ngModel)]="labTestTypeName" (ngModelChange)="loadLabTestTypesLike($event)">
                         <div class="row"  *ngIf="labTestTypes.length > 0">
                             <div class="col-sm-12">
-                                <button class="form-control btn btn-primary btn-outline" *ngFor="let lab of labTestTypes" (click)="getLabTestType(lab.id)" style="text-align: left;">{{lab.name}}</button>
+                                <select class="form-control" multiple="multiple">
+                                    <option *ngFor="let lab of labTestTypes" (click)="getLabTestType(lab.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{lab.name}}</option>
+                                </select>
+                            
+                               <!-- <button class="form-control btn btn-primary btn-outline" *ngFor="let lab of labTestTypes" (click)="getLabTestType(lab.id)" style="text-align: left;">{{lab.name}}</button>-->
                             </div>
                         </div>
                      </div>
@@ -618,7 +634,10 @@
                         <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                         <div class="row"  *ngIf="diagnosisTypes.length > 0">
                             <div class="col-sm-12">
-                                <button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>
+                                <select class="form-control" multiple="multiple">
+                                    <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.name}}</option>
+                                </select>
+                                <!--<button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>-->
                             </div>
                         </div>
                     </div>
@@ -731,7 +750,7 @@
 
     <!-- Modal success -->
 <div class="modal fade modal-success" id="assign-radiology-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -749,7 +768,10 @@
                         <input type="text" class="form-control" [(ngModel)]="radiologyTypeName" (ngModelChange)="loadRadiologyTypesLike($event)">
                         <div class="row"  *ngIf="radiologyTypes.length > 0">
                             <div class="col-sm-12">
-                                <button class="form-control btn btn-primary btn-outline" *ngFor="let rad of radiologyTypes" (click)="getRadiologyType(rad.id)" style="text-align: left;">{{rad.name}}</button>
+                                <select class="form-control" multiple="multiple">
+                                    <option *ngFor="let rad of radiologyTypes" (click)="getRadiologyType(rad.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{rad.name}}</option>
+                                </select>
+                                <!--<button class="form-control btn btn-primary btn-outline" *ngFor="let rad of radiologyTypes" (click)="getRadiologyType(rad.id)" style="text-align: left;">{{rad.name}}</button>-->
                             </div>
                         </div>
                     </div>
@@ -765,7 +787,10 @@
                         <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                         <div class="row"  *ngIf="diagnosisTypes.length > 0">
                             <div class="col-sm-12">
-                                <button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>
+                                <select class="form-control" multiple="multiple">
+                                    <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.name}}</option>
+                                </select>
+                                <!--<button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>-->
                             </div>
                         </div>
                     </div>
@@ -836,6 +861,7 @@
                                 <tr>
                                     <td>Radiology Test</td>
                                     <td>Result</td>
+                                    <td>Doctor Report</td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -845,12 +871,12 @@
                                 <tr *ngFor="let radiology of radiologies">
                                     <td><b>{{radiology.radiologyType?.name}}</b></td>
                                     <td>{{radiology?.result}}</td>
+                                    <td>{{radiology?.report}}</td>
                                     <td>
                                         <table>
                                             <tbody>
                                                 <tr><td><small>Diagnosis: {{radiology?.diagnosisType?.name}}</small></td></tr>
-                                                <tr><td><small>Description: {{radiology?.description}}</small> </td></tr> 
-                                                <tr><td><small>Doctor Report: {{radiology?.report}}</small> </td></tr>   
+                                                <tr><td><small>Description: {{radiology?.description}}</small> </td></tr>
                                             </tbody>
                                         </table>
                                     </td>

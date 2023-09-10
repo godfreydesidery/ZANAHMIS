@@ -113,7 +113,7 @@ public class MedicineResource {
 			@RequestBody Medicine med,
 			HttpServletRequest request){
 		double unit = 0;
-		Optional<Medicine> medicine = medicineRepository.findByName(med.getName());
+		Optional<Medicine> medicine = medicineRepository.findById(med.getId());
 		if(medicine.isEmpty()) {
 			return 0;
 		}

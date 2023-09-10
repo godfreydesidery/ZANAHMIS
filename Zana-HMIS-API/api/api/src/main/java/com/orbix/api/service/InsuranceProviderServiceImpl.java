@@ -38,7 +38,7 @@ public class InsuranceProviderServiceImpl implements InsuranceProviderService{
 	@Override
 	public InsuranceProvider save(InsuranceProvider insuranceProvider, HttpServletRequest request) {
 		
-		insuranceProvider.setName(Sanitizer.sanitizeString(insuranceProvider.getName()));
+		insuranceProvider.setName(insuranceProvider.getName());
 		
 		if(insuranceProvider.getId() == null) {
 			insuranceProvider.setCreatedby(userService.getUser(request).getId());

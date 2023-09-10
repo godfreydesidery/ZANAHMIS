@@ -39,8 +39,8 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public Item save(Item item, HttpServletRequest request) {
 		
-		item.setCode(Sanitizer.sanitizeString(item.getCode().replace(" ", "")));
-		item.setName(Sanitizer.sanitizeString(item.getName()));
+		item.setCode(item.getCode().replace(" ", ""));
+		item.setName(item.getName());
 		
 		if(item.getId() == null) {
 			item.setCreatedBy(userService.getUser(request).getId());

@@ -546,6 +546,9 @@ export class DoctorCrackingComponent implements OnInit {
     this.labTestTypeId = null
     this.labTestTypeCode = ''
     this.labTestTypeName = ''
+    
+    this.diagnosisTypeId = null
+    this.diagnosisTypeCode = ''
     this.diagnosisTypeName = ''
   }
 
@@ -554,12 +557,19 @@ export class DoctorCrackingComponent implements OnInit {
     this.radiologyTypeCode = ''
     this.radiologyTypeName = ''
     this.diagnosisTypeName = ''
+
+    this.diagnosisTypeId = null
+    this.diagnosisTypeCode = ''
+    this.diagnosisTypeName = ''
   }
 
   clearProcedure(){
     this.procedureTypeId = null
     this.procedureTypeCode = ''
     this.procedureTypeName = ''
+    
+    this.diagnosisTypeId = null
+    this.diagnosisTypeCode = ''
     this.diagnosisTypeName = ''
 
     this.procedureNeedTheatre = false
@@ -609,13 +619,13 @@ export class DoctorCrackingComponent implements OnInit {
     )
   }
 
-  async getMedicineUnit(medicineName : any){
+  async getMedicineUnit(id : any){
     this.prescriptionUnit = 0
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var medicine = {
-      name : medicineName
+      id : id
     }
     this.spinner.show()
     await this.http.post<number>(API_URL+'/medicines/get_available_units', medicine, options)
@@ -756,17 +766,18 @@ export class DoctorCrackingComponent implements OnInit {
     .then(
       () => {
         this.loadLabTest(this.id, 0)
+        this.clearLabTest()
         this.msgBox.showSuccessMessage('Lab Test Saved successifully')
       }
     )
     .catch(
       error => {
         this.loadLabTest(this.id, 0)
+        this.clearLabTest()
         this.msgBox.showErrorMessage('Could not save Lab Test')
         console.log(error)
       }
     )
-    
   }
 
   async saveRadiology(){
@@ -791,16 +802,20 @@ export class DoctorCrackingComponent implements OnInit {
     .toPromise()
     .then(
       () => {
+        this.loadRadiologies(this.id, 0)
+        this.clearRadiology()
         this.msgBox.showSuccessMessage('Radiology Saved successifully')
       }
     )
     .catch(
       error => {
+        this.loadRadiologies(this.id, 0)
+        this.clearRadiology()
         this.msgBox.showErrorMessage('Could not save Radiology')
         console.log(error)
       }
     )
-    this.loadRadiologies(this.id, 0)
+    
   }
 
   async addRadiologyReport(){
@@ -895,17 +910,19 @@ export class DoctorCrackingComponent implements OnInit {
     .toPromise()
     .then(
       () => {
-        this.msgBox.showSuccessMessage('Procedure Saved successifully')
+        this.loadProcedures(this.id, 0)
         this.clearProcedure()
+        this.msgBox.showSuccessMessage('Procedure Saved successifully')
       }
     )
     .catch(
       error => {
+        this.loadProcedures(this.id, 0)
+        this.clearProcedure()
         this.msgBox.showErrorMessage('Could not save Procedure')
         console.log(error)
       }
     )
-    this.loadProcedures(this.id, 0)
   }
 
   showProcedureNote(id : any, procedureTypeName : string, note : string){
@@ -975,17 +992,20 @@ export class DoctorCrackingComponent implements OnInit {
     .toPromise()
     .then(
       () => {
-        this.msgBox.showSuccessMessage('Prescription Saved successifully')
+        this.loadPrescriptions(this.id, 0)
         this.clearPrescription()
+        this.msgBox.showSuccessMessage('Prescription Saved successifully')
       }
     )
     .catch(
       error => {
+        this.loadPrescriptions(this.id, 0)
+        this.clearPrescription()
         this.msgBox.showErrorMessage(error['error'])
         console.log(error)
       }
     )
-    this.loadPrescriptions(this.id, 0)
+    
   }
 
   async loadLabTest(consultationId : any, nonConsultationId : any){
@@ -1271,7 +1291,7 @@ export class DoctorCrackingComponent implements OnInit {
     }
     this.labTestTypes = []
     this.spinner.show()
-    await this.http.get<IProcedureType>(API_URL+'/lab_test_types/get?id='+id, options)
+    await this.http.get<ILabTestType>(API_URL+'/lab_test_types/get?id='+id, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -1430,10 +1450,12 @@ export class DoctorCrackingComponent implements OnInit {
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
-      (data) => {
+      async (data) => {
         this.medicineId = data?.id
         this.medicineCode = data!.code
         this.medicineName = data!.name
+
+        await this.getMedicineUnit(this.medicineId)
       }
     )
     .catch(

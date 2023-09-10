@@ -27,8 +27,9 @@
                             <table class="table table-responsive table-bordered table-striped table-small">
                                 <thead>
                                     <tr style="font-weight: bold;">
-                                        <td>Created At/By</td>
+                                        <td>Created At</td>
                                         <td>Main Complain</td>
+                                        <td>Doctor</td>
                                         <!--<td>Drugs and Alergic History</td>
                                         <td>Family and Social History</td>
                                         <td>Past Medical History</td>
@@ -40,8 +41,9 @@
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let history of clinicalNotes">
-                                        <td>{{history?.created}}</td>
+                                        <td>{{history?.created | showTime}}</td>
                                         <td>{{history?.mainComplain}}</td>
+                                        <td>{{history?.created | showUser}}</td>
                                         <!--<td>{{history?.drugsAndAllergyHistory}}</td>
                                         <td>{{history?.familyAndSocialHistory}}</td>
                                         <td>{{history?.pastMedicalHistory}}</td>

@@ -7,6 +7,8 @@ import { IClinicalNote } from 'src/app/domain/clinical-note';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
+import { ShowTimePipe } from 'src/app/pipes/show_time.pipe';
+
 
 
 const API_URL = environment.apiUrl;

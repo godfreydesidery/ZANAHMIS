@@ -75,7 +75,7 @@ public class DiagnosisTypeResource {
 	public ResponseEntity<DiagnosisType>save(
 			@RequestBody DiagnosisType diagnosisType,
 			HttpServletRequest request){
-		diagnosisType.setName(Sanitizer.sanitizeString(diagnosisType.getName()));
+		diagnosisType.setName(diagnosisType.getName());
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/diagnosis_types/save").toUriString());
 		return ResponseEntity.created(uri).body(diagnosisTypeService.save(diagnosisType, request));

@@ -27,4 +27,17 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 	 * @return
 	 */
 	Optional<Patient> findBySearchKey(String key);
+
+
+	
+	/**
+	 * @param value
+	 * @param value2
+	 * @param value3
+	 * @param value4
+	 * @param value5
+	 * @return
+	 */
+	List<Patient> findAllByNoContainingOrFirstNameContainingOrMiddleNameContainingOrLastNameContainingOrPhoneNoContaining(
+			String value, String value2, String value3, String value4, String value5);
 }

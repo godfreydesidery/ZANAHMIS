@@ -91,7 +91,7 @@ public class InsurancePlanResource {
 			HttpServletRequest request){
 		InsuranceProvider insuranceProvider = insuranceProviderRepository.findByName(insurancePlan.getInsuranceProvider().getName());
 		insurancePlan.setInsuranceProvider(insuranceProvider);
-		insurancePlan.setName(Sanitizer.sanitizeString(insurancePlan.getName()));
+		insurancePlan.setName(insurancePlan.getName());
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/insurance_plans/save").toUriString());
 		return ResponseEntity.created(uri).body(insurancePlanService.save(insurancePlan, request));

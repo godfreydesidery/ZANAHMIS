@@ -49,7 +49,7 @@ public class MedicineServiceImpl implements MedicineService{
 	@Override
 	public Medicine save(Medicine medicine, HttpServletRequest request) {
 		
-		medicine.setName(Sanitizer.sanitizeString(medicine.getName()));
+		medicine.setName(medicine.getName());
 		
 		if(medicine.getId() == null) {
 			medicine.setCreatedby(userService.getUser(request).getId());
