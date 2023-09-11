@@ -8,10 +8,11 @@ export interface ILabTestTypeInsurancePlan {
 
     price   : number
 
+    covered : boolean
+
     labTestType     : ILabTestType
     insurancePlan   : IInsurancePlan
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created : string
+    
 }

@@ -1,6 +1,3 @@
-import { IDay } from "./day"
-import { IUser } from "./user"
-
 export interface IItem {
 	id                  : any
 	code                : string
@@ -19,7 +16,6 @@ export interface IItem {
 	active              : boolean
 	ingredients         : string
 
-    createdBy           : IUser
-    createdOn           : IDay
-    createdAt           : Date
+    created          : string
+
 }

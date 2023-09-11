@@ -31,6 +31,8 @@ export class MedicinePlanComponent implements OnInit {
 
  medicineInsurancePlans : IMedicineInsurancePlan[] = []
 
+ insurancePlans : IInsurancePlan[] = []
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,
@@ -39,9 +41,10 @@ export class MedicinePlanComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadMedicineInsurancePlans()
-    this.loadInsuranceProviderNames()
-    this.loadMedicineNames()
+    //this.loadMedicineInsurancePlans()
+    //this.loadInsuranceProviderNames()
+    //this.loadMedicineNames()
+    this.loadInsurancePlans()
   }
 
   async loadInsuranceProviderNames(){
@@ -63,6 +66,27 @@ export class MedicinePlanComponent implements OnInit {
     .catch(
       error => {
         this.msgBox.showErrorMessage('Could not load Insurance Providers')
+      }
+    )
+  }
+
+  async loadInsurancePlans(){
+    this.insurancePlans = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IInsurancePlan[]>(API_URL+'/insurance_plans', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.insurancePlans = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
   }

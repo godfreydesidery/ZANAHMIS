@@ -11,13 +11,13 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <div class="btn"> 
+                    <!--<div class="btn"> 
                         <button type="button" class="btn btn-success m-r-2 m-b-5" (click)="clear()" data-toggle="modal" data-target="#add-edit-modal">New</button>
-                    </div>
+                    </div>-->
                 </div>
                 <div class="panel-body">
                     <div class="col-sm-12">
-                        <table class="table table-bordered table-small">
+                        <!--<table class="table table-bordered table-small">
                             <thead>
                                 <tr>
                                     <td>ID</td>
@@ -40,7 +40,15 @@
                                     </td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table>-->
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <button class="btn btn-transparent btn-inverse form-control" style="border-radius: 0px;">CASH</button>
+                            </div>
+                            <div class="col-sm-2" *ngFor="let p of insurancePlans">
+                                <button class="btn btn-transparent btn-inverse form-control" style="border-radius: 0px;">{{p.name}}</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
              </div>

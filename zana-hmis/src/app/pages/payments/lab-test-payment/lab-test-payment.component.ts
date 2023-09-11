@@ -422,6 +422,10 @@ export class LabTestPaymentComponent implements OnInit {
         //this.insurancePlanName = data!['insurancePlan']?.name
 
         this.lockSearchKey = true
+
+        this.total = 0
+        this.loadRegistrationBill()
+        this.loadLabTestBills()
       }
     )
     .catch(

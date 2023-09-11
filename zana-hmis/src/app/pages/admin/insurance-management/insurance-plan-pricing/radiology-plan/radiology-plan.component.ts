@@ -32,6 +32,8 @@ export class RadiologyPlanComponent implements OnInit {
 
  radiologyTypeInsurancePlans : IRadiologyTypeInsurancePlan[] = []
 
+ insurancePlans : IInsurancePlan[] = []
+
 
 
   constructor(
@@ -43,9 +45,10 @@ export class RadiologyPlanComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadRadiologyTypeInsurancePlans()
-    this.loadInsuranceProviderNames()
-    this.loadRadiologyTypeNames()
+    //this.loadRadiologyTypeInsurancePlans()
+    //this.loadInsuranceProviderNames()
+    //this.loadRadiologyTypeNames()
+    this.loadInsurancePlans()
   }
 
   async loadInsuranceProviderNames(){
@@ -67,6 +70,27 @@ export class RadiologyPlanComponent implements OnInit {
     .catch(
       error => {
         this.msgBox.showErrorMessage('Could not load Providers')
+      }
+    )
+  }
+
+  async loadInsurancePlans(){
+    this.insurancePlans = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IInsurancePlan[]>(API_URL+'/insurance_plans', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.insurancePlans = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
   }

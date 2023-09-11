@@ -843,7 +843,7 @@ export class PatientRegisterComponent implements OnInit {
     }
     
     this.spinner.show()
-    await this.http.get<Date>(API_URL+'/patients/last_visit_date?patient_id='+this.id, options)
+    await this.http.get<Date>(API_URL+'/patients/last_visit_date_time?patient_id='+this.id, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -854,6 +854,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
+        alert(error['error'])
        console.log(error)
       }
     )
@@ -1339,6 +1340,15 @@ export class PatientRegisterComponent implements OnInit {
         console.log(error)
       }
     )
+    if(this.type === 'OUTPATIENT'){
+      await this.loadActiveConsultation(this.id)
+    }else if(this.type === 'OUTSIDER'){
+      await this.loadNonConsultationId(this.id)
+      await this.loadLabTest(0, this.nonConsultationId)
+      await this.loadRadiologies(0, this.nonConsultationId)
+      await this.loadProcedures(0, this.nonConsultationId)
+    }
+    await this.getLastVisitDate()  
   }
 
   nationalities : string[] = [

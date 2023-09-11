@@ -32,6 +32,8 @@ export class ProcedurePlanComponent implements OnInit {
 
  procedureTypeInsurancePlans : IProcedureTypeInsurancePlan[] = []
 
+ insurancePlans : IInsurancePlan[] = []
+
 
 
   constructor(
@@ -42,9 +44,10 @@ export class ProcedurePlanComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadProcedureTypeInsurancePlans()
-    this.loadInsuranceProviderNames()
-    this.loadProcedureTypeNames()
+    //this.loadProcedureTypeInsurancePlans()
+    //this.loadInsuranceProviderNames()
+    //this.loadProcedureTypeNames()
+    this.loadInsurancePlans()
   }
 
   async loadInsuranceProviderNames(){
@@ -66,6 +69,27 @@ export class ProcedurePlanComponent implements OnInit {
     .catch(
       error => {
         this.msgBox.showErrorMessage('Could not load Insurance Providers')
+      }
+    )
+  }
+
+  async loadInsurancePlans(){
+    this.insurancePlans = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IInsurancePlan[]>(API_URL+'/insurance_plans', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.insurancePlans = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
   }

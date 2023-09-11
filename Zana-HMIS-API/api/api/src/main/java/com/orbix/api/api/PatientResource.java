@@ -382,17 +382,21 @@ public class PatientResource {
 	
 	@GetMapping("/patients/last_visit_date_time")
 	public ResponseEntity<LocalDateTime>getLastVisitDateTime(
-			@RequestParam Long patient_id,
+			@RequestParam(name = "patient_id") Long patient_id,
 			HttpServletRequest request){
 			
 		Optional<Patient> p = patientRepository.findById(patient_id);
 		
-		LocalDateTime lastVistitDateTime = visitRepository.findLastByPatient(p.get()).get().getCreatedAt();
+		LocalDateTime lastVistiDateTime = visitRepository.findLastByPatient(p.get()).get().getCreatedAt();
+		
+		//for(int i = 0; i< 1000; i++) {
+			//System.out.println(lastVistiDateTime.toString());
+		//}
 		
 		
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/last_visit_date_time").toUriString());
-		return ResponseEntity.created(uri).body(lastVistitDateTime);
+		return ResponseEntity.created(uri).body(lastVistiDateTime);
 	}
 	
 	@GetMapping("/patients/load_pending_consultations_by_clinician_id")    // to do later

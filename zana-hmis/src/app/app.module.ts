@@ -99,6 +99,8 @@ import { LabTestStatisticsReportComponent } from './pages/laboratory/reports/lab
 import { LabSampleCollectionReportComponent } from './pages/laboratory/reports/lab-sample-collection-report/lab-sample-collection-report.component';
 import { ShowTimePipe } from './pipes/show_time.pipe';
 import { ShowUserPipe } from './pipes/show_user.pipe';
+import { LabTestTypePriceComponent } from './pages/admin/insurance-management/prices/lab-test-type-price/lab-test-type-price.component';
+import { ShowDateTimePipe } from './pipes/date_time.pipe';
 
 @NgModule({
   declarations: [
@@ -165,6 +167,7 @@ import { ShowUserPipe } from './pipes/show_user.pipe';
     PatientProcedureComponent,
     AgePipe,
     ShowTimePipe,
+    ShowDateTimePipe,
     ShowUserPipe,
     TheatreComponent,
     ItemRegisterComponent,
@@ -190,6 +193,7 @@ import { ShowUserPipe } from './pipes/show_user.pipe';
     LabTestReportComponent,
     LabTestStatisticsReportComponent,
     LabSampleCollectionReportComponent,
+    LabTestTypePriceComponent,
   ],
   imports: [
     HttpClientModule,
@@ -279,7 +283,7 @@ import { ShowUserPipe } from './pipes/show_user.pipe';
     {path : 'prescription-history', component : PrescriptionHistoryComponent},
     {path : 'working-diagnosis-history', component : WorkingDiagnosisHistoryComponent},
     {path : 'final-diagnosis-history', component : FinalDiagnosisHistoryComponent},
-    {path : 'dashboard', component : DashboardComponent},
+    {path : 'lab-test-type-price', component : LabTestTypePriceComponent},
 
     ])
   ],

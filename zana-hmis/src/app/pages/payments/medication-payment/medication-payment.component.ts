@@ -410,6 +410,10 @@ export class MedicationPaymentComponent implements OnInit {
         //this.insurancePlanName = data!['insurancePlan']?.name
 
         this.lockSearchKey = true
+
+        this.total = 0
+        this.loadRegistrationBill()
+        this.loadPrescriptionBills()
       }
     )
     .catch(
