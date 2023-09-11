@@ -32,16 +32,11 @@
                                     <td>{{l.labTestType.name}}</td>
                                     <td style="text-align: right;">{{l.price | currency:'':''}}</td>
                                     <td><input type="text" class="form-control" [(ngModel)]="l.price" style="text-align: center;"></td>
-                                    <td><button class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i>Save</button></td>
+                                    <td><button class="btn btn-success" (click)="updateLabTestTypePriceByInsurance(insurancePlanId, l?.labTestTypeInsurancePlan?.labTestType?.id, l.price)"><i class="glyphicon glyphicon-floppy-disk"></i>Save</button></td>
                                     <td>
                                         <div *ngIf="l?.labTestTypeInsurancePlan?.covered != undefined">
-                                            <button *ngIf="l?.labTestTypeInsurancePlan?.covered === true"  (click)="changeLabTestTypeCoverage(insurancePlanId, l?.labTestTypeInsurancePlan?.labTestType?.id, false)">COVERED [Change]</button>
-                                            <button *ngIf="l?.labTestTypeInsurancePlan?.covered === false" (click)="changeLabTestTypeCoverage(insurancePlanId, l?.labTestTypeInsurancePlan?.labTestType?.id, true)">NOT COVERED [Change]</button>
-                                            <!--<select class="form-control">
-                                                <option><span *ngIf="l?.labTestTypeInsurancePlan?.covered === true">COVERED</span> <span *ngIf="l?.labTestTypeInsurancePlan?.covered === false">NOT COVERED</span></option>
-                                                <option><button (click)="changeLabTestTypeCoverage(insurancePlanId, l?.labTestTypeInsurancePlan?.labTestType?.id, true)">COVERED</button></option>
-                                                <option><button (click)="changeLabTestTypeCoverage(insurancePlanId, l?.labTestTypeInsurancePlan?.labTestType?.id,  false)">NOT COVERED</button></option>
-                                            </select>-->
+                                            <span *ngIf="l?.labTestTypeInsurancePlan?.covered === true">COVERED <button (click)="changeLabTestTypeCoverage(insurancePlanId, l?.labTestTypeInsurancePlan?.labTestType?.id, false)">Change</button></span>
+                                            <span *ngIf="l?.labTestTypeInsurancePlan?.covered === false">NOT COVERED <button (click)="changeLabTestTypeCoverage(insurancePlanId, l?.labTestTypeInsurancePlan?.labTestType?.id, true)">Change</button></span>
                                         </div>
                                     </td>
                                 </tr>

@@ -124,8 +124,10 @@ export class LabTestTypePriceComponent {
         this.labTestTypePrices.forEach(element => {
           if(data!.labTestType.id === element.labTestType.id){
             element.labTestTypeInsurancePlan.price = data!.labTestTypeInsurancePlan.price
+            element.labTestTypeInsurancePlan.covered = data!.labTestTypeInsurancePlan.covered
           }
         })
+        this.msgBox.showSuccessMessage('Price updated successifully')
       }
     )
     .catch(
