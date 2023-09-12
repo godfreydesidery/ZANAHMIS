@@ -111,9 +111,9 @@ export class LabTestTypePriceComponent {
       labTestTypeInsurancePlan : {
         insurancePlan : {
           id : insurancePlanId
-        },
-        price : price
+        }
       },
+      price : price
     }
     this.spinner.show()
     await this.http.post<ILabTestTypePrice>(API_URL+'/insurance_plans/update_lab_test_type_price_by_insurance', update, options)
@@ -123,8 +123,8 @@ export class LabTestTypePriceComponent {
       data => {
         this.labTestTypePrices.forEach(element => {
           if(data!.labTestType.id === element.labTestType.id){
-            element.labTestTypeInsurancePlan.price = data!.labTestTypeInsurancePlan.price
-            element.labTestTypeInsurancePlan.covered = data!.labTestTypeInsurancePlan.covered
+            element.price = data!.price
+            element.covered = data!.covered
           }
         })
         this.msgBox.showSuccessMessage('Price updated successifully')
@@ -132,6 +132,7 @@ export class LabTestTypePriceComponent {
     )
     .catch(
       error => {
+        console.log(error)
         this.msgBox.showErrorMessage(error['error'])
       }
     )

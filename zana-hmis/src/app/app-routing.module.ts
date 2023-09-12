@@ -60,12 +60,12 @@ import { PharmacyOutsiderListComponent } from './pages/pharmacy/pharmacy-outside
 import { PharmacyToStoreROComponent } from './pages/pharmacy/pharmacy-to-store-r-o/pharmacy-to-store-r-o.component';
 import { SelectPharmacyComponent } from './pages/pharmacy/select-pharmacy/select-pharmacy.component';
 import { StoreToPharmacyRNComponent } from './pages/pharmacy/store-to-pharmacy-r-n/store-to-pharmacy-r-n.component';
-import { ConsultationPriceComponent } from './pages/price-view/consultation-price/consultation-price.component';
+import { ConsultationPricesComponent } from './pages/price-view/consultation-price/consultation-prices.component';
 import { LabTestPriceComponent } from './pages/price-view/lab-test-price/lab-test-price.component';
-import { MedicinePriceComponent } from './pages/price-view/medicine-price/medicine-price.component';
+import { MedicinePricesComponent } from './pages/price-view/medicine-price/medicine-price.component';
 import { ProcedurePriceComponent } from './pages/price-view/procedure-price/procedure-price.component';
 import { RadiologyPriceComponent } from './pages/price-view/radiology-price/radiology-price.component';
-import { RegistrationPriceComponent } from './pages/price-view/registration-price/registration-price.component';
+import { RegistrationPricesComponent } from './pages/price-view/registration-price/registration-prices.component';
 import { PatientProcedureComponent } from './pages/procedure/patient-procedure/patient-procedure.component';
 import { ProcedureInpatientListComponent } from './pages/procedure/procedure-inpatient-list/procedure-inpatient-list.component';
 import { ProcedureOutpatientListComponent } from './pages/procedure/procedure-outpatient-list/procedure-outpatient-list.component';
@@ -132,12 +132,12 @@ const routes: Routes = [
     {path : 'procedure-outpatient-list', component : ProcedureOutpatientListComponent, canActivate: [AuthGuard]},
     {path : 'procedure-inpatient-list', component : ProcedureInpatientListComponent, canActivate: [AuthGuard]},
     {path : 'procedure-outsider-list', component : ProcedureOutsiderListComponent, canActivate: [AuthGuard]},
-    {path : 'registration-price', component : RegistrationPriceComponent, canActivate: [AuthGuard]},
-    {path : 'consultation-price', component : ConsultationPriceComponent, canActivate: [AuthGuard]},
+    {path : 'registration-prices', component : RegistrationPricesComponent, canActivate: [AuthGuard]},
+    {path : 'consultation-prices', component : ConsultationPricesComponent, canActivate: [AuthGuard]},
     {path : 'lab-test-price', component : LabTestPriceComponent, canActivate: [AuthGuard]},
     {path : 'procedure-price', component : ProcedurePriceComponent, canActivate: [AuthGuard]},
     {path : 'radiology-price', component : RadiologyPriceComponent, canActivate: [AuthGuard]},
-    {path : 'medicine-price', component : MedicinePriceComponent, canActivate: [AuthGuard]},
+    {path : 'medicine-prices', component : MedicinePricesComponent, canActivate: [AuthGuard]},
     {path : 'select-pharmacy', component : SelectPharmacyComponent, canActivate: [AuthGuard]},
     {path : 'pharmacy-outpatient-list', component : PharmacyOutpatientListComponent, canActivate: [AuthGuard]},
     {path : 'pharmacy-inpatient-list', component : PharmacyInpatientListComponent, canActivate: [AuthGuard]},

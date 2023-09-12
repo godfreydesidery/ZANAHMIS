@@ -51,12 +51,12 @@ import { LabTestPaymentComponent } from './pages/payments/lab-test-payment/lab-t
 import { RadiologyPaymentComponent } from './pages/payments/radiology-payment/radiology-payment.component';
 import { MedicationPaymentComponent } from './pages/payments/medication-payment/medication-payment.component';
 import { ProcedurePaymentComponent } from './pages/payments/procedure-payment/procedure-payment.component';
-import { RegistrationPriceComponent } from './pages/price-view/registration-price/registration-price.component';
-import { ConsultationPriceComponent } from './pages/price-view/consultation-price/consultation-price.component';
+import { RegistrationPricesComponent } from './pages/price-view/registration-price/registration-prices.component';
+import { ConsultationPricesComponent } from './pages/price-view/consultation-price/consultation-prices.component';
 import { LabTestPriceComponent } from './pages/price-view/lab-test-price/lab-test-price.component';
 import { RadiologyPriceComponent } from './pages/price-view/radiology-price/radiology-price.component';
 import { ProcedurePriceComponent } from './pages/price-view/procedure-price/procedure-price.component';
-import { MedicinePriceComponent } from './pages/price-view/medicine-price/medicine-price.component';
+import { MedicinePricesComponent } from './pages/price-view/medicine-price/medicine-price.component';
 import { RadiologyInpatientListComponent } from './pages/radiology/radiology-inpatient-list/radiology-inpatient-list.component';
 import { RadiologyOutpatientListComponent } from './pages/radiology/radiology-outpatient-list/radiology-outpatient-list.component';
 import { RadiologyOutsiderListComponent } from './pages/radiology/radiology-outsider-list/radiology-outsider-list.component';
@@ -101,6 +101,11 @@ import { ShowTimePipe } from './pipes/show_time.pipe';
 import { ShowUserPipe } from './pipes/show_user.pipe';
 import { LabTestTypePriceComponent } from './pages/admin/insurance-management/prices/lab-test-type-price/lab-test-type-price.component';
 import { ShowDateTimePipe } from './pipes/date_time.pipe';
+import { RadiologyTypePriceComponent } from './pages/admin/insurance-management/prices/radiology-type-price/radiology-type-price.component';
+import { ProcedureTypePriceComponent } from './pages/admin/insurance-management/prices/procedure-type-price/procedure-type-price.component';
+import { MedicinePriceComponent } from './pages/admin/insurance-management/prices/medicine-price/medicine-price.component';
+import { ConsultationPriceComponent } from './pages/admin/insurance-management/prices/consultation-price/consultation-price.component';
+import { RegistrationPriceComponent } from './pages/admin/insurance-management/prices/registration-price/registration-price.component';
 
 @NgModule({
   declarations: [
@@ -144,12 +149,12 @@ import { ShowDateTimePipe } from './pipes/date_time.pipe';
     RadiologyPaymentComponent,
     MedicationPaymentComponent,
     ProcedurePaymentComponent,
-    RegistrationPriceComponent,
-    ConsultationPriceComponent,
+    RegistrationPricesComponent,
+    ConsultationPricesComponent,
     LabTestPriceComponent,
     ProcedurePriceComponent,
     RadiologyPriceComponent,
-    MedicinePriceComponent,
+    MedicinePricesComponent,
     RadiologyInpatientListComponent,
     RadiologyOutpatientListComponent,
     RadiologyOutsiderListComponent,
@@ -194,6 +199,11 @@ import { ShowDateTimePipe } from './pipes/date_time.pipe';
     LabTestStatisticsReportComponent,
     LabSampleCollectionReportComponent,
     LabTestTypePriceComponent,
+    RadiologyTypePriceComponent,
+    ProcedureTypePriceComponent,
+    MedicinePriceComponent,
+    ConsultationPriceComponent,
+    RegistrationPriceComponent,
   ],
   imports: [
     HttpClientModule,
@@ -252,12 +262,12 @@ import { ShowDateTimePipe } from './pipes/date_time.pipe';
     {path : 'procedure-outpatient-list', component : ProcedureOutpatientListComponent},
     {path : 'procedure-inpatient-list', component : ProcedureInpatientListComponent},
     {path : 'procedure-outsider-list', component : ProcedureOutsiderListComponent},
-    {path : 'registration-price', component : RegistrationPriceComponent},
-    {path : 'consultation-price', component : ConsultationPriceComponent},
+    {path : 'registration-prices', component : RegistrationPricesComponent},
+    {path : 'consultation-prices', component : ConsultationPricesComponent},
     {path : 'lab-test-price', component : LabTestPriceComponent},
     {path : 'procedure-price', component : ProcedurePriceComponent},
     {path : 'radiology-price', component : RadiologyPriceComponent},
-    {path : 'medicine-price', component : MedicinePriceComponent},
+    {path : 'medicine-prices', component : MedicinePricesComponent},
     {path : 'select-pharmacy', component : SelectPharmacyComponent},
     {path : 'pharmacy-outpatient-list', component : PharmacyOutpatientListComponent},
     {path : 'pharmacy-inpatient-list', component : PharmacyInpatientListComponent},
@@ -284,6 +294,11 @@ import { ShowDateTimePipe } from './pipes/date_time.pipe';
     {path : 'working-diagnosis-history', component : WorkingDiagnosisHistoryComponent},
     {path : 'final-diagnosis-history', component : FinalDiagnosisHistoryComponent},
     {path : 'lab-test-type-price', component : LabTestTypePriceComponent},
+    {path : 'radiology-type-price', component : RadiologyTypePriceComponent},
+    {path : 'procedure-type-price', component : ProcedureTypePriceComponent},
+    {path : 'medicine-price', component : MedicinePriceComponent},
+    {path : 'consultation-price', component : ConsultationPriceComponent},
+    {path : 'registration-price', component : RegistrationPriceComponent},
 
     ])
   ],

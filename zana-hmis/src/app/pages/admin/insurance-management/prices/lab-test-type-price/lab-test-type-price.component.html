@@ -32,7 +32,7 @@
                                     <td>{{l.labTestType.name}}</td>
                                     <td style="text-align: right;">{{l.price | currency:'':''}}</td>
                                     <td><input type="text" class="form-control" [(ngModel)]="l.price" style="text-align: center;"></td>
-                                    <td><button class="btn btn-success" (click)="updateLabTestTypePriceByInsurance(insurancePlanId, l?.labTestTypeInsurancePlan?.labTestType?.id, l.price)"><i class="glyphicon glyphicon-floppy-disk"></i>Save</button></td>
+                                    <td><button class="btn btn-success" (click)="updateLabTestTypePriceByInsurance(insurancePlanId, l?.labTestType?.id, l.price)"><i class="glyphicon glyphicon-floppy-disk"></i>Save</button></td>
                                     <td>
                                         <div *ngIf="l?.labTestTypeInsurancePlan?.covered != undefined">
                                             <span *ngIf="l?.labTestTypeInsurancePlan?.covered === true">COVERED <button (click)="changeLabTestTypeCoverage(insurancePlanId, l?.labTestTypeInsurancePlan?.labTestType?.id, false)">Change</button></span>

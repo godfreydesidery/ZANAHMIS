@@ -7,10 +7,10 @@ export interface IRadiologyTypeInsurancePlan {
     id      : any
     price   : number
 
+    covered : boolean
+
     radiologyType : IRadiologyType
     insurancePlan : IInsurancePlan
 
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created : string
 }

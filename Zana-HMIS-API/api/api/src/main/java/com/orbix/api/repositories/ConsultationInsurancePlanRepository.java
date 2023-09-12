@@ -31,4 +31,13 @@ public interface ConsultationInsurancePlanRepository extends JpaRepository<Consu
 	 */
 	Optional<ConsultationInsurancePlan> findByClinicAndInsurancePlan(Clinic c, InsurancePlan insurancePlan);
 
+	/**
+	 * @param c
+	 * @param insurancePlan
+	 * @param b
+	 * @return
+	 */
+	Optional<ConsultationInsurancePlan> findByClinicAndInsurancePlanAndCovered(Clinic c, InsurancePlan insurancePlan,
+			boolean b);
+
 }

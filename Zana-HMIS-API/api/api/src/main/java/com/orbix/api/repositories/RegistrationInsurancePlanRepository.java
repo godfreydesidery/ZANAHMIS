@@ -22,4 +22,11 @@ public interface RegistrationInsurancePlanRepository extends JpaRepository<Regis
 	 */
 	Optional<RegistrationInsurancePlan> findByInsurancePlan(InsurancePlan insurancePlan);
 
+	/**
+	 * @param insurancePlan
+	 * @param b
+	 * @return
+	 */
+	Optional<RegistrationInsurancePlan> findByInsurancePlanAndCovered(InsurancePlan insurancePlan, boolean b);
+
 }

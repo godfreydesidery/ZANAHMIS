@@ -300,4 +300,9 @@ export class RadiologyPlanComponent implements OnInit {
     return granted
   }
 
+  setInsurancePlanId(id : any, name : string){
+    localStorage.setItem('insurance_plan_id', id)
+    localStorage.setItem('insurance_plan_name', name)
+  }
+
 }

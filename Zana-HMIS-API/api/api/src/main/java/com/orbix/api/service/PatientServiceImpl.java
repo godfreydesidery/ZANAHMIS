@@ -219,7 +219,7 @@ public class PatientServiceImpl implements PatientService {
 			/**
 			 * Load Registration plan
 			 */
-			Optional<RegistrationInsurancePlan> plan = registrationInsurancePlanRepository.findByInsurancePlan(patient.getInsurancePlan());
+			Optional<RegistrationInsurancePlan> plan = registrationInsurancePlanRepository.findByInsurancePlanAndCovered(patient.getInsurancePlan(), true);
 			if(!plan.isPresent()) {
 				throw new NotFoundException("There is no registration plan for this insurance plan. Please change payment method");
 			}
@@ -473,7 +473,7 @@ public class PatientServiceImpl implements PatientService {
 		if(p.getPaymentType().equals("INSURANCE")) {
 			
 			
-			Optional<ConsultationInsurancePlan> consultationPricePlan = consultationInsurancePlanRepository.findByClinicAndInsurancePlan(c, p.getInsurancePlan());
+			Optional<ConsultationInsurancePlan> consultationPricePlan = consultationInsurancePlanRepository.findByClinicAndInsurancePlanAndCovered(c, p.getInsurancePlan(), true);
 			
 			if(!consultationPricePlan.isPresent()) {
 				throw new InvalidOperationException("Plan not available for this clinic. Please change payment method");
@@ -659,7 +659,7 @@ public class PatientServiceImpl implements PatientService {
 		
 		if(patient.getPaymentType().equals("INSURANCE")) {
 			
-			Optional<LabTestTypeInsurancePlan> labTestTypePricePlan = labTestTypeInsurancePlanRepository.findByLabTestTypeAndInsurancePlan(ltt.get(), patient.getInsurancePlan());
+			Optional<LabTestTypeInsurancePlan> labTestTypePricePlan = labTestTypeInsurancePlanRepository.findByLabTestTypeAndInsurancePlanAndCovered(ltt.get(), patient.getInsurancePlan(), true);
 			
 			if(labTestTypePricePlan.isPresent()) {
 				patientBill.setAmount(labTestTypePricePlan.get().getPrice());
@@ -783,7 +783,7 @@ public class PatientServiceImpl implements PatientService {
 		
 		if(patient.getPaymentType().equals("INSURANCE")) {
 			
-			Optional<RadiologyTypeInsurancePlan> radiologyTypePricePlan = radiologyTypeInsurancePlanRepository.findByRadiologyTypeAndInsurancePlan(rt.get(), patient.getInsurancePlan());
+			Optional<RadiologyTypeInsurancePlan> radiologyTypePricePlan = radiologyTypeInsurancePlanRepository.findByRadiologyTypeAndInsurancePlanAndCovered(rt.get(), patient.getInsurancePlan(), true);
 			
 			if(radiologyTypePricePlan.isPresent()) {
 				patientBill.setAmount(radiologyTypePricePlan.get().getPrice());
@@ -923,7 +923,7 @@ public class PatientServiceImpl implements PatientService {
 		
 		if(patient.getPaymentType().equals("INSURANCE")) {
 			
-			Optional<ProcedureTypeInsurancePlan> procedureTypePricePlan = procedureTypeInsurancePlanRepository.findByProcedureTypeAndInsurancePlan(pr.get(), patient.getInsurancePlan());
+			Optional<ProcedureTypeInsurancePlan> procedureTypePricePlan = procedureTypeInsurancePlanRepository.findByProcedureTypeAndInsurancePlanAndCovered(pr.get(), patient.getInsurancePlan(), true);
 			
 			if(procedureTypePricePlan.isPresent()) {
 				patientBill.setAmount(procedureTypePricePlan.get().getPrice());
@@ -1031,7 +1031,7 @@ public class PatientServiceImpl implements PatientService {
 		
 		if(patient.getPaymentType().equals("INSURANCE")) {
 			
-			Optional<MedicineInsurancePlan> medicinePricePlan = medicineInsurancePlanRepository.findByMedicineAndInsurancePlan(md.get(), patient.getInsurancePlan());
+			Optional<MedicineInsurancePlan> medicinePricePlan = medicineInsurancePlanRepository.findByMedicineAndInsurancePlanAndCovered(md.get(), patient.getInsurancePlan(), true);
 			
 			if(medicinePricePlan.isPresent()) {
 				patientBill.setAmount(medicinePricePlan.get().getPrice() * prescription.getQty());

@@ -7,10 +7,10 @@ export interface IMedicineInsurancePlan {
     id : any
     price   : number
 
+    covered : boolean
+
     medicine : IMedicine
     insurancePlan : IInsurancePlan
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created : string
 }

@@ -32,4 +32,13 @@ public interface MedicineInsurancePlanRepository extends JpaRepository<MedicineI
 	 */
 	Optional<MedicineInsurancePlan> findByMedicineAndInsurancePlan(Medicine medicine, InsurancePlan insurancePlan);
 
+	/**
+	 * @param medicine
+	 * @param insurancePlan
+	 * @param b
+	 * @return
+	 */
+	Optional<MedicineInsurancePlan> findByMedicineAndInsurancePlanAndCovered(Medicine medicine,
+			InsurancePlan insurancePlan, boolean b);
+
 }

@@ -5,4 +5,5 @@ export interface ILabTestTypePrice{
     labTestType : ILabTestType
     labTestTypeInsurancePlan : ILabTestTypeInsurancePlan
     price : number
+    covered : boolean
 }

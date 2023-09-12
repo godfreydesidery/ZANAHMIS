@@ -6,9 +6,9 @@ export interface IRegistrationInsurancePlan {
     id      : any
     registrationFee : number
 
+    covered : boolean
+
     insurancePlan   : IInsurancePlan
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created : string
 }

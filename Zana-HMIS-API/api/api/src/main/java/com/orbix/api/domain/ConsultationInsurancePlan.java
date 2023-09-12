@@ -41,6 +41,7 @@ public class ConsultationInsurancePlan {
 	@NotNull
 	private double consultationFee;
 	private boolean active = false;
+	private boolean covered = false;
 	
 	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "insurance_plan_id", nullable = false , updatable = true)

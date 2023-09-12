@@ -7,10 +7,10 @@ export interface IProcedureTypeInsurancePlan {
     id      : any
     price   : number
 
+    covered : boolean
+
     procedureType : IProcedureType
     insurancePlan : IInsurancePlan
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created : string
 }

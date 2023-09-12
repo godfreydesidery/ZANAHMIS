@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.api.accessories.Sanitizer;
+import com.orbix.api.domain.Clinic;
+import com.orbix.api.domain.CompanyProfile;
+import com.orbix.api.domain.ConsultationInsurancePlan;
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.InsuranceProvider;
 import com.orbix.api.domain.LabTestType;
@@ -34,9 +37,13 @@ import com.orbix.api.domain.ProcedureType;
 import com.orbix.api.domain.ProcedureTypeInsurancePlan;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.RadiologyTypeInsurancePlan;
+import com.orbix.api.domain.RegistrationInsurancePlan;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.domain.InsurancePlan;
+import com.orbix.api.repositories.ClinicRepository;
+import com.orbix.api.repositories.CompanyProfileRepository;
+import com.orbix.api.repositories.ConsultationInsurancePlanRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.InsuranceProviderRepository;
 import com.orbix.api.repositories.LabTestTypeInsurancePlanRepository;
@@ -47,6 +54,7 @@ import com.orbix.api.repositories.ProcedureTypeInsurancePlanRepository;
 import com.orbix.api.repositories.ProcedureTypeRepository;
 import com.orbix.api.repositories.RadiologyTypeInsurancePlanRepository;
 import com.orbix.api.repositories.RadiologyTypeRepository;
+import com.orbix.api.repositories.RegistrationInsurancePlanRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.service.DayService;
 import com.orbix.api.service.InsurancePlanService;
@@ -83,6 +91,13 @@ public class InsurancePlanResource {
 	
 	private final MedicineRepository medicineRepository;
 	private final MedicineInsurancePlanRepository medicineInsurancePlanRepository;
+	
+	private final ClinicRepository clinicRepository;
+	private final ConsultationInsurancePlanRepository consultationInsurancePlanRepository;
+	
+	private final RegistrationInsurancePlanRepository registrationInsurancePlanRepository;
+	
+	private final CompanyProfileRepository companyProfileRepository;
 	
 	
 	@GetMapping("/insurance_plans")
@@ -223,11 +238,28 @@ public class InsurancePlanResource {
 		if(tt.isEmpty()) {
 			throw new NotFoundException("Selected test type not found");
 		}
+		
+		LLabTestTypePrice coverage = new LLabTestTypePrice();
+		if(labTestTypePrice.getLabTestTypeInsurancePlan().getInsurancePlan().getId() == 0) {
+			if(labTestTypePrice.getPrice() < 0) {
+				throw new InvalidOperationException("Invalid price value. Price should not be less than zero");
+			}
+			tt.get().setPrice(labTestTypePrice.getPrice());
+			LabTestType labTestType = labTestTypeRepository.save(tt.get());
+			
+			coverage.setLabTestType(labTestType);
+			coverage.setLabTestTypeInsurancePlan(null);
+			coverage.setPrice(labTestTypePrice.getPrice());
+			coverage.setCovered(true);
+			
+			return ResponseEntity.ok().body(coverage);
+		}
+		
 		Optional<InsurancePlan> ip = insurancePlanRepository.findById(labTestTypePrice.getLabTestTypeInsurancePlan().getInsurancePlan().getId());
 		if(ip.isEmpty()) {
 			throw new NotFoundException("Selected plan not found");
 		}
-		double price = labTestTypePrice.getLabTestTypeInsurancePlan().getPrice();
+		double price = labTestTypePrice.getPrice();
 		Optional<LabTestTypeInsurancePlan> lttip = labTestTypeInsurancePlanRepository.findByInsurancePlanAndLabTestType(ip.get(), tt.get());
 		if(lttip.isEmpty()) {
 			throw new NotFoundException("Selected package not found");
@@ -241,10 +273,11 @@ public class InsurancePlanResource {
 		
 		LabTestTypeInsurancePlan plan = labTestTypeInsurancePlanRepository.save(lttip.get());
 		
-		LLabTestTypePrice coverage = new LLabTestTypePrice();
+		
 		coverage.setLabTestType(tt.get());
 		coverage.setLabTestTypeInsurancePlan(plan);
 		coverage.setPrice(plan.getPrice());
+		coverage.setCovered(plan.isCovered());
 		
 		return ResponseEntity.ok().body(coverage);
 	}
@@ -337,11 +370,28 @@ public class InsurancePlanResource {
 		if(tt.isEmpty()) {
 			throw new NotFoundException("Selected procedure not found");
 		}
+		
+		LProcedureTypePrice coverage = new LProcedureTypePrice();
+		if(procedureTypePrice.getProcedureTypeInsurancePlan().getInsurancePlan().getId() == 0) {
+			if(procedureTypePrice.getPrice() < 0) {
+				throw new InvalidOperationException("Invalid price value. Price should not be less than zero");
+			}
+			tt.get().setPrice(procedureTypePrice.getPrice());
+			ProcedureType procedureType = procedureTypeRepository.save(tt.get());
+			
+			coverage.setProcedureType(procedureType);
+			coverage.setProcedureTypeInsurancePlan(null);
+			coverage.setPrice(procedureTypePrice.getPrice());
+			coverage.setCovered(true);
+			
+			return ResponseEntity.ok().body(coverage);
+		}
+		
 		Optional<InsurancePlan> ip = insurancePlanRepository.findById(procedureTypePrice.getProcedureTypeInsurancePlan().getInsurancePlan().getId());
 		if(ip.isEmpty()) {
 			throw new NotFoundException("Selected plan not found");
 		}
-		double price = procedureTypePrice.getProcedureTypeInsurancePlan().getPrice();
+		double price = procedureTypePrice.getPrice();
 		Optional<ProcedureTypeInsurancePlan> lttip = procedureTypeInsurancePlanRepository.findByInsurancePlanAndProcedureType(ip.get(), tt.get());
 		if(lttip.isEmpty()) {
 			throw new NotFoundException("Selected package not found");
@@ -355,7 +405,7 @@ public class InsurancePlanResource {
 		
 		ProcedureTypeInsurancePlan plan = procedureTypeInsurancePlanRepository.save(lttip.get());
 		
-		LProcedureTypePrice coverage = new LProcedureTypePrice();
+		coverage = new LProcedureTypePrice();
 		coverage.setProcedureType(tt.get());
 		coverage.setProcedureTypeInsurancePlan(plan);
 		coverage.setPrice(plan.getPrice());
@@ -451,11 +501,28 @@ public class InsurancePlanResource {
 		if(tt.isEmpty()) {
 			throw new NotFoundException("Selected radiology not found");
 		}
+		
+		LRadiologyTypePrice coverage = new LRadiologyTypePrice();
+		if(radiologyTypePrice.getRadiologyTypeInsurancePlan().getInsurancePlan().getId() == 0) {
+			if(radiologyTypePrice.getPrice() < 0) {
+				throw new InvalidOperationException("Invalid price value. Price should not be less than zero");
+			}
+			tt.get().setPrice(radiologyTypePrice.getPrice());
+			RadiologyType radiologyType = radiologyTypeRepository.save(tt.get());
+			
+			coverage.setRadiologyType(radiologyType);
+			coverage.setRadiologyTypeInsurancePlan(null);
+			coverage.setPrice(radiologyTypePrice.getPrice());
+			coverage.setCovered(true);
+			
+			return ResponseEntity.ok().body(coverage);
+		}
+		
 		Optional<InsurancePlan> ip = insurancePlanRepository.findById(radiologyTypePrice.getRadiologyTypeInsurancePlan().getInsurancePlan().getId());
 		if(ip.isEmpty()) {
 			throw new NotFoundException("Selected plan not found");
 		}
-		double price = radiologyTypePrice.getRadiologyTypeInsurancePlan().getPrice();
+		double price = radiologyTypePrice.getPrice();
 		Optional<RadiologyTypeInsurancePlan> lttip = radiologyTypeInsurancePlanRepository.findByInsurancePlanAndRadiologyType(ip.get(), tt.get());
 		if(lttip.isEmpty()) {
 			throw new NotFoundException("Selected package not found");
@@ -469,7 +536,7 @@ public class InsurancePlanResource {
 		
 		RadiologyTypeInsurancePlan plan = radiologyTypeInsurancePlanRepository.save(lttip.get());
 		
-		LRadiologyTypePrice coverage = new LRadiologyTypePrice();
+		coverage = new LRadiologyTypePrice();
 		coverage.setRadiologyType(tt.get());
 		coverage.setRadiologyTypeInsurancePlan(plan);
 		coverage.setPrice(plan.getPrice());
@@ -565,11 +632,28 @@ public class InsurancePlanResource {
 		if(tt.isEmpty()) {
 			throw new NotFoundException("Selected medicine not found");
 		}
+		
+		LMedicinePrice coverage = new LMedicinePrice();
+		if(medicinePrice.getMedicineInsurancePlan().getInsurancePlan().getId() == 0) {
+			if(medicinePrice.getPrice() < 0) {
+				throw new InvalidOperationException("Invalid price value. Price should not be less than zero");
+			}
+			tt.get().setPrice(medicinePrice.getPrice());
+			Medicine medicine = medicineRepository.save(tt.get());
+			
+			coverage.setMedicine(medicine);
+			coverage.setMedicineInsurancePlan(null);
+			coverage.setPrice(medicinePrice.getPrice());
+			coverage.setCovered(true);
+			
+			return ResponseEntity.ok().body(coverage);
+		}
+		
 		Optional<InsurancePlan> ip = insurancePlanRepository.findById(medicinePrice.getMedicineInsurancePlan().getInsurancePlan().getId());
 		if(ip.isEmpty()) {
 			throw new NotFoundException("Selected plan not found");
 		}
-		double price = medicinePrice.getMedicineInsurancePlan().getPrice();
+		double price = medicinePrice.getPrice();
 		Optional<MedicineInsurancePlan> lttip = medicineInsurancePlanRepository.findByInsurancePlanAndMedicine(ip.get(), tt.get());
 		if(lttip.isEmpty()) {
 			throw new NotFoundException("Selected package not found");
@@ -583,10 +667,266 @@ public class InsurancePlanResource {
 		
 		MedicineInsurancePlan plan = medicineInsurancePlanRepository.save(lttip.get());
 		
-		LMedicinePrice coverage = new LMedicinePrice();
+		coverage = new LMedicinePrice();
 		coverage.setMedicine(tt.get());
 		coverage.setMedicineInsurancePlan(plan);
 		coverage.setPrice(plan.getPrice());
+		
+		return ResponseEntity.ok().body(coverage);
+	}
+	
+	@GetMapping("/insurance_plans/get_consultation_prices")
+	public ResponseEntity<List<LConsultationPrice>> getConsultationPrices(
+			@RequestParam(name = "insurance_plan_id") Long insurancePlanId,
+			HttpServletRequest request){
+		List<LConsultationPrice> consultationPrices = new ArrayList<>();
+		List<Clinic> clinics = clinicRepository.findAll();
+		for(Clinic t : clinics) {
+			LConsultationPrice consultationPrice = new LConsultationPrice();
+			consultationPrice.setClinic(t);
+			if(insurancePlanId == 0) {
+				consultationPrice.setPrice(t.getConsultationFee());
+			}else if(insurancePlanId > 0) {
+				Optional<InsurancePlan> i = insurancePlanRepository.findById(insurancePlanId);
+				if(i.isEmpty()) {
+					throw new NotFoundException("Insurance package not found");
+				}
+				Optional<ConsultationInsurancePlan> p = consultationInsurancePlanRepository.findByClinicAndInsurancePlan(t, i.get());
+				ConsultationInsurancePlan plan;
+				if(p.isEmpty()) {
+					//create
+					plan = new ConsultationInsurancePlan();
+					plan.setActive(true);
+					plan.setCovered(false);
+					plan.setConsultationFee(0);
+					plan.setInsurancePlan(i.get());
+					plan.setClinic(t);
+					
+					plan.setCreatedby(userService.getUserId(request));
+					plan.setCreatedOn(dayService.getDayId());
+					plan.setCreatedAt(LocalDateTime.now());
+					
+					plan = consultationInsurancePlanRepository.save(plan);
+				}else {
+					plan = p.get();
+				}
+				consultationPrice.setConsultationInsurancePlan(plan);
+				consultationPrice.setPrice(plan.getConsultationFee());
+			}else {
+				throw new InvalidOperationException("Invalid package type selected");
+			}
+			consultationPrices.add(consultationPrice);
+		}
+		return ResponseEntity.ok().body(consultationPrices);
+	}
+	
+	@PostMapping("/insurance_plans/change_consultation_coverage")
+	public ResponseEntity<LConsultationPrice> changeConsultationCoverage(
+			@RequestBody LConsultationPrice consultationPrice,
+			HttpServletRequest request){
+		Optional<Clinic> tt = clinicRepository.findById(consultationPrice.getClinic().getId());
+		if(tt.isEmpty()) {
+			throw new NotFoundException("Selected clinic not found");
+		}
+		Optional<InsurancePlan> ip = insurancePlanRepository.findById(consultationPrice.getConsultationInsurancePlan().getInsurancePlan().getId());
+		if(ip.isEmpty()) {
+			throw new NotFoundException("Selected plan not found");
+		}
+		boolean covered = consultationPrice.getConsultationInsurancePlan().isCovered();
+		Optional<ConsultationInsurancePlan> lttip = consultationInsurancePlanRepository.findByInsurancePlanAndClinic(ip.get(), tt.get());
+		if(lttip.isEmpty()) {
+			throw new NotFoundException("Selected package not found");
+		}
+		if(covered == true) {
+			if(lttip.get().getConsultationFee() <= 0) {
+				throw new InvalidOperationException("Could not change coverage. Invalid price value. Should not be equal or less than zero");
+			}
+		}
+		lttip.get().setCovered(covered);
+		ConsultationInsurancePlan plan = consultationInsurancePlanRepository.save(lttip.get());
+		
+		LConsultationPrice coverage = new LConsultationPrice();
+		coverage.setClinic(tt.get());
+		coverage.setConsultationInsurancePlan(plan);
+		coverage.setPrice(plan.getConsultationFee());
+		
+		
+		return ResponseEntity.ok().body(coverage);
+	}
+	
+	@PostMapping("/insurance_plans/update_consultation_price_by_insurance")
+	public ResponseEntity<LConsultationPrice> updateConsultationPriceByInsurance(
+			@RequestBody LConsultationPrice consultationPrice,
+			HttpServletRequest request){
+		Optional<Clinic> tt = clinicRepository.findById(consultationPrice.getClinic().getId());
+		if(tt.isEmpty()) {
+			throw new NotFoundException("Selected clinic not found");
+		}
+		
+		LConsultationPrice coverage = new LConsultationPrice();
+		if(consultationPrice.getConsultationInsurancePlan().getInsurancePlan().getId() == 0) {
+			if(consultationPrice.getPrice() < 0) {
+				throw new InvalidOperationException("Invalid price value. Price should not be less than zero");
+			}
+			tt.get().setConsultationFee(consultationPrice.getPrice());
+			Clinic clinic = clinicRepository.save(tt.get());
+			
+			coverage.setClinic(clinic);
+			coverage.setConsultationInsurancePlan(null);
+			coverage.setPrice(consultationPrice.getPrice());
+			coverage.setCovered(true);
+			
+			return ResponseEntity.ok().body(coverage);
+		}
+		
+		Optional<InsurancePlan> ip = insurancePlanRepository.findById(consultationPrice.getConsultationInsurancePlan().getInsurancePlan().getId());
+		if(ip.isEmpty()) {
+			throw new NotFoundException("Selected plan not found");
+		}
+		double price = consultationPrice.getPrice();
+		Optional<ConsultationInsurancePlan> lttip = consultationInsurancePlanRepository.findByInsurancePlanAndClinic(ip.get(), tt.get());
+		if(lttip.isEmpty()) {
+			throw new NotFoundException("Selected package not found");
+		}
+		if(price == 0) {
+			lttip.get().setCovered(false);
+		}else if(price < 0) {
+			throw new InvalidOperationException("Invalid Price value. Price should not be less than zero");
+		}
+		lttip.get().setConsultationFee(price);
+		
+		ConsultationInsurancePlan plan = consultationInsurancePlanRepository.save(lttip.get());
+		
+		coverage = new LConsultationPrice();
+		coverage.setClinic(tt.get());
+		coverage.setConsultationInsurancePlan(plan);
+		coverage.setPrice(plan.getConsultationFee());
+		
+		return ResponseEntity.ok().body(coverage);
+	}
+	
+	
+	@GetMapping("/insurance_plans/get_registration_prices")
+	public ResponseEntity<List<LRegistrationPrice>> getRegistrationPrices(
+			@RequestParam(name = "insurance_plan_id") Long insurancePlanId,
+			HttpServletRequest request){
+		List<LRegistrationPrice> registrationPrices = new ArrayList<>();
+		//List<Clinic> clinics = clinicRepository.findAll();
+		//for(Clinic t : clinics) {
+			LRegistrationPrice registrationPrice = new LRegistrationPrice();
+			//registrationPrice.setClinic(t);
+			if(insurancePlanId == 0) {
+				List<CompanyProfile> cps = companyProfileRepository.findAll();
+				for(CompanyProfile cp : cps) {
+					registrationPrice.setPrice(cp.getRegistrationFee());
+				}
+			}else if(insurancePlanId > 0) {
+				Optional<InsurancePlan> i = insurancePlanRepository.findById(insurancePlanId);
+				if(i.isEmpty()) {
+					throw new NotFoundException("Insurance package not found");
+				}
+				Optional<RegistrationInsurancePlan> p = registrationInsurancePlanRepository.findByInsurancePlan(i.get());
+				RegistrationInsurancePlan plan;
+				if(p.isEmpty()) {
+					//create
+					plan = new RegistrationInsurancePlan();
+					plan.setActive(true);
+					plan.setCovered(false);
+					plan.setRegistrationFee(0);
+					plan.setInsurancePlan(i.get());
+					
+					plan.setCreatedby(userService.getUserId(request));
+					plan.setCreatedOn(dayService.getDayId());
+					plan.setCreatedAt(LocalDateTime.now());
+					
+					plan = registrationInsurancePlanRepository.save(plan);
+				}else {
+					plan = p.get();
+				}
+				registrationPrice.setRegistrationInsurancePlan(plan);
+				registrationPrice.setPrice(plan.getRegistrationFee());
+			}else {
+				throw new InvalidOperationException("Invalid package type selected");
+			}
+			registrationPrices.add(registrationPrice);
+		//}
+		return ResponseEntity.ok().body(registrationPrices);
+	}
+	
+	@PostMapping("/insurance_plans/change_registration_coverage")
+	public ResponseEntity<LRegistrationPrice> changeRegistrationCoverage(
+			@RequestBody LRegistrationPrice registrationPrice,
+			HttpServletRequest request){
+		Optional<InsurancePlan> ip = insurancePlanRepository.findById(registrationPrice.getRegistrationInsurancePlan().getInsurancePlan().getId());
+		if(ip.isEmpty()) {
+			throw new NotFoundException("Selected plan not found");
+		}
+		boolean covered = registrationPrice.getRegistrationInsurancePlan().isCovered();
+		Optional<RegistrationInsurancePlan> lttip = registrationInsurancePlanRepository.findByInsurancePlan(ip.get());
+		if(lttip.isEmpty()) {
+			throw new NotFoundException("Selected package not found");
+		}
+		if(covered == true) {
+			if(lttip.get().getRegistrationFee() <= 0) {
+				throw new InvalidOperationException("Could not change coverage. Invalid price value. Should not be equal or less than zero");
+			}
+		}
+		lttip.get().setCovered(covered);
+		RegistrationInsurancePlan plan = registrationInsurancePlanRepository.save(lttip.get());
+		
+		LRegistrationPrice coverage = new LRegistrationPrice();
+		coverage.setRegistrationInsurancePlan(plan);
+		coverage.setPrice(plan.getRegistrationFee());
+		
+		return ResponseEntity.ok().body(coverage);
+	}
+	
+	@PostMapping("/insurance_plans/update_registration_price_by_insurance")
+	public ResponseEntity<LRegistrationPrice> updateRegistrationPriceByInsurance(
+			@RequestBody LRegistrationPrice registrationPrice,
+			HttpServletRequest request){
+		
+		LRegistrationPrice coverage = new LRegistrationPrice();
+		if(registrationPrice.getRegistrationInsurancePlan().getInsurancePlan().getId() == 0) {
+			if(registrationPrice.getPrice() < 0) {
+				throw new InvalidOperationException("Invalid price value. Price should not be less than zero");
+			}
+			CompanyProfile companyProfile = null;
+			List<CompanyProfile> profiles = companyProfileRepository.findAll();
+			for(CompanyProfile profile : profiles) {
+				companyProfile = profile;
+			}
+			companyProfile.setRegistrationFee(registrationPrice.getPrice());
+			companyProfile = companyProfileRepository.save(companyProfile);
+			
+			coverage.setRegistrationInsurancePlan(null);
+			coverage.setPrice(registrationPrice.getPrice());
+			coverage.setCovered(true);
+			
+			return ResponseEntity.ok().body(coverage);
+		}
+		
+		Optional<InsurancePlan> ip = insurancePlanRepository.findById(registrationPrice.getRegistrationInsurancePlan().getInsurancePlan().getId());
+		if(ip.isEmpty()) {
+			throw new NotFoundException("Selected plan not found");
+		}
+		double price = registrationPrice.getPrice();
+		Optional<RegistrationInsurancePlan> lttip = registrationInsurancePlanRepository.findByInsurancePlan(ip.get());
+		if(lttip.isEmpty()) {
+			throw new NotFoundException("Selected package not found");
+		}
+		if(price == 0) {
+			lttip.get().setCovered(false);
+		}else if(price < 0) {
+			throw new InvalidOperationException("Invalid Price value. Price should not be less than zero");
+		}
+		lttip.get().setRegistrationFee(price);
+		
+		RegistrationInsurancePlan plan = registrationInsurancePlanRepository.save(lttip.get());
+		
+		coverage = new LRegistrationPrice();
+		coverage.setRegistrationInsurancePlan(plan);
+		coverage.setPrice(plan.getRegistrationFee());
 		
 		return ResponseEntity.ok().body(coverage);
 	}
@@ -596,8 +936,9 @@ public class InsurancePlanResource {
 @Data
 class LLabTestTypePrice{
 	LabTestType labTestType = null;
-	LabTestTypeInsurancePlan labTestTypeInsurancePlan = null;
+	LabTestTypeInsurancePlan labTestTypeInsurancePlan = null;	
 	double price;
+	boolean covered;
 }
 
 @Data
@@ -605,6 +946,7 @@ class LProcedureTypePrice{
 	ProcedureType procedureType = null;
 	ProcedureTypeInsurancePlan procedureTypeInsurancePlan = null;
 	double price;
+	boolean covered;
 }
 
 @Data
@@ -612,6 +954,7 @@ class LRadiologyTypePrice{
 	RadiologyType radiologyType = null;
 	RadiologyTypeInsurancePlan radiologyTypeInsurancePlan = null;
 	double price;
+	boolean covered;
 }
 
 @Data
@@ -619,5 +962,22 @@ class LMedicinePrice{
 	Medicine medicine = null;
 	MedicineInsurancePlan medicineInsurancePlan = null;
 	double price;
+	boolean covered;
+}
+
+@Data
+class LConsultationPrice{
+	Clinic clinic = null;
+	ConsultationInsurancePlan consultationInsurancePlan = null;
+	double price;
+	boolean covered;
+}
+
+@Data
+class LRegistrationPrice{
+	//Clinic clinic = null;
+	RegistrationInsurancePlan registrationInsurancePlan = null;
+	double price;
+	boolean covered;
 }
 
