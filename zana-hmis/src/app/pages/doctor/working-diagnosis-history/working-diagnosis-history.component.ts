@@ -22,6 +22,8 @@ export class WorkingDiagnosisHistoryComponent {
 
   workingDiagnosises : IWorkingDiagnosis[] = []
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,

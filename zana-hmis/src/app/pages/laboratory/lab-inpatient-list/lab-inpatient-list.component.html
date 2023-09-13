@@ -16,6 +16,11 @@
                     <button class="btn btn-primary btn-outline" routerLink="/lab-outsider-list">Outsider List</button>
                 </div>
                 <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="text" class="form-control" [(ngModel)]="filterRecords" placeholder="Search...">
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead class="success">

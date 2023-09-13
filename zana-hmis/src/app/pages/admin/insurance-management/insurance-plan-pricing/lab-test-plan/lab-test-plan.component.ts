@@ -34,7 +34,7 @@ export class LabTestPlanComponent implements OnInit {
 
   insurancePlans : IInsurancePlan[] = []
 
-
+  filterRecords : string = ''
 
   constructor(
     private auth : AuthService,

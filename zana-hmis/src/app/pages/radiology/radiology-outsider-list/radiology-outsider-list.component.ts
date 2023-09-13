@@ -19,6 +19,8 @@ const API_URL = environment.apiUrl;
 export class RadiologyOutsiderListComponent {
 
   patients : IPatient[] = []
+
+  filterRecords : string = ''
   
   constructor(private auth : AuthService,
     private http :HttpClient,

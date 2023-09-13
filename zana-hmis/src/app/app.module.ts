@@ -106,6 +106,7 @@ import { ProcedureTypePriceComponent } from './pages/admin/insurance-management/
 import { MedicinePriceComponent } from './pages/admin/insurance-management/prices/medicine-price/medicine-price.component';
 import { ConsultationPriceComponent } from './pages/admin/insurance-management/prices/consultation-price/consultation-price.component';
 import { RegistrationPriceComponent } from './pages/admin/insurance-management/prices/registration-price/registration-price.component';
+import { SearchFilterPipe } from './pipes/search-filter-pipe';
 
 @NgModule({
   declarations: [
@@ -174,6 +175,7 @@ import { RegistrationPriceComponent } from './pages/admin/insurance-management/p
     ShowTimePipe,
     ShowDateTimePipe,
     ShowUserPipe,
+    SearchFilterPipe,
     TheatreComponent,
     ItemRegisterComponent,
     SupplierRegisterComponent,

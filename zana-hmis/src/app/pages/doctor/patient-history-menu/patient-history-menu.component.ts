@@ -16,6 +16,8 @@ const API_URL = environment.apiUrl;
 })
 export class PatientHistoryMenuComponent {
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
               private http :HttpClient,
               private spinner : NgxSpinnerService,

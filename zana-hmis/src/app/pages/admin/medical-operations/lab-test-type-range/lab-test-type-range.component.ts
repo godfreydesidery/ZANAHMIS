@@ -28,6 +28,8 @@ export class LabTestTypeRangeComponent implements OnInit {
 
   labTestTypeName : string = ''
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

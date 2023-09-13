@@ -56,6 +56,8 @@ export class StoreToPharmacyRNComponent {
 
   //pharmacyToStoreDetails : IPharmacyToStoreRODetail[] = []
 
+  filterRecords : string = ''
+
 
   constructor(
     private auth : AuthService,

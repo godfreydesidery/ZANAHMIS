@@ -65,6 +65,8 @@ export class LabTestPaymentComponent implements OnInit {
 
   lockSearchKey : boolean = false
 
+  filterRecords : string = ''
+
   constructor(
               private auth : AuthService,
               private http : HttpClient,

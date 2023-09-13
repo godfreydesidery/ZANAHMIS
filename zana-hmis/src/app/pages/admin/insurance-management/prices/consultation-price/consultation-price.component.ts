@@ -29,6 +29,8 @@ export class ConsultationPriceComponent {
 
   consultationPrices : IConsultationPrice[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

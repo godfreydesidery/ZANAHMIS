@@ -26,6 +26,8 @@ export class ProcedureTypePriceComponent {
 
   procedureTypePrices : IProcedureTypePrice[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

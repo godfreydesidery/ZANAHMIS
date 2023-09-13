@@ -36,7 +36,7 @@
                                         <td>Status</td>
                                     </tr>
                                 </thead>
-                                <tbody *ngFor="let history of prescriptions">
+                                <tbody *ngFor="let history of prescriptions | searchFilter : filterRecords">
                                     <tr *ngIf="history?.status === 'NOT-GIVEN' || history?.status === 'VERIFIED' || history?.status === 'APPROVED' || history?.status === 'GIVEN'">
                                         <td>{{history?.created}}</td>
                                         <td>{{history?.medicine?.name}}</td>

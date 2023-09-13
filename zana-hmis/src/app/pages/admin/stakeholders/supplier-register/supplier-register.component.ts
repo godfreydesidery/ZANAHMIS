@@ -43,6 +43,8 @@ export class SupplierRegisterComponent {
 
   names : string[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

@@ -48,6 +48,8 @@ export class UserProfileComponent implements OnInit {
 
   public users           : IUser[]
 
+  filterRecords : string = ''
+
   /**
    * 
    * @param http 

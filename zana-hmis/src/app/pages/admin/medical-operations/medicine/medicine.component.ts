@@ -26,6 +26,8 @@ export class MedicineComponent implements OnInit {
 
   medicines : IMedicine[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

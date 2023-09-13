@@ -34,6 +34,8 @@ export class RoleComponent implements OnInit {
 
   public roles : IRole[]
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
               private http :HttpClient,
               private spinner : NgxSpinnerService,

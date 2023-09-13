@@ -41,7 +41,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let procedure of procedures">
+                                    <tr *ngFor="let procedure of procedures | searchFilter : filterRecords">
                                         <td>{{procedure?.procedureType?.name}}</td>
                                         <!--<td>{{procedure.dosage}}</td>
                                         <td>{{procedure.frequency}}</td>

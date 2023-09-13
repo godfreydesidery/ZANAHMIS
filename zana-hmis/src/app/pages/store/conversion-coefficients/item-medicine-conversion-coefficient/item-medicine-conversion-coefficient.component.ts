@@ -39,6 +39,8 @@ export class ItemMedicineConversionCoefficientComponent {
 
   itemMedicineCoefficients : IItemMedicineCoefficient[] = []
 
+  filterRecords : string = ''
+
 
   constructor(
     private auth : AuthService,

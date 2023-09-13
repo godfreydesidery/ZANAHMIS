@@ -27,6 +27,8 @@ export class LabTestTypePriceComponent {
 
   labTestTypePrices : ILabTestTypePrice[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

@@ -42,7 +42,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let history of generalExaminations">
+                                    <tr *ngFor="let history of generalExaminations | searchFilter : filterRecords">
                                         <td>{{history?.created}}</td>
                                         <td>{{history?.temperature}}</td>
                                         <td>{{history?.bodyMassIndex}}</td>

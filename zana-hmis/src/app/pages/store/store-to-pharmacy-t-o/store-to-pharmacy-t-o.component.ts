@@ -44,6 +44,8 @@ export class StoreToPharmacyTOComponent {
   batchStoreItemName : string = ''
   batchStoreToPharmacyTODetailId : any
 
+  filterRecords : string = ''
+
 
   constructor(
     private auth : AuthService,

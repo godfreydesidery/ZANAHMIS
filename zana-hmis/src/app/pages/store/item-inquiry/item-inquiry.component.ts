@@ -40,6 +40,8 @@ export class ItemInquiryComponent {
 
   names : string[] = []
 
+  filterRecords : string = ''
+
 
   constructor(
     private auth : AuthService,

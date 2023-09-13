@@ -14,20 +14,25 @@
                     <h4 class="text-primary">Package: {{insurancePlanName}}</h4>
                 </div>
                 <div class="panel-body">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" style="height: 100%; overflow: scroll;">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <input type="text" class="form-control" [(ngModel)]="filterRecords" placeholder="Search...">
+                            </div>
+                        </div>
                         <table class="table table-bordered table-small">
                             <thead>
                                 <tr>
-                                    <td>ID</td>
-                                    <td>Clinic</td>
-                                    <td>Price</td>
-                                    <td>Edit Price</td>
-                                    <td>Action</td>
-                                    <td>Coverage</td>
+                                    <th>ID</th>
+                                    <th>Clinic</th>
+                                    <th>Price</th>
+                                    <th>Edit Price</th>
+                                    <th>Action</th>
+                                    <th>Coverage</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let l of consultationPrices">
+                                <tr *ngFor="let l of consultationPrices | searchFilter : filterRecords">
                                     <td>{{l.clinic.id}}</td>
                                     <td>{{l.clinic.name}}</td>
                                     <td style="text-align: right;">{{l.price | currency:'':''}}</td>

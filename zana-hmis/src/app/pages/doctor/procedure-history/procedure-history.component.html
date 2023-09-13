@@ -35,7 +35,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let history of procedures">
+                                    <tr *ngFor="let history of procedures | searchFilter : filterRecords">
                                         <td>{{history?.created}}</td>
                                         <td>{{history?.procedureType?.name}}</td>
                                         <td>{{history?.note}}</td>

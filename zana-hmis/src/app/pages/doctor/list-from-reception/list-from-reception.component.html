@@ -30,7 +30,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let consultation of consultations">
+                                <tr *ngFor="let consultation of consultations | searchFilter : filterRecords">
                                     <td>{{consultation.id}}</td>
                                     <td>{{consultation.patient.firstName}} {{consultation.patient.middleName}} {{consultation.patient.lastName}}</td>
                                     <td>{{consultation.patient.no}}</td>

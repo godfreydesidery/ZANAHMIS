@@ -16,6 +16,11 @@
                     <a class="btn btn-success" style="margin-right: 1mm;" routerLink="/lab-outsider-list">Outsider List</a>
                 </div>
                 <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="text" class="form-control" [(ngModel)]="filterRecords" placeholder="Search...">
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead class="success">

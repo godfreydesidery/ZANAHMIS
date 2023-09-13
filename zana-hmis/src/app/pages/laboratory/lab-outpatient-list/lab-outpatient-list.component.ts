@@ -19,6 +19,8 @@ export class LabOutpatientListComponent implements OnInit {
 
   patients : IPatient[] = []
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,

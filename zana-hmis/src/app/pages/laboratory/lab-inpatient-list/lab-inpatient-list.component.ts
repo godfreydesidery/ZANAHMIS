@@ -15,6 +15,8 @@ const API_URL = environment.apiUrl;
 })
 export class LabInpatientListComponent implements OnInit {
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,

@@ -14,7 +14,12 @@
                     <h4 class="text-primary">Package: {{insurancePlanName}}</h4>
                 </div>
                 <div class="panel-body">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" style="height: 100%; overflow: scroll;">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <input type="text" class="form-control" [(ngModel)]="filterRecords" placeholder="Search...">
+                            </div>
+                        </div>
                         <table class="table table-bordered table-small">
                             <thead>
                                 <tr>
@@ -27,7 +32,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let l of radiologyTypePrices">
+                                <tr *ngFor="let l of radiologyTypePrices | searchFilter : filterRecords">
                                     <td>{{l.radiologyType.id}}</td>
                                     <td>{{l.radiologyType.name}}</td>
                                     <td style="text-align: right;">{{l.price | currency:'':''}}</td>

@@ -34,6 +34,8 @@ export class PharmacistComponent {
 
   userCode : string = ''
 
+  filterRecords : string = ''
+
 
   constructor(
     private auth : AuthService,

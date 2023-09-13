@@ -32,6 +32,7 @@ export class PatientPharmacyComponent {
   pharmacyId = localStorage.getItem('selected-pharmacy-id')
 
 
+  filterRecords : string = ''
 
   constructor(private auth : AuthService,
     private http :HttpClient,

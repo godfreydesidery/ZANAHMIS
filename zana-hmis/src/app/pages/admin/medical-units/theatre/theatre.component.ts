@@ -26,6 +26,8 @@ export class TheatreComponent {
 
   theatres : ITheatre[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

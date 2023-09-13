@@ -27,6 +27,8 @@ export class RadiologyTypeComponent implements OnInit {
 
   radiologyTypes : IRadiologyType[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

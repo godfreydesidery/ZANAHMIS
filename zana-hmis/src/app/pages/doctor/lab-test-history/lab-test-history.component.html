@@ -38,7 +38,7 @@
                                         <td>Status</td>
                                     </tr>
                                 </thead>
-                                <tbody *ngFor="let history of labTests">
+                                <tbody *ngFor="let history of labTests | searchFilter : filterRecords">
                                     <tr>
                                         <td>{{history?.created}}</td>
                                         <td>{{history?.labTestType?.name}}</td>

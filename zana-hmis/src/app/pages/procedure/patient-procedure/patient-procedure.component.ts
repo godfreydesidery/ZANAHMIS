@@ -26,6 +26,7 @@ export class PatientProcedureComponent {
 
   procedures : IProcedure[] = []
 
+  filterRecords : string = ''
 
 
   constructor(private auth : AuthService,

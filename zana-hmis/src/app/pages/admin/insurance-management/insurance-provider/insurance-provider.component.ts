@@ -31,6 +31,8 @@ export class InsuranceProviderComponent implements OnInit {
 
   insuranceProviderNames : string[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

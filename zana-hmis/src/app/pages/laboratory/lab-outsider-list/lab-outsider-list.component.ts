@@ -18,6 +18,8 @@ const API_URL = environment.apiUrl;
 export class LabOutsiderListComponent implements OnInit {
 
   patients : IPatient[] = []
+
+  filterRecords : string = ''
   
   constructor(private auth : AuthService,
     private http :HttpClient,

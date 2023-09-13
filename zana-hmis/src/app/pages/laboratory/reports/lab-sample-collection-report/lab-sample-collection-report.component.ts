@@ -33,6 +33,8 @@ export class LabSampleCollectionReportComponent {
 
   report : string[] = []
 
+  filterRecords : string = ''
+
   constructor(
     //private shortcut : ShortCutHandlerService,
               private auth : AuthService,

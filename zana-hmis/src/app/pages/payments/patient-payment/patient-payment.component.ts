@@ -42,6 +42,8 @@ export class PatientPaymentComponent implements OnInit {
   registrationFeeStatus = ''
   cardValidationStatus = ''
 
+  filterRecords : string = ''
+
   constructor(
     //private shortcut : ShortCutHandlerService,
               private auth : AuthService,

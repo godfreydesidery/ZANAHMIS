@@ -27,6 +27,8 @@ export class MedicinePriceComponent {
 
   medicinePrices : IMedicinePrice[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

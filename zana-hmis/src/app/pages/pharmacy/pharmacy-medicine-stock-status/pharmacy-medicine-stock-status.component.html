@@ -16,6 +16,11 @@
                     <button class="btn btn-primary btn-outline" routerLink="/pharmacy-outsider-list">Outsider List</button>-->
                 </div>
                 <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="text" class="form-control" [(ngModel)]="filterRecords" placeholder="Search...">
+                        </div>
+                    </div>
                     <table class="table table-responsive table-striped table-bordered">
                         <thead>
                             <tr style="font-style: bold;">
@@ -26,7 +31,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let pharmacyMedicine of pharmacyMedicines">
+                            <tr *ngFor="let pharmacyMedicine of pharmacyMedicines | searchFilter : filterRecords">
                                 <td>{{pharmacyMedicine?.medicine?.code}}</td>
                                 <td>{{pharmacyMedicine?.medicine?.name}}</td>
                                 <td>{{pharmacyMedicine?.stock}}</td>

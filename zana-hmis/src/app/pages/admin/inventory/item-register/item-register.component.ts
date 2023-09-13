@@ -38,6 +38,8 @@ export class ItemRegisterComponent {
 
   names : string[] = []
 
+  filterRecords : string = ''
+
 
   constructor(
     private auth : AuthService,

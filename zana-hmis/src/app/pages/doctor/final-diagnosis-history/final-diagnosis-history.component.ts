@@ -22,6 +22,8 @@ export class FinalDiagnosisHistoryComponent {
 
   finalDiagnosises : IFinalDiagnosis[] =  []
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,

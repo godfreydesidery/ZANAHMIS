@@ -50,6 +50,8 @@ export class PharmacyToStoreROComponent {
 
   //pharmacyToStoreDetails : IPharmacyToStoreRODetail[] = []
 
+  filterRecords : string = ''
+
 
   constructor(
     private auth : AuthService,

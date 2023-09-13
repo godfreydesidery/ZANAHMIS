@@ -24,6 +24,8 @@ export class PharmacyInpatientListComponent {
 
   pharmacyName = localStorage.getItem('selected-pharmacy-name')
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,

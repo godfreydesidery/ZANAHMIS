@@ -93,8 +93,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 table-responsive" style="height: 100%; overflow: scroll;">
                         <br>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <input type="text" class="form-control" [(ngModel)]="filterRecords" placeholder="Search...">
+                            </div>
+                        </div>
                         <table class="table table-bordered table-striped table-sm">
                             <thead>
                                 <tr>
@@ -106,7 +111,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let user of users">
+                                <tr *ngFor="let user of users | searchFilter : filterRecords">
                                     <td>{{user.code}}</td>
                                     <td>{{user.lastName}}, {{user.firstName}}</td>
                                     <td>{{user.nickname}}</td>

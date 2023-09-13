@@ -37,7 +37,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let history of radiologies">
+                                    <tr *ngFor="let history of radiologies | searchFilter : filterRecords">
                                         <td>{{history?.created}}</td>
                                         <td>{{history?.radiologyType?.name}}</td>
                                         <td>{{history?.result}}</td>

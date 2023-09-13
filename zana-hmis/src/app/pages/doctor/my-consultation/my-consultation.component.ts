@@ -21,6 +21,8 @@ export class MyConsultationComponent implements OnInit {
 
   consultations : IConsultation[] = []
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,

@@ -27,14 +27,14 @@ export class RadiologyPlanComponent implements OnInit {
   insuranceProviderNames : string[] = []
   insurancePlanNames : string[] = []
 
- radiologyTypeName : string = ''
- radiologyTypeNames : string[] = []
+  radiologyTypeName : string = ''
+  radiologyTypeNames : string[] = []
 
- radiologyTypeInsurancePlans : IRadiologyTypeInsurancePlan[] = []
+  radiologyTypeInsurancePlans : IRadiologyTypeInsurancePlan[] = []
 
- insurancePlans : IInsurancePlan[] = []
+  insurancePlans : IInsurancePlan[] = []
 
-
+  filterRecords : string = ''
 
   constructor(
     private auth : AuthService,

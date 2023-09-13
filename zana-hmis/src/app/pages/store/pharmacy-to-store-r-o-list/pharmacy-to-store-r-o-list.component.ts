@@ -31,6 +31,8 @@ export class PharmacyToStoreROListComponent {
 
   pharmacyToStoreRO! : IPharmacyToStoreRO
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

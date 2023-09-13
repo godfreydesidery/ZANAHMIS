@@ -27,6 +27,8 @@ export class PharmacyComponent {
 
   pharmacies : IPharmacy[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

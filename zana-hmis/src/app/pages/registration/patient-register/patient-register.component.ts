@@ -112,6 +112,8 @@ export class PatientRegisterComponent implements OnInit {
 
   theatreName : string = ''
   theatreNames : string[] = []
+
+  filterRecords : string = ''
   
   constructor(
     //private shortcut : ShortCutHandlerService,
@@ -282,24 +284,24 @@ export class PatientRegisterComponent implements OnInit {
           //swal.fire()
           this.msgBox.showSuccessMessage('Patient Registered successifully. Please note patients File No')
 
-          this.id = data!['id']
-          this.no = data!['no']
-          this.firstName = data!['firstName']
-          this.middleName = data!['middleName']
-          this.lastName = data!['lastName']
-          this.gender = data!['gender']
-          this.paymentType = data!['paymentType']
-          this.type = data!['type']
-          this.membershipNo = data!['membershipNo']
-          this.phoneNo = data!['phoneNo']
-          this.address = data!['address']
-          this.email = data!['email']
-          this.nationality = data!['nationality']
-          this.nationalId = data!['nationalId']
-          this.passportNo = data!['passportNo']
-          this.kinFullName = data!['kinFullName']
-          this.kinRelationship = data!['kinRelationship']
-          this.kinPhoneNo = data!['kinPhoneNo']
+          this.id               = data!['id']
+          this.no               = data!['no']
+          this.firstName        = data!['firstName']
+          this.middleName       = data!['middleName']
+          this.lastName         = data!['lastName']
+          this.gender           = data!['gender']
+          this.paymentType      = data!['paymentType']
+          this.type             = data!['type']
+          this.membershipNo     = data!['membershipNo']
+          this.phoneNo          = data!['phoneNo']
+          this.address          = data!['address']
+          this.email            = data!['email']
+          this.nationality      = data!['nationality']
+          this.nationalId       = data!['nationalId']
+          this.passportNo       = data!['passportNo']
+          this.kinFullName      = data!['kinFullName']
+          this.kinRelationship  = data!['kinRelationship']
+          this.kinPhoneNo       = data!['kinPhoneNo']
 
           
           
@@ -337,7 +339,7 @@ export class PatientRegisterComponent implements OnInit {
       middleName          : this.middleName,
       lastName            : this.lastName,
       gender              : this.gender,
-      type         : this.type,
+      type                : this.type,
       dateOfBirth         : this.dateOfBirth,
       paymentType         : this.paymentType,
       membershipNo        : this.membershipNo,
@@ -365,24 +367,24 @@ export class PatientRegisterComponent implements OnInit {
       data => {
         this.msgBox.showSuccessMessage('Patient updated successifully. Please note patients File No')
 
-        this.id = data!['id']
-        this.no = data!['no']
-        this.firstName = data!['firstName']
-        this.middleName = data!['middleName']
-        this.lastName = data!['lastName']
-        this.gender = data!['gender']
-        this.paymentType = data!['paymentType']
-        this.type = data!['type']
-        this.membershipNo = data!['membershipNo']
-        this.phoneNo = data!['phoneNo']
-        this.address = data!['address']
-        this.email = data!['email']
-        this.nationality = data!['nationality']
-        this.nationalId = data!['nationalId']
-        this.passportNo = data!['passportNo']
-        this.kinFullName = data!['kinFullName']
-        this.kinRelationship = data!['kinRelationship']
-        this.kinPhoneNo = data!['kinPhoneNo']
+        this.id               = data!['id']
+        this.no               = data!['no']
+        this.firstName        = data!['firstName']
+        this.middleName       = data!['middleName']
+        this.lastName         = data!['lastName']
+        this.gender           = data!['gender']
+        this.paymentType      = data!['paymentType']
+        this.type             = data!['type']
+        this.membershipNo     = data!['membershipNo']
+        this.phoneNo          = data!['phoneNo']
+        this.address          = data!['address']
+        this.email            = data!['email']
+        this.nationality      = data!['nationality']
+        this.nationalId       = data!['nationalId']
+        this.passportNo       = data!['passportNo']
+        this.kinFullName      = data!['kinFullName']
+        this.kinRelationship  = data!['kinRelationship']
+        this.kinPhoneNo       = data!['kinPhoneNo']
 
 
         this.insurancePlanName = data!['insurancePlan']?.name
@@ -409,6 +411,17 @@ export class PatientRegisterComponent implements OnInit {
     }
 
     return updated
+  }
+
+  validatePatient(patient : IPatient) : boolean{
+
+    var valid = true
+    if(patient.dateOfBirth == null){
+      this.msgBox.showErrorMessage('Date of birth is a required value')
+      return false
+    }
+
+    return true
   }
 
   async loadSearchKeys(){//for unpaid registration
@@ -477,29 +490,29 @@ export class PatientRegisterComponent implements OnInit {
 
         this.searchKey = key
 
-        this.id = data!['id']
-        this.no = data!['no']
-        this.firstName = data!['firstName']
-        this.middleName = data!['middleName']
-        this.lastName = data!['lastName']
-        this.gender = data!['gender']
-        this.dateOfBirth =data!['dateOfBirth']
-        this.paymentType = data!['paymentType']
-        this.type = data!['type']
-        this.membershipNo = data!['membershipNo']
-        this.phoneNo = data!['phoneNo']
-        this.address = data!['address']
-        this.email = data!['email']
-        this.nationality = data!['nationality']
-        this.nationalId = data!['nationalId']
-        this.passportNo = data!['passportNo']
-        this.kinFullName = data!['kinFullName']
-        this.kinRelationship = data!['kinRelationship']
-        this.kinPhoneNo = data!['kinPhoneNo']
+        this.id                 = data!['id']
+        this.no                 = data!['no']
+        this.firstName          = data!['firstName']
+        this.middleName         = data!['middleName']
+        this.lastName           = data!['lastName']
+        this.gender             = data!['gender']
+        this.dateOfBirth        = data!['dateOfBirth']
+        this.paymentType        = data!['paymentType']
+        this.type               = data!['type']
+        this.membershipNo       = data!['membershipNo']
+        this.phoneNo            = data!['phoneNo']
+        this.address            = data!['address']
+        this.email              = data!['email']
+        this.nationality        = data!['nationality']
+        this.nationalId         = data!['nationalId']
+        this.passportNo         = data!['passportNo']
+        this.kinFullName        = data!['kinFullName']
+        this.kinRelationship    = data!['kinRelationship']
+        this.kinPhoneNo         = data!['kinPhoneNo']
 
-        this.insurancePlanName = data!['insurancePlan']?.name
+        this.insurancePlanName  = data!['insurancePlan']?.name
 
-        this.lockSearchKey = true
+        this.lockSearchKey      = true
       }
     )
     .catch(
@@ -986,7 +999,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        //this.loadProcedures(0, this.nonConsultationId)
+        this.loadProcedures(0, this.nonConsultationId)
         this.msgBox.showErrorMessage('Could not save Procedure')
         console.log(error)
       }
@@ -1184,10 +1197,10 @@ export class PatientRegisterComponent implements OnInit {
   }
 
   clearTests(){
-    this.labTestTypeName = ''
-    this.diagnosisTypeName = ''
-    this.radiologyTypeName = ''
-    this.procedureTypeName = ''
+    this.labTestTypeName    = ''
+    this.diagnosisTypeName  = ''
+    this.radiologyTypeName  = ''
+    this.procedureTypeName  = ''
   }
 
   async loadTheatreNames(){
@@ -1247,10 +1260,11 @@ export class PatientRegisterComponent implements OnInit {
 
   public grant(privilege : string[]) : boolean{
     /**Allow user to perform an action if the user has that priviledge */
+
     var granted : boolean = false
     privilege.forEach(
       element => {
-        if(this.auth.checkPrivilege(element)){
+        if(this.auth.checkPrivilege(element)){45
           granted = true
         }
       }

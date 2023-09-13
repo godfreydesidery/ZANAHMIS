@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./procedure-price.component.scss']
 })
 export class ProcedurePriceComponent {
-
+  filterRecords : string = ''
 }

@@ -23,6 +23,8 @@ export class PatientListComponent implements OnInit {
 
   filterValue : string = ''
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
               private http : HttpClient,

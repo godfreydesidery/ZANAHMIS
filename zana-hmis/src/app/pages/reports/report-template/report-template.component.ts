@@ -36,6 +36,8 @@ export class ReportTemplateComponent {
 
   report : string[] = []
 
+  filterRecords : string = ''
+
   constructor(
     //private shortcut : ShortCutHandlerService,
               private auth : AuthService,

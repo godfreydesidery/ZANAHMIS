@@ -64,6 +64,11 @@
                                     <h4 class="text-primary" *ngIf="id != null && status === 'PENDING'">Order Details  <button class="btn btn-success" (click)="clearDetail()"  data-toggle="modal" data-target="#medicine-modal" style="border-radius: 5mm;">+</button></h4>
                                 </div>
                                 <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input type="text" class="form-control" [(ngModel)]="filterRecords" placeholder="Search...">
+                                        </div>
+                                    </div>
                                     <table class="table table-responsive table striped table-bordered">
                                         <thead>
                                             <tr>
@@ -75,7 +80,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let d of pharmacyToStoreRO?.pharmacyToStoreRODetails">
+                                            <tr *ngFor="let d of pharmacyToStoreRO?.pharmacyToStoreRODetails | searchFilter : filterRecords">
                                                 <td>{{d.medicine.code}}</td>
                                                 <td>{{d.medicine.name}}</td>
                                                 <td>{{d.orderedQty}}</td>

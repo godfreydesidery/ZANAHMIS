@@ -34,6 +34,8 @@ export class ConsultationPlanComponent implements OnInit {
 
   insurancePlans : IInsurancePlan[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

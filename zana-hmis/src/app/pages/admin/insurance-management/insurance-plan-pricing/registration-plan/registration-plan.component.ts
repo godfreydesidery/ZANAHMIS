@@ -31,6 +31,7 @@ export class RegistrationPlanComponent implements OnInit {
 
   insurancePlans : IInsurancePlan[] = []
 
+  filterRecords : string = ''
 
 
   constructor(

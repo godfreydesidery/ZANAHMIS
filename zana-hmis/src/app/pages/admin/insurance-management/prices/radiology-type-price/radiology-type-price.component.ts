@@ -26,6 +26,8 @@ export class RadiologyTypePriceComponent {
 
   radiologyTypePrices : IRadiologyTypePrice[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

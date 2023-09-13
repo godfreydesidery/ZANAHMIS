@@ -17,6 +17,11 @@
                 </div>
                 <div class="panel-body">
                     <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <input type="text" class="form-control" [(ngModel)]="filterRecords" placeholder="Search...">
+                            </div>
+                        </div>
                         <table class="table table-bordered table-small">
                             <thead>
                                 <tr>
@@ -29,7 +34,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let insurancePlan of insurancePlans">
+                                <tr *ngFor="let insurancePlan of insurancePlans | searchFilter : filterRecords">
                                     <td>{{insurancePlan.code}}</td>
                                     <td>{{insurancePlan.name}}</td>
                                     <td>{{insurancePlan.insuranceProvider.name}}</td>

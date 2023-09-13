@@ -28,6 +28,8 @@ export class RadiologyComponent {
 
   diagnosisTypeNames : string[] = []
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,

@@ -40,7 +40,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let history of clinicalNotes">
+                                    <tr *ngFor="let history of clinicalNotes | searchFilter : filterRecords">
                                         <td>{{history?.created | showTime}}</td>
                                         <td>{{history?.mainComplain}}</td>
                                         <td>{{history?.created | showUser}}</td>

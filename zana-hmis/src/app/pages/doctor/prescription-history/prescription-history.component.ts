@@ -22,6 +22,8 @@ export class PrescriptionHistoryComponent {
 
   prescriptions : IPrescription[] = []
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,

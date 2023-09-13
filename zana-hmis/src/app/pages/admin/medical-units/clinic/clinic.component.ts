@@ -26,6 +26,8 @@ export class ClinicComponent implements OnInit {
 
   clinics         : IClinic[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

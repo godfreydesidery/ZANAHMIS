@@ -27,6 +27,8 @@ export class LabTestTypeComponent implements OnInit {
 
   labTestTypes : ILabTestType[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

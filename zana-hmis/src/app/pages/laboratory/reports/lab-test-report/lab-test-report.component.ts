@@ -33,6 +33,8 @@ export class LabTestReportComponent {
 
   report : string[] = []
 
+  filterRecords : string = ''
+
   constructor(
     //private shortcut : ShortCutHandlerService,
               private auth : AuthService,

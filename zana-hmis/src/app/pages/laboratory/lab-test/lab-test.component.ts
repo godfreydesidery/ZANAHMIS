@@ -29,6 +29,8 @@ export class LabTestComponent implements OnInit {
 
   rs : number[] = [1,2,3.4,5,6]
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,

@@ -140,6 +140,7 @@ export class DoctorCrackingComponent implements OnInit {
   theatreNames : string[] = []
 
 
+  filterRecords : string = '' // this is composite
 
   constructor(private auth : AuthService,
     private http :HttpClient,

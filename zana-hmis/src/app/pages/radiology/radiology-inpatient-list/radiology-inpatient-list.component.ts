@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./radiology-inpatient-list.component.scss']
 })
 export class RadiologyInpatientListComponent {
-
+  filterRecords : string = ''
 }

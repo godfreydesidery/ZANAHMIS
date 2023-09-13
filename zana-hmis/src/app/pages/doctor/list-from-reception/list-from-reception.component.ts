@@ -22,6 +22,8 @@ export class ListFromReceptionComponent implements OnInit {
 
   consultations : IConsultation[] = []
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,

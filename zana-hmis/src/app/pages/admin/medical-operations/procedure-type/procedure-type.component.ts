@@ -28,6 +28,8 @@ export class ProcedureTypeComponent implements OnInit {
 
   procedureTypes : IProcedureType[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

@@ -34,7 +34,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let history of finalDiagnosises">
+                                    <tr *ngFor="let history of finalDiagnosises | searchFilter : filterRecords">
                                         <td>{{history?.created}}</td>
                                         <td>{{history?.diagnosisType?.code}}</td>
                                         <td>{{history?.diagnosisType?.name}}</td>

@@ -35,6 +35,8 @@ export class ClinicianComponent implements OnInit {
 
   userCode : string = ''
 
+  filterRecords : string = ''
+
 
   constructor(
     private auth : AuthService,

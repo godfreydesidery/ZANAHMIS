@@ -35,6 +35,8 @@ export class DiagnosisTypeComponent implements OnInit {
 
   diagnosisTypes : IDiagnosisType[] = []
 
+  filterRecords : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,

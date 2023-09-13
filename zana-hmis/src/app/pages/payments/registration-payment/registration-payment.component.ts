@@ -62,6 +62,8 @@ export class RegistrationPaymentComponent implements OnInit {
 
   lockSearchKey : boolean = false
 
+  filterRecords : string = ''
+
   constructor(
               private auth : AuthService,
               private http : HttpClient,

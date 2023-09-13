@@ -56,6 +56,8 @@ export class RadiologyPaymentComponent implements OnInit {
 
   lockSearchKey : boolean = false
 
+  filterRecords : string = ''
+
   constructor(
               private auth : AuthService,
               private http : HttpClient,

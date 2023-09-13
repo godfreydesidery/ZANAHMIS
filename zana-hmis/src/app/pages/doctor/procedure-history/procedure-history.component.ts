@@ -22,6 +22,8 @@ export class ProcedureHistoryComponent {
 
   procedures : IProcedure[] = []
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,

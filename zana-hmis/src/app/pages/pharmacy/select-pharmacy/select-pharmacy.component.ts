@@ -24,6 +24,8 @@ export class SelectPharmacyComponent {
   selectedPharmacyCode : string = ''
   selectedPharmacyName : string = ''
 
+  filterRecords : string = ''
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,
