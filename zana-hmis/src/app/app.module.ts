@@ -107,6 +107,12 @@ import { MedicinePriceComponent } from './pages/admin/insurance-management/price
 import { ConsultationPriceComponent } from './pages/admin/insurance-management/prices/consultation-price/consultation-price.component';
 import { RegistrationPriceComponent } from './pages/admin/insurance-management/prices/registration-price/registration-price.component';
 import { SearchFilterPipe } from './pipes/search-filter-pipe';
+import { WardCategoryComponent } from './pages/admin/medical-units/ward-management/ward-category/ward-category.component';
+import { WardTypeComponent } from './pages/admin/medical-units/ward-management/ward-type/ward-type.component';
+import { WardComponent } from './pages/admin/medical-units/ward-management/ward/ward.component';
+import { WardTypePlanComponent } from './pages/admin/insurance-management/insurance-plan-pricing/ward-type-plan/ward-type-plan.component';
+import { WardPlanComponent } from './pages/admin/insurance-management/insurance-plan-pricing/ward-plan/ward-plan.component';
+import { WardTypePriceComponent } from './pages/admin/insurance-management/prices/ward-type-price/ward-type-price.component';
 
 @NgModule({
   declarations: [
@@ -134,6 +140,7 @@ import { SearchFilterPipe } from './pipes/search-filter-pipe';
     ProcedurePlanComponent,
     RadiologyPlanComponent,
     MedicinePlanComponent,
+    WardPlanComponent,
     UserProfileComponent,
     RoleComponent,
     AccessManagementComponent,
@@ -206,6 +213,11 @@ import { SearchFilterPipe } from './pipes/search-filter-pipe';
     MedicinePriceComponent,
     ConsultationPriceComponent,
     RegistrationPriceComponent,
+    WardCategoryComponent,
+    WardTypeComponent,
+    WardComponent,
+    WardTypePlanComponent,
+    WardTypePriceComponent,
   ],
   imports: [
     HttpClientModule,
@@ -246,6 +258,7 @@ import { SearchFilterPipe } from './pipes/search-filter-pipe';
     {path : 'procedure-plan', component : ProcedurePlanComponent},
     {path : 'radiology-plan', component : RadiologyPlanComponent},
     {path : 'medicine-plan', component : MedicinePlanComponent},
+    {path : 'ward-plan', component : WardPlanComponent},
     {path : 'user-profile', component : UserProfileComponent},
     {path : 'role', component : RoleComponent},
     {path : 'access-management', component : AccessManagementComponent},
@@ -301,6 +314,10 @@ import { SearchFilterPipe } from './pipes/search-filter-pipe';
     {path : 'medicine-price', component : MedicinePriceComponent},
     {path : 'consultation-price', component : ConsultationPriceComponent},
     {path : 'registration-price', component : RegistrationPriceComponent},
+    {path : 'ward-type-price', component : WardTypePriceComponent},
+    {path : 'ward', component : WardComponent},
+    {path : 'ward-category', component : WardCategoryComponent},
+    {path : 'ward-type', component : WardTypeComponent},
 
     ])
   ],

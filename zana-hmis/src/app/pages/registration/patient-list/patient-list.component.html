@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <div class="row">
+                    <!--<div class="row">
                         <div class="panel-header">
                             <div class="col-sm-4">
                                 <div class="dataTables_length">
@@ -30,13 +30,16 @@
                             <div class="col-sm-4">
                                 <input type="text" class="form-control"  [(ngModel)]="filterValue" (keyup)="applyFilter(filterValue)" placeholder="Search..">
                             </div>
-                    </div>
-                </div>
+                        </div>
+                    </div>-->
                 <div class="row">
-                    <div class="col-xs-12">
-                        <input type="text" class="form-control" [(ngModel)]="filterRecords" placeholder="Search...">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control pull-right" [(ngModel)]="filterRecords" placeholder="Search..." style="max-width: 8cm;">
                     </div>
                 </div>
+                <br>
 
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
@@ -49,7 +52,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let p of patientsToShow">
+                                <tr *ngFor="let p of patients | searchFilter : filterRecords">
                                     <td>{{p.no}}</td>
                                     <td>{{p.firstName+' '+p.middleName+' '+p.lastName}}</td>
                                     <td>{{p.gender}}</td>

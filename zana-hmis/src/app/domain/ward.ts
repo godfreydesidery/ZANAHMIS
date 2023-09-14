@@ -1,18 +1,19 @@
 import { IDay } from "./day"
 import { IUser } from "./user"
 import { IWardCategory } from "./ward-category"
+import { IWardType } from "./ward-type"
 
 export interface IWard {
     id      : any
     code    : string
     name    : string
-    price   : string
     status  : string
     active  : boolean
 
-    wardCategory : IWardCategory
+    noOfBeds : number
+
+    wardCategory    : IWardCategory
+    wardType        : IWardType
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created : string
 }

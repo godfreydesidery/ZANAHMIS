@@ -3,11 +3,10 @@ import { IUser } from "./user"
 
 export interface IWardCategory {
     id      : any
+    code    : string
     name    : string
-    gender  : string
-    type    : string
+    description : string
+    active : boolean
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created : string
 }

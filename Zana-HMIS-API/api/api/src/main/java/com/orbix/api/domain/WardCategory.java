@@ -38,14 +38,11 @@ public class WardCategory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@NotBlank
+	@Column(unique = true, nullable = false)
+	private String code;
+	@Column(unique = true, nullable = false)
 	private String name;
-	@NotBlank
-	private String gender;
-	@NotBlank
-	private String age;
-	@NotBlank
-	private String type;
+	private String description;
 
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
     private Long createdby;

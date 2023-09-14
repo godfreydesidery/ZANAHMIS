@@ -6,10 +6,9 @@ export interface IWardBed {
     id      : any
     no      : string
     status  : string
+    active : boolean
 
     ward    : IWard
     
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
+    created : string
 }

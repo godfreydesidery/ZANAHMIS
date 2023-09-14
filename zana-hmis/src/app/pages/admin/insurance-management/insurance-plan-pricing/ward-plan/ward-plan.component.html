@@ -1,0 +1,57 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="header-title">
+        <h1>Ward Plan</h1>
+    </div>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <!-- Form controls -->
+        <div class="col-sm-12">
+            <div class="panel panel-bd lobidrag">
+                <div class="panel-heading">
+                    <!--<div class="btn"> 
+                        <button type="button" class="btn btn-success m-r-2 m-b-5" (click)="clear()" data-toggle="modal" data-target="#add-edit-modal">New</button>
+                    </div>-->
+                </div>
+                <div class="panel-body">
+                    <div class="col-sm-12">
+                        <!--<table class="table table-bordered table-small">
+                            <thead>
+                                <tr>
+                                    <td>ID</td>
+                                    <td>Provider</td>
+                                    <td>Plan</td>
+                                    <td>Ward Type</td>
+                                    <td>Price</td>
+                                    <td>Action</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let wardTypeInsurancePlan of wardTypeInsurancePlans">
+                                    <td>{{wardTypeInsurancePlan.id}}</td>
+                                    <td>{{wardTypeInsurancePlan.insurancePlan.insuranceProvider.name}}</td>
+                                    <td>{{wardTypeInsurancePlan.insurancePlan.name}}</td>
+                                    <td>{{wardTypeInsurancePlan.wardType.name}}</td>
+                                    <td style="text-align: right;">{{wardTypeInsurancePlan.price | currency:'':''}}</td>
+                                    <td><a (click)="getWardTypeInsurancePlan(wardTypeInsurancePlan.id)" data-toggle="modal" data-target="#add-edit-modal"><i class="glyphicon glyphicon-pencil"></i>Edit</a>
+                                        <a (click)="deleteWardTypeInsurancePlan(wardTypeInsurancePlan.id)"><i class="glyphicon glyphicon-trash"></i>Delete</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>-->
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <button class="btn btn-transparent btn-primary btn-outline form-control" routerLink="/ward-type-price" (click)="setInsurancePlanId(0, 'CASH')" style="border-radius: 0px;">CASH</button>
+                            </div>
+                            <div class="col-sm-2" *ngFor="let p of insurancePlans">
+                                <button class="btn btn-transparent btn-primary btn-outline form-control" routerLink="/ward-type-price" (click)="setInsurancePlanId(p.id, p.name)" style="border-radius: 0px;">{{p.name}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+         </div>
+     </div>     
+ </section> <!-- /.content -->

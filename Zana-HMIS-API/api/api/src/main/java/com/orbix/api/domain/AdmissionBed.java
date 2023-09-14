@@ -41,32 +41,28 @@ public class AdmissionBed {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@NotBlank
-	private String no;
-	@NotNull
-	private double price;
 	private String status;
 	
-	@ManyToOne(targetEntity = Ward.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "ward_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
-    private Ward ward;
+	@ManyToOne(targetEntity = WardBed.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "ward_bed_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private WardBed wardBed;
 	
 	@OneToOne(targetEntity = PatientBill.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "bill_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    @JoinColumn(name = "patient_bill_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private PatientBill patientBill;
 	
 	@ManyToOne(targetEntity = Admission.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "admission_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Admission admission;
 	
 	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "patient_id", nullable = false , updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Patient patient;
 	
-	private LocalDateTime openedAt;
+	private LocalDateTime openedAt = LocalDateTime.now();
 	private LocalDateTime closedAt;
 }

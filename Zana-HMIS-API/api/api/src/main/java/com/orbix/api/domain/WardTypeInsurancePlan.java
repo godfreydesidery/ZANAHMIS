@@ -33,24 +33,25 @@ import lombok.NoArgsConstructor;
 @Data 
 @NoArgsConstructor 
 @AllArgsConstructor
-@Table(name = "ward_insurance_plans")
-public class WardInsurancePlan {
+@Table(name = "ward_type_insurance_plans")
+public class WardTypeInsurancePlan {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotNull
 	private double price;
 	private boolean active = false;
+	private boolean covered = false;
 	
 	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "insurance_plan_id", nullable = false , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private InsurancePlan insurancePlan;
 	
-	@ManyToOne(targetEntity = Ward.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "ward_id", nullable = false , updatable = true)
+	@ManyToOne(targetEntity = WardType.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "ward_type_id", nullable = false , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
-    private Ward ward;
+    private WardType wardType;
 	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
     private Long createdby;

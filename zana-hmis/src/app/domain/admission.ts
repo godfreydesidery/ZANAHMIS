@@ -4,23 +4,20 @@ import { IPatient } from "./patient"
 import { IUser } from "./user"
 import { IVisit } from "./visit"
 import { IWard } from "./ward"
+import { IWardBed } from "./ward-bed"
 
 export interface IAdmission {
-    id      : any
-    bedNo   : string
-    status  : string
+    id              : any
+    paymentType     : string
+    membershipNo    : string
+    status          : string
 
     patient         : IPatient
     visit           : IVisit
-    ward            : IWard
     insurancePlan   : IInsurancePlan
+    wardBed         : IWardBed
 
-    
-    createdBy       : IUser
-    createdOn       : IDay
-    createdAt       : Date
-
-    dischargedBy       : IUser
-    dischargedOn       : IDay
-    dischargedAt       : Date
+    created     : string
+    admitted    : string
+    discharged  : string
 }

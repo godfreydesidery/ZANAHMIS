@@ -96,10 +96,13 @@
                     <div class="col-sm-6 table-responsive" style="height: 100%; overflow: scroll;">
                         <br>
                         <div class="row">
-                            <div class="col-xs-12">
-                                <input type="text" class="form-control" [(ngModel)]="filterRecords" placeholder="Search...">
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control pull-right" [(ngModel)]="filterRecords" placeholder="Search..." style="max-width: 8cm;">
                             </div>
                         </div>
+                        <br>
                         <table class="table table-bordered table-striped table-sm">
                             <thead>
                                 <tr>

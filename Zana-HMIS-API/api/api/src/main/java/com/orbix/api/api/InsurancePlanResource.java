@@ -38,6 +38,8 @@ import com.orbix.api.domain.ProcedureTypeInsurancePlan;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.RadiologyTypeInsurancePlan;
 import com.orbix.api.domain.RegistrationInsurancePlan;
+import com.orbix.api.domain.WardType;
+import com.orbix.api.domain.WardTypeInsurancePlan;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.domain.InsurancePlan;
@@ -55,6 +57,8 @@ import com.orbix.api.repositories.ProcedureTypeRepository;
 import com.orbix.api.repositories.RadiologyTypeInsurancePlanRepository;
 import com.orbix.api.repositories.RadiologyTypeRepository;
 import com.orbix.api.repositories.RegistrationInsurancePlanRepository;
+import com.orbix.api.repositories.WardTypeInsurancePlanRepository;
+import com.orbix.api.repositories.WardTypeRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.service.DayService;
 import com.orbix.api.service.InsurancePlanService;
@@ -98,6 +102,9 @@ public class InsurancePlanResource {
 	private final RegistrationInsurancePlanRepository registrationInsurancePlanRepository;
 	
 	private final CompanyProfileRepository companyProfileRepository;
+	
+	private final WardTypeRepository wardTypeRepository;
+	private final WardTypeInsurancePlanRepository wardTypeInsurancePlanRepository;
 	
 	
 	@GetMapping("/insurance_plans")
@@ -931,6 +938,136 @@ public class InsurancePlanResource {
 		return ResponseEntity.ok().body(coverage);
 	}
 	
+	@GetMapping("/insurance_plans/get_ward_type_prices")
+	public ResponseEntity<List<LWardTypePrice>> getWardTypePrices(
+			@RequestParam(name = "insurance_plan_id") Long insurancePlanId,
+			HttpServletRequest request){
+		List<LWardTypePrice> wardTypePrices = new ArrayList<>();
+		List<WardType> wardTypes = wardTypeRepository.findAll();
+		for(WardType t : wardTypes) {
+			LWardTypePrice wardTypePrice = new LWardTypePrice();
+			wardTypePrice.setWardType(t);
+			if(insurancePlanId == 0) {
+				wardTypePrice.setPrice(t.getPrice());
+			}else if(insurancePlanId > 0) {
+				Optional<InsurancePlan> i = insurancePlanRepository.findById(insurancePlanId);
+				if(i.isEmpty()) {
+					throw new NotFoundException("Insurance package not found");
+				}
+				Optional<WardTypeInsurancePlan> p = wardTypeInsurancePlanRepository.findByWardTypeAndInsurancePlan(t, i.get());
+				WardTypeInsurancePlan plan;
+				if(p.isEmpty()) {
+					//create
+					plan = new WardTypeInsurancePlan();
+					plan.setActive(true);
+					plan.setCovered(false);
+					plan.setPrice(0);
+					plan.setInsurancePlan(i.get());
+					plan.setWardType(t);
+					
+					plan.setCreatedby(userService.getUserId(request));
+					plan.setCreatedOn(dayService.getDayId());
+					plan.setCreatedAt(LocalDateTime.now());
+					
+					plan = wardTypeInsurancePlanRepository.save(plan);
+				}else {
+					plan = p.get();
+				}
+				wardTypePrice.setWardTypeInsurancePlan(plan);
+				wardTypePrice.setPrice(plan.getPrice());
+			}else {
+				throw new InvalidOperationException("Invalid package type selected");
+			}
+			wardTypePrices.add(wardTypePrice);
+		}
+		return ResponseEntity.ok().body(wardTypePrices);
+	}
+	
+	@PostMapping("/insurance_plans/change_ward_type_coverage")
+	public ResponseEntity<LWardTypePrice> changeWardTypeCoverage(
+			@RequestBody LWardTypePrice wardTypePrice,
+			HttpServletRequest request){
+		Optional<WardType> tt = wardTypeRepository.findById(wardTypePrice.getWardType().getId());
+		if(tt.isEmpty()) {
+			throw new NotFoundException("Selected ward type not found");
+		}
+		Optional<InsurancePlan> ip = insurancePlanRepository.findById(wardTypePrice.getWardTypeInsurancePlan().getInsurancePlan().getId());
+		if(ip.isEmpty()) {
+			throw new NotFoundException("Selected plan not found");
+		}
+		boolean covered = wardTypePrice.getWardTypeInsurancePlan().isCovered();
+		Optional<WardTypeInsurancePlan> lttip = wardTypeInsurancePlanRepository.findByInsurancePlanAndWardType(ip.get(), tt.get());
+		if(lttip.isEmpty()) {
+			throw new NotFoundException("Selected package not found");
+		}
+		if(covered == true) {
+			if(lttip.get().getPrice() <= 0) {
+				throw new InvalidOperationException("Could not change coverage. Invalid price value. Should not be equal or less than zero");
+			}
+		}
+		lttip.get().setCovered(covered);
+		WardTypeInsurancePlan plan = wardTypeInsurancePlanRepository.save(lttip.get());
+		
+		LWardTypePrice coverage = new LWardTypePrice();
+		coverage.setWardType(tt.get());
+		coverage.setWardTypeInsurancePlan(plan);
+		coverage.setPrice(plan.getPrice());
+		
+		
+		return ResponseEntity.ok().body(coverage);
+	}
+	
+	@PostMapping("/insurance_plans/update_ward_type_price_by_insurance")
+	public ResponseEntity<LWardTypePrice> updateWardTypePriceByInsurance(
+			@RequestBody LWardTypePrice wardTypePrice,
+			HttpServletRequest request){
+		Optional<WardType> tt = wardTypeRepository.findById(wardTypePrice.getWardType().getId());
+		if(tt.isEmpty()) {
+			throw new NotFoundException("Selected ward type not found");
+		}
+		
+		LWardTypePrice coverage = new LWardTypePrice();
+		if(wardTypePrice.getWardTypeInsurancePlan().getInsurancePlan().getId() == 0) {
+			if(wardTypePrice.getPrice() < 0) {
+				throw new InvalidOperationException("Invalid price value. Price should not be less than zero");
+			}
+			tt.get().setPrice(wardTypePrice.getPrice());
+			WardType wardType = wardTypeRepository.save(tt.get());
+			
+			coverage.setWardType(wardType);
+			coverage.setWardTypeInsurancePlan(null);
+			coverage.setPrice(wardTypePrice.getPrice());
+			coverage.setCovered(true);
+			
+			return ResponseEntity.ok().body(coverage);
+		}
+		
+		Optional<InsurancePlan> ip = insurancePlanRepository.findById(wardTypePrice.getWardTypeInsurancePlan().getInsurancePlan().getId());
+		if(ip.isEmpty()) {
+			throw new NotFoundException("Selected plan not found");
+		}
+		double price = wardTypePrice.getPrice();
+		Optional<WardTypeInsurancePlan> lttip = wardTypeInsurancePlanRepository.findByInsurancePlanAndWardType(ip.get(), tt.get());
+		if(lttip.isEmpty()) {
+			throw new NotFoundException("Selected package not found");
+		}
+		if(price == 0) {
+			lttip.get().setCovered(false);
+		}else if(price < 0) {
+			throw new InvalidOperationException("Invalid Price value. Price should not be less than zero");
+		}
+		lttip.get().setPrice(price);
+		
+		WardTypeInsurancePlan plan = wardTypeInsurancePlanRepository.save(lttip.get());
+		
+		coverage = new LWardTypePrice();
+		coverage.setWardType(tt.get());
+		coverage.setWardTypeInsurancePlan(plan);
+		coverage.setPrice(plan.getPrice());
+		
+		return ResponseEntity.ok().body(coverage);
+	}
+	
 }
 
 @Data
@@ -977,6 +1114,14 @@ class LConsultationPrice{
 class LRegistrationPrice{
 	//Clinic clinic = null;
 	RegistrationInsurancePlan registrationInsurancePlan = null;
+	double price;
+	boolean covered;
+}
+
+@Data
+class LWardTypePrice{
+	WardType wardType = null;
+	WardTypeInsurancePlan wardTypeInsurancePlan = null;
 	double price;
 	boolean covered;
 }

@@ -38,13 +38,10 @@ import lombok.NoArgsConstructor;
 public class Admission {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	@NotBlank
-	private String bedNo;
+	private Long id;	
 	@NotBlank
 	private String paymentType;//CASH,DEBIT CARD, CREDIT CARD, MOBILE, INSURANCE
 	private String membershipNo;
-	@NotBlank
 	private String status;
 	
 	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
@@ -62,10 +59,10 @@ public class Admission {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private InsurancePlan insurancePlan;
 	
-	@ManyToOne(targetEntity = Ward.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "ward_id", nullable = false , updatable = true)
+	@OneToOne(targetEntity = WardBed.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "ward_bed_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
-    private Ward ward;
+    private WardBed wardBed;
 	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
     private Long createdby;

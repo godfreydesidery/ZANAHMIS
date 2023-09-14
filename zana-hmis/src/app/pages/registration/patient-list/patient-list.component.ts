@@ -49,7 +49,7 @@ export class PatientListComponent implements OnInit {
       data?.forEach(element => {
         console.log(element)
         this.patients.push(element)
-        this.patientsToShow.push(element)
+        //this.patientsToShow.push(element)
       })     
     })
     .catch(error => {

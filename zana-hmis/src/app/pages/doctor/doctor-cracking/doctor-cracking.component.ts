@@ -150,12 +150,13 @@ export class DoctorCrackingComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.id = localStorage.getItem('consultation-id')
-    //localStorage.removeItem('consultation-id')
+    localStorage.removeItem('consultation-id')
     await this.refresh()    
   }
 
   async setGlobalPatientId(){
     localStorage.setItem('patient-id', this.consultation.patient.id)
+    localStorage.setItem('consultation-id', this.id)
   }
 
   async refresh(){

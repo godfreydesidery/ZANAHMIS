@@ -39,13 +39,11 @@ public class Ward {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@NotBlank
+	@Column(unique = true, nullable = false)
 	private String code;
-	@NotBlank
+	@Column(unique = true, nullable = false)
 	private String name;
-	@NotNull
-	private double price;
-	private String status;
+	private int noOfBeds = 0;
 	private boolean active = false;
 	
 	@ManyToOne(targetEntity = WardCategory.class, fetch = FetchType.EAGER,  optional = false)
@@ -53,7 +51,11 @@ public class Ward {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private WardCategory wardCategory;
 	
-
+	@ManyToOne(targetEntity = WardType.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "ward_type_id", nullable = false , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private WardType wardType;
+	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
     private Long createdby;
 	@Column(name = "created_on_day_id", nullable = false , updatable = false)

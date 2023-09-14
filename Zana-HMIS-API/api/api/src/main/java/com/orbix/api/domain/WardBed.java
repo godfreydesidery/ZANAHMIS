@@ -38,9 +38,10 @@ public class WardBed {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@NotBlank
+	@Column(nullable = false)
 	private String no;
 	private String status;
+	private boolean active = false;
 	
 	@ManyToOne(targetEntity = Ward.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "ward_id", nullable = false , updatable = false)
