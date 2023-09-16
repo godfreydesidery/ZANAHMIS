@@ -39,7 +39,7 @@ import lombok.NoArgsConstructor;
 @Data 
 @NoArgsConstructor 
 @AllArgsConstructor
-@Table(name = "invoices")
+@Table(name = "patient_invoices")
 public class PatientInvoice {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

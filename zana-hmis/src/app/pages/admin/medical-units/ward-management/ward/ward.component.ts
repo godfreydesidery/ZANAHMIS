@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
@@ -40,7 +41,8 @@ export class WardComponent {
     private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,
-    private msgBox : MsgBoxService
+    private msgBox : MsgBoxService,
+    private router : Router
   ) { }
 
   ngOnInit(): void {
@@ -248,5 +250,10 @@ export class WardComponent {
       }
     )
     return granted
+  }
+
+  configureWard(id : any){
+    localStorage.setItem('ward-id', id)
+    this.router.navigate(['ward-configuration'])
   }
 }

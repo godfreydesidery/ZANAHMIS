@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.domain.WardType;
+import com.orbix.api.exceptions.InvalidEntryException;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.TheatreRepository;
@@ -35,6 +36,10 @@ public class WardTypeServiceImpl implements WardTypeService {
 	
 	@Override
 	public WardType save(WardType wardType, HttpServletRequest request) {
+		
+		if(wardType.getName().equals("")) {
+			throw new InvalidEntryException("Name can not be empty");
+		}
 		
 		wardType.setName(wardType.getName());
 		

@@ -17,7 +17,6 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./procedure-payment.component.scss']
 })
 export class ProcedurePaymentComponent implements OnInit {
-  //searchKeys : string[] = []
   searchKey : string = ''
 
   id : any = null

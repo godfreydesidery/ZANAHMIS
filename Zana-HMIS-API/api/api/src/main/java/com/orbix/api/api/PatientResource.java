@@ -54,6 +54,7 @@ import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.User;
 import com.orbix.api.domain.Visit;
+import com.orbix.api.domain.WardBed;
 import com.orbix.api.domain.WorkingDiagnosis;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
@@ -98,6 +99,7 @@ import com.orbix.api.repositories.ProcedureTypeRepository;
 import com.orbix.api.repositories.RadiologyRepository;
 import com.orbix.api.repositories.RadiologyTypeRepository;
 import com.orbix.api.repositories.VisitRepository;
+import com.orbix.api.repositories.WardBedRepository;
 import com.orbix.api.repositories.WorkingDiagnosisRepository;
 import com.orbix.api.service.CompanyProfileService;
 import com.orbix.api.service.DayService;
@@ -154,6 +156,7 @@ public class PatientResource {
 	private final PatientCreditNoteService patientCreditNoteService;
 	private final CompanyProfileRepository companyProfileRepository;
 	private final PharmacyStockCardRepository pharmacyStockCardRepository;
+	private final WardBedRepository wardBedRepository;
 	
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(
@@ -284,6 +287,13 @@ public class PatientResource {
 		Optional<Clinic> c = clinicRepository.findByName(clinic_name);
 		Optional<Clinician> cn = clinicianRepository.findByNickname(clinician_name);
 		
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		statuses.add("IN-PROCESS");
+		List<Admission> adms = admissionRepository.findAllByPatientAndStatusIn(p.get(), statuses);
+		if(!adms.isEmpty()) {
+			throw new InvalidOperationException("Could not process consultation, the patient has an active admission");
+		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/do_consultation").toUriString());
 		return ResponseEntity.created(uri).body(patientService.doConsultation(p.get(), c.get(), cn.get(), request));
@@ -2819,6 +2829,43 @@ public class PatientResource {
 		return ResponseEntity.ok().body(patients);
 	}
 	
+	
+	@PostMapping("/patients/do_admission")
+	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<Admission>doAdmission(
+
+			@RequestBody LAdmission adm, 
+			HttpServletRequest request){		
+		Optional<Patient> p = patientRepository.findById(adm.getPatient().getId());
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found");
+		}
+		
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		statuses.add("IN-PROCESS");
+		List<Admission> adms = admissionRepository.findAllByPatientAndStatusIn(p.get(), statuses);
+		if(!adms.isEmpty()) {
+			throw new InvalidOperationException("Could not process admission. The patient is already admitted");
+		}
+		
+		Optional<WardBed> wb = wardBedRepository.findById(adm.getWardBed().getId());
+		if(wb.isEmpty()) {
+			throw new NotFoundException("Bed/Room nof found");
+		}
+		
+		
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/do_admission").toUriString());
+		return ResponseEntity.created(uri).body(patientService.doAdmission(p.get(), wb.get(), request));
+	}
+	
+}
+
+@Data
+class LAdmission{
+	private Patient patient;
+	private WardBed wardBed;
 }
 
 @Data

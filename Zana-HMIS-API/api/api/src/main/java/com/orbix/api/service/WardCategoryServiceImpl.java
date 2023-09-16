@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.WardCategory;
+import com.orbix.api.exceptions.InvalidEntryException;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.MedicineRepository;
@@ -38,7 +39,13 @@ public class WardCategoryServiceImpl implements WardCategoryService {
 	@Override
 	public WardCategory save(WardCategory wardCategory, HttpServletRequest request) {
 		
+		if(wardCategory.getName().equals("")) {
+			throw new InvalidEntryException("Name can not be empty");
+		}
+			
 		wardCategory.setName(wardCategory.getName());
+		
+		
 		
 		if(wardCategory.getId() == null) {
 			wardCategory.setCreatedby(userService.getUser(request).getId());

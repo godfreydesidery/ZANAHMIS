@@ -93,6 +93,12 @@ public interface ProcedureRepository extends JpaRepository<Procedure, Long> {
 	 */
 	List<Procedure> findAllByConsultationInOrNonConsultationIn(List<Consultation> cs, List<NonConsultation> ncs);
 
+	/**
+	 * @param admission
+	 * @return
+	 */
+	List<Procedure> findAllByAdmission(Admission admission);
+
 
 
 }

@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +22,11 @@ public interface PatientInvoiceDetailRepository extends JpaRepository<PatientInv
 	 * @return
 	 */
 	Optional<PatientInvoiceDetail> findByPatientBill(PatientBill patientBill);
+
+	/**
+	 * @param patientBill
+	 * @return
+	 */
+	List<PatientInvoiceDetail> findAllByPatientBill(PatientBill patientBill);
 
 }

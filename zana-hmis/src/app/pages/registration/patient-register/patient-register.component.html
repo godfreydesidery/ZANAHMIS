@@ -225,7 +225,7 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <div>
-                                                <div *ngIf="type != 'OUTSIDER' && id != null && paymentType != ''">
+                                                <div *ngIf="type === 'OUTPATIENT' && id != null && paymentType != ''">
                                                     <div *ngIf="consultations.length === 0">
                                                         <h4 class="text-primary"><b>Send Outpatient to Doctor</b></h4>
                                                         <div class="row">

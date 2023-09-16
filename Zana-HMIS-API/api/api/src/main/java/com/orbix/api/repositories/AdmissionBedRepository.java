@@ -24,4 +24,10 @@ public interface AdmissionBedRepository extends JpaRepository <AdmissionBed, Lon
 	 */
 	List<AdmissionBed> findAllByAdmissionAndStatusIn(Admission admission, List<String> statuses);
 
+	/**
+	 * @param admission
+	 * @return
+	 */
+	List<AdmissionBed> findAllByAdmission(Admission admission);
+
 }

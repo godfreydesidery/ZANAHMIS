@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IAdmission } from 'src/app/domain/admission';
 import { IClinicalNote } from 'src/app/domain/clinical-note';
 import { IConsultation } from 'src/app/domain/consultation';
 import { IDiagnosisType } from 'src/app/domain/diagnosis-type';
@@ -12,11 +13,16 @@ import { IGeneralExamination } from 'src/app/domain/general-examination';
 import { ILabTest } from 'src/app/domain/lab-test';
 import { ILabTestType } from 'src/app/domain/lab-test-type';
 import { IMedicine } from 'src/app/domain/medicine';
+import { IPatient } from 'src/app/domain/patient';
 import { IPrescription } from 'src/app/domain/prescription';
 import { IProcedure } from 'src/app/domain/procedure';
 import { IProcedureType } from 'src/app/domain/procedure-type';
 import { IRadiology } from 'src/app/domain/radiology';
 import { IRadiologyType } from 'src/app/domain/radiology-type';
+import { IWard } from 'src/app/domain/ward';
+import { IWardBed } from 'src/app/domain/ward-bed';
+import { IWardCategory } from 'src/app/domain/ward-category';
+import { IWardType } from 'src/app/domain/ward-type';
 import { IWorkingDiagnosis } from 'src/app/domain/working-diagnosis';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
@@ -31,6 +37,8 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./doctor-cracking.component.scss']
 })
 export class DoctorCrackingComponent implements OnInit {
+
+  rs : string[] = ['Bed 1', 'Bed 2', 'Bed 3', 'Bed 4', 'Bed 5', 'Bed 6', 'Bed 7', 'Bed 8', 'Bed 9', 'Bed 10', 'Bed 11', 'Bed 12', 'Bed 13']
 
   id : any
 
@@ -138,6 +146,17 @@ export class DoctorCrackingComponent implements OnInit {
 
   theatreName : string = ''
   theatreNames : string[] = []
+
+  wardCategories : IWardCategory[] = []
+  wardTypes      : IWardType[] = []
+  wards          : IWard[] = []
+  wardBeds       : IWardBed[] = []
+
+  wardCategoryName : string = ''
+  wardTypeName : string = ''
+  wardName : string = ''
+  wardBedNo : string = ''
+  wardBedId : any = null
 
 
   filterRecords : string = '' // this is composite
@@ -1470,6 +1489,195 @@ export class DoctorCrackingComponent implements OnInit {
 
 
 
+  async loadWardCategories(){
+    this.wardCategories = []
+    this.wardCategoryName = ''
+    this.wards = []
+    this.wardName = ''
+    this.wardBeds = []
+    this.wardBedNo = ''
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IWardCategory[]>(API_URL+'/ward_categories', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        data?.forEach(element => {
+          this.wardCategories.push(element)
+        })
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage('Could not load ward categories')
+      }
+    )
+  }
+
+  async loadWardTypes(){
+    this.wardTypes = []
+    this.wardTypeName = ''
+    this.wards = []
+    this.wardName = ''
+    this.wardBeds = []
+    this.wardBedNo = ''
+    
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IWardType[]>(API_URL+'/ward_types', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        data?.forEach(element => {
+          this.wardTypes.push(element)
+        })
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage('Could not load ward types')
+      }
+    )
+  }
+
+  async loadWardsByWardCategoryAndWardType(){
+    this.wards = []
+    this.wardBeds = []
+    this.wardName = ''
+    this.wardBedNo = ''
+
+    if(this.wardCategoryName === '' || this.wardTypeName === ''){
+      return
+    }
+
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var categoryId : any = null
+    this.wardCategories.forEach(element => {
+      if(element.name === this.wardCategoryName){
+        categoryId = element.id
+      }
+    })
+    var typeId : any = null
+    this.wardTypes.forEach(element => {
+      if(element.name === this.wardTypeName){
+        typeId = element.id
+      }
+    })
+
+    this.spinner.show()
+    await this.http.get<IWard[]>(API_URL+'/wards/get_wards_by_category_and_type?category_id='+categoryId+'&type_id='+typeId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.wards = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage('Could not load wards')
+      }
+    )
+  }
+
+  async loadAvailableWardBedsByWard(){
+    this.wardBeds = []
+    this.wardBedNo = ''
+    if(this.wardName === ''){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var wardId : any = null
+    this.wards.forEach(element => {
+      if(element.name === this.wardName){
+        wardId = element.id
+      }
+    })
+    
+    this.spinner.show()
+    await this.http.get<IWardBed[]>(API_URL+'/wards/get_available_beds_by_ward?ward_id='+wardId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        data!.forEach(element => {
+          element.selected = false
+          this.wardBeds.push(element)
+        })
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage('Could not load Beds/Rooms')
+      }
+    )
+  }
+
+  async selectWardBed(no : string){
+    this.wardBeds.forEach(element => {
+      if(element.no === no){
+        this.wardBedId = element.id
+        this.wardBedNo = no
+        element.selected = true
+      }else{
+        element.selected = false
+      }
+    })
+  }
+
+  cancelBed(){
+    this.wardBedNo = ''
+    this.wardBeds.forEach(element => {
+      element.selected = false
+    })
+  }
+
+
+  async admitPatient(){
+
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var adm = {
+      patient : {
+        id : this.consultation.patient.id
+      },
+      wardBed: {
+        id : this.wardBedId,
+        no : this.wardBedNo
+      }
+    }
+
+    this.spinner.show()
+    await this.http.post<IAdmission[]>(API_URL+'/patients/do_admission', adm, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Success')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+
 }
 
 
@@ -1477,4 +1685,9 @@ export class DoctorCrackingComponent implements OnInit {
 export interface ICG{
   clinicalNote : IClinicalNote
   generalExamination : IGeneralExamination
+}
+
+export interface IAdm {
+  patient : IPatient
+  wardBed : IWardBed
 }

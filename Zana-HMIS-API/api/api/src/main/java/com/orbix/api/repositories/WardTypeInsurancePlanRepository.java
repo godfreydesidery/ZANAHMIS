@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,4 +31,11 @@ public interface WardTypeInsurancePlanRepository extends JpaRepository <WardType
 	 * @return
 	 */
 	Optional<WardTypeInsurancePlan> findByInsurancePlanAndWardType(InsurancePlan insurancePlan, WardType wardType);
+
+	/**
+	 * @param insurancePlan
+	 * @param b
+	 * @return
+	 */
+	List<WardTypeInsurancePlan> findByInsurancePlanAndCovered(InsurancePlan insurancePlan, boolean b);
 }

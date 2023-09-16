@@ -8,6 +8,8 @@ export interface IWardBed {
     status  : string
     active : boolean
 
+    selected : boolean
+
     ward    : IWard
     
     created : string

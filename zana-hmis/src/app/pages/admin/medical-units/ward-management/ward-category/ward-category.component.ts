@@ -69,7 +69,7 @@ export class WardCategoryComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create ward category')
+          this.msgBox.showErrorMessage(error['error'])
         }
       )
 
@@ -91,7 +91,7 @@ export class WardCategoryComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update ward category')
+          this.msgBox.showErrorMessage(error['error'])
         }
       )
     }

@@ -14,7 +14,8 @@
                     <div class="btn-group"> 
                         <a class="btn btn-primary" routerLink="/list-from-reception" style="margin: 1px;"> <i class="fa fa-list"></i>List From Reception</a>  
                         <a class="btn btn-primary" routerLink="/my-consultation" style="margin: 1px;"> <i class="fa fa-list"></i>My Consultations</a>  
-                        <a class="btn btn-primary" routerLink="/patient-history-menu" (click)="setGlobalPatientId()" style="margin: 1px;"> <i class="glyphicon glyphicon-calendar"></i>Patient History</a> 
+                        <a class="btn btn-primary" routerLink="/patient-history-menu" (click)="setGlobalPatientId()" style="margin: 1px;"> <i class="fa fa-history"></i>Patient History</a> 
+                        <a class="btn btn-primary" (click)="loadWardCategories()" (click)="loadWardTypes()" data-toggle="modal" data-target="#send-to-ward-modal" style="margin: 1px;"> <i class="fa fa-hotel"></i> Send To Ward</a> 
                     </div>
                 </div>
                 <div class="panel-body">
@@ -1008,6 +1009,92 @@
 </div>
 
 
+<!-- Modal success -->
+<div class="modal fade modal-success" id="send-to-ward-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Send this patient to Ward</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h4>Select Ward Category</h4>
+                                <select class="form-control" [(ngModel)]="wardCategoryName" ngModel (ngModelChange)="loadWardsByWardCategoryAndWardType()">
+                                    <option></option>
+                                    <option *ngFor="let c of wardCategories">{{c.name}}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <h4>Select Ward Type</h4>
+                                <select class="form-control" [(ngModel)]="wardTypeName" ngModel (ngModelChange)="loadWardsByWardCategoryAndWardType()">
+                                    <option></option>
+                                    <option *ngFor="let t of wardTypes">{{t.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <br>
+                                <h4 *ngIf="wards.length > 0">Select Ward</h4>
+                                <span class="form-control" *ngIf="wards.length === 0 && wardTypeName != '' && wardCategoryName != ''">No Wards Available</span>
+                                <select class="form-control" *ngIf="wards.length > 0" [(ngModel)]="wardName" ngModel (ngModelChange)="loadAvailableWardBedsByWard()">
+                                    <option></option>
+                                    <option *ngFor="let w of wards">{{w.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h4 *ngIf="wardBeds.length > 0">Available Beds/Rooms <span (click)="cancelBed()" style="cursor: pointer;">[X]</span></h4>
+                                <br>
+                                <div class="row" *ngIf="wardBeds.length > 0">
+                                    <div class="col-sm-3" *ngFor="let wardBed of wardBeds">
+                                        <button class="btn btn-default form-control" (click)="selectWardBed(wardBed.no)">
+                                            {{wardBed?.no}}
+                                            <input type="checkbox" [checked]="wardBed?.selected" style="border-color: white;">
+                                            <!--<button *ngFor="let operation of model.operations" class="btn btn-light" style="margin-left: 1mm; margin-right: 1mm;"><input type="checkbox" [checked]="privilegeChecked(model.object, operation)" (change)="addOrRemovePrivilege($event, model.object, operation)" style="height: 5mm; width: 5mm;"><label>{{operation}}</label></button>-->
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="wardBeds.length === 0 && wardName != ''">
+                                    <div class="col-sm-12">
+                                        <span class="form-control">No Bed/Room Available</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row" *ngIf="wardBedNo != ''">
+                            <div class="col-sm-12">
+                                <h4>Summary</h4>
+                                <table class="table">
+                                    <tbody>
+                                        <tr><td>Category     </td><td>{{wardCategoryName}}</td></tr>
+                                        <tr><td>Type         </td><td>{{wardTypeName}}</td></tr>
+                                        <tr><td>Ward         </td><td>{{wardName}}</td></tr>
+                                        <tr><td>Bed          </td><td>{{wardBedNo}}</td></tr>
+                                        <tr><td>Price          </td><td></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer" style="text-align: center;">
+                    <button type="button" class="btn btn-success"  *ngIf="wardBedNo != ''" (click)="admitPatient()" data-dismiss="modal">Admit</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Modal success -->
+
+    <!-- Modal success -->
 
 
 
@@ -1080,6 +1167,27 @@
                 </div> 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success pull-right" (click)="savePrescription()" data-dismiss="modal">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Modal success -->
+
+    <!-- Modal success -->
+
+     <!-- Modal success -->
+<div class="modal fade modal-success" id="send-to-ward-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Send this patient to Ward</h3>
+            </div>
+            <div class="modal-body">
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->

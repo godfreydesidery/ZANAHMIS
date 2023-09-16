@@ -28,4 +28,11 @@ public interface PatientBillRepository extends JpaRepository<PatientBill, Long> 
 	 */
 	List<PatientBill> findAllByPatient(Patient patient);
 
+	/**
+	 * @param patient
+	 * @param string
+	 * @return
+	 */
+	List<PatientBill> findAllByPatientAndStatus(Patient patient, String string);
+
 }

@@ -33,8 +33,9 @@
                                     <td>Name</td>
                                     <td>Category</td>
                                     <td>Type</td>
-                                    <td>Beds</td>
-                                    <td>Active</td>
+                                    <td>Beds/Rooms</td>
+                                    <td>Price@</td>
+                                    <td>Active Status</td>
                                     <td>Action</td>
                                 </tr>
                             </thead>
@@ -45,8 +46,15 @@
                                     <td>{{ward?.wardCategory?.name}}</td>
                                     <td>{{ward?.wardType?.name}}</td>
                                     <td style="text-align: center;">{{ward.noOfBeds}}</td>
-                                    <td>{{ward.active}}</td>
-                                    <td><a (click)="getWard(ward.id)" data-toggle="modal" data-target="#add-edit-modal"><i class="glyphicon glyphicon-pencil"></i>Edit</a></td>
+                                    <td style="text-align: right;">{{ward?.wardType?.price | currency:'':''}}</td>
+                                    <td>
+                                        <span class="label-success label label-default" *ngIf="ward?.active === true">Active</span>
+                                        <span class="label-success label label-default" *ngIf="ward?.active === false">Active</span>
+                                    </td>
+                                    <td>
+                                        <a (click)="getWard(ward.id)" data-toggle="modal" data-target="#add-edit-modal"><i class="glyphicon glyphicon-pencil"></i>Edit</a> | 
+                                        <a (click)="configureWard(ward.id)"><i class="glyphicon glyphicon-cog"></i>Configure</a>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

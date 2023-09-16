@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
@@ -17,6 +18,7 @@ import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.Radiology;
+import com.orbix.api.domain.WardBed;
 
 /**
  * @author Godfrey
@@ -25,6 +27,7 @@ import com.orbix.api.domain.Radiology;
 public interface PatientService {
 	Patient doRegister(Patient patient, HttpServletRequest request);
 	Patient doConsultation(Patient p, Clinic c, Clinician cn, HttpServletRequest request);
+	Admission doAdmission(Patient p, WardBed wb, HttpServletRequest request);
 	Patient update(Patient patient, HttpServletRequest request);
 	List<Patient>getBySearchKey(String searchKey);
 	List<Patient>getAll();

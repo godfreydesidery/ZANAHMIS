@@ -35,7 +35,7 @@ import lombok.NoArgsConstructor;
 @Data 
 @NoArgsConstructor 
 @AllArgsConstructor
-@Table(name = "invoice_details")
+@Table(name = "patient_invoice_details")
 public class PatientInvoiceDetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +46,7 @@ public class PatientInvoiceDetail {
 	private double qty;
 	@NotNull
 	private double amount;
+	private String status;
 	
 	@ManyToOne(targetEntity = PatientInvoice.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "patient_invoice_id", nullable = false , updatable = false)

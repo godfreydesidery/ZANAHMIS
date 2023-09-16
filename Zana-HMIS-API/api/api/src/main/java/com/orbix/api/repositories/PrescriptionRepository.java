@@ -91,4 +91,10 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
 	 */
 	List<Prescription> findAllByPatient(Patient patient);
 
+	/**
+	 * @param admission
+	 * @return
+	 */
+	List<Prescription> findAllByAdmission(Admission admission);
+
 }

@@ -65,19 +65,19 @@ public class Admission {
     private WardBed wardBed;
 	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
-    private Long createdby;
+    private Long createdBy;
 	@Column(name = "created_on_day_id", nullable = false , updatable = false)
     private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
 	
 	@Column(name = "admitted_by_user_id", nullable = false , updatable = false)
-    private Long admittedby;
+    private Long admittedBy;
 	@Column(name = "admitted_on_day_id", nullable = false , updatable = false)
     private Long admittedOn;
 	private LocalDateTime admittedAt = LocalDateTime.now();
 	
 	@Column(name = "discharged_by_user_id", nullable = true , updatable = true)
-    private Long dischargedby;
+    private Long dischargedBy;
 	@Column(name = "discharged_on_day_id", nullable = true , updatable = true)
     private Long dischargedOn;
 	private LocalDateTime dischargedAt;

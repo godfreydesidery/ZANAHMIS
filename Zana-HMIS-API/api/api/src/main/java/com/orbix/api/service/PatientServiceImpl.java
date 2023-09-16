@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.PatientBill;
+import com.orbix.api.domain.Admission;
+import com.orbix.api.domain.AdmissionBed;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.CompanyProfile;
@@ -43,8 +45,12 @@ import com.orbix.api.domain.Registration;
 import com.orbix.api.domain.RegistrationInsurancePlan;
 import com.orbix.api.domain.Theatre;
 import com.orbix.api.domain.Visit;
+import com.orbix.api.domain.WardBed;
+import com.orbix.api.domain.WardTypeInsurancePlan;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.repositories.AdmissionBedRepository;
+import com.orbix.api.repositories.AdmissionRepository;
 import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationInsurancePlanRepository;
 import com.orbix.api.repositories.ConsultationRepository;
@@ -72,6 +78,8 @@ import com.orbix.api.repositories.RegistrationInsurancePlanRepository;
 import com.orbix.api.repositories.RegistrationRepository;
 import com.orbix.api.repositories.TheatreRepository;
 import com.orbix.api.repositories.VisitRepository;
+import com.orbix.api.repositories.WardBedRepository;
+import com.orbix.api.repositories.WardTypeInsurancePlanRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -115,6 +123,10 @@ public class PatientServiceImpl implements PatientService {
 	private final DiagnosisTypeRepository diagnosisTypeRepository;
 	private final TheatreRepository theatreRepository;
 	private final CompanyProfileRepository companyProfileRepository;
+	private final AdmissionRepository admissionRepository;
+	private final WardBedRepository wardBedRepository;
+	private final AdmissionBedRepository admissionBedRepository;
+	private final WardTypeInsurancePlanRepository wardTypeInsurancePlanRepository;
 	
 	@Override
 	public List<Patient> getAll() {
@@ -669,7 +681,7 @@ public class PatientServiceImpl implements PatientService {
 				patientBill.setStatus("COVERED");
 				patientBill = patientBillRepository.save(patientBill);
 				
-				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(patient, patient.getInsurancePlan(),"PENDING");
 				if(!inv.isPresent()) {
 					/**
 					 * If no pending patientInvoice
@@ -1099,5 +1111,311 @@ public class PatientServiceImpl implements PatientService {
 		prescription.setPatient(patient);
 		prescription.setPatientBill(patientBill);
 		return prescriptionRepository.save(prescription);		
+	}
+
+	@Override
+	public Admission doAdmission(Patient p, WardBed wb, HttpServletRequest request) {
+		
+		if(!wb.isActive()) {
+			throw new InvalidOperationException("Could not process admission, bed not active");
+		}
+		
+		if(!wb.getStatus().equals("EMPTY")){
+			throw new InvalidOperationException("Could not process admission, bed already occupied. Please select a different bed.");
+		}
+		wb.setStatus("WAITING");
+		wb = wardBedRepository.save(wb);
+		
+		Admission admission = new Admission();
+		admission.setPatient(p);
+		admission.setPaymentType(p.getPaymentType());
+		admission.setInsurancePlan(p.getInsurancePlan());
+		admission.setMembershipNo(p.getMembershipNo());
+		admission.setWardBed(wb);
+		admission.setStatus("PENDING");
+				
+		/**
+		 * Set visit, create one if the last visit is not for today
+		 */
+		Optional<Visit> v = visitRepository.findLastByPatient(p);
+		Visit visit = new Visit();
+		if(!v.isPresent() || !v.get().getStatus().equals("PENDING")) {			
+			visit.setPatient(p);
+			if(!v.isPresent()) {
+				visit.setSequence("FIRST");
+			}else {
+				visit.setSequence("SUBSEQUENT");
+			}
+			
+			visit.setCreatedby(userService.getUser(request).getId());
+			visit.setCreatedOn(dayService.getDay().getId());
+			visit.setCreatedAt(dayService.getTimeStamp());
+			
+			visitRepository.save(visit);
+		}else {
+			visit = v.get();
+		}
+		admission.setVisit(visit);
+		
+		admission.setCreatedBy(userService.getUser(request).getId());
+		admission.setCreatedOn(dayService.getDay().getId());
+		admission.setCreatedAt(dayService.getTimeStamp());
+		
+		admission.setAdmittedBy(userService.getUser(request).getId());
+		admission.setAdmittedOn(dayService.getDay().getId());
+		admission.setAdmittedAt(dayService.getTimeStamp());
+		
+		admission = admissionRepository.save(admission);
+		
+		/**
+		 * Create ward bed bill
+		 */
+		PatientBill wardBedBill = new PatientBill();
+		wardBedBill.setAmount(wb.getWard().getWardType().getPrice());
+		wardBedBill.setPaid(0);
+		wardBedBill.setBalance(wb.getWard().getWardType().getPrice());
+		wardBedBill.setQty(1);
+		wardBedBill.setDescription("Ward Bed / Room");
+		wardBedBill.setStatus("UNPAID");
+		/**
+		 * Add forensic data to registration patientBill
+		 */
+		wardBedBill.setCreatedby(userService.getUser(request).getId());
+		wardBedBill.setCreatedOn(dayService.getDay().getId());
+		wardBedBill.setCreatedAt(dayService.getTimeStamp());
+		/**
+		 * Assign patient to consultation patientBill
+		 */
+		wardBedBill.setPatient(p);
+		/**
+		 * Save Registration patientBill
+		 */
+		wardBedBill = patientBillRepository.save(wardBedBill);
+		
+		AdmissionBed admissionBed = new AdmissionBed();
+		admissionBed.setAdmission(admission);
+		admissionBed.setPatient(p);
+		admissionBed.setWardBed(wb);
+		admissionBed.setPatientBill(wardBedBill);
+		admissionBed.setStatus("OPENED");
+		admissionBed.setOpenedAt(LocalDateTime.now());
+		admissionBed = admissionBedRepository.save(admissionBed);
+		
+		p.setType("INPATIENT");
+		p = patientRepository.save(p);
+		
+		if(p.getPaymentType().equals("INSURANCE")) {
+						
+			WardTypeInsurancePlan eligiblePlan = null;
+			
+			List<WardTypeInsurancePlan> wardTypePricePlans = wardTypeInsurancePlanRepository.findByInsurancePlanAndCovered(p.getInsurancePlan(), true);
+			double eligiblePrice = 0;
+			for(WardTypeInsurancePlan plan : wardTypePricePlans) {
+				if(plan.getPrice() > eligiblePrice || plan.getInsurancePlan().getId() == p.getInsurancePlan().getId()) {
+					eligiblePrice = plan.getPrice();
+					eligiblePlan = plan;
+					if(plan.getInsurancePlan().getId() == p.getInsurancePlan().getId()) {
+						break;
+					}
+				}
+			}	
+			
+			if(eligiblePlan != null) {
+				wardBedBill.setAmount(eligiblePlan.getPrice());
+				wardBedBill.setPaid(eligiblePlan.getPrice());
+				wardBedBill.setBalance(0);
+				wardBedBill.setStatus("COVERED");				
+				wardBedBill = patientBillRepository.save(wardBedBill);
+				
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(p, p.getInsurancePlan(),"PENDING");
+				if(!inv.isPresent()) {
+					/**
+					 * If no pending patientInvoice
+					 */
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(p);
+					patientInvoice.setAdmission(admission);
+					patientInvoice.setInsurancePlan(p.getInsurancePlan());
+					patientInvoice.setStatus("PENDING");
+					
+					patientInvoice.setCreatedby(userService.getUser(request).getId());
+					patientInvoice.setCreatedOn(dayService.getDay().getId());
+					patientInvoice.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					/**
+					 * Add lab test patientBill claim to patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(wardBedBill);
+					patientInvoiceDetail.setAmount(wardBedBill.getAmount());
+					patientInvoiceDetail.setDescription("Ward Bed / Room");
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}else {
+					/**
+					 * If there is a .pending patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(wardBedBill);
+					patientInvoiceDetail.setAmount(wardBedBill.getAmount());
+					patientInvoiceDetail.setDescription("Ward Bed / Room");
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}
+				
+				
+				
+				
+				if(eligiblePlan.getInsurancePlan().getId() != p.getInsurancePlan().getId() && (wb.getWard().getWardType().getPrice() - eligiblePlan.getPrice() > 0)) {
+					PatientBill supplementaryWardBedBill = new PatientBill();
+										
+					supplementaryWardBedBill.setAmount(wb.getWard().getWardType().getPrice() - eligiblePlan.getPrice());
+					supplementaryWardBedBill.setPaid(0);
+					supplementaryWardBedBill.setBalance(wb.getWard().getWardType().getPrice() - eligiblePlan.getPrice());
+					supplementaryWardBedBill.setStatus("UNPAID");
+					supplementaryWardBedBill.setPrincipalPatientBill(wardBedBill);
+					
+					supplementaryWardBedBill = patientBillRepository.save(wardBedBill);					
+					wardBedBill.setSupplementaryPatientBill(supplementaryWardBedBill);
+					wardBedBill = patientBillRepository.save(wardBedBill);
+					
+					Optional<PatientInvoice> supInv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(p, null,"PENDING");
+					if(!supInv.isPresent()) {
+						/**
+						 * If no pending patientInvoice
+						 */
+						PatientInvoice patientInvoice = new PatientInvoice();
+						patientInvoice.setNo("NA");
+						patientInvoice.setPatient(p);
+						patientInvoice.setAdmission(admission);
+						patientInvoice.setInsurancePlan(null);
+						patientInvoice.setStatus("PENDING");
+						
+						patientInvoice.setCreatedby(userService.getUser(request).getId());
+						patientInvoice.setCreatedOn(dayService.getDay().getId());
+						patientInvoice.setCreatedAt(dayService.getTimeStamp());
+						
+						patientInvoice = patientInvoiceRepository.save(patientInvoice);
+						patientInvoice.setNo(patientInvoice.getId().toString());
+						patientInvoice = patientInvoiceRepository.save(patientInvoice);
+						/**
+						 * Add lab test patientBill claim to patientInvoice
+						 */
+						PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+						patientInvoiceDetail.setPatientInvoice(patientInvoice);
+						patientInvoiceDetail.setPatientBill(supplementaryWardBedBill);
+						patientInvoiceDetail.setAmount(supplementaryWardBedBill.getAmount());
+						patientInvoiceDetail.setDescription("Ward Bed / Room");
+						patientInvoiceDetail.setQty(1);
+						
+						patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+						patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+						patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+						
+						patientInvoiceDetailRepository.save(patientInvoiceDetail);
+					}else {
+						/**
+						 * If there is a .pending patientInvoice
+						 */
+						PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+						patientInvoiceDetail.setPatientInvoice(supInv.get());
+						patientInvoiceDetail.setPatientBill(supplementaryWardBedBill);
+						patientInvoiceDetail.setAmount(supplementaryWardBedBill.getAmount());
+						patientInvoiceDetail.setDescription("Ward Bed / Room");
+						patientInvoiceDetail.setQty(1);
+						
+						patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+						patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+						patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+						
+						patientInvoiceDetailRepository.save(patientInvoiceDetail);
+					}					
+				}else {
+					List<String> sts = new ArrayList<>();
+					sts.add("PENDING");
+					sts.add("IN-PROCESS");
+					List<Consultation> cons = consultationRepository.findAllByPatientAndStatusIn(p, sts);
+					for(Consultation con : cons) {
+						con.setStatus("SIGNED-OUT");
+						consultationRepository.save(con);
+					}
+					admission.setStatus("IN-PROCESS");
+					admission = admissionRepository.save(admission);
+					wb.setStatus("OCCUPIED");
+					wardBedRepository.save(wb);
+				}
+			}else {
+				//throw new InvalidOperationException("")
+			}
+		}else {
+			Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(p, null,"PENDING");
+			if(!inv.isPresent()) {
+				/**
+				 * If no pending patientInvoice
+				 */
+				PatientInvoice patientInvoice = new PatientInvoice();
+				patientInvoice.setNo("NA");
+				patientInvoice.setPatient(p);
+				patientInvoice.setAdmission(admission);
+				patientInvoice.setInsurancePlan(null);
+				patientInvoice.setStatus("PENDING");
+				
+				patientInvoice.setCreatedby(userService.getUser(request).getId());
+				patientInvoice.setCreatedOn(dayService.getDay().getId());
+				patientInvoice.setCreatedAt(dayService.getTimeStamp());
+				
+				patientInvoice = patientInvoiceRepository.save(patientInvoice);
+				patientInvoice.setNo(patientInvoice.getId().toString());
+				patientInvoice = patientInvoiceRepository.save(patientInvoice);
+				/**
+				 * Add lab test patientBill claim to patientInvoice
+				 */
+				PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+				patientInvoiceDetail.setPatientInvoice(patientInvoice);
+				patientInvoiceDetail.setPatientBill(wardBedBill);
+				patientInvoiceDetail.setAmount(wardBedBill.getAmount());
+				patientInvoiceDetail.setDescription("Ward Bed / Room");
+				patientInvoiceDetail.setQty(1);
+				
+				patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+				patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+				patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+				
+				patientInvoiceDetailRepository.save(patientInvoiceDetail);
+			}else {
+				/**
+				 * If there is a .pending patientInvoice
+				 */
+				PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+				patientInvoiceDetail.setPatientInvoice(inv.get());
+				patientInvoiceDetail.setPatientBill(wardBedBill);
+				patientInvoiceDetail.setAmount(wardBedBill.getAmount());
+				patientInvoiceDetail.setDescription("Ward Bed / Room");
+				patientInvoiceDetail.setQty(1);
+				
+				patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+				patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+				patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+				
+				patientInvoiceDetailRepository.save(patientInvoiceDetail);
+			}
+		}
+		return admission;
 	}
 }

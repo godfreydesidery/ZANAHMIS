@@ -30,4 +30,33 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	 */
 	List<Admission> findAllByStatus(String string);
 
+	/**
+	 * @param patient
+	 * @param statuses
+	 * @return
+	 */
+	List<Admission> findAllByPatientAndStatusIn(Patient patient, List<String> statuses);
+
+	/**
+	 * @param patient
+	 * @param statuses
+	 * @return
+	 */
+	Optional<Admission> findByPatientAndStatusIn(Patient patient, List<String> statuses);
+
+	/**
+	 * @param patient
+	 * @param string
+	 * @param string2
+	 * @return
+	 */
+	Optional<Admission> findByPatientAndStatusOrStatus(Patient patient, String string, String string2);
+
+	/**
+	 * @param patient
+	 * @param string
+	 * @return
+	 */
+	List<Admission> findAllByPatientAndStatus(Patient patient, String string);
+
 }

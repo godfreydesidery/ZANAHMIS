@@ -11,11 +11,15 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Ward;
+import com.orbix.api.domain.WardBed;
 import com.orbix.api.domain.WardCategory;
 import com.orbix.api.domain.WardType;
+import com.orbix.api.exceptions.InvalidEntryException;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.repositories.WardBedRepository;
 import com.orbix.api.repositories.WardCategoryRepository;
 import com.orbix.api.repositories.WardRepository;
 import com.orbix.api.repositories.WardTypeRepository;
@@ -37,6 +41,7 @@ public class WardServiceImpl implements WardService {
 	private final WardRepository wardRepository;
 	private final WardCategoryRepository wardCategoryRepository;
 	private final WardTypeRepository wardTypeRepository;
+	private final WardBedRepository wardBedRepository;
 	
 	@Override
 	public Ward save(Ward ward, HttpServletRequest request) {
@@ -102,5 +107,97 @@ public class WardServiceImpl implements WardService {
 		 * Returns false if not
 		 */
 		return false;
+	}
+
+	@Override
+	public WardBed registerBed(WardBed wb, HttpServletRequest request) {
+		
+		String no = Sanitizer.sanitizeString(wb.getNo());
+		WardBed wardBed = new WardBed();
+		
+		Optional<Ward> w = wardRepository.findById(wb.getWard().getId());
+		if(w.isEmpty()) {
+			throw new NotFoundException("Ward not found");
+		}
+		
+		if(wardBedRepository.existsByNoAndWard(no, w.get())) {
+			throw new InvalidOperationException("Could not register. Ward with similar number already exist");
+		}
+		
+		int count = 0; // use count later
+		List<WardBed> wardBeds = wardBedRepository.findAllByWard(w.get());
+		for(WardBed b : wardBeds) {
+			count = count + 1;
+		}
+		if(count >= w.get().getNoOfBeds()) {
+			throw new InvalidOperationException("Bed/Room Limit reached");
+		}
+		
+		if(no.equals("")) {
+			throw new InvalidEntryException("Bed/Room no can not be empty");
+		}
+		
+		wardBed.setNo(no);
+		wardBed.setWard(w.get());
+		wardBed.setActive(true);
+		wardBed.setStatus("EMPTY");
+		
+		wardBed.setCreatedby(userService.getUser(request).getId());
+		wardBed.setCreatedOn(dayService.getDay().getId());
+		wardBed.setCreatedAt(dayService.getTimeStamp());
+		
+		return wardBedRepository.save(wardBed);
+	}
+	
+	@Override
+	public WardBed updateBed(WardBed wb, HttpServletRequest request) {
+		
+		String no = Sanitizer.sanitizeString(wb.getNo());
+		
+		if(wb.getNo().equals("")) {
+			throw new InvalidEntryException("Bed/Room no can not be empty");
+		}
+		
+		Optional<WardBed> wardBed = wardBedRepository.findById(wb.getId());
+		if(wardBed.isEmpty()) {
+			throw new NotFoundException("Bed/Room not found");
+		}
+		
+		Optional<WardBed> wardBed2 = wardBedRepository.findByNo(no);
+		
+		if(wardBed2.isPresent()) {
+			if(wardBed.get().getId() == wardBed2.get().getId()) {
+				throw new InvalidOperationException("could not update, a bed/room with similar number already exist");
+			}
+		}
+		
+		wardBed.get().setNo(no);
+		
+		return wardBedRepository.save(wardBed.get());
+	}
+	
+	
+	@Override
+	public WardBed activateBed(WardBed wb, HttpServletRequest request) {
+		
+		Optional<WardBed> wardBed = wardBedRepository.findById(wb.getId());
+		
+		wardBed.get().setActive(true);
+		
+		return wardBedRepository.save(wardBed.get());
+	}
+	
+	@Override
+	public WardBed deactivateBed(WardBed wb, HttpServletRequest request) {
+		
+		Optional<WardBed> wardBed = wardBedRepository.findById(wb.getId());
+		
+		if(!wardBed.get().getStatus().equals("EMPTY")) {
+			throw new InvalidOperationException("Could not deactivate, bed not empty");
+		}
+		
+		wardBed.get().setActive(false);
+		
+		return wardBedRepository.save(wardBed.get());
 	}
 }

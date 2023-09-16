@@ -113,6 +113,8 @@ import { WardComponent } from './pages/admin/medical-units/ward-management/ward/
 import { WardTypePlanComponent } from './pages/admin/insurance-management/insurance-plan-pricing/ward-type-plan/ward-type-plan.component';
 import { WardPlanComponent } from './pages/admin/insurance-management/insurance-plan-pricing/ward-plan/ward-plan.component';
 import { WardTypePriceComponent } from './pages/admin/insurance-management/prices/ward-type-price/ward-type-price.component';
+import { WardConfigurationComponent } from './pages/admin/medical-units/ward-management/ward-configuration/ward-configuration.component';
+import { InpatientPaymentComponent } from './pages/payments/inpatient-payment/inpatient-payment.component';
 
 @NgModule({
   declarations: [
@@ -218,6 +220,8 @@ import { WardTypePriceComponent } from './pages/admin/insurance-management/price
     WardComponent,
     WardTypePlanComponent,
     WardTypePriceComponent,
+    WardConfigurationComponent,
+    InpatientPaymentComponent,
   ],
   imports: [
     HttpClientModule,
@@ -237,6 +241,7 @@ import { WardTypePriceComponent } from './pages/admin/insurance-management/price
     {path : 'radiology-payment', component : RadiologyPaymentComponent},
     {path : 'medication-payment', component : MedicationPaymentComponent},
     {path : 'procedure-payment', component : ProcedurePaymentComponent},
+    {path : 'inpatient-payment', component : InpatientPaymentComponent},
     {path : 'clinic', component : ClinicComponent},
     {path : 'pharmacy', component : PharmacyComponent},
     {path : 'theatre', component : TheatreComponent},
@@ -316,13 +321,13 @@ import { WardTypePriceComponent } from './pages/admin/insurance-management/price
     {path : 'registration-price', component : RegistrationPriceComponent},
     {path : 'ward-type-price', component : WardTypePriceComponent},
     {path : 'ward', component : WardComponent},
+    {path : 'ward-configuration', component : WardConfigurationComponent},
     {path : 'ward-category', component : WardCategoryComponent},
     {path : 'ward-type', component : WardTypeComponent},
 
     ])
   ],
   schemas: [ 
-    //CUSTOM_ELEMENTS_SCHEMA,
     NO_ERRORS_SCHEMA
    ],
   providers: [

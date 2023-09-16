@@ -56,6 +56,16 @@ public class PatientBill {
     @JoinColumn(name = "patient_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
+	
+	@ManyToOne(targetEntity = PatientBill.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "principal_patient_bill_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private PatientBill principalPatientBill;
+	
+	@ManyToOne(targetEntity = PatientBill.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "supplementary_patient_bill_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private PatientBill supplementaryPatientBill;
 
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
     private Long createdby;
