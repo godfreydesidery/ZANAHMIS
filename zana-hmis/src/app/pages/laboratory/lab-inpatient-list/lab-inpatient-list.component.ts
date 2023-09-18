@@ -1,10 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
+import { IPatient } from 'src/app/domain/patient';
+import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -14,6 +16,7 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./lab-inpatient-list.component.scss']
 })
 export class LabInpatientListComponent implements OnInit {
+  patients : IPatient[] = []
 
   filterRecords : string = ''
 
@@ -21,13 +24,39 @@ export class LabInpatientListComponent implements OnInit {
     private http :HttpClient,
     private modalService: NgbModal,
     private spinner : NgxSpinnerService,
-    private router : Router) { }
+    private router : Router,
+    private msgBox : MsgBoxService) { }
 
   ngOnInit(): void {
+    this.loadInpatientList()
   }
 
-  attend(){
+  attend(id : any){
+    localStorage.setItem('lab-test-patient-id', id)
     this.router.navigate(['lab-test'])
+  }
+
+  async loadInpatientList(){   
+    this.patients = [] 
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IPatient[]>(API_URL+'/patients/get_lab_inpatient_list', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        
+        this.patients = data!
+        console.log(this.patients)
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage('Could not load patients')
+      }
+    )
   }
 
   public grant(privilege : string[]) : boolean{
@@ -42,5 +71,4 @@ export class LabInpatientListComponent implements OnInit {
     )
     return granted
   }
-
 }

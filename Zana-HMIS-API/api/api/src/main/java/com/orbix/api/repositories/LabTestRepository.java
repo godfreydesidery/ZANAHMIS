@@ -106,6 +106,21 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
 	 */
 	List<LabTest> findAllByAdmission(Admission admission);
 
+	/**
+	 * @param a
+	 * @return
+	 */
+	List<LabTest> findAllByAdmissionIn(List<Admission> a);
+
+	/**
+	 * @param cs
+	 * @param ncs
+	 * @param adm
+	 * @return
+	 */
+	List<LabTest> findAllByConsultationInOrNonConsultationInOrAdmissionIn(List<Consultation> cs,
+			List<NonConsultation> ncs, List<Admission> adm);
+
 	
 	
 }

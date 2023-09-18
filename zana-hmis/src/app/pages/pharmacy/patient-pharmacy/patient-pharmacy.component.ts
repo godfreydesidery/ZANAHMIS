@@ -41,11 +41,11 @@ export class PatientPharmacyComponent {
     private router : Router,
     private msgBox : MsgBoxService) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.id = localStorage.getItem('pharmacy-patient-id')
     localStorage.removeItem('pharmacy-patient-id')
-    this.loadPatient(this.id)
-    this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
+    await this.loadPatient(this.id)
+    await this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
   }
 
   async loadPatient(id : any){
@@ -81,7 +81,7 @@ export class PatientPharmacyComponent {
     .toPromise()
     .then(
       data => {
-        
+        console.log(data)
         this.prescriptions = data!
         this.prescriptions.forEach(element => {
           element.checked = false
@@ -92,7 +92,7 @@ export class PatientPharmacyComponent {
     .catch(
       error => {
         this.prescriptions = []
-        this.msgBox.showErrorMessage('Could not load prescriptions')
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
   }

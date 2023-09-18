@@ -34,11 +34,11 @@ public interface PatientService {
 	List<String> getSearchKeys();
 	Patient findBySearchKey(String code);
 	
-	LabTest saveLabTest(LabTest test, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request);
+	LabTest saveLabTest(LabTest test, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> adm, HttpServletRequest request);
 	
-	Radiology saveRadiology(Radiology radio, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request);
+	Radiology saveRadiology(Radiology radio, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> adm, HttpServletRequest request);
 	
-	Procedure saveProcedure(Procedure procedure, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request);
+	Procedure saveProcedure(Procedure procedure, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> adm, HttpServletRequest request);
 	
-	Prescription savePrescription(Prescription prescription, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request);
+	Prescription savePrescription(Prescription prescription, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> adm, HttpServletRequest request);
 }

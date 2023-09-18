@@ -526,9 +526,9 @@ export class PatientRegisterComponent implements OnInit {
       await this.loadActiveConsultation(this.id)
     }else if(this.type === 'OUTSIDER'){
       await this.loadNonConsultationId(this.id)
-      await this.loadLabTest(0, this.nonConsultationId)
-      await this.loadRadiologies(0, this.nonConsultationId)
-      await this.loadProcedures(0, this.nonConsultationId)
+      await this.loadLabTest(0, this.nonConsultationId, 0)
+      await this.loadRadiologies(0, this.nonConsultationId, 0)
+      await this.loadProcedures(0, this.nonConsultationId, 0)
     }
     await this.getLastVisitDate()   
   }
@@ -544,13 +544,13 @@ export class PatientRegisterComponent implements OnInit {
     .then(
       data => {
         console.log(data)
-        this.loadLabTest(0, this.nonConsultationId)
+        this.loadLabTest(0, this.nonConsultationId, 0)
       }
     )
     .catch(
       error => {
         this.msgBox.showErrorMessage(error['error'])
-        this.loadLabTest(0, this.nonConsultationId)
+        this.loadLabTest(0, this.nonConsultationId, 0)
       }
     )    
   }
@@ -566,12 +566,12 @@ export class PatientRegisterComponent implements OnInit {
     .then(
       data => {
         console.log(data)
-        this.loadRadiologies(0, this.nonConsultationId)
+        this.loadRadiologies(0, this.nonConsultationId, 0)
       }
     )
     .catch(
       error => {
-        this.loadRadiologies(0, this.nonConsultationId)
+        this.loadRadiologies(0, this.nonConsultationId, 0)
         this.msgBox.showErrorMessage(error['error'])
       }
     )
@@ -589,26 +589,26 @@ export class PatientRegisterComponent implements OnInit {
     .then(
       data => {
         console.log(data)
-        this.loadProcedures(0, this.nonConsultationId)
+        this.loadProcedures(0, this.nonConsultationId, 0)
       }
     )
     .catch(
       error => {
-        this.loadProcedures(0, this.nonConsultationId)
+        this.loadProcedures(0, this.nonConsultationId, 0)
         this.msgBox.showErrorMessage(error['error'])
       }
     )
     
   }
 
-  async loadRadiologies(consultationId : any, nonConsultationId : any){
+  async loadRadiologies(consultationId : any, nonConsultationId : any, admissionId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.radiologies = []
     this.radiologyTotal = 0
     this.spinner.show()
-    await this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    await this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -630,14 +630,14 @@ export class PatientRegisterComponent implements OnInit {
     
   }
 
-  async loadProcedures(consultationId : any, nonConsultationId : any){
+  async loadProcedures(consultationId : any, nonConsultationId : any, admissionId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.procedures = []
     this.procedureTotal = 0
     this.spinner.show()
-    await this.http.get<IProcedure[]>(API_URL+'/patients/load_procedures?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    await this.http.get<IProcedure[]>(API_URL+'/patients/load_procedures?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -946,18 +946,18 @@ export class PatientRegisterComponent implements OnInit {
       diagnosisType : {name : this.diagnosisTypeName}
     }
     this.spinner.show()
-    await this.http.post(API_URL+'/patients/save_lab_test?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId, labTest, options)
+    await this.http.post(API_URL+'/patients/save_lab_test?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId+'&admission_id='+0, labTest, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       () => {
-        this.loadLabTest(0, this.nonConsultationId)
+        this.loadLabTest(0, this.nonConsultationId, 0)
         this.msgBox.showSuccessMessage('Lab Test Saved successifully')
       }
     )
     .catch(
       error => {
-        this.loadLabTest(0, this.nonConsultationId)
+        this.loadLabTest(0, this.nonConsultationId, 0)
         this.msgBox.showErrorMessage('Could not save Lab Test')
         console.log(error)
       }
@@ -988,18 +988,18 @@ export class PatientRegisterComponent implements OnInit {
       minutes   : this.procedureMinutes
     }
     this.spinner.show()
-    await this.http.post(API_URL+'/patients/save_procedure?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId, procedure, options)
+    await this.http.post(API_URL+'/patients/save_procedure?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId+'&admission_id='+0, procedure, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       () => {
-        this.loadProcedures(0, this.nonConsultationId)
+        this.loadProcedures(0, this.nonConsultationId, 0)
         this.msgBox.showSuccessMessage('Procedure Saved successifully')
       }
     )
     .catch(
       error => {
-        this.loadProcedures(0, this.nonConsultationId)
+        this.loadProcedures(0, this.nonConsultationId, 0)
         this.msgBox.showErrorMessage('Could not save Procedure')
         console.log(error)
       }
@@ -1007,14 +1007,14 @@ export class PatientRegisterComponent implements OnInit {
     
   }
 
-  async loadLabTest(consultationId : any, nonConsultationId : any){
+  async loadLabTest(consultationId : any, nonConsultationId : any, admissionId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.labTests = []
     this.labTotal = 0
     this.spinner.show()
-    await this.http.get<ILabTest[]>(API_URL+'/patients/load_lab_tests?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    await this.http.get<ILabTest[]>(API_URL+'/patients/load_lab_tests?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -1051,18 +1051,18 @@ export class PatientRegisterComponent implements OnInit {
       diagnosisType : {name : this.diagnosisTypeName}
     }
     this.spinner.show()
-    await this.http.post(API_URL+'/patients/save_radiology?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId, radiology, options)
+    await this.http.post(API_URL+'/patients/save_radiology?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId+'&admission_id='+0, radiology, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       () => {
-        this.loadRadiology(0, this.nonConsultationId)
+        this.loadRadiology(0, this.nonConsultationId, 0)
         this.msgBox.showSuccessMessage('Radiology Saved successifully')
       }
     )
     .catch(
       error => {
-        this.loadRadiology(0, this.nonConsultationId)
+        this.loadRadiology(0, this.nonConsultationId, 0)
         this.msgBox.showErrorMessage('Could not save Radiology')
         console.log(error)
       }
@@ -1070,7 +1070,7 @@ export class PatientRegisterComponent implements OnInit {
     
   }
 
-  async loadRadiology(consultationId : any, nonConsultationId : any){
+  async loadRadiology(consultationId : any, nonConsultationId : any, admissionId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -1358,9 +1358,9 @@ export class PatientRegisterComponent implements OnInit {
       await this.loadActiveConsultation(this.id)
     }else if(this.type === 'OUTSIDER'){
       await this.loadNonConsultationId(this.id)
-      await this.loadLabTest(0, this.nonConsultationId)
-      await this.loadRadiologies(0, this.nonConsultationId)
-      await this.loadProcedures(0, this.nonConsultationId)
+      await this.loadLabTest(0, this.nonConsultationId, 0)
+      await this.loadRadiologies(0, this.nonConsultationId, 0)
+      await this.loadProcedures(0, this.nonConsultationId, 0)
     }
     await this.getLastVisitDate()  
   }

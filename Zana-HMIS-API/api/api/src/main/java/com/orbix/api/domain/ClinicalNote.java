@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -57,10 +58,15 @@ public class ClinicalNote {
 	@Column(length = 3000)
 	private String managementPlan;
 	
-	@OneToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = false)
-    @JoinColumn(name = "consultation_id", nullable = false , updatable = false)
+	@OneToOne(targetEntity = Consultation.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "consultation_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Consultation consultation;
+	
+	@ManyToOne(targetEntity = Admission.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "admission_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private Admission admission;
 	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
     private Long createdby;

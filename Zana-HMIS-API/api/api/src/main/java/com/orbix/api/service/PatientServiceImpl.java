@@ -615,25 +615,44 @@ public class PatientServiceImpl implements PatientService {
 	}
 
 	@Override
-	public LabTest saveLabTest(LabTest test, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request) {
+	public LabTest saveLabTest(LabTest test, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, HttpServletRequest request) {
 		Patient patient = new Patient();
 		Optional<LabTestType> ltt = labTestTypeRepository.findById(test.getLabTestType().getId());
 		 
 		if(!ltt.isPresent()) {
 			throw new NotFoundException("Lab Test type not found");
 		}
+		Optional<DiagnosisType> dt;
 		
-		Optional<DiagnosisType> dt = diagnosisTypeRepository.findById(test.getDiagnosisType().getId());
-		if(!dt.isPresent() && !test.getDiagnosisType().getName().equals(""))	{
-			throw new NotFoundException("Lab Test type not found");
+		if(test.getDiagnosisType().getId() != null) {
+			dt = diagnosisTypeRepository.findById(test.getDiagnosisType().getId());
+			if(!dt.isPresent() && test.getDiagnosisType().getId() != null)	{
+				throw new NotFoundException("Diagnosis type not found");
+			}else {
+				test.setDiagnosisType(dt.get());
+			}
+		}else {
+			test.setDiagnosisType(null);
 		}
-		//LabTestType labTestType = labTestTypeRepository.save(ltt.get());
-		if(c.isPresent() && nc.isPresent()) {
-			throw new InvalidOperationException("Could not save, labtest has two controversial properties");
+		
+		 
+		
+		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, labtest should not have more than two properties");
+		}		
+		if(c.isPresent() && nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, labtest should not have more than two properties");
 		}
-		if(!c.isPresent() && !nc.isPresent()) {
+		if(c.isPresent() && !nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, labtest should not have more than two properties");
+		}
+		if(!c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, labtest should not have more than two properties");
+		}		
+		if(!c.isPresent() && !nc.isPresent() && !a.isPresent()) {
 			throw new InvalidOperationException("Could not save, labtest must have one property");
 		}
+		
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
 			test.setConsultation(c.get());
@@ -652,8 +671,19 @@ public class PatientServiceImpl implements PatientService {
 			test.setNonConsultation(non);
 		}
 		
+		if(a.isPresent()) {
+			Admission adm;// = new NonConsultation();
+			if(a.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not be done. Admission not verified");
+			}else if(a.get().getStatus().equals("IN-PROCESS")) {
+				adm = a.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			patient = adm.getPatient();
+			test.setAdmission(adm);
+		}		
 		test.setLabTestType(ltt.get());
-		test.setDiagnosisType(dt.get());
 		test.setStatus("PENDING");
 		PatientBill patientBill = new PatientBill();
 		patientBill.setAmount(test.getLabTestType().getPrice());
@@ -670,7 +700,7 @@ public class PatientServiceImpl implements PatientService {
 		patientBill.setPatient(patient);
 		patientBill = patientBillRepository.save(patientBill);
 		
-		if(patient.getPaymentType().equals("INSURANCE")) {
+		if(patient.getPaymentType().equals("INSURANCE") || a.isPresent() == true) {
 			
 			Optional<LabTestTypeInsurancePlan> labTestTypePricePlan = labTestTypeInsurancePlanRepository.findByLabTestTypeAndInsurancePlanAndCovered(ltt.get(), patient.getInsurancePlan(), true);
 			
@@ -731,6 +761,64 @@ public class PatientServiceImpl implements PatientService {
 					
 					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}
+			}else if(a.isPresent() == true) {
+				
+				patientBill.setAmount(test.getLabTestType().getPrice());
+				patientBill.setPaid(test.getLabTestType().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("VERIFIED");
+				patientBill = patientBillRepository.save(patientBill);
+				
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(patient, null,"PENDING");
+				if(!inv.isPresent()) {
+					/**
+					 * If no pending patientInvoice
+					 */
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(null);
+					patientInvoice.setStatus("PENDING");
+					
+					patientInvoice.setCreatedby(userService.getUser(request).getId());
+					patientInvoice.setCreatedOn(dayService.getDay().getId());
+					patientInvoice.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					/**
+					 * Add lab test patientBill claim to patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Lab Test: "+test.getLabTestType().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}else {
+					/**
+					 * If there is a .pending patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Lab Test: "+test.getLabTestType().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}
 			}
 			
 		}
@@ -741,22 +829,39 @@ public class PatientServiceImpl implements PatientService {
 	}
 	
 	@Override
-	public Radiology saveRadiology(Radiology radio, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request) {
+	public Radiology saveRadiology(Radiology radio, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, HttpServletRequest request) {
 		Patient patient = new Patient();
 		Optional<RadiologyType> rt = radiologyTypeRepository.findById(radio.getRadiologyType().getId());
 				 
 		if(!rt.isPresent()) {
 			throw new NotFoundException("Radiology type not found");
 		}
-		Optional<DiagnosisType> dt = diagnosisTypeRepository.findById(radio.getDiagnosisType().getId());
-		if(!dt.isPresent() && !radio.getDiagnosisType().getName().equals(""))	{
-			throw new NotFoundException("Diagnosis type not found");
+		Optional<DiagnosisType> dt;		
+		if(radio.getDiagnosisType().getId() != null) {
+			dt = diagnosisTypeRepository.findById(radio.getDiagnosisType().getId());
+			if(!dt.isPresent() && radio.getDiagnosisType().getId() != null)	{
+				throw new NotFoundException("Diagnosis type not found");
+			}else {
+				radio.setDiagnosisType(dt.get());
+			}
+		}else {
+			radio.setDiagnosisType(null);
 		}
-		if(c.isPresent() && nc.isPresent()) {
-			throw new InvalidOperationException("Could not save, radiology has two controversial properties");
+		
+		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, radiology should not have more than two properties");
+		}		
+		if(c.isPresent() && nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, radiology should not have more than two properties");
 		}
-		if(!c.isPresent() && !nc.isPresent()) {
-			throw new InvalidOperationException("Could not save, radiology must have one property");
+		if(c.isPresent() && !nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, radiology should not have more than two properties");
+		}
+		if(!c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, radiology should not have more than two properties");
+		}
+		if(!c.isPresent() && !nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, radiology should have one property");
 		}
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
@@ -776,10 +881,20 @@ public class PatientServiceImpl implements PatientService {
 			patient = non.getPatient();
 			radio.setNonConsultation(non);
 		}
-		
+		if(a.isPresent()) {
+			Admission adm;// = new NonConsultation();
+			if(a.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not be done. Admission not verified");
+			}else if(a.get().getStatus().equals("IN-PROCESS")) {
+				adm = a.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			patient = adm.getPatient();
+			radio.setAdmission(adm);
+		}
 		
 		radio.setRadiologyType(rt.get());
-		radio.setDiagnosisType(dt.get());
 		radio.setStatus("PENDING");
 		PatientBill patientBill = new PatientBill();
 		patientBill.setAmount(radio.getRadiologyType().getPrice());
@@ -794,7 +909,7 @@ public class PatientServiceImpl implements PatientService {
 		patientBill.setPatient(patient);
 		patientBill = patientBillRepository.save(patientBill);
 		
-		if(patient.getPaymentType().equals("INSURANCE")) {
+		if(patient.getPaymentType().equals("INSURANCE") || a.isPresent() == true) {
 			
 			Optional<RadiologyTypeInsurancePlan> radiologyTypePricePlan = radiologyTypeInsurancePlanRepository.findByRadiologyTypeAndInsurancePlanAndCovered(rt.get(), patient.getInsurancePlan(), true);
 			
@@ -855,8 +970,65 @@ public class PatientServiceImpl implements PatientService {
 					
 					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}
+			}else if(a.isPresent() == true) {
+				
+				patientBill.setAmount(radio.getRadiologyType().getPrice());
+				patientBill.setPaid(radio.getRadiologyType().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("VERIFIED");
+				patientBill = patientBillRepository.save(patientBill);
+				
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(patient, null,"PENDING");
+				if(!inv.isPresent()) {
+					/**
+					 * If no pending patientInvoice
+					 */
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(null);
+					patientInvoice.setStatus("PENDING");
+					
+					patientInvoice.setCreatedby(userService.getUser(request).getId());
+					patientInvoice.setCreatedOn(dayService.getDay().getId());
+					patientInvoice.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					/**
+					 * Add lab test patientBill claim to patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Radiology: "+radio.getRadiologyType().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}else {
+					/**
+					 * If there is a .pending patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Radiology: "+radio.getRadiologyType().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}
 			}
-			
 		}
 		radio.setPatient(patient);
 		radio.setPatientBill(patientBill);
@@ -865,7 +1037,7 @@ public class PatientServiceImpl implements PatientService {
 	
 	
 	@Override
-	public Procedure saveProcedure(Procedure procedure, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request) {
+	public Procedure saveProcedure(Procedure procedure, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, HttpServletRequest request) {
 		Patient patient = new Patient();
 		Optional<ProcedureType> pr = procedureTypeRepository.findById(procedure.getProcedureType().getId());
 		if(procedure.getType().equals("THEATRE")) {
@@ -878,23 +1050,34 @@ public class PatientServiceImpl implements PatientService {
 		}else {
 			procedure.setTheatre(null);
 		}
-		if(!procedure.getDiagnosisType().getName().equals("")) {
+		if(procedure.getDiagnosisType().getId() != null) {
 			Optional<DiagnosisType> dt = diagnosisTypeRepository.findById(procedure.getDiagnosisType().getId());
 			if(dt.isEmpty()) {
 				throw new NotFoundException("Diagnosis Type not found");
 			}else {
 				procedure.setDiagnosisType(dt.get());
 			}
+		}else {
+			procedure.setDiagnosisType(null);
 		}
 		
 		if(!pr.isPresent()) {
 			throw new NotFoundException("Procedure type not found");
 		}
-		if(c.isPresent() && nc.isPresent()) {
-			throw new InvalidOperationException("Could not save, procedure has two controversial properties");
+		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, procedure should not have more than two properties");
+		}		
+		if(c.isPresent() && nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, procedure should not have more than two properties");
 		}
-		if(!c.isPresent() && !nc.isPresent()) {
-			throw new InvalidOperationException("Could not save, procedure must have one property");
+		if(c.isPresent() && !nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, procedure should not have more than two properties");
+		}
+		if(!c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, procedure should not have more than two properties");
+		}
+		if(!c.isPresent() && !nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, procedure should have one property");
 		}
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
@@ -915,6 +1098,18 @@ public class PatientServiceImpl implements PatientService {
 			procedure.setNonConsultation(non);
 		}
 		
+		if(a.isPresent()) {
+			Admission adm;// = new NonConsultation();
+			if(a.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not be done. Admission not verified");
+			}else if(a.get().getStatus().equals("IN-PROCESS")) {
+				adm = a.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			patient = adm.getPatient();
+			procedure.setAdmission(adm);
+		}
 		
 		procedure.setProcedureType(pr.get());
 		
@@ -934,7 +1129,7 @@ public class PatientServiceImpl implements PatientService {
 		patientBill.setPatient(patient);
 		patientBill = patientBillRepository.save(patientBill);
 		
-		if(patient.getPaymentType().equals("INSURANCE")) {
+		if(patient.getPaymentType().equals("INSURANCE") || a.isPresent() == true) {
 			
 			Optional<ProcedureTypeInsurancePlan> procedureTypePricePlan = procedureTypeInsurancePlanRepository.findByProcedureTypeAndInsurancePlanAndCovered(pr.get(), patient.getInsurancePlan(), true);
 			
@@ -995,8 +1190,65 @@ public class PatientServiceImpl implements PatientService {
 					
 					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}
+			}else if(a.isPresent() == true) {
+				
+				patientBill.setAmount(procedure.getProcedureType().getPrice());
+				patientBill.setPaid(procedure.getProcedureType().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("VERIFIED");
+				patientBill = patientBillRepository.save(patientBill);
+				
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(patient, null,"PENDING");
+				if(!inv.isPresent()) {
+					/**
+					 * If no pending patientInvoice
+					 */
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(null);
+					patientInvoice.setStatus("PENDING");
+					
+					patientInvoice.setCreatedby(userService.getUser(request).getId());
+					patientInvoice.setCreatedOn(dayService.getDay().getId());
+					patientInvoice.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					/**
+					 * Add lab test patientBill claim to patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Procedure: "+procedure.getProcedureType().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}else {
+					/**
+					 * If there is a .pending patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Procedure: "+procedure.getProcedureType().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}
 			}
-			
 		}
 		procedure.setPatient(patient);
 		procedure.setPatientBill(patientBill);
@@ -1006,18 +1258,27 @@ public class PatientServiceImpl implements PatientService {
 	
 	
 	@Override
-	public Prescription savePrescription(Prescription prescription, Optional<Consultation> c, Optional<NonConsultation> nc, HttpServletRequest request) {
+	public Prescription savePrescription(Prescription prescription, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, HttpServletRequest request) {
 		Patient patient = new Patient();
 		Optional<Medicine> md = medicineRepository.findByName(prescription.getMedicine().getName());
 		 
 		if(!md.isPresent()) {
 			throw new NotFoundException("Medicine not found");
 		}
-		if(c.isPresent() && nc.isPresent()) {
-			throw new InvalidOperationException("Could not save, medicine has two controversial properties");
+		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, prescription should not have more than two properties");
+		}		
+		if(c.isPresent() && nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, prescription should not have more than two properties");
 		}
-		if(!c.isPresent() && !nc.isPresent()) {
-			throw new InvalidOperationException("Could not save, medicine must have one property");
+		if(c.isPresent() && !nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, prescription should not have more than two properties");
+		}
+		if(!c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, prescription should not have more than two properties");
+		}
+		if(!c.isPresent() && !nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, prescription should have one property");
 		}
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
@@ -1027,6 +1288,20 @@ public class PatientServiceImpl implements PatientService {
 			patient = nc.get().getPatient();
 			prescription.setNonConsultation(nc.get());
 		}
+		
+		if(a.isPresent()) {
+			Admission adm;// = new NonConsultation();
+			if(a.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not be done. Admission not verified");
+			}else if(a.get().getStatus().equals("IN-PROCESS")) {
+				adm = a.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			patient = adm.getPatient();
+			prescription.setAdmission(adm);
+		}
+		
 		prescription.setMedicine(md.get());
 		prescription.setStatus("NOT-GIVEN");
 		PatientBill patientBill = new PatientBill();
@@ -1042,7 +1317,7 @@ public class PatientServiceImpl implements PatientService {
 		patientBill.setPatient(patient);
 		patientBill = patientBillRepository.save(patientBill);
 		
-		if(patient.getPaymentType().equals("INSURANCE")) {
+		if(patient.getPaymentType().equals("INSURANCE") || a.isPresent() == true) {
 			
 			Optional<MedicineInsurancePlan> medicinePricePlan = medicineInsurancePlanRepository.findByMedicineAndInsurancePlanAndCovered(md.get(), patient.getInsurancePlan(), true);
 			
@@ -1103,8 +1378,65 @@ public class PatientServiceImpl implements PatientService {
 					
 					patientInvoiceDetailRepository.save(patientInvoiceDetail);
 				}
+			}else if(a.isPresent() == true) {
+				
+				patientBill.setAmount(prescription.getMedicine().getPrice());
+				patientBill.setPaid(prescription.getMedicine().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("VERIFIED");
+				patientBill = patientBillRepository.save(patientBill);
+				
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(patient, null,"PENDING");
+				if(!inv.isPresent()) {
+					/**
+					 * If no pending patientInvoice
+					 */
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(null);
+					patientInvoice.setStatus("PENDING");
+					
+					patientInvoice.setCreatedby(userService.getUser(request).getId());
+					patientInvoice.setCreatedOn(dayService.getDay().getId());
+					patientInvoice.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					/**
+					 * Add lab test patientBill claim to patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Medicine: "+prescription.getMedicine().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}else {
+					/**
+					 * If there is a .pending patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Medicine: "+prescription.getMedicine().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}
 			}
-			
 		}
 		prescription.setIssued(0);
 		prescription.setBalance(prescription.getQty());

@@ -38,8 +38,6 @@ const API_URL = environment.apiUrl;
 })
 export class DoctorCrackingComponent implements OnInit {
 
-  rs : string[] = ['Bed 1', 'Bed 2', 'Bed 3', 'Bed 4', 'Bed 5', 'Bed 6', 'Bed 7', 'Bed 8', 'Bed 9', 'Bed 10', 'Bed 11', 'Bed 12', 'Bed 13']
-
   id : any
 
   consultation! : IConsultation
@@ -185,10 +183,10 @@ export class DoctorCrackingComponent implements OnInit {
     await this.loadTheatreNames()
     await this.loadWorkingDiagnosis(this.id)
     await this.loadFinalDiagnosis(this.id)
-    await this.loadLabTest(this.id, 0)
-    await this.loadRadiologies(this.id, 0)
-    await this.loadProcedures(this.id, 0)
-    await this.loadPrescriptions(this.id, 0)  
+    await this.loadLabTest(this.id, 0, 0)
+    await this.loadRadiologies(this.id, 0, 0)
+    await this.loadProcedures(this.id, 0, 0)
+    await this.loadPrescriptions(this.id, 0, 0)  
   }
 
   toggleTheatre(){
@@ -781,19 +779,19 @@ export class DoctorCrackingComponent implements OnInit {
       description : this.labTestDescription     
     }
     this.spinner.show()
-    await this.http.post(API_URL+'/patients/save_lab_test?consultation_id='+this.id+'&non_consultation_id='+0, labTest, options)
+    await this.http.post(API_URL+'/patients/save_lab_test?consultation_id='+this.id+'&non_consultation_id='+0+'&admission_id='+0, labTest, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       () => {
-        this.loadLabTest(this.id, 0)
+        this.loadLabTest(this.id, 0, 0)
         this.clearLabTest()
         this.msgBox.showSuccessMessage('Lab Test Saved successifully')
       }
     )
     .catch(
       error => {
-        this.loadLabTest(this.id, 0)
+        this.loadLabTest(this.id, 0, 0)
         this.clearLabTest()
         this.msgBox.showErrorMessage('Could not save Lab Test')
         console.log(error)
@@ -818,19 +816,19 @@ export class DoctorCrackingComponent implements OnInit {
       description : this.radiologyDescription       
     }
     this.spinner.show()
-    await this.http.post(API_URL+'/patients/save_radiology?consultation_id='+this.id+'&non_consultation_id='+0, radiology, options)
+    await this.http.post(API_URL+'/patients/save_radiology?consultation_id='+this.id+'&non_consultation_id='+0+'&admission_id='+0, radiology, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       () => {
-        this.loadRadiologies(this.id, 0)
+        this.loadRadiologies(this.id, 0, 0)
         this.clearRadiology()
         this.msgBox.showSuccessMessage('Radiology Saved successifully')
       }
     )
     .catch(
       error => {
-        this.loadRadiologies(this.id, 0)
+        this.loadRadiologies(this.id, 0, 0)
         this.clearRadiology()
         this.msgBox.showErrorMessage('Could not save Radiology')
         console.log(error)
@@ -862,7 +860,7 @@ export class DoctorCrackingComponent implements OnInit {
         console.log(error)
       }
     )
-    this.loadRadiologies(this.id, 0)
+    this.loadRadiologies(this.id, 0, 0)
   }
 
   showRadiologyReport(id : any, radiologyTypeName : string, report : string){
@@ -894,7 +892,7 @@ export class DoctorCrackingComponent implements OnInit {
         console.log(error)
       }
     )
-    this.loadLabTest(this.id, 0)
+    this.loadLabTest(this.id, 0, 0)
   }
 
   showLabTestReport(id : any, labTestTypeName : string, report : string){
@@ -926,19 +924,19 @@ export class DoctorCrackingComponent implements OnInit {
       minutes   : this.procedureMinutes
     }
     this.spinner.show()
-    await this.http.post<IProcedure>(API_URL+'/patients/save_procedure?consultation_id='+this.id+'&non_consultation_id='+0, procedure, options)
+    await this.http.post<IProcedure>(API_URL+'/patients/save_procedure?consultation_id='+this.id+'&non_consultation_id='+0+'&admission_id='+0, procedure, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       () => {
-        this.loadProcedures(this.id, 0)
+        this.loadProcedures(this.id, 0, 0)
         this.clearProcedure()
         this.msgBox.showSuccessMessage('Procedure Saved successifully')
       }
     )
     .catch(
       error => {
-        this.loadProcedures(this.id, 0)
+        this.loadProcedures(this.id, 0, 0)
         this.clearProcedure()
         this.msgBox.showErrorMessage('Could not save Procedure')
         console.log(error)
@@ -975,7 +973,7 @@ export class DoctorCrackingComponent implements OnInit {
         console.log(error)
       }
     )
-    this.loadProcedures(this.id, 0)
+    this.loadProcedures(this.id, 0, 0)
   }
 
 
@@ -1008,19 +1006,19 @@ export class DoctorCrackingComponent implements OnInit {
       return
     }
     this.spinner.show()
-    await this.http.post<IPrescription>(API_URL+'/patients/save_prescription?consultation_id='+this.id+'&non_consultation_id='+0, prescription, options)
+    await this.http.post<IPrescription>(API_URL+'/patients/save_prescription?consultation_id='+this.id+'&non_consultation_id='+0+'&admission_id='+0, prescription, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       () => {
-        this.loadPrescriptions(this.id, 0)
+        this.loadPrescriptions(this.id, 0, 0)
         this.clearPrescription()
         this.msgBox.showSuccessMessage('Prescription Saved successifully')
       }
     )
     .catch(
       error => {
-        this.loadPrescriptions(this.id, 0)
+        this.loadPrescriptions(this.id, 0, 0)
         this.clearPrescription()
         this.msgBox.showErrorMessage(error['error'])
         console.log(error)
@@ -1029,13 +1027,13 @@ export class DoctorCrackingComponent implements OnInit {
     
   }
 
-  async loadLabTest(consultationId : any, nonConsultationId : any){
+  async loadLabTest(consultationId : any, nonConsultationId : any, admissionId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.labTests = []
     this.spinner.show()
-    await this.http.get<ILabTest[]>(API_URL+'/patients/load_lab_tests?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    await this.http.get<ILabTest[]>(API_URL+'/patients/load_lab_tests?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -1054,13 +1052,13 @@ export class DoctorCrackingComponent implements OnInit {
     )   
   }
 
-  async loadRadiologies(consultationId : any, nonConsultationId : any){
+  async loadRadiologies(consultationId : any, nonConsultationId : any, admissionId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.radiologies = []
     this.spinner.show()
-    await this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    await this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -1081,13 +1079,13 @@ export class DoctorCrackingComponent implements OnInit {
     
   }
 
-  async loadProcedures(consultationId : any, nonConsultationId : any){
+  async loadProcedures(consultationId : any, nonConsultationId : any, admissionId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.procedures = []
     this.spinner.show()
-    await this.http.get<IProcedure[]>(API_URL+'/patients/load_procedures?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    await this.http.get<IProcedure[]>(API_URL+'/patients/load_procedures?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -1104,13 +1102,13 @@ export class DoctorCrackingComponent implements OnInit {
     
   }
 
-  async loadPrescriptions(consultationId : any, nonConsultationId : any){
+  async loadPrescriptions(consultationId : any, nonConsultationId : any, admissionId : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.prescriptions = []
     this.spinner.show()
-    await this.http.get<IPrescription[]>(API_URL+'/patients/load_prescriptions?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    await this.http.get<IPrescription[]>(API_URL+'/patients/load_prescriptions?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -1138,13 +1136,13 @@ export class DoctorCrackingComponent implements OnInit {
     .then(
       data => {
         console.log(data)
-        this.loadLabTest(this.id, 0)
+        this.loadLabTest(this.id, 0, 0)
       }
     )
     .catch(
       error => {
         this.msgBox.showErrorMessage(error['error'])
-        this.loadLabTest(this.id, 0)
+        this.loadLabTest(this.id, 0, 0)
 
       }
     )
@@ -1170,7 +1168,7 @@ export class DoctorCrackingComponent implements OnInit {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
-    this.loadRadiologies(this.id, 0)
+    this.loadRadiologies(this.id, 0, 0)
   }
 
   async deleteProcedure(procedureId : any){
@@ -1192,7 +1190,7 @@ export class DoctorCrackingComponent implements OnInit {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
-    this.loadProcedures(this.id, 0)
+    this.loadProcedures(this.id, 0, 0)
   }
 
   async deletePrescription(prescriptionId : any){
@@ -1214,7 +1212,7 @@ export class DoctorCrackingComponent implements OnInit {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
-    this.loadPrescriptions(this.id, 0)
+    this.loadPrescriptions(this.id, 0, 0)
   }
 
   public grant(privilege : string[]) : boolean{
@@ -1620,6 +1618,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
+        console.log(error)
         this.msgBox.showErrorMessage('Could not load Beds/Rooms')
       }
     )
@@ -1672,6 +1671,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
+        console.log(error)
         this.msgBox.showErrorMessage(error['error'])
       }
     )

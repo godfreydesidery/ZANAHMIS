@@ -47,6 +47,11 @@ public class WorkingDiagnosis {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Consultation consultation;
 	
+	@ManyToOne(targetEntity = Admission.class, fetch = FetchType.EAGER,  optional = true)
+    @JoinColumn(name = "admission_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private Admission admission;
+	
 	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "patient_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	

@@ -17,21 +17,37 @@
 
                 </div>
                 <div class="panel-body">
-                    
+                    <div class="row">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control pull-right" [(ngModel)]="filterRecords" placeholder="Search..." style="max-width: 8cm;">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="success">
+                            <tr>
+                                <th>Name</th>
+                                <th>Patient's File No</th>
+                                <th>Payment Type</th>
+                                <th>Gender</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let p of patients | searchFilter : filterRecords">
+                                    <td>{{p.firstName+' '+p.middleName+' '+p.lastName}}</td>
+                                    <td>{{p.no}}</td>
+                                    <td>{{p.paymentType}}</td>
+                                    <td>{{p.gender}}</td>
+                                    <td><a class="btn btn-success" (click)="attend(p.id)">Attend</a></td>
+                                </tr>
+                            </tbody>
+                        </table>   
+                    </div> 
                 </div>
-
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="success">
-                        <tr>
-                            
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>    
-                </div>  
             </div>
         </div>
     </div>

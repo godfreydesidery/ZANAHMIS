@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.Patient;
@@ -42,5 +43,11 @@ public interface WorkingDiagnosisRepository extends JpaRepository<WorkingDiagnos
 	 * @return
 	 */
 	List<WorkingDiagnosis> findAllByConsultationIn(List<Consultation> cons);
+
+	/**
+	 * @param admission
+	 * @return
+	 */
+	List<WorkingDiagnosis> findAllByAdmission(Admission admission);
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.FinalDiagnosis;
@@ -38,5 +39,12 @@ public interface FinalDiagnosisRepository extends JpaRepository<FinalDiagnosis, 
 	 * @return
 	 */
 	List<FinalDiagnosis> findAllByConsultationIn(List<Consultation> cons);
+
+
+	/**
+	 * @param admission
+	 * @return
+	 */
+	List<FinalDiagnosis> findAllByAdmission(Admission admission);
 
 }

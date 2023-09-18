@@ -38,11 +38,11 @@ export class LabTestComponent implements OnInit {
     private router : Router,
     private msgBox : MsgBoxService) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.id = localStorage.getItem('lab-test-patient-id')
     localStorage.removeItem('lab-test-patient-id')
-    this.loadPatient(this.id)
-    this.loadLabTestsByPatient(this.id)
+    await this.loadPatient(this.id)
+    await this.loadLabTestsByPatient(this.id)
   }
 
   async loadPatient(id : any){

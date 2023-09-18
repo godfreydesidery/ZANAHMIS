@@ -57,7 +57,7 @@
                                                 <div class="col-sm-12" *ngIf="prescription.patientBill.status === 'COVERED'" style="text-align: center;">
                                                     <span>COVERED</span>
                                                 </div>
-                                                <div class="col-sm-12" *ngIf="prescription.patientBill.status === 'PAID'" style="text-align: right;">
+                                                <div class="col-sm-12" *ngIf="prescription.patientBill.status === 'PAID' || prescription.patientBill.status === 'VERIFIED'" style="text-align: right;">
                                                     {{prescription.patientBill.amount | currency:'':''}}
                                                 </div>
                                             </div>

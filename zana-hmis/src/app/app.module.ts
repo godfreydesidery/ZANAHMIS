@@ -115,6 +115,11 @@ import { WardPlanComponent } from './pages/admin/insurance-management/insurance-
 import { WardTypePriceComponent } from './pages/admin/insurance-management/prices/ward-type-price/ward-type-price.component';
 import { WardConfigurationComponent } from './pages/admin/medical-units/ward-management/ward-configuration/ward-configuration.component';
 import { InpatientPaymentComponent } from './pages/payments/inpatient-payment/inpatient-payment.component';
+import { DoctorInpatientListComponent } from './pages/doctor/doctor-inpatient-list/doctor-inpatient-list.component';
+import { NurseOutpatientListComponent } from './pages/nurse/nurse-outpatient-list/nurse-outpatient-list.component';
+import { NurseInpatientListComponent } from './pages/nurse/nurse-inpatient-list/nurse-inpatient-list.component';
+import { NurseOutsiderListComponent } from './pages/nurse/nurse-outsider-list/nurse-outsider-list.component';
+import { DoctorInpatientComponent } from './pages/doctor/doctor-inpatient/doctor-inpatient.component';
 
 @NgModule({
   declarations: [
@@ -222,6 +227,11 @@ import { InpatientPaymentComponent } from './pages/payments/inpatient-payment/in
     WardTypePriceComponent,
     WardConfigurationComponent,
     InpatientPaymentComponent,
+    DoctorInpatientListComponent,
+    NurseOutpatientListComponent,
+    NurseInpatientListComponent,
+    NurseOutsiderListComponent,
+    DoctorInpatientComponent,
   ],
   imports: [
     HttpClientModule,
@@ -324,6 +334,9 @@ import { InpatientPaymentComponent } from './pages/payments/inpatient-payment/in
     {path : 'ward-configuration', component : WardConfigurationComponent},
     {path : 'ward-category', component : WardCategoryComponent},
     {path : 'ward-type', component : WardTypeComponent},
+    {path : 'doctor-inpatient-list', component : DoctorInpatientListComponent},
+    {path : 'nurse-inpatient-list', component : NurseInpatientListComponent},
+    {path : 'doctor-inpatient' , component : DoctorInpatientComponent},
 
     ])
   ],
