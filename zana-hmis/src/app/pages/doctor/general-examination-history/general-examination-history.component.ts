@@ -22,6 +22,9 @@ export class GeneralExaminationHistoryComponent {
 
   filterRecords : string = ''
 
+  consultationId : any = null
+  admissionId : any = null
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,
@@ -31,6 +34,9 @@ export class GeneralExaminationHistoryComponent {
   async ngOnInit(): Promise<void> {
     this.patientId = localStorage.getItem('patient-id')
     this.getGeneralExaminationHistory()
+
+    this.consultationId = localStorage.getItem('consultation-id')
+    this.admissionId = localStorage.getItem('admission-id')
   } 
   
   async getGeneralExaminationHistory(){

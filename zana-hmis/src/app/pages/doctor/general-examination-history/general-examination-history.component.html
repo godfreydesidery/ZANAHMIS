@@ -11,7 +11,8 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <a class="btn btn-primary btn-outline" routerLink="/doctor-cracking"><i class="glyphicon glyphicon-triangle-left"></i> Back</a>
+                    <a class="btn btn-primary btn-outline" *ngIf="consultationId != null" routerLink="/doctor-cracking"><i class="glyphicon glyphicon-triangle-left"></i> Back</a>
+                    <a class="btn btn-primary btn-outline" *ngIf="admissionId != null" routerLink="/doctor-inpatient"><i class="glyphicon glyphicon-triangle-left"></i> Back</a>
                     <a class="btn btn-primary btn-outline" routerLink="/clinical-note-history">Clinical Notes</a>
                     <a class="btn btn-primary" routerLink="/general-examination-history">General Examination</a>
                     <!--<a class="btn btn-primary btn-outline" routerLink="/working-diagnosis-history">Working Diagnosis</a>-->

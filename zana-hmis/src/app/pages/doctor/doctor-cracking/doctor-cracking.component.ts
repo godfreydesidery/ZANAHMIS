@@ -174,6 +174,7 @@ export class DoctorCrackingComponent implements OnInit {
   async setGlobalPatientId(){
     localStorage.setItem('patient-id', this.consultation.patient.id)
     localStorage.setItem('consultation-id', this.id)
+    localStorage.removeItem('admission-id')
   }
 
   async refresh(){

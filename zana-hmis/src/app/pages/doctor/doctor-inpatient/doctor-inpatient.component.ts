@@ -168,6 +168,7 @@ export class DoctorInpatientComponent implements OnInit {
   async setGlobalPatientId(){
     localStorage.setItem('patient-id', this.admission.patient.id)
     localStorage.setItem('admission-id', this.id)
+    localStorage.removeItem('consultation-id')
   }
 
   async refresh(){

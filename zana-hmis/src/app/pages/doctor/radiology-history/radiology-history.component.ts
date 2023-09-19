@@ -24,6 +24,9 @@ export class RadiologyHistoryComponent {
 
   filterRecords : string = ''
 
+  consultationId : any = null
+  admissionId : any = null
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,
@@ -33,6 +36,9 @@ export class RadiologyHistoryComponent {
   async ngOnInit(): Promise<void> {
     this.patientId = localStorage.getItem('patient-id')
     this.getRadiologyHistory()
+
+    this.consultationId = localStorage.getItem('consultation-id')
+    this.admissionId = localStorage.getItem('admission-id')
   }   
   
   async getRadiologyHistory(){

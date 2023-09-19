@@ -26,6 +26,9 @@ export class ClinicalNoteHistoryComponent {
 
   filterRecords : string = ''
 
+  consultationId : any = null
+  admissionId : any = null
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,
@@ -35,6 +38,9 @@ export class ClinicalNoteHistoryComponent {
   async ngOnInit(): Promise<void> {
     this.patientId = localStorage.getItem('patient-id')
     this.getClinicalNoteHistory()
+
+    this.consultationId = localStorage.getItem('consultation-id')
+    this.admissionId = localStorage.getItem('admission-id')
   } 
   
   async getClinicalNoteHistory(){

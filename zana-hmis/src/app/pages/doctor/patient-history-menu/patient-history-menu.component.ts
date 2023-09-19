@@ -18,6 +18,9 @@ export class PatientHistoryMenuComponent {
 
   filterRecords : string = ''
 
+  consultationId : any = null
+  admissionId : any = null
+
   constructor(private auth : AuthService,
               private http :HttpClient,
               private spinner : NgxSpinnerService,
@@ -25,7 +28,8 @@ export class PatientHistoryMenuComponent {
               ) { }
 
   async ngOnInit(): Promise<void> {
-      
+      this.consultationId = localStorage.getItem('consultation-id')
+      this.admissionId = localStorage.getItem('admission-id')
   }  
   
   public grant(privilege : string[]) : boolean{
