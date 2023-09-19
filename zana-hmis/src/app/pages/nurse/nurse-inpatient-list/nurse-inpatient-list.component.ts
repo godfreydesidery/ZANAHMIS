@@ -18,6 +18,9 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./nurse-inpatient-list.component.scss']
 })
 export class NurseInpatientListComponent {
+
+  nurseId : any = null
+
   admissions : IAdmission[] = []
 
   filterRecords : string = ''
@@ -30,13 +33,13 @@ export class NurseInpatientListComponent {
     private msgBox : MsgBoxService) { }
 
 
-    ngOnInit(): void {
-      this.loadInpatientList()
-    }
-  
-    attend(id : any){
-      localStorage.setItem('radiology-patient-id', id)
-      this.router.navigate(['radiology'])
+    async ngOnInit(): Promise<void> {
+      await this.loadNurse()
+      if(this.nurseId != null){
+        this.loadInpatientList()
+      }else{
+        this.msgBox.showErrorMessage('User not found in nurse register')
+      }
     }
   
     async loadInpatientList(){   
@@ -60,7 +63,34 @@ export class NurseInpatientListComponent {
           this.msgBox.showErrorMessage('Could not load patients')
         }
       )
-    } 
+    }
+    
+    async loadNurse(){    
+      var username = localStorage.getItem('username')!
+      let options = {
+        headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+      }
+      this.spinner.show()
+      await this.http.get<any>(API_URL+'/nurses/load_nurse_by_username?username='+username, options)
+      .pipe(finalize(() => this.spinner.hide()))
+      .toPromise()
+      .then(
+        data => {
+          this.nurseId = data
+        }
+      )
+      .catch(
+        error => {
+          this.msgBox.showErrorMessage('Could not load nurse')
+        }
+      )
+    }
+
+    async postAdmission(id : any){
+      
+      localStorage.setItem('admission-id', id)
+      this.router.navigate(['nurse-inpatient-chart'])    
+    }
     
     public grant(privilege : string[]) : boolean{
       /**Allow user to perform an action if the user has that priviledge */

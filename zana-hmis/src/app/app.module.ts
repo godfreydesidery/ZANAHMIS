@@ -125,6 +125,8 @@ import { ShowDateOnlyPipe } from './pipes/date.pipe';
 import { ProcedureReportComponent } from './pages/admin/reports/procedure-report/procedure-report.component';
 import { DoctorToRadiologyReportComponent } from './pages/admin/reports/doctor-to-radiology-report/doctor-to-radiology-report.component';
 import { DoctorToLaboratoryReportComponent } from './pages/admin/reports/doctor-to-laboratory-report/doctor-to-laboratory-report.component';
+import { NurseComponent } from './pages/admin/personnel/nurse/nurse.component';
+import { NurseInpatientChartComponent } from './pages/nurse/nurse-inpatient-chart/nurse-inpatient-chart.component';
 
 @NgModule({
   declarations: [
@@ -241,7 +243,9 @@ import { DoctorToLaboratoryReportComponent } from './pages/admin/reports/doctor-
     ShowDateOnlyPipe,
     ProcedureReportComponent,
     DoctorToRadiologyReportComponent,
-    DoctorToLaboratoryReportComponent
+    DoctorToLaboratoryReportComponent,
+    NurseComponent,
+    NurseInpatientChartComponent
   ],
   imports: [
     HttpClientModule,
@@ -266,6 +270,7 @@ import { DoctorToLaboratoryReportComponent } from './pages/admin/reports/doctor-
     {path : 'pharmacy', component : PharmacyComponent},
     {path : 'theatre', component : TheatreComponent},
     {path : 'clinician', component : ClinicianComponent},
+    {path : 'nurse', component : NurseComponent},
     {path : 'pharmacist', component : PharmacistComponent},
     {path : 'my-consultation', component : MyConsultationComponent},
     {path : 'doctor-cracking', component : DoctorCrackingComponent},
@@ -346,11 +351,14 @@ import { DoctorToLaboratoryReportComponent } from './pages/admin/reports/doctor-
     {path : 'ward-type', component : WardTypeComponent},
     {path : 'doctor-inpatient-list', component : DoctorInpatientListComponent},
     {path : 'nurse-inpatient-list', component : NurseInpatientListComponent},
+    {path : 'nurse-outpatient-list', component : NurseOutpatientListComponent},
+    {path : 'nurse-outsider-list', component : NurseOutsiderListComponent},
     {path : 'doctor-inpatient' , component : DoctorInpatientComponent},
     {path : 'consultation-report', component : ConsultationReportComponent},
     {path : 'procedure-report', component : ProcedureReportComponent},
     {path : 'doctor-to-radiology-report', component : DoctorToRadiologyReportComponent},
-    {path : 'doctor-to-laboratory-report', component : DoctorToLaboratoryReportComponent}
+    {path : 'doctor-to-laboratory-report', component : DoctorToLaboratoryReportComponent},
+    {path : 'nurse-inpatient-chart', component : NurseInpatientChartComponent}
 
     ])
   ],

@@ -42,11 +42,6 @@ export class DoctorInpatientListComponent {
       }
     }
   
-    attend(id : any){
-      localStorage.setItem('radiology-patient-id', id)
-      this.router.navigate(['radiology'])
-    }
-  
     async loadInpatientList(){   
       this.admissions = [] 
       let options = {

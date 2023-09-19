@@ -637,8 +637,6 @@ public class PatientServiceImpl implements PatientService {
 			test.setDiagnosisType(null);
 		}
 		
-		 
-		
 		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
 			throw new InvalidOperationException("Could not save, labtest should not have more than two properties");
 		}		

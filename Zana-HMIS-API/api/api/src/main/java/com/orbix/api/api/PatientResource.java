@@ -1833,6 +1833,28 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(admissions);
 	}
 	
+	@GetMapping("/patients/get_nurse_outpatient_list") 
+	public ResponseEntity<List<Consultation>> getNurseOutpatientList(
+			HttpServletRequest request){
+		
+		List<Consultation> consultations = consultationRepository.findAllByStatus("IN-PROCESS");
+		
+		//HashSet<Admission> h = new HashSet<Admission>(admissions);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_nurse_outpatient_list").toUriString());
+		return ResponseEntity.created(uri).body(consultations);
+	}
+	
+	@GetMapping("/patients/get_nurse_outsider_list") 
+	public ResponseEntity<List<NonConsultation>> getNurseOutsidertList(
+			HttpServletRequest request){
+		
+		List<NonConsultation> nonConsultations = nonConsultationRepository.findAllByStatus("IN-PROCESS");
+		
+		//HashSet<Admission> h = new HashSet<Admission>(admissions);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_nurse_outsider_list").toUriString());
+		return ResponseEntity.created(uri).body(nonConsultations);
+	}
+	
 	
 	@GetMapping("/patients/get_lab_outpatient_list") 
 	public ResponseEntity<List<Patient>> getLabOutpatientList(

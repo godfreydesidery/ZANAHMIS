@@ -34,6 +34,7 @@ public class Object_ {
 	public static String CLINIC_SERVICE = "CLINIC_SERVICE";
 	public static String CONSULTATION = "CONSULTATION";
 	public static String PROCEDURE = "PROCEDURE";
+	public static String NURSING = "NURSING";
 	/**
 	 * Radiology Services
 	 */

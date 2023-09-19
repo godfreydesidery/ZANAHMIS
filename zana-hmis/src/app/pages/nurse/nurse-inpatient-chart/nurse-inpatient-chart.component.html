@@ -1,0 +1,285 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="header-title">
+        <h1>Nurse Chart - Inpatient</h1>
+    </div>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <!-- Form controls -->
+        <div class="col-sm-12">
+            <div class="panel panel-bd lobidrag">
+                <div class="panel-heading">
+                    <div class="btn-group"> 
+
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-12 alert alert-primary" role="alert">
+                            <h3 class="text-primary">Name: <b>{{admission?.patient?.firstName}} {{admission?.patient?.middleName}} {{admission?.patient?.lastName}}</b>, File No: <b>{{admission?.patient?.no}}</b>, <b>Date of Birth: {{admission.patient.dateOfBirth | date}} Age: {{admission.patient.dateOfBirth | age}}</b>, {{admission?.patient?.gender}}, {{admission.paymentType}} {{admission?.insurancePlan?.name}}</h3>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container container-fluid" style="overflow: auto;">
+                                    <table class="table table-responsive table-small table-bordered">
+                                        <thead>
+                                            <tr style="font-weight: bold;">
+                                                <td>#</td>
+                                                <td>Doctor</td>
+                                                <td>Drug Name</td>
+                                                <td>Dosage</td>
+                                                <td>Frequency</td>
+                                                <td>Route</td>
+                                                <td>Days</td>
+                                                <td>Qty</td>
+                                                <td>Instructions</td>
+                                                <td>Date</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container">
+                                    procedure details
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container">
+                                    lab investigations
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container">
+                                    radiology investigation
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container">
+                                    dressing chart
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container">
+                                    <h4 class="text-primary">Patient Consumable</h4>
+                                    <table class="table table-responsive table-small table-bordered">
+                                        <thead>
+                                            <tr style="font-weight: bold;">
+                                                <td>Select Item</td>
+                                                <td>Qty</td>
+                                                <td>Add</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <select class="form-control">
+                                                        <option></option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="number" class="form-control"> </td>
+                                                <td><button>Add</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <table class="table table-responsive table-small table-bordered">
+                                        <thead>
+                                            <tr style="font-weight: bold;">
+                                                <td>Name</td>
+                                                <td>Qty</td>
+                                                <td>Price</td>
+                                                <td>Entered By</td>
+                                                <td>Date</td>
+                                                <td>Action</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td><span class="text-danger"><i class="fa fa-trash"></i></span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container">
+                                    observation chart
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container">
+                                    drug chart
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container" style="overflow: auto; width: 100%;">
+                                    <h4 class="text-primary">Nurse Chart</h4>
+                                    <table class="table table-responsive table-small table-bordered">
+                                        <tbody>
+                                            <tr style="font-weight: bold;">
+                                                <td>Feeding</td>
+                                                <td>Changing Position</td>
+                                                <td>Bed Bathing</td>
+                                                <td>RBG</td>
+                                                <td>FBG</td>
+                                                <td>Drainage Output</td>
+                                                <td>Fluid Intake</td>
+                                                <td>Urine Output</td>
+                                                <td>Add</td>
+                                            </tr>
+                                        </tbody>
+                                        <tbody>
+                                            <tr>
+                                                <td><textarea class="form-control"></textarea></td>
+                                                <td><textarea class="form-control"></textarea></td>
+                                                <td><textarea class="form-control"></textarea></td>
+                                                <td><textarea class="form-control"></textarea></td>
+                                                <td><textarea class="form-control"></textarea></td>
+                                                <td><textarea class="form-control"></textarea></td>
+                                                <td><textarea class="form-control"></textarea></td>
+                                                <td><textarea class="form-control"></textarea></td>
+                                                <td><button>Add</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-responsive table-small table-bordered">
+                                        <thead>
+                                            <tr style="font-weight: bold;">
+                                                <td>Feeding</td>
+                                                <td>Changing Position</td>
+                                                <td>Bed Bathing</td>
+                                                <td>RBG</td>
+                                                <td>FBG</td>
+                                                <td>Drainage Output</td>
+                                                <td>Fluid Intake</td>
+                                                <td>Urine Output</td>
+                                                <td>Added By</td>
+                                                <td>Date</td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td><span class="text-danger"><i class="fa fa-trash"></i></span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container">
+                                    <h4 class="text-primary">Nurse Progress Notes</h4>
+                                    <hr>
+                                    <h4>Add Note</h4>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <textarea class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <table class="table table-responsive table-small table-bordered">
+                                        <thead>
+                                            <tr style="font-weight: bold;">
+                                                <td>Progress Note</td>
+                                                <td>Entered By</td>
+                                                <td>Date</td>
+                                                <td>Action</td>
+                                                <td></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td><span class="text-danger"><i class="fa fa-trash"></i></span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container">
+                                    nurse care plan
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div> 
+                    
+            </div>
+        </div>
+    </div>
+     
+</section> <!-- /.content -->

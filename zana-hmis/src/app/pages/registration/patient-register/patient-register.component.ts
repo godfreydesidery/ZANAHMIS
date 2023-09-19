@@ -7,11 +7,15 @@ import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IClinician } from 'src/app/domain/clinician';
 import { IConsultation } from 'src/app/domain/consultation';
+import { IDiagnosisType } from 'src/app/domain/diagnosis-type';
 import { IInsurancePlan } from 'src/app/domain/insurance-plan';
 import { ILabTest } from 'src/app/domain/lab-test';
+import { ILabTestType } from 'src/app/domain/lab-test-type';
 import { IPatient } from 'src/app/domain/patient';
 import { IProcedure } from 'src/app/domain/procedure';
+import { IProcedureType } from 'src/app/domain/procedure-type';
 import { IRadiology } from 'src/app/domain/radiology';
+import { IRadiologyType } from 'src/app/domain/radiology-type';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -81,17 +85,14 @@ export class PatientRegisterComponent implements OnInit {
 
   labTests : ILabTest[] = []
   labTestTypeNames : string[] = []
-  labTestTypeName : string = ''
   
   radiologies : IRadiology[] = []
   radiologyTypeNames : string[] = []
-  radiologyTypeName : string = ''
 
   procedures : IProcedure[] = []
   procedureTypeNames : string[] = []
   procedureTypeName : string = ''
 
-  diagnosisTypeName : string = ''
   diagnosisTypeNames : string[] = []
 
 
@@ -939,11 +940,15 @@ export class PatientRegisterComponent implements OnInit {
     }
     var labTest  = {
       labTestType : {
-        id : null,
-        code : '',
-        name : this.labTestTypeName,
+        id : this.labTestTypeId,
+        code : this.labTestTypeCode,
+        name : this.labTestTypeName
       },
-      diagnosisType : {name : this.diagnosisTypeName}
+      diagnosisType : {
+        id : this.diagnosisTypeId,
+        code : this.diagnosisTypeCode,
+        name : this.diagnosisTypeName
+      } 
     }
     this.spinner.show()
     await this.http.post(API_URL+'/patients/save_lab_test?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId+'&admission_id='+0, labTest, options)
@@ -1044,11 +1049,14 @@ export class PatientRegisterComponent implements OnInit {
     }
     var radiology  = {
       radiologyType : {
-        id : null,
-        code : '',
-        name : this.radiologyTypeName
+        id    : this.radiologyTypeId,
+        code  : this.radiologyTypeName,
+        name  : this.radiologyTypeName,
       },
-      diagnosisType : {name : this.diagnosisTypeName}
+      diagnosisType : {
+        id    : this.diagnosisTypeId,
+        code  : this.diagnosisTypeCode,
+        name  : this.diagnosisTypeName}   
     }
     this.spinner.show()
     await this.http.post(API_URL+'/patients/save_radiology?consultation_id='+0+'&non_consultation_id='+this.nonConsultationId+'&admission_id='+0, radiology, options)
@@ -1077,7 +1085,7 @@ export class PatientRegisterComponent implements OnInit {
     this.radiologies = []
     this.radiologyTotal = 0
     this.spinner.show()
-    await this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId, options)
+    await this.http.get<IRadiology[]>(API_URL+'/patients/load_radiologies?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -1617,6 +1625,157 @@ export class PatientRegisterComponent implements OnInit {
     "Zimbabwe",
     "Åland Islands"
   ];
+
+
+  labTestTypeId : any =  null
+  labTestTypeCode : string = ''
+  labTestTypeName : string = ''
+  labTestTypes : ILabTestType[] = []
+  async loadLabTestTypesLike(value : string){
+    if(value.length < 3){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.labTestTypes = []
+    await this.http.get<ILabTestType[]>(API_URL+'/lab_test_types/load_lab_test_types_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.labTestTypes = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getLabTestType(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.labTestTypes = []
+    this.spinner.show()
+    await this.http.get<ILabTestType>(API_URL+'/lab_test_types/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.labTestTypeId    = data?.id
+        this.labTestTypeCode  = data!.code
+        this.labTestTypeName  = data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
+
+  radiologyTypeId : any =  null
+  radiologyTypeCode : string = ''
+  radiologyTypeName : string = ''
+  radiologyTypes : IRadiologyType[] = []
+  async loadRadiologyTypesLike(value : string){
+    if(value.length < 3){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.radiologyTypes = []
+    await this.http.get<IRadiologyType[]>(API_URL+'/radiology_types/load_radiology_types_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.radiologyTypes = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getRadiologyType(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.radiologyTypes = []
+    this.spinner.show()
+    await this.http.get<IProcedureType>(API_URL+'/radiology_types/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.radiologyTypeId = data?.id
+        this.radiologyTypeCode = data!.code
+        this.radiologyTypeName = data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
+
+  diagnosisTypeId : any =  null
+  diagnosisTypeCode : string = ''
+  diagnosisTypeName : string = ''
+  diagnosisTypes : IDiagnosisType[] = []
+  async loadDiagnosisTypesLike(value : string){
+    this.diagnosisTypes = []
+    if(value.length < 3){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IDiagnosisType[]>(API_URL+'/diagnosis_types/load_diagnosis_types_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.diagnosisTypes = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getDiagnosisType(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.diagnosisTypes = []
+    this.spinner.show()
+    await this.http.get<IProcedureType>(API_URL+'/diagnosis_types/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.diagnosisTypeId = data?.id
+        this.diagnosisTypeCode = data!.code
+        this.diagnosisTypeName = data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
 
 }
 
