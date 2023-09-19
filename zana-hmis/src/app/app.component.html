@@ -1,4 +1,4 @@
-<body class="hold-transition sidebar-mini" style="background-color: rgb(210, 211, 212);">
+<body class="hold-transition sidebar-mini" style="background-color: rgb(210, 211, 212); min-height: 150%;">
 
   <div *ngIf="isLoggedIn===false">
       <app-login></app-login>
@@ -360,6 +360,22 @@
                                 </a>
                                 <ul class="treeview-menu">
                                     <li><a routerLink="/company-profile">Company Profile</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <ul class="treeview-menu">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-file-text"></i><span>Reports</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a routerLink="/consultation-report">Consultation Report</a></li>
+                                    <li><a routerLink="/procedure-report">Procedure Report</a></li>
+                                    <li><a routerLink="/doctor-to-radiology-report">Doctor to Radiology Report</a></li>
+                                    <li><a routerLink="/doctor-to-laboratory-report">Doctor to Laboratory Report</a></li>
                                 </ul>
                             </li>
                         </ul>

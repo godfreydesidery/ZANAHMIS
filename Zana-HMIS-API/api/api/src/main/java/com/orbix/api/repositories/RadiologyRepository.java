@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -113,5 +114,12 @@ public interface RadiologyRepository extends JpaRepository<Radiology, Long> {
 	 */
 	List<Radiology> findAllByConsultationInOrNonConsultationInOrAdmissionIn(List<Consultation> cs,
 			List<NonConsultation> ncs, List<Admission> adm);
+
+	/**
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @return
+	 */
+	List<Radiology> findAllByCreatedAtBetween(LocalDateTime atStartOfDay, LocalDateTime plusDays);
 
 }

@@ -7,6 +7,7 @@ import { INonConsultation } from "./non-consultation"
 import { IPatient } from "./patient"
 import { IUser } from "./user"
 import { IDiagnosisType } from "./diagnosis-type"
+import { IInsurancePlan } from "./insurance-plan"
 
 export interface ILabTest {
     id      : any
@@ -26,6 +27,8 @@ export interface ILabTest {
     labTestType     : ILabTestType
     diagnosisType   : IDiagnosisType
 
+    insurancePlan   : IInsurancePlan
+
     created : string
     ordered : string
     accepted : string
@@ -33,4 +36,6 @@ export interface ILabTest {
     rejectComment : string
     collected : string
     verified : string
+
+    createdAt : Date
 }

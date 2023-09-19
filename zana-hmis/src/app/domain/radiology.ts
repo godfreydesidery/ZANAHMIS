@@ -9,6 +9,7 @@ import { IRadiologyType } from "./radiology-type"
 import { IUser } from "./user"
 import { IDiagnosisType } from "./diagnosis-type"
 import { Byte } from "src/custom-packages/util"
+import { IInsurancePlan } from "./insurance-plan"
 
 export interface IRadiology {
     id          : any
@@ -28,6 +29,8 @@ export interface IRadiology {
     admission       : IAdmission
     patientBill     : IPatientBill
     radiologyType   : IRadiologyType
+
+    insurancePlan   : IInsurancePlan
     
     //createdBy       : IUser
     //createdOn       : IDay
@@ -50,4 +53,6 @@ export interface IRadiology {
     //verifiedBy       : IUser
     //verifiedOn       : IDay
     //verifiedAt       : Date
+
+    createdAt : Date
 }

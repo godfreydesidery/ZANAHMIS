@@ -53,6 +53,9 @@ public class Procedure {
 	private double minutes;
 	private String status;
 	
+	private String paymentType;//CASH,DEBIT CARD, CREDIT CARD, MOBILE, INSURANCE
+	private String membershipNo;
+	
 	@ManyToOne(targetEntity = Theatre.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "theatre_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
@@ -93,6 +96,16 @@ public class Procedure {
 	@JoinColumn(name = "patient_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Patient patient;
+	
+	@ManyToOne(targetEntity = Clinician.class, fetch = FetchType.EAGER,  optional = true)
+	@JoinColumn(name = "clinician_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private Clinician clinician;
+	
+	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private InsurancePlan insurancePlan;
 
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
     private Long createdby;

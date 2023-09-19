@@ -120,6 +120,11 @@ import { NurseOutpatientListComponent } from './pages/nurse/nurse-outpatient-lis
 import { NurseInpatientListComponent } from './pages/nurse/nurse-inpatient-list/nurse-inpatient-list.component';
 import { NurseOutsiderListComponent } from './pages/nurse/nurse-outsider-list/nurse-outsider-list.component';
 import { DoctorInpatientComponent } from './pages/doctor/doctor-inpatient/doctor-inpatient.component';
+import { ConsultationReportComponent } from './pages/admin/reports/consultation-report/consultation-report.component';
+import { ShowDateOnlyPipe } from './pipes/date.pipe';
+import { ProcedureReportComponent } from './pages/admin/reports/procedure-report/procedure-report.component';
+import { DoctorToRadiologyReportComponent } from './pages/admin/reports/doctor-to-radiology-report/doctor-to-radiology-report.component';
+import { DoctorToLaboratoryReportComponent } from './pages/admin/reports/doctor-to-laboratory-report/doctor-to-laboratory-report.component';
 
 @NgModule({
   declarations: [
@@ -232,6 +237,11 @@ import { DoctorInpatientComponent } from './pages/doctor/doctor-inpatient/doctor
     NurseInpatientListComponent,
     NurseOutsiderListComponent,
     DoctorInpatientComponent,
+    ConsultationReportComponent,
+    ShowDateOnlyPipe,
+    ProcedureReportComponent,
+    DoctorToRadiologyReportComponent,
+    DoctorToLaboratoryReportComponent
   ],
   imports: [
     HttpClientModule,
@@ -337,6 +347,10 @@ import { DoctorInpatientComponent } from './pages/doctor/doctor-inpatient/doctor
     {path : 'doctor-inpatient-list', component : DoctorInpatientListComponent},
     {path : 'nurse-inpatient-list', component : NurseInpatientListComponent},
     {path : 'doctor-inpatient' , component : DoctorInpatientComponent},
+    {path : 'consultation-report', component : ConsultationReportComponent},
+    {path : 'procedure-report', component : ProcedureReportComponent},
+    {path : 'doctor-to-radiology-report', component : DoctorToRadiologyReportComponent},
+    {path : 'doctor-to-laboratory-report', component : DoctorToLaboratoryReportComponent}
 
     ])
   ],

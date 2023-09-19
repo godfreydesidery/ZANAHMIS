@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -98,6 +99,13 @@ public interface ProcedureRepository extends JpaRepository<Procedure, Long> {
 	 * @return
 	 */
 	List<Procedure> findAllByAdmission(Admission admission);
+
+	/**
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @return
+	 */
+	List<Procedure> findAllByCreatedAtBetween(LocalDateTime atStartOfDay, LocalDateTime plusDays);
 
 
 

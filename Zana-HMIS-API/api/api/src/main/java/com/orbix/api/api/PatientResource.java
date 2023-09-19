@@ -237,8 +237,13 @@ public class PatientResource {
 		if(!p.isPresent()) {
 			throw new NotFoundException("Could not process, patient not available");
 		}
-		if(!(type.equals("OUTPATIENT") || type.equals("OUTSIDER"))){
+		if((type.equals("OUTPATIENT") || type.equals("OUTSIDER"))){
+			//continue change
+		}else {
 			throw new InvalidOperationException("Invalid patient types. Only OUTPATIENT and OUTSIDER types are allowed");
+		}
+		if(p.get().getType().equals("INPATIENT")) {
+			throw new InvalidOperationException("Active inpatients can only be discharged");
 		}
 		/**
 		 * From OUTPATIENT to OUTSIDER

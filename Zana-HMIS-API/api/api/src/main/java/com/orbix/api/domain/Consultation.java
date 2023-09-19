@@ -98,7 +98,6 @@ public class Consultation {
 	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
-	@JsonIgnoreProperties({"createdBy", "createdOn"})
     private InsurancePlan insurancePlan;
 	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)

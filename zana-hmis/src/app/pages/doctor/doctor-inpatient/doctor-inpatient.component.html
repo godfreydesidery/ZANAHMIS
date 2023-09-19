@@ -22,26 +22,26 @@
                         <div class="col-sm-12 alert alert-primary" role="alert">
                             <h3 class="text-primary">Name: <b>{{admission?.patient?.firstName}} {{admission?.patient?.middleName}} {{admission?.patient?.lastName}}</b>, File No: <b>{{admission?.patient?.no}}</b>, <b>Date of Birth: {{admission.patient.dateOfBirth | date}} Age: {{admission.patient.dateOfBirth | age}}</b>, {{admission?.patient?.gender}}, {{admission.paymentType}} {{admission?.insurancePlan?.name}}</h3>
                         </div>
-                        <!--<div class="col-sm-6">
+                        <div class="col-sm-6">
                             <label>Clinical Notes</label>
                             <div class="jumbotron jumbotron-fluid">                              
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <textarea class="form-control" [(ngModel)]="cNMainComplain" placeholder="Main Complain/ Others" style="height: 7cm;"></textarea>
-                                            <textarea class="form-control" [(ngModel)]="cNPresentIllnessHistory" placeholder="History of Present Illness"></textarea>
+                                            <!--<textarea class="form-control" [(ngModel)]="cNPresentIllnessHistory" placeholder="History of Present Illness"></textarea>
                                             <textarea class="form-control" [(ngModel)]="cNPastMedicalHistory" placeholder="Past Medical History"></textarea>
                                             <textarea class="form-control" [(ngModel)]="cNFamilyAndSocialHistory" placeholder="Family and Social History"></textarea>
                                             <textarea class="form-control" [(ngModel)]="cNDrugsAndAllergyHistory" placeholder="Drugs and Allergy History"></textarea>
                                             <textarea class="form-control" [(ngModel)]="cNReviewOfOtherSystems" placeholder="Review of Other Systems"></textarea>
                                             <textarea class="form-control" [(ngModel)]="cNPhysicalExamination" placeholder="Physical Examination"></textarea>
-                                            <textarea class="form-control" [(ngModel)]="cNManagementPlan" placeholder="Management Plan"></textarea>
+                                            <textarea class="form-control" [(ngModel)]="cNManagementPlan" placeholder="Management Plan"></textarea>-->
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>-->
-                        <!--<div class="col-sm-6">
+                        </div>
+                        <div class="col-sm-6">
                             <label>General Examination</label>
                             <div class="jumbotron jumbotron-fluid">                               
                                 <div class="container">
@@ -74,7 +74,7 @@
                         <div class="col-sm-12" style="text-align: center;">
                             <button class="btn btn-primary" (click)="saveCG()">Save</button>
                             <hr>
-                        </div>-->
+                        </div>
 
                         <div class="row" style="margin-left: 1mm; margin-right: 1mm;">
                             <div class="col-sm-12" style="text-align: center;">

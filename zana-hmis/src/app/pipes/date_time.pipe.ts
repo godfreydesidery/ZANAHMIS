@@ -14,6 +14,6 @@ export class ShowDateTimePipe implements PipeTransform {
         str1 = str1.replaceAll(',','-')
         str2 = str2.replaceAll(',',':')
 
-        return str1 + str2
+        return str.replace(',','-').replace(',','-').replace(',',':').replace(',',':').replace(',',':')
     }
 }

@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,7 +78,12 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 	 */
 	List<Consultation> findAllByStatusIn(List<String> conStatuses);
 
-	
+	/**
+	 * @param atStartOfDay
+	 * @param atStartOfDay2
+	 * @return
+	 */
+	List<Consultation> findAllByCreatedAtBetween(LocalDateTime atStartOfDay, LocalDateTime atStartOfDay2);
 
 	/**
 	 * @param p

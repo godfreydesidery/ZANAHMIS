@@ -6,6 +6,7 @@ import { IMedicine } from "./medicine"
 import { INonConsultation } from "./non-consultation"
 import { IPatient } from "./patient"
 import { IUser } from "./user"
+import { IInsurancePlan } from "./insurance-plan"
 
 export interface IPrescription {
     id          : any
@@ -28,6 +29,8 @@ export interface IPrescription {
     admission       : IAdmission
     patientBill            : IPatientBill
     medicine        : IMedicine
+
+    insurancePlan   : IInsurancePlan
     
     created : string
     ordered : string

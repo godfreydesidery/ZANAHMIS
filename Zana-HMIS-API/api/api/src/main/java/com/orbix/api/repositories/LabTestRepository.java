@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -120,6 +121,13 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
 	 */
 	List<LabTest> findAllByConsultationInOrNonConsultationInOrAdmissionIn(List<Consultation> cs,
 			List<NonConsultation> ncs, List<Admission> adm);
+
+	/**
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @return
+	 */
+	List<LabTest> findAllByCreatedAtBetween(LocalDateTime atStartOfDay, LocalDateTime plusDays);
 
 	
 	

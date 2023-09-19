@@ -14,13 +14,13 @@ export interface IConsultation {
     membershipNo    : string
 
     patient         : IPatient
-    bill            : IPatientBill
+    patientBill     : IPatientBill
     clinician       : IClinician
     clinic          : IClinic
     visit           : IVisit
     insurancePlan   : IInsurancePlan
     
-    createdBy       : IUser
-    createdOn       : IDay
+    created : string
+
     createdAt       : Date
 }

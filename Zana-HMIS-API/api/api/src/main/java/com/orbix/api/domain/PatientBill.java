@@ -66,6 +66,11 @@ public class PatientBill {
     @JoinColumn(name = "supplementary_patient_bill_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private PatientBill supplementaryPatientBill;
+	
+	@ManyToOne(targetEntity = InsurancePlan.class, fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "insurance_plan_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private InsurancePlan insurancePlan;
 
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
     private Long createdby;

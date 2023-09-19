@@ -51,6 +51,7 @@ import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.AdmissionBedRepository;
 import com.orbix.api.repositories.AdmissionRepository;
+import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationInsurancePlanRepository;
 import com.orbix.api.repositories.ConsultationRepository;
@@ -127,6 +128,7 @@ public class PatientServiceImpl implements PatientService {
 	private final WardBedRepository wardBedRepository;
 	private final AdmissionBedRepository admissionBedRepository;
 	private final WardTypeInsurancePlanRepository wardTypeInsurancePlanRepository;
+	private final ClinicianRepository clinicianRepository;
 	
 	@Override
 	public List<Patient> getAll() {
@@ -656,6 +658,7 @@ public class PatientServiceImpl implements PatientService {
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
 			test.setConsultation(c.get());
+			test.setClinician(c.get().getClinician());
 		}
 		if(nc.isPresent()) {
 			NonConsultation non;// = new NonConsultation();
@@ -682,9 +685,14 @@ public class PatientServiceImpl implements PatientService {
 			}
 			patient = adm.getPatient();
 			test.setAdmission(adm);
+			Optional<Clinician> clin = clinicianRepository.findByUser(userService.getUser(request));
+			if(clin.isPresent()) {
+				test.setClinician(clin.get());
+			}
 		}		
 		test.setLabTestType(ltt.get());
 		test.setStatus("PENDING");
+				
 		PatientBill patientBill = new PatientBill();
 		patientBill.setAmount(test.getLabTestType().getPrice());
 		patientBill.setPaid(0);
@@ -709,8 +717,9 @@ public class PatientServiceImpl implements PatientService {
 				patientBill.setPaid(labTestTypePricePlan.get().getPrice());
 				patientBill.setBalance(0);
 				patientBill.setStatus("COVERED");
+				patientBill.setInsurancePlan(labTestTypePricePlan.get().getInsurancePlan());
 				patientBill = patientBillRepository.save(patientBill);
-				
+								
 				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(patient, patient.getInsurancePlan(),"PENDING");
 				if(!inv.isPresent()) {
 					/**
@@ -866,6 +875,7 @@ public class PatientServiceImpl implements PatientService {
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
 			radio.setConsultation(c.get());
+			radio.setClinician(c.get().getClinician());
 		}
 		
 		if(nc.isPresent()) {
@@ -889,6 +899,10 @@ public class PatientServiceImpl implements PatientService {
 				adm = a.get();
 			}else {
 				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			Optional<Clinician> clin = clinicianRepository.findByUser(userService.getUser(request));
+			if(clin.isPresent()) {
+				radio.setClinician(clin.get());
 			}
 			patient = adm.getPatient();
 			radio.setAdmission(adm);
@@ -918,6 +932,7 @@ public class PatientServiceImpl implements PatientService {
 				patientBill.setPaid(radiologyTypePricePlan.get().getPrice());
 				patientBill.setBalance(0);
 				patientBill.setStatus("COVERED");
+				patientBill.setInsurancePlan(radiologyTypePricePlan.get().getInsurancePlan());
 				patientBill = patientBillRepository.save(patientBill);
 				
 				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
@@ -1082,6 +1097,7 @@ public class PatientServiceImpl implements PatientService {
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
 			procedure.setConsultation(c.get());
+			procedure.setClinician(c.get().getClinician());
 		}
 		
 		if(nc.isPresent()) {
@@ -1106,6 +1122,10 @@ public class PatientServiceImpl implements PatientService {
 				adm = a.get();
 			}else {
 				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			Optional<Clinician> clin = clinicianRepository.findByUser(userService.getUser(request));
+			if(clin.isPresent()) {
+				procedure.setClinician(clin.get());
 			}
 			patient = adm.getPatient();
 			procedure.setAdmission(adm);
@@ -1138,6 +1158,7 @@ public class PatientServiceImpl implements PatientService {
 				patientBill.setPaid(procedureTypePricePlan.get().getPrice());
 				patientBill.setBalance(0);
 				patientBill.setStatus("COVERED");
+				patientBill.setInsurancePlan(procedureTypePricePlan.get().getInsurancePlan());
 				patientBill = patientBillRepository.save(patientBill);
 				
 				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
@@ -1283,6 +1304,7 @@ public class PatientServiceImpl implements PatientService {
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
 			prescription.setConsultation(c.get());
+			prescription.setClinician(c.get().getClinician());
 		}
 		if(nc.isPresent()) {
 			patient = nc.get().getPatient();
@@ -1297,6 +1319,10 @@ public class PatientServiceImpl implements PatientService {
 				adm = a.get();
 			}else {
 				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			Optional<Clinician> clin = clinicianRepository.findByUser(userService.getUser(request));
+			if(clin.isPresent()) {
+				prescription.setClinician(clin.get());
 			}
 			patient = adm.getPatient();
 			prescription.setAdmission(adm);
@@ -1326,6 +1352,7 @@ public class PatientServiceImpl implements PatientService {
 				patientBill.setPaid(medicinePricePlan.get().getPrice() * prescription.getQty());
 				patientBill.setBalance(0);
 				patientBill.setStatus("COVERED");
+				patientBill.setInsurancePlan(medicinePricePlan.get().getInsurancePlan());
 				patientBill = patientBillRepository.save(patientBill);
 				
 				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");

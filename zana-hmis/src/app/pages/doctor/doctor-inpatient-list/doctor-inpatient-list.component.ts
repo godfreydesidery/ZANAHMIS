@@ -22,6 +22,8 @@ export class DoctorInpatientListComponent {
   admissions : IAdmission[] = []
 
   filterRecords : string = ''
+
+  clinicianId : any = null
   
   constructor(private auth : AuthService,
     private http :HttpClient,
@@ -31,8 +33,13 @@ export class DoctorInpatientListComponent {
     private msgBox : MsgBoxService) { }
 
 
-    ngOnInit(): void {
-      this.loadInpatientList()
+    async ngOnInit(): Promise<void> {
+      await this.loadClinician()
+      if(this.clinicianId != null){
+        this.loadInpatientList()
+      }else{
+        this.msgBox.showErrorMessage('User not found in doctors register')
+      }
     }
   
     attend(id : any){
@@ -62,6 +69,27 @@ export class DoctorInpatientListComponent {
         }
       )
     } 
+
+    async loadClinician(){    
+      var username = localStorage.getItem('username')!
+      let options = {
+        headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+      }
+      this.spinner.show()
+      await this.http.get<any>(API_URL+'/clinicians/load_clinician_by_username?username='+username, options)
+      .pipe(finalize(() => this.spinner.hide()))
+      .toPromise()
+      .then(
+        data => {
+          this.clinicianId = data
+        }
+      )
+      .catch(
+        error => {
+          this.msgBox.showErrorMessage('Could not load doctor')
+        }
+      )
+    }
 
     async postAdmission(id : any){
       

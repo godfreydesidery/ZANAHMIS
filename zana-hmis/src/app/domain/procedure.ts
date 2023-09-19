@@ -9,6 +9,7 @@ import { IUser } from "./user"
 import { Time } from "@angular/common"
 import { ITheatre } from "./theatre"
 import { IDiagnosisType } from "./diagnosis-type"
+import { IInsurancePlan } from "./insurance-plan"
 
 export interface IProcedure {
     id      : any
@@ -23,12 +24,14 @@ export interface IProcedure {
 
     theatre : ITheatre
 
-    patient?         : IPatient
+    patient         : IPatient
     consultation?    : IConsultation
     nonConsultation? : INonConsultation
     admission?       : IAdmission
     patientBill?     : IPatientBill
     procedureType   : IProcedureType
+
+    insurancePlan   : IInsurancePlan
     
     created        : string
     accepted       : string
@@ -36,4 +39,6 @@ export interface IProcedure {
     rejectComment  : string
     verified       : string
     held           : string
+
+    createdAt      : Date
 }

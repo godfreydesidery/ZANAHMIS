@@ -1,0 +1,77 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="header-title">
+        <h1>Consultations Report</h1>
+    </div>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <!-- Form controls -->
+        <div class="col-sm-12">
+            <div class="panel panel-bd lobidrag">
+                <div class="panel-heading">
+                    <button type="button" class="btn btn-success btn-outline" (click)="exportToPdf()"><i class="fa fa-file-pdf-o"></i> Pdf</button>
+                    <button type="button" class="btn btn-success btn-outline" (click)="exportToSpreadsheet()"><i class="fa fa-file-excel-o"></i> Excel</button>
+                    <button type="button" class="btn btn-success btn-outline" (click)="print()"><i class="fa fa-print"></i> Print</button>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                    <h4>From</h4>
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="date" class="form-control" [(ngModel)]="startDate">
+                                </div>
+                                <div class="col-sm-1">
+                                    <h4>To</h4>
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="date" class="form-control" [(ngModel)]="endDate">
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-primary btn-outline" (click)="loadConsultationReport(startDate, endDate)">Run Report</button>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-primary btn-outline" (click)="clear()">Clear</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12" style="height: 100%; overflow: scroll;">
+                            <hr>
+                            <table class="table table-responsive table-hover table-striped table-small">
+                                <thead>
+                                    <tr style="font-weight: bold;">
+                                        <td>Patient Name</td>
+                                        <td>Patient Phone</td>
+                                        <td>Registration#</td>
+                                        <td>Payment Mode</td>
+                                        <td>Consultation Date</td>
+                                        <td>Status</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let consultation of consultations">
+                                        <td>{{consultation?.patient?.firstName}} {{consultation?.patient?.middleName}} {{consultation?.patient?.lastName}}</td>
+                                        <td>{{consultation?.patient?.phoneNo}}</td>
+                                        <td>{{consultation?.patient?.no}}</td>
+                                        <td>
+                                            <span *ngIf="consultation?.patientBill?.status ==='COVERED'">{{consultation?.insurancePlan?.name}}</span>
+                                            <span *ngIf="consultation?.patientBill?.status === 'VERIFIED' || consultation?.patientBill?.status === 'PAID' || consultation?.patientBill?.status === 'UNPAID'">Cash</span>
+                                        </td>
+                                        <td>{{consultation.createdAt | dateOnly}}</td>
+                                        <td>{{consultation?.status}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>     
+</section> <!-- /.content -->

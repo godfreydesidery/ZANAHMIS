@@ -288,6 +288,9 @@ export class DoctorInpatientComponent implements OnInit {
   }
 
   async saveCG(){
+
+    return // remove this later
+
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
