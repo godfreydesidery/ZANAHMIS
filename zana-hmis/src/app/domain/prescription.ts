@@ -15,7 +15,6 @@ export interface IPrescription {
     frequency   : string
     route       : string
     days        : string
-    price       : number
     qty         : number
     issued      : number
     balance     : number

@@ -44,8 +44,6 @@ public class Prescription {
 	private String route;
 	private String days;
 	@NotNull
-	private double price;
-	@NotNull
 	private double qty;
 	private double issued = 0;
 	private double balance;

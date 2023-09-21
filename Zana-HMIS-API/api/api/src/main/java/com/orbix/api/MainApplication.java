@@ -10,19 +10,14 @@ import java.util.Scanner;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
-import javax.swing.JOptionPane;
-
-import org.hibernate.type.TypeResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,14 +28,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.multipart.support.MultipartFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import org.thymeleaf.util.StringUtils;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.orbix.api.domain.CompanyProfile;
@@ -52,8 +39,13 @@ import com.orbix.api.repositories.AdmissionRepository;
 import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.DayRepository;
+import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
+import com.orbix.api.repositories.PatientBillRepository;
+import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.PrivilegeRepository;
+import com.orbix.api.repositories.ProcedureRepository;
+import com.orbix.api.repositories.RadiologyRepository;
 import com.orbix.api.security.Object_;
 import com.orbix.api.security.Operation;
 import com.orbix.api.service.CompanyProfileService;
@@ -63,7 +55,6 @@ import com.orbix.api.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -89,6 +80,11 @@ protected ConfigurableApplicationContext springContext;
     private final ConsultationRepository consultationRepository;
 	private final NonConsultationRepository nonConsultationRepository;
 	private final AdmissionRepository admissionRepository;
+	private final PatientBillRepository patientBillRepository;
+	private final LabTestRepository labTestRepository;
+	private final RadiologyRepository radiologyRepository;
+	private final ProcedureRepository procedureRepository;
+	private final PrescriptionRepository prescriptionRepository;
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -127,7 +123,15 @@ protected ConfigurableApplicationContext springContext;
 	@Bean
 	void updateRecords() {
 		//thread to update patient records periodically
-		UpdatePatient updatePatient = new UpdatePatient(consultationRepository, nonConsultationRepository, admissionRepository);
+		UpdatePatient updatePatient = new UpdatePatient(
+				consultationRepository, 
+				nonConsultationRepository, 
+				admissionRepository, 
+				patientBillRepository,
+				labTestRepository, 
+				radiologyRepository, 
+				procedureRepository, 
+				prescriptionRepository);
 	    Thread updatePatientThread = new Thread(updatePatient);
 	    updatePatientThread.start();
 	}

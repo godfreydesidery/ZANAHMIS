@@ -122,4 +122,16 @@ public interface RadiologyRepository extends JpaRepository<Radiology, Long> {
 	 */
 	List<Radiology> findAllByCreatedAtBetween(LocalDateTime atStartOfDay, LocalDateTime plusDays);
 
+	/**
+	 * @param c
+	 * @return
+	 */
+	List<Radiology> findByConsultation(Consultation c);
+
+	/**
+	 * @param c
+	 * @return
+	 */
+	List<Radiology> findByNonConsultation(NonConsultation c);
+
 }

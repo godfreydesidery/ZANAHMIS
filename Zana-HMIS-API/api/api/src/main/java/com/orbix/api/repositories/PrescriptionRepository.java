@@ -106,4 +106,16 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
 	List<Prescription> findAllByConsultationInOrNonConsultationInOrAdmissionIn(List<Consultation> cs,
 			List<NonConsultation> ncs, List<Admission> adm);
 
+	/**
+	 * @param c
+	 * @return
+	 */
+	List<Prescription> findByConsultation(Consultation c);
+
+	/**
+	 * @param c
+	 * @return
+	 */
+	List<Prescription> findByNonConsultation(NonConsultation c);
+
 }

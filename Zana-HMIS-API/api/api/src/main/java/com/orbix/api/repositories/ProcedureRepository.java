@@ -107,6 +107,18 @@ public interface ProcedureRepository extends JpaRepository<Procedure, Long> {
 	 */
 	List<Procedure> findAllByCreatedAtBetween(LocalDateTime atStartOfDay, LocalDateTime plusDays);
 
+	/**
+	 * @param c
+	 * @return
+	 */
+	List<Procedure> findByConsultation(Consultation c);
+
+	/**
+	 * @param c
+	 * @return
+	 */
+	List<Procedure> findByNonConsultation(NonConsultation c);
+
 
 
 }

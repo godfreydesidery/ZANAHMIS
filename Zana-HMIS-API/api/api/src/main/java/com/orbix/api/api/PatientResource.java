@@ -1371,7 +1371,7 @@ public class PatientResource {
 			model.setFrequency(l.getFrequency());			
 			model.setRoute(l.getRoute());
 			model.setDays(l.getDays());
-			model.setPrice(l.getPrice());
+			//model.setPrice(l.getPrice());
 			model.setQty(l.getQty());
 			model.setIssued(l.getIssued());
 			model.setBalance(l.getBalance());
@@ -2540,7 +2540,7 @@ public class PatientResource {
 				m.setFrequency(pres.getFrequency());
 				m.setRoute(pres.getRoute());
 				m.setDays(pres.getDays());
-				m.setPrice(pres.getPrice());
+				//m.setPrice(pres.getPrice());
 				m.setQty(pres.getQty());
 				m.setStatus(pres.getStatus());
 				m.setMedicine(pres.getMedicine());
@@ -3030,7 +3030,6 @@ public class PatientResource {
 			model.setFrequency(l.getFrequency());			
 			model.setRoute(l.getRoute());
 			model.setDays(l.getDays());
-			model.setPrice(l.getPrice());
 			model.setQty(l.getQty());
 			model.setIssued(l.getIssued());
 			model.setBalance(l.getBalance());
