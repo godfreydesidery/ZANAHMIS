@@ -237,7 +237,7 @@
                                     <div class="col-sm-4"></div>
                                     <div class="col-sm-4">
                                         
-                                        <h4>Search Medicine (Enter 3 Characters to search)</h4>
+                                        <h4>Search Medicine (Enter 2 Characters to search)</h4>
                                         <input type="text" class="form-control" [(ngModel)]="medicineName" (ngModelChange)="loadMedicinesLike($event)">
                                         <div class="row"  *ngIf="medicines.length > 0">
                                             <select class="form-control" multiple="multiple">
@@ -352,7 +352,7 @@
                                                                     <option></option>
                                                                     <option *ngFor="let name of procedureTypeNames">{{name}}</option>
                                                                 </select>-->
-                                                                <h4>Search Procedure (Enter 3 Characters to Search)</h4>
+                                                                <h4>Search Procedure (Enter 2 Characters to Search)</h4>
                                                                 <input type="text" class="form-control" [(ngModel)]="procedureTypeName" (ngModelChange)="loadProcedureTypesLike($event)">
                                                                 <div class="row"  *ngIf="procedureTypes.length > 0">
                                                                     <div class="col-sm-12">
@@ -369,7 +369,7 @@
                                                                     <option></option>
                                                                     <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
                                                                 </select>-->
-                                                                <h4>Search Diagnosis (Enter 3 Characters to Search)</h4>
+                                                                <h4>Search Diagnosis (Enter 2 Characters to Search)</h4>
                                                                 <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                                                                 <div class="row"  *ngIf="diagnosisTypes.length > 0">
                                                                     <div class="col-sm-12">
@@ -554,7 +554,7 @@
                             <option></option>
                             <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
                         </select>-->
-                        <h4>Search Diagnosis (Enter 3 Characters to Search)</h4>
+                        <h4>Search Diagnosis (Enter 2 Characters to Search)</h4>
                         <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                         <div class="row"  *ngIf="diagnosisTypes.length > 0">
                             <div class="col-sm-12">
@@ -593,7 +593,7 @@
                             <option></option>
                             <option *ngFor="let name of labTestTypeNames">{{name}}</option>
                         </select>-->
-                        <h4>Search Lab Test (Enter 3 Characters to Search)</h4>
+                        <h4>Search Lab Test (Enter 2 Characters to Search)</h4>
                         <input type="text" class="form-control" [(ngModel)]="labTestTypeName" (ngModelChange)="loadLabTestTypesLike($event)">
                         <div class="row"  *ngIf="labTestTypes.length > 0">
                             <div class="col-sm-12">
@@ -613,7 +613,7 @@
                             <option></option>
                             <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
                         </select>-->
-                        <h4>Search Diagnosis (Enter 3 Characters to Search)</h4>
+                        <h4>Search Diagnosis (Enter 2 Characters to Search)</h4>
                         <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                         <div class="row"  *ngIf="diagnosisTypes.length > 0">
                             <div class="col-sm-12">
@@ -747,7 +747,7 @@
                            <option></option>
                            <option *ngFor="let name of radiologyTypeNames">{{name}}</option>
                        </select>-->
-                       <h4>Search Radiology (Enter 3 Characters to Search)</h4>
+                       <h4>Search Radiology (Enter 2 Characters to Search)</h4>
                         <input type="text" class="form-control" [(ngModel)]="radiologyTypeName" (ngModelChange)="loadRadiologyTypesLike($event)">
                         <div class="row"  *ngIf="radiologyTypes.length > 0">
                             <div class="col-sm-12">
@@ -766,7 +766,7 @@
                             <option></option>
                             <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
                         </select>-->
-                        <h4>Search Diagnosis (Enter 3 Characters to Search)</h4>
+                        <h4>Search Diagnosis (Enter 2 Characters to Search)</h4>
                         <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                         <div class="row"  *ngIf="diagnosisTypes.length > 0">
                             <div class="col-sm-12">

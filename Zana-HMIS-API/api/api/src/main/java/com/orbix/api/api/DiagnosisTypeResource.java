@@ -86,7 +86,7 @@ public class DiagnosisTypeResource {
 			@RequestParam(name = "name_like") String value,
 			HttpServletRequest request){
 		List<DiagnosisType> diagnosisTypes = new ArrayList<DiagnosisType>();
-		diagnosisTypes = diagnosisTypeRepository.findAllByNameContaining(value);
+		diagnosisTypes = diagnosisTypeRepository.findAllByNameContainingOrCodeContaining(value, value);
 		return ResponseEntity.ok().body(diagnosisTypes);
 	}
 }

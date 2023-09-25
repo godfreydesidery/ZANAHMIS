@@ -33,4 +33,11 @@ public interface DiagnosisTypeRepository extends JpaRepository<DiagnosisType, Lo
 	 */
 	List<DiagnosisType> findAllByNameContaining(String value);
 
+	/**
+	 * @param value
+	 * @param value2
+	 * @return
+	 */
+	List<DiagnosisType> findAllByNameContainingOrCodeContaining(String value, String value2);
+
 }

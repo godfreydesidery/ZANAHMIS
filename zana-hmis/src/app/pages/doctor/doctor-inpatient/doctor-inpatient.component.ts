@@ -1111,7 +1111,7 @@ export class DoctorInpatientComponent implements OnInit {
   diagnosisTypes : IDiagnosisType[] = []
   async loadDiagnosisTypesLike(value : string){
     this.diagnosisTypes = []
-    if(value.length < 3){
+    if(value.length < 2){
       return
     }
     let options = {
@@ -1160,7 +1160,8 @@ export class DoctorInpatientComponent implements OnInit {
   labTestTypeName : string = ''
   labTestTypes : ILabTestType[] = []
   async loadLabTestTypesLike(value : string){
-    if(value.length < 3){
+    this.labTestTypes = []
+    if(value.length < 2){
       return
     }
     let options = {
@@ -1211,7 +1212,8 @@ export class DoctorInpatientComponent implements OnInit {
   radiologyTypeName : string = ''
   radiologyTypes : IRadiologyType[] = []
   async loadRadiologyTypesLike(value : string){
-    if(value.length < 3){
+    this.radiologyTypes = []
+    if(value.length < 2){
       return
     }
     let options = {
@@ -1262,7 +1264,7 @@ export class DoctorInpatientComponent implements OnInit {
   procedureTypes : IProcedureType[] = []
   async loadProcedureTypesLike(value : string){
     this.procedureTypes = []
-    if(value.length < 3){
+    if(value.length < 2){
       return
     }
     let options = {
@@ -1312,7 +1314,7 @@ export class DoctorInpatientComponent implements OnInit {
   medicines : IMedicine[] = []
   async loadMedicinesLike(value : string){
     this.medicines = []
-    if(value.length < 3){
+    if(value.length < 2){
       return
     }
     let options = {

@@ -149,10 +149,10 @@ export class PatientRegisterComponent implements OnInit {
     //this.loadSearchKeys()
     this.loadClinicNames()
     this.loadInsurancePlanNames()
-    this.loadLabTestTypeNames()
-    this.loadRadiologyTypeNames()
-    this.loadProcedureTypeNames()
-    this.loadDiagnosisTypeNames()
+    //this.loadLabTestTypeNames()
+    //this.loadRadiologyTypeNames()
+    //this.loadProcedureTypeNames()
+    //this.loadDiagnosisTypeNames()
     this.loadTheatreNames()
   }
 
@@ -1632,6 +1632,7 @@ export class PatientRegisterComponent implements OnInit {
   labTestTypeName : string = ''
   labTestTypes : ILabTestType[] = []
   async loadLabTestTypesLike(value : string){
+    this.labTestTypes = []
     if(value.length < 3){
       return
     }
@@ -1682,6 +1683,7 @@ export class PatientRegisterComponent implements OnInit {
   radiologyTypeName : string = ''
   radiologyTypes : IRadiologyType[] = []
   async loadRadiologyTypesLike(value : string){
+    this.radiologyTypes = []
     if(value.length < 3){
       return
     }
