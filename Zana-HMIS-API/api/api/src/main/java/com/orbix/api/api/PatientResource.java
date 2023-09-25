@@ -6,6 +6,7 @@ package com.orbix.api.api;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.PatientBill;
+import com.orbix.api.domain.PatientConsumableChart;
 import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.ClinicalNote;
@@ -37,7 +39,13 @@ import com.orbix.api.domain.GeneralExamination;
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.PatientInvoice;
 import com.orbix.api.domain.PatientInvoiceDetail;
+import com.orbix.api.domain.PatientNursingCarePlan;
+import com.orbix.api.domain.PatientNursingCarePlanModel;
+import com.orbix.api.domain.PatientNursingChart;
+import com.orbix.api.domain.PatientNursingProgressNote;
+import com.orbix.api.domain.PatientObservationChart;
 import com.orbix.api.domain.PatientPaymentDetail;
+import com.orbix.api.domain.PatientPrescriptionChart;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyMedicine;
 import com.orbix.api.domain.PharmacyStockCard;
@@ -45,8 +53,10 @@ import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.NonConsultation;
+import com.orbix.api.domain.Nurse;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientCreditNote;
+import com.orbix.api.domain.PatientDressingChart;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.ProcedureType;
@@ -64,6 +74,12 @@ import com.orbix.api.models.ConsultationModel;
 import com.orbix.api.models.FinalDiagnosisModel;
 import com.orbix.api.models.GeneralExaminationModel;
 import com.orbix.api.models.LabTestModel;
+import com.orbix.api.models.PatientConsumableChartModel;
+import com.orbix.api.models.PatientDressingChartModel;
+import com.orbix.api.models.PatientNursingChartModel;
+import com.orbix.api.models.PatientNursingProgressNoteModel;
+import com.orbix.api.models.PatientObservationChartModel;
+import com.orbix.api.models.PatientPrescriptionChartModel;
 import com.orbix.api.models.PrescriptionModel;
 import com.orbix.api.models.ProcedureModel;
 import com.orbix.api.models.RadiologyModel;
@@ -83,12 +99,20 @@ import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
+import com.orbix.api.repositories.NurseRepository;
 import com.orbix.api.repositories.PatientBillRepository;
+import com.orbix.api.repositories.PatientConsumableChartRepository;
 import com.orbix.api.repositories.PatientCreditNoteRepository;
+import com.orbix.api.repositories.PatientDressingChartRepository;
 import com.orbix.api.repositories.PatientInvoiceDetailRepository;
 import com.orbix.api.repositories.PatientInvoiceRepository;
+import com.orbix.api.repositories.PatientNursingCarePlanRepository;
+import com.orbix.api.repositories.PatientNursingChartRepository;
+import com.orbix.api.repositories.PatientNursingProgressNoteRepository;
+import com.orbix.api.repositories.PatientObservationChartRepository;
 import com.orbix.api.repositories.PatientPaymentDetailRepository;
 import com.orbix.api.repositories.PatientPaymentRepository;
+import com.orbix.api.repositories.PatientPrescriptionChartRepository;
 import com.orbix.api.repositories.PatientRepository;
 import com.orbix.api.repositories.PharmacyMedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
@@ -157,6 +181,14 @@ public class PatientResource {
 	private final CompanyProfileRepository companyProfileRepository;
 	private final PharmacyStockCardRepository pharmacyStockCardRepository;
 	private final WardBedRepository wardBedRepository;
+	private final NurseRepository nurseRepository;
+	private final PatientDressingChartRepository patientDressingChartRepository;
+	private final PatientConsumableChartRepository patientConsumableChartRepository;
+	private final PatientObservationChartRepository patientObservationChartRepository;
+	private final PatientPrescriptionChartRepository patientPrescriptionChartRepository;
+	private final PatientNursingChartRepository patientNursingChartRepository;
+	private final PatientNursingProgressNoteRepository patientNursingProgressNoteRepository;
+	private final PatientNursingCarePlanRepository patientNursingCarePlanRepository;
 	
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(
@@ -1079,6 +1111,108 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(patientService.savePrescription(prescription, c, nc, adm, request));
 	}
 	
+	@PostMapping("/patients/save_patient_dressing_chart")
+	public ResponseEntity<PatientDressingChart>savePatientDressingChart(
+			@RequestBody PatientDressingChart chart,
+			@RequestParam Long consultation_id, 
+			@RequestParam Long non_consultation_id,
+			@RequestParam Long admission_id,
+			@RequestParam Long nurse_id,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		Optional<Admission> adm = admissionRepository.findById(admission_id);
+		Optional<Nurse> n = nurseRepository.findById(nurse_id);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_patient_dressing_chart").toUriString());
+		return ResponseEntity.created(uri).body(patientService.savePatientDressingChart(chart, c, nc, adm, n, request));
+	}
+	
+	@PostMapping("/patients/save_patient_consumable")
+	public ResponseEntity<PatientConsumableChart>savePatientConssumableChart(
+			@RequestBody PatientConsumableChart chart,
+			@RequestParam Long consultation_id, 
+			@RequestParam Long non_consultation_id,
+			@RequestParam Long admission_id,
+			@RequestParam Long nurse_id,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		Optional<Admission> adm = admissionRepository.findById(admission_id);
+		Optional<Nurse> n = nurseRepository.findById(nurse_id);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_patient_consumable").toUriString());
+		return ResponseEntity.created(uri).body(patientService.savePatientConsumableChart(chart, c, nc, adm, n, request));
+	}
+	
+	@PostMapping("/patients/save_patient_observation_chart")
+	public ResponseEntity<PatientObservationChart>savePatientObservationChart(
+			@RequestBody PatientObservationChart chart,
+			@RequestParam Long consultation_id, 
+			@RequestParam Long non_consultation_id,
+			@RequestParam Long admission_id,
+			@RequestParam Long nurse_id,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		Optional<Admission> adm = admissionRepository.findById(admission_id);
+		Optional<Nurse> n = nurseRepository.findById(nurse_id);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_patient_observation_chart").toUriString());
+		return ResponseEntity.created(uri).body(patientService.savePatientObservationChart(chart, c, nc, adm, n, request));
+	}
+	
+	@PostMapping("/patients/save_patient_prescription_chart")
+	public ResponseEntity<PatientPrescriptionChart>savePatientPrescriptionChart(
+			@RequestBody PatientPrescriptionChart chart,
+			@RequestParam Long consultation_id, 
+			@RequestParam Long non_consultation_id,
+			@RequestParam Long admission_id,
+			@RequestParam Long nurse_id,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		Optional<Admission> adm = admissionRepository.findById(admission_id);
+		Optional<Nurse> n = nurseRepository.findById(nurse_id);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_patient_prescription_chart").toUriString());
+		return ResponseEntity.created(uri).body(patientService.savePatientPrescriptionChart(chart, c, nc, adm, n, request));
+	}
+	
+	@PostMapping("/patients/save_patient_nursing_chart")
+	public ResponseEntity<PatientNursingChart>savePatientNursingChart(
+			@RequestBody PatientNursingChart chart,
+			@RequestParam Long consultation_id, 
+			@RequestParam Long non_consultation_id,
+			@RequestParam Long admission_id,
+			@RequestParam Long nurse_id,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		Optional<Admission> adm = admissionRepository.findById(admission_id);
+		Optional<Nurse> n = nurseRepository.findById(nurse_id);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_patient_nursing_chart").toUriString());
+		return ResponseEntity.created(uri).body(patientService.savePatientNursingChart(chart, c, nc, adm, n, request));
+	}
+	
+	@PostMapping("/patients/save_patient_nursing_progress_note")
+	public ResponseEntity<PatientNursingProgressNote>savePatientNursingProgressNote(
+			@RequestBody PatientNursingProgressNote note,
+			@RequestParam Long consultation_id, 
+			@RequestParam Long non_consultation_id,
+			@RequestParam Long admission_id,
+			@RequestParam Long nurse_id,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		Optional<Admission> adm = admissionRepository.findById(admission_id);
+		Optional<Nurse> n = nurseRepository.findById(nurse_id);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_patient_nursing_progress_note").toUriString());
+		return ResponseEntity.created(uri).body(patientService.savePatientNursingProgressNote(note, c, nc, adm, n, request));
+	}
+	
 	@GetMapping("/patients/load_lab_tests") 
 	public ResponseEntity<List<LabTestModel>> loadLabTests(
 			@RequestParam(name = "consultation_id") Long consultationId,
@@ -1421,6 +1555,376 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(models);
 	}
 	
+	@GetMapping("/patients/dressing_charts") 
+	public ResponseEntity<List<PatientDressingChartModel>> loadPatientDressingCharts(
+			@RequestParam(name = "consultation_id") Long consultationId,
+			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
+			@RequestParam(name = "admission_id") Long admissionId,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
+		Optional<Admission> adm = admissionRepository.findById(admissionId);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/dressing_charts").toUriString());
+		Patient patient = new Patient();
+		Visit visit = new Visit();
+		List<PatientDressingChart> patientDressingCharts = new ArrayList<>();
+		if(c.isPresent()) {
+			patient = c.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientDressingCharts = patientDressingChartRepository.findAllByConsultation(c.get());
+			}
+			
+		}else if(nc.isPresent()){	
+			patient = nc.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientDressingCharts = patientDressingChartRepository.findAllByNonConsultation(nc.get());
+			}					
+		}else if(adm.isPresent()){	
+			patient = adm.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientDressingCharts = patientDressingChartRepository.findAllByAdmission(adm.get());
+			}					
+		}
+		List<PatientDressingChartModel> models = new ArrayList<>();
+		for(PatientDressingChart l : patientDressingCharts) {
+			PatientDressingChartModel model= new PatientDressingChartModel();
+			model.setId(l.getId());
+			model.setProcedureType(l.getProcedureType());
+			model.setPatientBill(l.getPatientBill());
+			model.setClinician(l.getClinician());
+			model.setNurse(l.getNurse());
+			model.setQty(l.getQty());			
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}		
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
+	}
+	
+	@GetMapping("/patients/consumable_charts") 
+	public ResponseEntity<List<PatientConsumableChartModel>> loadPatientConsumableCharts(
+			@RequestParam(name = "consultation_id") Long consultationId,
+			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
+			@RequestParam(name = "admission_id") Long admissionId,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
+		Optional<Admission> adm = admissionRepository.findById(admissionId);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/consumable_charts").toUriString());
+		Patient patient = new Patient();
+		Visit visit = new Visit();
+		List<PatientConsumableChart> patientConsumableCharts = new ArrayList<>();
+		if(c.isPresent()) {
+			patient = c.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientConsumableCharts = patientConsumableChartRepository.findAllByConsultation(c.get());
+			}
+			
+		}else if(nc.isPresent()){	
+			patient = nc.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientConsumableCharts = patientConsumableChartRepository.findAllByNonConsultation(nc.get());
+			}					
+		}else if(adm.isPresent()){	
+			patient = adm.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientConsumableCharts = patientConsumableChartRepository.findAllByAdmission(adm.get());
+			}					
+		}
+		List<PatientConsumableChartModel> models = new ArrayList<>();
+		for(PatientConsumableChart l : patientConsumableCharts) {
+			PatientConsumableChartModel model= new PatientConsumableChartModel();
+			model.setId(l.getId());
+			model.setMedicine(l.getMedicine());
+			model.setPatientBill(l.getPatientBill());
+			model.setClinician(l.getClinician());
+			model.setNurse(l.getNurse());
+			model.setQty(l.getQty());				
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}		
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
+	}
+	
+	@GetMapping("/patients/observation_charts") 
+	public ResponseEntity<List<PatientObservationChartModel>> loadPatientObservationCharts(
+			@RequestParam(name = "consultation_id") Long consultationId,
+			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
+			@RequestParam(name = "admission_id") Long admissionId,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
+		Optional<Admission> adm = admissionRepository.findById(admissionId);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/observation_charts").toUriString());
+		Patient patient = new Patient();
+		Visit visit = new Visit();
+		List<PatientObservationChart> patientObservationCharts = new ArrayList<>();
+		if(c.isPresent()) {
+			patient = c.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientObservationCharts = patientObservationChartRepository.findAllByConsultation(c.get());
+			}
+			
+		}else if(nc.isPresent()){	
+			patient = nc.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientObservationCharts = patientObservationChartRepository.findAllByNonConsultation(nc.get());
+			}					
+		}else if(adm.isPresent()){	
+			patient = adm.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientObservationCharts = patientObservationChartRepository.findAllByAdmission(adm.get());
+			}					
+		}
+		List<PatientObservationChartModel> models = new ArrayList<>();
+		for(PatientObservationChart l : patientObservationCharts) {
+			PatientObservationChartModel model= new PatientObservationChartModel();
+			model.setId(l.getId());
+			model.setClinician(l.getClinician());
+			model.setNurse(l.getNurse());
+			model.setBloodPressure(l.getBloodPressure());
+			model.setMeanArterialPressure(l.getMeanArterialPressure());
+			model.setPressure(l.getPressure());
+			model.setTemperature(l.getTemperature());
+			model.setRespiratoryRate(l.getRespiratoryRate());
+			model.setSaturationOxygen(l.getSaturationOxygen());
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}		
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
+	}
+	
+	@GetMapping("/patients/prescription_charts") 
+	public ResponseEntity<List<PatientPrescriptionChartModel>> loadPatientPrescriptionCharts(
+			@RequestParam(name = "consultation_id") Long consultationId,
+			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
+			@RequestParam(name = "admission_id") Long admissionId,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
+		Optional<Admission> adm = admissionRepository.findById(admissionId);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/prescription_charts").toUriString());
+		Patient patient = new Patient();
+		Visit visit = new Visit();
+		List<PatientPrescriptionChart> patientPrescriptionCharts = new ArrayList<>();
+		if(c.isPresent()) {
+			patient = c.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientPrescriptionCharts = patientPrescriptionChartRepository.findAllByConsultation(c.get());
+			}
+			
+		}else if(nc.isPresent()){	
+			patient = nc.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientPrescriptionCharts = patientPrescriptionChartRepository.findAllByNonConsultation(nc.get());
+			}					
+		}else if(adm.isPresent()){	
+			patient = adm.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientPrescriptionCharts = patientPrescriptionChartRepository.findAllByAdmission(adm.get());
+			}					
+		}
+		List<PatientPrescriptionChartModel> models = new ArrayList<>();
+		for(PatientPrescriptionChart l : patientPrescriptionCharts) {
+			PatientPrescriptionChartModel model= new PatientPrescriptionChartModel();
+			model.setId(l.getId());
+			model.setClinician(l.getClinician());
+			model.setNurse(l.getNurse());
+			model.setDosage(l.getDosage());
+			model.setPrescription(l.getPrescription());
+			model.setOutput(l.getOutput());
+			model.setRemark(l.getRemark());			
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}		
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
+	}
+	
+	@GetMapping("/patients/nursing_charts") 
+	public ResponseEntity<List<PatientNursingChartModel>> loadPatientNursingCharts(
+			@RequestParam(name = "consultation_id") Long consultationId,
+			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
+			@RequestParam(name = "admission_id") Long admissionId,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
+		Optional<Admission> adm = admissionRepository.findById(admissionId);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/nursing_charts").toUriString());
+		Patient patient = new Patient();
+		Visit visit = new Visit();
+		List<PatientNursingChart> patientNursingCharts = new ArrayList<>();
+		if(c.isPresent()) {
+			patient = c.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientNursingCharts = patientNursingChartRepository.findAllByConsultation(c.get());
+			}
+			
+		}else if(nc.isPresent()){	
+			patient = nc.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientNursingCharts = patientNursingChartRepository.findAllByNonConsultation(nc.get());
+			}					
+		}else if(adm.isPresent()){	
+			patient = adm.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientNursingCharts = patientNursingChartRepository.findAllByAdmission(adm.get());
+			}					
+		}
+		List<PatientNursingChartModel> models = new ArrayList<>();
+		for(PatientNursingChart l : patientNursingCharts) {
+			PatientNursingChartModel model= new PatientNursingChartModel();
+			model.setId(l.getId());
+			model.setNurse(l.getNurse());
+			model.setFeeding(l.getFeeding());
+			model.setChangingPosition(l.getChangingPosition());
+			model.setBedBathing(l.getBedBathing());
+			model.setRandomBloodSugar(l.getRandomBloodSugar());
+			model.setFullBloodSugar(l.getFullBloodSugar());
+			model.setDrainageOutput(l.getDrainageOutput());
+			model.setFluidIntake(l.getFluidIntake());
+			model.setUrineOutput(l.getUrineOutput());
+			
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}		
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
+	}
+	
+	@GetMapping("/patients/nursing_progress_notes") 
+	public ResponseEntity<List<PatientNursingProgressNoteModel>> loadPatientNursingProgressNotes(
+			@RequestParam(name = "consultation_id") Long consultationId,
+			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
+			@RequestParam(name = "admission_id") Long admissionId,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
+		Optional<Admission> adm = admissionRepository.findById(admissionId);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/nursing_progress_notes").toUriString());
+		Patient patient = new Patient();
+		Visit visit = new Visit();
+		List<PatientNursingProgressNote> patientNursingProgressNotes = new ArrayList<>();
+		if(c.isPresent()) {
+			patient = c.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientNursingProgressNotes = patientNursingProgressNoteRepository.findAllByConsultation(c.get());
+			}
+			
+		}else if(nc.isPresent()){	
+			patient = nc.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientNursingProgressNotes = patientNursingProgressNoteRepository.findAllByNonConsultation(nc.get());
+			}					
+		}else if(adm.isPresent()){	
+			patient = adm.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientNursingProgressNotes = patientNursingProgressNoteRepository.findAllByAdmission(adm.get());
+			}					
+		}
+		List<PatientNursingProgressNoteModel> models = new ArrayList<>();
+		for(PatientNursingProgressNote l : patientNursingProgressNotes) {
+			PatientNursingProgressNoteModel model= new PatientNursingProgressNoteModel();
+			model.setId(l.getId());
+			model.setNurse(l.getNurse());
+			model.setNote(l.getNote());			
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}		
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
+	}
+	
+	@GetMapping("/patients/nursing_care_plans") 
+	public ResponseEntity<List<PatientNursingCarePlanModel>> loadPatientNursingCarePlans(
+			@RequestParam(name = "consultation_id") Long consultationId,
+			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
+			@RequestParam(name = "admission_id") Long admissionId,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(nonConsultationId);
+		Optional<Admission> adm = admissionRepository.findById(admissionId);
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/nursing_care_plans").toUriString());
+		Patient patient = new Patient();
+		Visit visit = new Visit();
+		List<PatientNursingCarePlan> patientNursingCarePlans = new ArrayList<>();
+		if(c.isPresent()) {
+			patient = c.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientNursingCarePlans = patientNursingCarePlanRepository.findAllByConsultation(c.get());
+			}
+			
+		}else if(nc.isPresent()){	
+			patient = nc.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientNursingCarePlans = patientNursingCarePlanRepository.findAllByNonConsultation(nc.get());
+			}					
+		}else if(adm.isPresent()){	
+			patient = adm.get().getPatient();
+			visit = visitRepository.findLastByPatient(patient).get();
+			if(visit.getStatus().equals("PENDING")) {
+				patientNursingCarePlans = patientNursingCarePlanRepository.findAllByAdmission(adm.get());
+			}					
+		}
+		List<PatientNursingCarePlanModel> models = new ArrayList<>();
+		for(PatientNursingCarePlan l : patientNursingCarePlans) {
+			PatientNursingCarePlanModel model= new PatientNursingCarePlanModel();
+			model.setId(l.getId());
+			model.setNurse(l.getNurse());
+			model.setNursingDiagnosis(l.getNursingDiagnosis());
+			model.setExpectedOutcome(l.getExpectedOutcome());
+			model.setImplementation(l.getImplementation());
+			model.setEvaluation(l.getEvaluation());
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}		
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
+	}
+	
 	@PostMapping("/patients/delete_lab_test")
 	public ResponseEntity<Boolean>deleteLabTest(
 			@RequestParam Long id, 
@@ -1435,19 +1939,6 @@ public class PatientResource {
 		
 		Optional<PatientPaymentDetail> pd = patientPaymentDetailRepository.findByPatientBill(patientBill);
 		if(pd.isPresent() && pd.get().getStatus().equals("RECEIVED")) {
-			
-			//disable deleting a paid test first
-			//throw new InvalidOperationException("Can not delete a paid lab test, please contact system administrator");
-			
-			/*PatientCreditNote patientCreditNote = new PatientCreditNote();
-			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
-			patientCreditNote.setPatient(patientBill.getPatient());
-			patientCreditNote.setReference("Lab test canceled");
-			patientCreditNote.setStatus("PENDING");
-			patientCreditNote.setNo("NA");
-			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
-			patientCreditNote.setNo(patientCreditNote.getId().toString());
-			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);*/
 			
 			PatientCreditNote patientCreditNote = new PatientCreditNote();
 			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
@@ -1488,6 +1979,216 @@ public class PatientResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_lab_test").toUriString());
 		return ResponseEntity.created(uri).body(true);
 	}
+	
+	@PostMapping("/patients/delete_dressing_chart")
+	public ResponseEntity<Boolean>deleteDressingChart(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<PatientDressingChart> t = patientDressingChartRepository.findById(id);
+		if(t.isEmpty()) {
+			throw new NotFoundException("Record not found");
+		}
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		if(difference >= 24) {
+			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
+		}
+		
+		
+		PatientBill patientBill = patientBillRepository.findById(t.get().getPatientBill().getId()).get();
+		
+		Optional<PatientPaymentDetail> pd = patientPaymentDetailRepository.findByPatientBill(patientBill);
+		if(pd.isPresent() && pd.get().getStatus().equals("RECEIVED")) {
+			
+			PatientCreditNote patientCreditNote = new PatientCreditNote();
+			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
+			patientCreditNote.setPatient(pd.get().getPatientBill().getPatient());
+			patientCreditNote.setReference("Canceled lab test");
+			patientCreditNote.setStatus("PENDING");
+			patientCreditNote.setNo(patientCreditNoteService.requestPatientCreditNoteNo().getNo());
+			
+			patientCreditNote.setCreatedby(userService.getUserId(request));
+			patientCreditNote.setCreatedOn(dayService.getDayId());
+			patientCreditNote.setCreatedAt(dayService.getTimeStamp());
+			
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+		}
+		Optional<PatientInvoiceDetail> i = patientInvoiceDetailRepository.findByPatientBill(patientBill);
+		/**
+		 * If there is a patientInvoice detail associated with this patientBill, delete it
+		 */
+		if(i.isPresent()) {			
+			patientInvoiceDetailRepository.delete(i.get());
+			PatientInvoice patientInvoice = i.get().getPatientInvoice();
+			int j = 0;
+			for(PatientInvoiceDetail d : patientInvoice.getPatientInvoiceDetails()) {
+				j = j++;
+			}
+			if(j == 0) {
+				patientInvoiceRepository.delete(patientInvoice);
+			}			
+		}
+		if(pd.isPresent()) {
+			//disable deleting a paid test first
+			//throw new InvalidOperationException("Can not delete a paid lab test, please contact system administrator");
+			patientPaymentDetailRepository.delete(pd.get());
+		}
+		patientDressingChartRepository.delete(t.get());
+		patientBillRepository.delete(patientBill);		
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_dressing_chart").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
+	@PostMapping("/patients/delete_consumable_chart")
+	public ResponseEntity<Boolean>deleteConsumableChart(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<PatientConsumableChart> t = patientConsumableChartRepository.findById(id);
+		if(t.isEmpty()) {
+			throw new NotFoundException("Record not found");
+		}
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		if(difference >= 24) {
+			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
+		}
+		
+		PatientBill patientBill = patientBillRepository.findById(t.get().getPatientBill().getId()).get();
+		
+		Optional<PatientPaymentDetail> pd = patientPaymentDetailRepository.findByPatientBill(patientBill);
+		if(pd.isPresent() && pd.get().getStatus().equals("RECEIVED")) {
+			
+			PatientCreditNote patientCreditNote = new PatientCreditNote();
+			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
+			patientCreditNote.setPatient(pd.get().getPatientBill().getPatient());
+			patientCreditNote.setReference("Canceled lab test");
+			patientCreditNote.setStatus("PENDING");
+			patientCreditNote.setNo(patientCreditNoteService.requestPatientCreditNoteNo().getNo());
+			
+			patientCreditNote.setCreatedby(userService.getUserId(request));
+			patientCreditNote.setCreatedOn(dayService.getDayId());
+			patientCreditNote.setCreatedAt(dayService.getTimeStamp());
+			
+			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
+		}
+		Optional<PatientInvoiceDetail> i = patientInvoiceDetailRepository.findByPatientBill(patientBill);
+		/**
+		 * If there is a patientInvoice detail associated with this patientBill, delete it
+		 */
+		if(i.isPresent()) {			
+			patientInvoiceDetailRepository.delete(i.get());
+			PatientInvoice patientInvoice = i.get().getPatientInvoice();
+			int j = 0;
+			for(PatientInvoiceDetail d : patientInvoice.getPatientInvoiceDetails()) {
+				j = j++;
+			}
+			if(j == 0) {
+				patientInvoiceRepository.delete(patientInvoice);
+			}			
+		}
+		if(pd.isPresent()) {
+			//disable deleting a paid test first
+			//throw new InvalidOperationException("Can not delete a paid lab test, please contact system administrator");
+			patientPaymentDetailRepository.delete(pd.get());
+		}
+		patientConsumableChartRepository.delete(t.get());
+		patientBillRepository.delete(patientBill);		
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_dressing_chart").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
+	
+	@PostMapping("/patients/delete_observation_chart")
+	public ResponseEntity<Boolean>deleteObservationChart(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<PatientObservationChart> t = patientObservationChartRepository.findById(id);
+		if(t.isEmpty()) {
+			throw new NotFoundException("Record not found");
+		}
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		if(difference >= 24) {
+			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
+		}		
+		patientObservationChartRepository.delete(t.get());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_observation_chart").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
+	@PostMapping("/patients/delete_prescription_chart")
+	public ResponseEntity<Boolean>deletePrescriptionChart(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<PatientPrescriptionChart> t = patientPrescriptionChartRepository.findById(id);
+		if(t.isEmpty()) {
+			throw new NotFoundException("Record not found");
+		}
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		if(difference >= 24) {
+			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
+		}		
+		patientPrescriptionChartRepository.delete(t.get());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_prescription_chart").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
+	@PostMapping("/patients/delete_nursing_chart")
+	public ResponseEntity<Boolean>deleteNursingChart(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<PatientNursingChart> t = patientNursingChartRepository.findById(id);
+		if(t.isEmpty()) {
+			throw new NotFoundException("Record not found");
+		}
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		if(difference >= 24) {
+			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
+		}		
+		patientNursingChartRepository.delete(t.get());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_nursing_chart").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
+	@PostMapping("/patients/delete_nursing_progress_note")
+	public ResponseEntity<Boolean>deleteNursingProgressNote(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<PatientNursingProgressNote> t = patientNursingProgressNoteRepository.findById(id);
+		if(t.isEmpty()) {
+			throw new NotFoundException("Record not found");
+		}
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		if(difference >= 24) {
+			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
+		}		
+		patientNursingProgressNoteRepository.delete(t.get());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_nursing_progress_note").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
+	@PostMapping("/patients/delete_nursing_care_plan")
+	public ResponseEntity<Boolean>deleteNursingCarePlan(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<PatientNursingCarePlan> t = patientNursingCarePlanRepository.findById(id);
+		if(t.isEmpty()) {
+			throw new NotFoundException("Record not found");
+		}
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		if(difference >= 24) {
+			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
+		}		
+		patientNursingCarePlanRepository.delete(t.get());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/delete_nursing_care_plan").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
+	
 	
 	@PostMapping("/patients/radiologies/add_report")
 	public void addReport(

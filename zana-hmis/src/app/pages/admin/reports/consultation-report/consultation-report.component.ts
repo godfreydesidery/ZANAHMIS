@@ -6,14 +6,11 @@ import { AuthService } from 'src/app/auth.service';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 import { Workbook } from 'exceljs';
-import { formatDate } from '@angular/common';
 import { DataService } from 'src/app/services/data.service';
 
 import { HttpHeaders } from '@angular/common/http';
 import { OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { IPatient } from 'src/app/domain/patient';
 
 
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -29,7 +26,7 @@ const API_URL = environment.apiUrl;
   templateUrl: './consultation-report.component.html',
   styleUrls: ['./consultation-report.component.scss']
 })
-export class ConsultationReportComponent {
+export class ConsultationReportComponent implements OnInit {
 
   
   logo!    : any

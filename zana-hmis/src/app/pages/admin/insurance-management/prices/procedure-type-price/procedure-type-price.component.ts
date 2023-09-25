@@ -1,12 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
-import { IInsurancePlan } from 'src/app/domain/insurance-plan';
 import { IProcedureType } from 'src/app/domain/procedure-type';
-import { IProcedureTypeInsurancePlan } from 'src/app/domain/procedure-type-insurance-plan';
 import { IProcedureTypePrice } from 'src/app/domain/procedure-type-price';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';

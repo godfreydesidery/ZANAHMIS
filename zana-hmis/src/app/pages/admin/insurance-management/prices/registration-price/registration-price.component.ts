@@ -1,15 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IClinic } from 'src/app/domain/clinic';
 import { IRegistrationPrice } from 'src/app/domain/registration-price';
-import { IInsurancePlan } from 'src/app/domain/insurance-plan';
-import { IMedicine } from 'src/app/domain/medicine';
-import { IMedicineInsurancePlan } from 'src/app/domain/medicine-insurance-plan';
-import { IMedicinePrice } from 'src/app/domain/medicine-price';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 

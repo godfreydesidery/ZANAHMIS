@@ -27,8 +27,6 @@ import { IWorkingDiagnosis } from 'src/app/domain/working-diagnosis';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
-
-
 const API_URL = environment.apiUrl;
 
 @Component({

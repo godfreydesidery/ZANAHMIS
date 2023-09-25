@@ -3,8 +3,13 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.orbix.api.domain.Admission;
+import com.orbix.api.domain.Consultation;
+import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.PatientDressingChart;
 
 /**
@@ -12,5 +17,23 @@ import com.orbix.api.domain.PatientDressingChart;
  *
  */
 public interface PatientDressingChartRepository extends JpaRepository<PatientDressingChart, Long> {
+
+	/**
+	 * @param consultation
+	 * @return
+	 */
+	List<PatientDressingChart> findAllByConsultation(Consultation consultation);
+
+	/**
+	 * @param nonConsultation
+	 * @return
+	 */
+	List<PatientDressingChart> findAllByNonConsultation(NonConsultation nonConsultation);
+
+	/**
+	 * @param admission
+	 * @return
+	 */
+	List<PatientDressingChart> findAllByAdmission(Admission admission);
 
 }

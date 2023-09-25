@@ -6,8 +6,6 @@ import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IWard } from 'src/app/domain/ward';
 import { IWardBed } from 'src/app/domain/ward-bed';
-import { IWardCategory } from 'src/app/domain/ward-category';
-import { IWardType } from 'src/app/domain/ward-type';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 

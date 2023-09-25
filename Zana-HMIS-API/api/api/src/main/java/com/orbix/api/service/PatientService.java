@@ -14,7 +14,15 @@ import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
+import com.orbix.api.domain.Nurse;
 import com.orbix.api.domain.Patient;
+import com.orbix.api.domain.PatientConsumableChart;
+import com.orbix.api.domain.PatientDressingChart;
+import com.orbix.api.domain.PatientNursingCarePlan;
+import com.orbix.api.domain.PatientNursingChart;
+import com.orbix.api.domain.PatientNursingProgressNote;
+import com.orbix.api.domain.PatientObservationChart;
+import com.orbix.api.domain.PatientPrescriptionChart;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.Radiology;
@@ -34,11 +42,26 @@ public interface PatientService {
 	List<String> getSearchKeys();
 	Patient findBySearchKey(String code);
 	
-	LabTest saveLabTest(LabTest test, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> adm, HttpServletRequest request);
+	LabTest saveLabTest(LabTest test, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, HttpServletRequest request);
 	
-	Radiology saveRadiology(Radiology radio, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> adm, HttpServletRequest request);
+	Radiology saveRadiology(Radiology radio, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, HttpServletRequest request);
 	
-	Procedure saveProcedure(Procedure procedure, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> adm, HttpServletRequest request);
+	Procedure saveProcedure(Procedure procedure, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, HttpServletRequest request);
 	
-	Prescription savePrescription(Prescription prescription, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> adm, HttpServletRequest request);
+	Prescription savePrescription(Prescription prescription, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, HttpServletRequest request);
+	
+	PatientDressingChart savePatientDressingChart(PatientDressingChart chart, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request);
+	
+	PatientConsumableChart savePatientConsumableChart(PatientConsumableChart chart, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request);
+	
+	PatientObservationChart savePatientObservationChart(PatientObservationChart chart, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request);
+	
+	PatientPrescriptionChart savePatientPrescriptionChart(PatientPrescriptionChart chart, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request);
+	
+	PatientNursingChart savePatientNursingChart(PatientNursingChart chart, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request);
+	
+	PatientNursingProgressNote savePatientNursingProgressNote(PatientNursingProgressNote note, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request);
+	
+	PatientNursingCarePlan savePatientNursingCarePlan(PatientNursingCarePlan plan, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request);
+	
 }

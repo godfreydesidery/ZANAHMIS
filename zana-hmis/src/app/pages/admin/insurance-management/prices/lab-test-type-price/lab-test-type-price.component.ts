@@ -1,12 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
-import { IInsurancePlan } from 'src/app/domain/insurance-plan';
 import { ILabTestType } from 'src/app/domain/lab-test-type';
-import { ILabTestTypeInsurancePlan } from 'src/app/domain/lab-test-type-insurance-plan';
 import { ILabTestTypePrice } from 'src/app/domain/lab-test-type-price';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';

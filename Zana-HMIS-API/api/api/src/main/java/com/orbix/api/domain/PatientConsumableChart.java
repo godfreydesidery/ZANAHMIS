@@ -32,8 +32,8 @@ import lombok.NoArgsConstructor;
 @Data 
 @NoArgsConstructor 
 @AllArgsConstructor
-@Table(name = "patient_consumables")
-public class PatientConsumable {
+@Table(name = "patient_consumable_charts")
+public class PatientConsumableChart {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

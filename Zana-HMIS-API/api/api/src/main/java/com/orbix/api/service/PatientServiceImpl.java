@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.PatientBill;
+import com.orbix.api.domain.PatientConsumableChart;
+import com.orbix.api.domain.PatientDressingChart;
 import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.AdmissionBed;
 import com.orbix.api.domain.Clinic;
@@ -23,16 +25,24 @@ import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.CompanyProfile;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.ConsultationInsurancePlan;
+import com.orbix.api.domain.Consumable;
 import com.orbix.api.domain.DiagnosisType;
+import com.orbix.api.domain.Dressing;
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.PatientInvoice;
 import com.orbix.api.domain.PatientInvoiceDetail;
+import com.orbix.api.domain.PatientNursingCarePlan;
+import com.orbix.api.domain.PatientNursingChart;
+import com.orbix.api.domain.PatientNursingProgressNote;
+import com.orbix.api.domain.PatientObservationChart;
+import com.orbix.api.domain.PatientPrescriptionChart;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.LabTestTypeInsurancePlan;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.MedicineInsurancePlan;
 import com.orbix.api.domain.NonConsultation;
+import com.orbix.api.domain.Nurse;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
@@ -55,18 +65,28 @@ import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationInsurancePlanRepository;
 import com.orbix.api.repositories.ConsultationRepository;
+import com.orbix.api.repositories.ConsumableRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
+import com.orbix.api.repositories.DressingRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.PatientInvoiceDetailRepository;
 import com.orbix.api.repositories.PatientInvoiceRepository;
+import com.orbix.api.repositories.PatientNursingCarePlanRepository;
+import com.orbix.api.repositories.PatientNursingChartRepository;
+import com.orbix.api.repositories.PatientNursingProgressNoteRepository;
+import com.orbix.api.repositories.PatientObservationChartRepository;
+import com.orbix.api.repositories.PatientPrescriptionChartRepository;
 import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.LabTestTypeInsurancePlanRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.repositories.MedicineInsurancePlanRepository;
 import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
+import com.orbix.api.repositories.NurseRepository;
 import com.orbix.api.repositories.PatientBillRepository;
+import com.orbix.api.repositories.PatientConsumableChartRepository;
+import com.orbix.api.repositories.PatientDressingChartRepository;
 import com.orbix.api.repositories.PatientRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.ProcedureRepository;
@@ -129,6 +149,16 @@ public class PatientServiceImpl implements PatientService {
 	private final AdmissionBedRepository admissionBedRepository;
 	private final WardTypeInsurancePlanRepository wardTypeInsurancePlanRepository;
 	private final ClinicianRepository clinicianRepository;
+	private final DressingRepository dressingRepository;
+	private final NurseRepository nurseRepository;
+	private final PatientDressingChartRepository patientDressingChartRepository;
+	private final ConsumableRepository consumableRepository;
+	private final PatientConsumableChartRepository patientConsumableChartRepository;
+	private final PatientObservationChartRepository patientObservationChartRepository;
+	private final PatientPrescriptionChartRepository patientPrescriptionChartRepository;
+	private final PatientNursingChartRepository patientNursingChartRepository;
+	private final PatientNursingProgressNoteRepository patientNursingProgressNoteRepository;
+	private final PatientNursingCarePlanRepository patientNursingCarePlanRepository;
 	
 	@Override
 	public List<Patient> getAll() {
@@ -191,7 +221,11 @@ public class PatientServiceImpl implements PatientService {
 		regBill.setQty(1);
 		regBill.setBalance(regFee);
 		regBill.setDescription("Registration Fee"); 
-		regBill.setStatus("UNPAID");
+		if(regFee > 0) {
+			regBill.setStatus("UNPAID");
+		}else {
+			regBill.setStatus("VERIFIED");
+		}
 		regBill.setPatient(patient);
 		/**
 		 * Add forensic data to registration patientBill
@@ -226,7 +260,7 @@ public class PatientServiceImpl implements PatientService {
 		/**
 		 * For insurance covered patients, check 
 		 */
-		if(patient.getPaymentType().equalsIgnoreCase("INSURANCE")) {
+		if(patient.getPaymentType().equalsIgnoreCase("INSURANCE") && regFee > 0) {
 			/**
 			 * Validate card, if card not valid, throw error, if valid, proceed		
 			 */
@@ -306,6 +340,8 @@ public class PatientServiceImpl implements PatientService {
 			 * Set registration patientBill to COVERED status, after assigning it to insurance cover
 			 */
 			regBill.setStatus("COVERED");
+			regBill.setPaymentType("INSURANCE");
+			regBill.setMembershipNo(patient.getMembershipNo());
 			/**
 			 * Save registration patientBill
 			 */
@@ -497,7 +533,8 @@ public class PatientServiceImpl implements PatientService {
 			conBill.setPaid(consultationPricePlan.get().getConsultationFee());
 			conBill.setBalance(0);
 			conBill.setStatus("COVERED");
-			
+			conBill.setPaymentType("INSURANCE");
+			conBill.setMembershipNo(p.getMembershipNo());
 			conBill.setCreatedby(userService.getUser(request).getId());
 			conBill.setCreatedOn(dayService.getDay().getId());
 			conBill.setCreatedAt(dayService.getTimeStamp());
@@ -715,6 +752,8 @@ public class PatientServiceImpl implements PatientService {
 				patientBill.setPaid(labTestTypePricePlan.get().getPrice());
 				patientBill.setBalance(0);
 				patientBill.setStatus("COVERED");
+				patientBill.setPaymentType("INSURANCE");
+				patientBill.setMembershipNo(patient.getMembershipNo());
 				patientBill.setInsurancePlan(labTestTypePricePlan.get().getInsurancePlan());
 				patientBill = patientBillRepository.save(patientBill);
 								
@@ -930,6 +969,8 @@ public class PatientServiceImpl implements PatientService {
 				patientBill.setPaid(radiologyTypePricePlan.get().getPrice());
 				patientBill.setBalance(0);
 				patientBill.setStatus("COVERED");
+				patientBill.setPaymentType("INSURANCE");
+				patientBill.setMembershipNo(patient.getMembershipNo());
 				patientBill.setInsurancePlan(radiologyTypePricePlan.get().getInsurancePlan());
 				patientBill = patientBillRepository.save(patientBill);
 				
@@ -1156,6 +1197,8 @@ public class PatientServiceImpl implements PatientService {
 				patientBill.setPaid(procedureTypePricePlan.get().getPrice());
 				patientBill.setBalance(0);
 				patientBill.setStatus("COVERED");
+				patientBill.setPaymentType("INSURANCE");
+				patientBill.setMembershipNo(patient.getMembershipNo());
 				patientBill.setInsurancePlan(procedureTypePricePlan.get().getInsurancePlan());
 				patientBill = patientBillRepository.save(patientBill);
 				
@@ -1350,6 +1393,8 @@ public class PatientServiceImpl implements PatientService {
 				patientBill.setPaid(medicinePricePlan.get().getPrice() * prescription.getQty());
 				patientBill.setBalance(0);
 				patientBill.setStatus("COVERED");
+				patientBill.setPaymentType("INSURANCE");
+				patientBill.setMembershipNo(patient.getMembershipNo());
 				patientBill.setInsurancePlan(medicinePricePlan.get().getInsurancePlan());
 				patientBill = patientBillRepository.save(patientBill);
 				
@@ -1581,6 +1626,8 @@ public class PatientServiceImpl implements PatientService {
 				wardBedBill.setAmount(eligiblePlan.getPrice());
 				wardBedBill.setPaid(eligiblePlan.getPrice());
 				wardBedBill.setBalance(0);
+				wardBedBill.setPaymentType("INSURANCE");
+				wardBedBill.setMembershipNo(p.getMembershipNo());
 				wardBedBill.setStatus("COVERED");				
 				wardBedBill = patientBillRepository.save(wardBedBill);
 				
@@ -1774,5 +1821,648 @@ public class PatientServiceImpl implements PatientService {
 			}
 		}
 		return admission;
+	}
+
+	@Override
+	public PatientDressingChart savePatientDressingChart(PatientDressingChart chart, Optional<Consultation> c,
+			Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request) {
+		Optional<ProcedureType> pt = procedureTypeRepository.findById(chart.getProcedureType().getId());
+		if(pt.isEmpty()) {
+			throw new NotFoundException("Procedure type not found");
+		}
+		List<Dressing> dress = dressingRepository.findAllByProcedureType(pt.get());
+		if(dress.isEmpty()) {
+			throw new NotFoundException("Procedure type is not listed as dressing");
+		}		
+		if(n.isEmpty()) {
+			throw new NotFoundException("Nurse information not found");
+		}		
+		Patient patient = new Patient();
+		
+		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, procedure should not have more than two properties");
+		}		
+		if(c.isPresent() && nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, procedure should not have more than two properties");
+		}
+		if(c.isPresent() && !nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, procedure should not have more than two properties");
+		}
+		if(!c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, procedure should not have more than two properties");
+		}
+		if(!c.isPresent() && !nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, procedure should have one property");
+		}
+		if(c.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outpatients");
+		}
+		
+		if(nc.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outsiders");
+		}		
+		if(a.isPresent()) {
+			Admission adm;
+			if(a.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not be done. Admission not verified");
+			}else if(a.get().getStatus().equals("IN-PROCESS")) {
+				adm = a.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			
+			patient =a.get().getPatient();
+			chart.setAdmission(a.get());
+			chart.setNurse(n.get());
+		}	
+		chart.setProcedureType(pt.get());
+		
+		//dressingChart.setStatus("PENDING");
+		PatientBill patientBill = new PatientBill();
+		patientBill.setAmount(chart.getProcedureType().getPrice());
+		patientBill.setPaid(0);
+		patientBill.setBalance(chart.getProcedureType().getPrice());
+		patientBill.setQty(1);
+		patientBill.setDescription("Dressing: "+chart.getProcedureType().getName());
+		patientBill.setStatus("UNPAID");		
+		patientBill.setCreatedby(userService.getUser(request).getId());
+		patientBill.setCreatedOn(dayService.getDay().getId());
+		patientBill.setCreatedAt(dayService.getTimeStamp());
+		patientBill.setPatient(patient);
+		patientBill = patientBillRepository.save(patientBill);
+		
+		if(patient.getPaymentType().equals("INSURANCE") || a.isPresent() == true) {
+			
+			Optional<ProcedureTypeInsurancePlan> procedureTypePricePlan = procedureTypeInsurancePlanRepository.findByProcedureTypeAndInsurancePlanAndCovered(pt.get(), patient.getInsurancePlan(), true);
+			
+			if(procedureTypePricePlan.isPresent()) {
+				patientBill.setAmount(procedureTypePricePlan.get().getPrice());
+				patientBill.setPaid(procedureTypePricePlan.get().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("COVERED");
+				patientBill.setPaymentType("INSURANCE");
+				patientBill.setMembershipNo(patient.getMembershipNo());
+				patientBill.setInsurancePlan(procedureTypePricePlan.get().getInsurancePlan());
+				patientBill = patientBillRepository.save(patientBill);
+				
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
+				if(!inv.isPresent()) {
+					/**
+					 * If no pending patientInvoice
+					 */
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
+					patientInvoice.setStatus("PENDING");
+					
+					patientInvoice.setCreatedby(userService.getUser(request).getId());
+					patientInvoice.setCreatedOn(dayService.getDay().getId());
+					patientInvoice.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					/**
+					 * Add lab test patientBill claim to patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Dressing: "+chart.getProcedureType().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}else {
+					/**
+					 * If there is a .pending patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Dressing: "+chart.getProcedureType().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}
+			}else if(a.isPresent() == true) {
+				
+				patientBill.setAmount(chart.getProcedureType().getPrice());
+				patientBill.setPaid(chart.getProcedureType().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("VERIFIED");
+				patientBill = patientBillRepository.save(patientBill);
+				
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(patient, null,"PENDING");
+				if(!inv.isPresent()) {
+					/**
+					 * If no pending patientInvoice
+					 */
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(null);
+					patientInvoice.setStatus("PENDING");
+					
+					patientInvoice.setCreatedby(userService.getUser(request).getId());
+					patientInvoice.setCreatedOn(dayService.getDay().getId());
+					patientInvoice.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					/**
+					 * Add lab test patientBill claim to patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Dressing: "+chart.getProcedureType().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}else {
+					/**
+					 * If there is a .pending patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Dressing: "+chart.getProcedureType().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}
+			}
+		}
+		chart.setPatient(patient);
+		chart.setPatientBill(patientBill);
+		return patientDressingChartRepository.save(chart);	
+		
+	}
+
+	@Override
+	public PatientConsumableChart savePatientConsumableChart(PatientConsumableChart chart, Optional<Consultation> c,
+			Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request) {
+		Optional<Medicine> med = medicineRepository.findById(chart.getMedicine().getId());
+		if(med.isEmpty()) {
+			throw new NotFoundException("Medicine not found");
+		}
+		List<Consumable> consum = consumableRepository.findAllByMedicine(med.get());
+		if(consum.isEmpty()) {
+			throw new NotFoundException("Medicine is not listed as consumable");
+		}		
+		if(n.isEmpty()) {
+			throw new NotFoundException("Nurse information not found");
+		}		
+		Patient patient = new Patient();
+		
+		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}		
+		if(c.isPresent() && nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(c.isPresent() && !nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && !nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should have one property");
+		}
+		if(c.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outpatients");
+		}
+		
+		if(nc.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outsiders");
+		}		
+		if(a.isPresent()) {
+			Admission adm;
+			if(a.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not be done. Admission not verified");
+			}else if(a.get().getStatus().equals("IN-PROCESS")) {
+				adm = a.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			
+			patient =a.get().getPatient();
+			chart.setAdmission(a.get());
+			chart.setNurse(n.get());
+		}		
+		chart.setMedicine(med.get());
+		
+		//dressingChart.setStatus("PENDING");
+		PatientBill patientBill = new PatientBill();
+		patientBill.setAmount(chart.getMedicine().getPrice());
+		patientBill.setPaid(0);
+		patientBill.setBalance(chart.getMedicine().getPrice());
+		patientBill.setQty(1);
+		patientBill.setDescription("Consumable: "+chart.getMedicine().getName());
+		patientBill.setStatus("UNPAID");		
+		patientBill.setCreatedby(userService.getUser(request).getId());
+		patientBill.setCreatedOn(dayService.getDay().getId());
+		patientBill.setCreatedAt(dayService.getTimeStamp());
+		patientBill.setPatient(patient);
+		patientBill = patientBillRepository.save(patientBill);
+		
+		if(patient.getPaymentType().equals("INSURANCE") || a.isPresent() == true) {
+			
+			Optional<MedicineInsurancePlan> medicinePricePlan = medicineInsurancePlanRepository.findByMedicineAndInsurancePlanAndCovered(med.get(), patient.getInsurancePlan(), true);
+			
+			if(medicinePricePlan.isPresent()) {
+				patientBill.setAmount(medicinePricePlan.get().getPrice());
+				patientBill.setPaid(medicinePricePlan.get().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("COVERED");
+				patientBill.setPaymentType("INSURANCE");
+				patientBill.setMembershipNo(patient.getMembershipNo());
+				patientBill.setInsurancePlan(medicinePricePlan.get().getInsurancePlan());
+				patientBill = patientBillRepository.save(patientBill);
+				
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
+				if(!inv.isPresent()) {
+					/**
+					 * If no pending patientInvoice
+					 */
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
+					patientInvoice.setStatus("PENDING");
+					
+					patientInvoice.setCreatedby(userService.getUser(request).getId());
+					patientInvoice.setCreatedOn(dayService.getDay().getId());
+					patientInvoice.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					/**
+					 * Add lab test patientBill claim to patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Consumable: "+chart.getMedicine().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}else {
+					/**
+					 * If there is a .pending patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Consumable: "+chart.getMedicine().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}
+			}else if(a.isPresent() == true) {
+				
+				patientBill.setAmount(chart.getMedicine().getPrice());
+				patientBill.setPaid(chart.getMedicine().getPrice());
+				patientBill.setBalance(0);
+				patientBill.setStatus("VERIFIED");
+				patientBill = patientBillRepository.save(patientBill);
+				
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(patient, null,"PENDING");
+				if(!inv.isPresent()) {
+					/**
+					 * If no pending patientInvoice
+					 */
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(null);
+					patientInvoice.setStatus("PENDING");
+					
+					patientInvoice.setCreatedby(userService.getUser(request).getId());
+					patientInvoice.setCreatedOn(dayService.getDay().getId());
+					patientInvoice.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					/**
+					 * Add lab test patientBill claim to patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Consumable: "+chart.getMedicine().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}else {
+					/**
+					 * If there is a .pending patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(patientBill);
+					patientInvoiceDetail.setAmount(patientBill.getAmount());
+					patientInvoiceDetail.setDescription("Consumable: "+chart.getMedicine().getName());
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.save(patientInvoiceDetail);
+				}
+			}
+		}
+		chart.setPatient(patient);
+		chart.setPatientBill(patientBill);
+		return patientConsumableChartRepository.save(chart);			
+	}
+
+	@Override
+	public PatientObservationChart savePatientObservationChart(PatientObservationChart chart, Optional<Consultation> c,
+			Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request) {
+		if(n.isEmpty()) {
+			throw new NotFoundException("Nurse information not found");
+		}
+		
+		Patient patient = new Patient();
+		
+		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}		
+		if(c.isPresent() && nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(c.isPresent() && !nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && !nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should have one property");
+		}
+		if(c.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outpatients");
+		}		
+		if(nc.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outsiders");
+		}		
+		if(a.isPresent()) {
+			Admission adm;
+			if(a.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not be done. Admission not verified");
+			}else if(a.get().getStatus().equals("IN-PROCESS")) {
+				adm = a.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			
+			patient =a.get().getPatient();
+			chart.setAdmission(a.get());
+			chart.setNurse(n.get());
+		}		
+		
+		chart.setPatient(patient);
+		return patientObservationChartRepository.save(chart);
+	}
+
+	@Override
+	public PatientPrescriptionChart savePatientPrescriptionChart(PatientPrescriptionChart chart,
+			Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n,
+			HttpServletRequest request) {
+		if(n.isEmpty()) {
+			throw new NotFoundException("Nurse information not found");
+		}
+		
+		Optional<Prescription> p = prescriptionRepository.findById(chart.getPrescription().getId());
+		if(p.isEmpty()) {
+			throw new NotFoundException("Medical prescription detail not found");
+		}		
+		Patient patient = new Patient();
+		
+		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}		
+		if(c.isPresent() && nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(c.isPresent() && !nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && !nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should have one property");
+		}
+		if(c.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outpatients");
+		}		
+		if(nc.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outsiders");
+		}		
+		if(a.isPresent()) {
+			if(a.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not be done. Admission not verified");
+			}else if(a.get().getStatus().equals("IN-PROCESS")) {
+				//continue
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			
+			patient =a.get().getPatient();
+			chart.setAdmission(a.get());
+			chart.setNurse(n.get());
+		}		
+		chart.setPatient(patient);
+		return patientPrescriptionChartRepository.save(chart);
+	}
+
+	@Override
+	public PatientNursingChart savePatientNursingChart(PatientNursingChart chart, Optional<Consultation> c,
+			Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request) {
+		if(n.isEmpty()) {
+			throw new NotFoundException("Nurse information not found");
+		}
+		
+		Patient patient = new Patient();
+		
+		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}		
+		if(c.isPresent() && nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(c.isPresent() && !nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && !nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should have one property");
+		}
+		if(c.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outpatients");
+		}		
+		if(nc.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outsiders");
+		}		
+		if(a.isPresent()) {
+			Admission adm;
+			if(a.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not be done. Admission not verified");
+			}else if(a.get().getStatus().equals("IN-PROCESS")) {
+				adm = a.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			
+			patient =a.get().getPatient();
+			chart.setAdmission(a.get());
+			chart.setNurse(n.get());
+		}		
+		
+		chart.setPatient(patient);
+		return patientNursingChartRepository.save(chart);
+	}
+
+	@Override
+	public PatientNursingProgressNote savePatientNursingProgressNote(PatientNursingProgressNote note,
+			Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n,
+			HttpServletRequest request) {
+		if(n.isEmpty()) {
+			throw new NotFoundException("Nurse information not found");
+		}		
+		Patient patient = new Patient();
+		
+		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}		
+		if(c.isPresent() && nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(c.isPresent() && !nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && !nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should have one property");
+		}
+		if(c.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outpatients");
+		}		
+		if(nc.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outsiders");
+		}		
+		if(a.isPresent()) {
+			Admission adm;
+			if(a.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not be done. Admission not verified");
+			}else if(a.get().getStatus().equals("IN-PROCESS")) {
+				adm = a.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			
+			patient =a.get().getPatient();
+			note.setAdmission(a.get());
+			note.setNurse(n.get());
+		}		
+		
+		note.setPatient(patient);
+		return patientNursingProgressNoteRepository.save(note);
+	}
+	
+	@Override
+	public PatientNursingCarePlan savePatientNursingCarePlan(PatientNursingCarePlan plan,
+			Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n,
+			HttpServletRequest request) {
+		if(n.isEmpty()) {
+			throw new NotFoundException("Nurse information not found");
+		}		
+		Patient patient = new Patient();
+		
+		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}		
+		if(c.isPresent() && nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(c.isPresent() && !nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && nc.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should not have more than two properties");
+		}
+		if(!c.isPresent() && !nc.isPresent() && !a.isPresent()) {
+			throw new InvalidOperationException("Could not save, chart should have one property");
+		}
+		if(c.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outpatients");
+		}		
+		if(nc.isPresent()) {
+			throw new InvalidOperationException("Operation not available for outsiders");
+		}		
+		if(a.isPresent()) {
+			Admission adm;
+			if(a.get().getStatus().equals("PENDING")) {
+				throw new InvalidOperationException("Could not be done. Admission not verified");
+			}else if(a.get().getStatus().equals("IN-PROCESS")) {
+				adm = a.get();
+			}else {
+				throw new InvalidOperationException("Could not be done. Patient already signed off");
+			}
+			
+			patient =a.get().getPatient();
+			plan.setAdmission(a.get());
+			plan.setNurse(n.get());
+		}		
+		
+		plan.setPatient(patient);
+		return patientNursingCarePlanRepository.save(plan);
 	}
 }

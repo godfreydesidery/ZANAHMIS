@@ -35,8 +35,7 @@ public class PatientPrescriptionChart {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(nullable = false)
-	private double qty;
+	private String dosage;
 	private String output;
 	private String remark;
 	

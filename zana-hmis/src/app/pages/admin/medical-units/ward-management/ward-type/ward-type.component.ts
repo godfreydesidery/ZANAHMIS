@@ -14,7 +14,7 @@ const API_URL = environment.apiUrl;
   templateUrl: './ward-type.component.html',
   styleUrls: ['./ward-type.component.scss']
 })
-export class WardTypeComponent {
+export class WardTypeComponent implements OnInit {
 
 
   id              : any

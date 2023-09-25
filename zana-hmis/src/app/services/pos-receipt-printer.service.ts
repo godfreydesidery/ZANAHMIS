@@ -114,6 +114,7 @@ export class PosReceiptPrinterService {
 
     const docDefinition = {
       header: '',
+      
       //watermark : { text : '', color: 'blue', opacity: 0.1, bold: true, italics: false },
         content : [
           {
@@ -127,7 +128,7 @@ export class PosReceiptPrinterService {
               headerRows : 0,
               widths : [210],
               body : [
-                [{text : '==============================', alignment : 'center'}],
+                [{text : '=============================='}],
               ]
             }
           }, 
@@ -155,14 +156,15 @@ export class PosReceiptPrinterService {
               headerRows : 0,
               widths : [210],
               body : [
-                [{text : '==============================', alignment : 'center'}],
+                [{text : '=============================='}],
                 [{text : 'Served By : '+ localStorage.getItem('user-name'), fontSize : 9, alignment : 'left'}],
                 [{text : '@Orbix Systems', fontSize : 10, bold : true, alignment : 'center'}],
                 [{text : '***End of Receipt***', fontSize : 9, alignment : 'center'}]
               ]
             }
           },                    
-        ]     
+        ],
+        pageMargins: 10,     
       }
       const win = window.open('', "tempWinForPdf")
       pdfMake.createPdf(docDefinition).print({}, win)

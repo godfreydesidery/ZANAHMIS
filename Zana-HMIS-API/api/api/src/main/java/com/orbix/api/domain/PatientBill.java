@@ -51,6 +51,9 @@ public class PatientBill {
 	private double balance;
 	@NotBlank
 	private String status;
+	
+	private String paymentType = "CASH";//CASH,DEBIT CARD, CREDIT CARD, MOBILE, INSURANCE
+	private String membershipNo;
 		
 	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "patient_id", nullable = false , updatable = false)
