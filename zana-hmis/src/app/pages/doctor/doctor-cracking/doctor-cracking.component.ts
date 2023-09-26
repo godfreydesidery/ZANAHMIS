@@ -1,6 +1,8 @@
-import { Time } from '@angular/common';
+import { CommonModule, Time } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
@@ -24,6 +26,9 @@ import { IWardBed } from 'src/app/domain/ward-bed';
 import { IWardCategory } from 'src/app/domain/ward-category';
 import { IWardType } from 'src/app/domain/ward-type';
 import { IWorkingDiagnosis } from 'src/app/domain/working-diagnosis';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { ShowDateTimePipe } from 'src/app/pipes/date_time.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -32,7 +37,17 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-doctor-cracking',
   templateUrl: './doctor-cracking.component.html',
-  styleUrls: ['./doctor-cracking.component.scss']
+  styleUrls: ['./doctor-cracking.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    ShowDateTimePipe,
+    RouterLink
+  ],
 })
 export class DoctorCrackingComponent implements OnInit {
 

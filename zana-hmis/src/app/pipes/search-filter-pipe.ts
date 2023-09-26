@@ -1,7 +1,9 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Injectable, Pipe, PipeTransform } from '@angular/core';
 @Pipe({
+    standalone : true,
     name: 'searchFilter'
 })
+@Injectable()
 export class SearchFilterPipe implements PipeTransform {
     transform(value : any, args? : any) : any {
         if (!value) return null;

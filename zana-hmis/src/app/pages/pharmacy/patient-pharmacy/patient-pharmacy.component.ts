@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
@@ -11,6 +11,10 @@ import { IPatient } from 'src/app/domain/patient';
 import { IPatientBill } from 'src/app/domain/patient-bill';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 
 const API_URL = environment.apiUrl;
 
@@ -18,7 +22,16 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-patient-pharmacy',
   templateUrl: './patient-pharmacy.component.html',
-  styleUrls: ['./patient-pharmacy.component.scss']
+  styleUrls: ['./patient-pharmacy.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    RouterLink
+  ],
 })
 export class PatientPharmacyComponent {
 

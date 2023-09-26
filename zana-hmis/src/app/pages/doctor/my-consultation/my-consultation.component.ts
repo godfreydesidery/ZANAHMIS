@@ -1,11 +1,16 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IConsultation } from 'src/app/domain/consultation';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { ShowDateTimePipe } from 'src/app/pipes/date_time.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -13,7 +18,17 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-my-consultation',
   templateUrl: './my-consultation.component.html',
-  styleUrls: ['./my-consultation.component.scss']
+  styleUrls: ['./my-consultation.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    ShowDateTimePipe,
+    RouterLink
+  ],
 })
 export class MyConsultationComponent implements OnInit {
 

@@ -1,6 +1,8 @@
-import { Time } from '@angular/common';
+import { CommonModule, Time } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
@@ -16,6 +18,9 @@ import { IProcedure } from 'src/app/domain/procedure';
 import { IProcedureType } from 'src/app/domain/procedure-type';
 import { IRadiology } from 'src/app/domain/radiology';
 import { IRadiologyType } from 'src/app/domain/radiology-type';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { ShowDateTimePipe } from 'src/app/pipes/date_time.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -24,7 +29,17 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-patient-register',
   templateUrl: './patient-register.component.html',
-  styleUrls: ['./patient-register.component.scss']
+  styleUrls: ['./patient-register.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    ShowDateTimePipe,
+    RouterLink
+  ],
 })
 export class PatientRegisterComponent implements OnInit {
 

@@ -1,10 +1,16 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { Component, NgModule, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 import { AuthService } from 'src/app/auth.service';
 import { IRole } from 'src/app/domain/role';
 import { IUser } from 'src/app/domain/user';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -12,6 +18,14 @@ const API_URL = environment.apiUrl;
 
 @Component({
   selector: 'app-user-profile',
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    RouterLink
+  ],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss']
 })
@@ -24,7 +38,7 @@ export class UserProfileComponent implements OnInit {
   public middleNameLocked   : boolean = true
   public lastNameLocked     : boolean = true
   public aliasLocked        : boolean = true
-
+  
   public enableSearch : boolean = false
   public enableDelete : boolean = false
   public enableSave   : boolean = false

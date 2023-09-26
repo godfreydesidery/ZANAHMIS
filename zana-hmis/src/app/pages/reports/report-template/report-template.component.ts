@@ -6,7 +6,7 @@ import { AuthService } from 'src/app/auth.service';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 import { Workbook } from 'exceljs';
-import { formatDate } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { DataService } from 'src/app/services/data.service';
 
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -20,6 +20,8 @@ const API_URL = environment.apiUrl;
 
 @Component({
   selector: 'app-report-template',
+  standalone : true,
+  imports : [CommonModule],
   templateUrl: './report-template.component.html',
   styleUrls: ['./report-template.component.scss']
 })

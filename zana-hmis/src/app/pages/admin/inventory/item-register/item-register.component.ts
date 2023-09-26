@@ -1,9 +1,15 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 import { AuthService } from 'src/app/auth.service';
 import { IItem } from 'src/app/domain/item';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -11,6 +17,14 @@ const API_URL = environment.apiUrl;
 
 @Component({
   selector: 'app-item-register',
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    RouterLink
+  ],
   templateUrl: './item-register.component.html',
   styleUrls: ['./item-register.component.scss']
 })

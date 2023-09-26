@@ -1,16 +1,30 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IRole } from 'src/app/domain/role';
 import { environment } from 'src/environments/environment';
 import { IPrivilege } from 'src/app/domain/privilege';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from 'src/app/app-routing.module';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+import { RouterLink } from '@angular/router';
 
 const API_URL = environment.apiUrl;
 
 @Component({
   selector: 'app-access-management',
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    RouterLink
+  ],
   templateUrl: './access-management.component.html',
   styleUrls: ['./access-management.component.scss']
 })

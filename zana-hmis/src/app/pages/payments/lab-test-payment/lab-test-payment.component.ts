@@ -10,6 +10,13 @@ import { ReceiptItem } from 'src/app/domain/receipt-item';
 import { PosReceiptPrinterService } from 'src/app/services/pos-receipt-printer.service';
 import { IPatientBill } from 'src/app/domain/patient-bill';
 import { IPatient } from 'src/app/domain/patient';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+import { ShowTimePipe } from 'src/app/pipes/show_time.pipe';
+import { ShowUserPipe } from 'src/app/pipes/show_user.pipe';
+import { RouterLink } from '@angular/router';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -18,7 +25,18 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-lab-test-payment',
   templateUrl: './lab-test-payment.component.html',
-  styleUrls: ['./lab-test-payment.component.scss']
+  styleUrls: ['./lab-test-payment.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    ShowUserPipe,
+    ShowTimePipe,
+    RouterLink
+  ], 
 })
 export class LabTestPaymentComponent implements OnInit {
   //searchKeysToDisplay : string[] = []

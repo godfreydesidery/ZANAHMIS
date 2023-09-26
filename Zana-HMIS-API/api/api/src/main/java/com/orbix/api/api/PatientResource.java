@@ -2324,18 +2324,6 @@ public class PatientResource {
 		
 		Optional<PatientPaymentDetail> pd = patientPaymentDetailRepository.findByPatientBill(patientBill);
 		if(pd.isPresent() && pd.get().getStatus().equals("RECEIVED")) {
-			//disable deleting a paid radiology first, in the mean time
-			//throw new InvalidOperationException("Can not delete a paid lab test, please contact system administrator");
-			
-			/*PatientCreditNote patientCreditNote = new PatientCreditNote();
-			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());
-			patientCreditNote.setPatient(patientBill.getPatient());
-			patientCreditNote.setReference("Radiology canceled");
-			patientCreditNote.setStatus("PENDING");
-			patientCreditNote.setNo("NA");
-			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);
-			patientCreditNote.setNo(patientCreditNote.getId().toString());
-			patientCreditNote = patientCreditNoteRepository.save(patientCreditNote);*/
 			
 			PatientCreditNote patientCreditNote = new PatientCreditNote();
 			patientCreditNote.setAmount(pd.get().getPatientBill().getAmount());

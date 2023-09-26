@@ -22,5 +22,11 @@ public interface ConsumableRepository extends JpaRepository<Consumable, Long> {
 	 */
 	List<Consumable> findAllByMedicine(Medicine medicine);
 
+	/**
+	 * @param medicine
+	 * @return
+	 */
+	Consumable findByMedicine(Medicine medicine);
+
 
 }

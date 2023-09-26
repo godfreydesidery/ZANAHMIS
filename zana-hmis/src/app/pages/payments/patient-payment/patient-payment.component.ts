@@ -1,10 +1,17 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IPatient } from 'src/app/domain/patient';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+import { ShowTimePipe } from 'src/app/pipes/show_time.pipe';
+import { ShowUserPipe } from 'src/app/pipes/show_user.pipe';
 import { environment } from 'src/environments/environment';
 
 const API_URL = environment.apiUrl;
@@ -12,7 +19,18 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-patient-payment',
   templateUrl: './patient-payment.component.html',
-  styleUrls: ['./patient-payment.component.scss']
+  styleUrls: ['./patient-payment.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    ShowUserPipe,
+    ShowTimePipe,
+    RouterLink
+  ], 
 })
 export class PatientPaymentComponent implements OnInit {
   id : any

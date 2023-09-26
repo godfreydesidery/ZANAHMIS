@@ -1,5 +1,8 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
@@ -8,6 +11,8 @@ import { IClinician } from 'src/app/domain/clinician';
 import { IItem } from 'src/app/domain/item';
 import { IItemMedicineCoefficient } from 'src/app/domain/item-medicine-coefficient';
 import { IMedicine } from 'src/app/domain/medicine';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -16,7 +21,16 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-item-medicine-conversion-coefficient',
   templateUrl: './item-medicine-conversion-coefficient.component.html',
-  styleUrls: ['./item-medicine-conversion-coefficient.component.scss']
+  styleUrls: ['./item-medicine-conversion-coefficient.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    RouterLink
+  ],
 })
 export class ItemMedicineConversionCoefficientComponent {
 

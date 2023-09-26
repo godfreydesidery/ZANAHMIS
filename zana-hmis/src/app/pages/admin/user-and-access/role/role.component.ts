@@ -1,9 +1,15 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 import { AuthService } from 'src/app/auth.service';
 import { IRole } from 'src/app/domain/role';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -11,6 +17,14 @@ const API_URL = environment.apiUrl;
 
 @Component({
   selector: 'app-role',
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    RouterLink
+  ],
   templateUrl: './role.component.html',
   styleUrls: ['./role.component.scss']
 })

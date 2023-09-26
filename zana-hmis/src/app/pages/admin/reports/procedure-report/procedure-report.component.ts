@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { AuthService } from 'src/app/auth.service';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
@@ -15,6 +15,12 @@ import { finalize } from 'rxjs';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import { IProcedure } from 'src/app/domain/procedure';
 import { ShowDateOnlyPipe } from 'src/app/pipes/date.pipe';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from 'src/app/app-routing.module';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+import { RouterLink } from '@angular/router';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -22,6 +28,15 @@ const API_URL = environment.apiUrl;
 
 @Component({
   selector: 'app-procedure-report',
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    ShowDateOnlyPipe,
+    RouterLink
+  ],
   templateUrl: './procedure-report.component.html',
   styleUrls: ['./procedure-report.component.scss']
 })

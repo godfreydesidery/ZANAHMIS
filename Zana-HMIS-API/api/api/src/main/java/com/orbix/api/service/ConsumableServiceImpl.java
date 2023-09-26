@@ -56,7 +56,7 @@ public class ConsumableServiceImpl implements ConsumableService {
 		}
 		consumable.setMedicine(md.get());
 		
-		consumable.setCreatedby(userService.getUser(request).getId());
+		consumable.setCreatedBy(userService.getUser(request).getId());
 		consumable.setCreatedOn(dayService.getDay().getId());
 		consumable.setCreatedAt(dayService.getTimeStamp());
 		

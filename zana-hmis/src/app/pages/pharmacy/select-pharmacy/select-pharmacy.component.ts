@@ -1,9 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IPharmacy } from 'src/app/domain/pharmacy';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -12,7 +17,16 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-select-pharmacy',
   templateUrl: './select-pharmacy.component.html',
-  styleUrls: ['./select-pharmacy.component.scss']
+  styleUrls: ['./select-pharmacy.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    RouterLink
+  ],
 })
 export class SelectPharmacyComponent {
 

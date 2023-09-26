@@ -1,10 +1,17 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IPatient } from 'src/app/domain/patient';
 import { ReceiptItem } from 'src/app/domain/receipt-item';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+import { ShowTimePipe } from 'src/app/pipes/show_time.pipe';
+import { ShowUserPipe } from 'src/app/pipes/show_user.pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { PosReceiptPrinterService } from 'src/app/services/pos-receipt-printer.service';
 import { environment } from 'src/environments/environment';
@@ -13,7 +20,18 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-radiology-payment',
   templateUrl: './radiology-payment.component.html',
-  styleUrls: ['./radiology-payment.component.scss']
+  styleUrls: ['./radiology-payment.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    ShowUserPipe,
+    ShowTimePipe,
+    RouterLink
+  ], 
 })
 export class RadiologyPaymentComponent implements OnInit {
   //searchKeys : string[] = []

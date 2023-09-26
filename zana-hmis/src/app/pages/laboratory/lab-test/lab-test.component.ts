@@ -1,5 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -7,6 +9,8 @@ import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { ILabTest } from 'src/app/domain/lab-test';
 import { IPatient } from 'src/app/domain/patient';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -16,7 +20,15 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-lab-test',
   templateUrl: './lab-test.component.html',
-  styleUrls: ['./lab-test.component.scss']
+  styleUrls: ['./lab-test.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe
+  ],
 })
 export class LabTestComponent implements OnInit {
 

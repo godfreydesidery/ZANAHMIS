@@ -1,9 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { ILabTest } from 'src/app/domain/lab-test';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { ShowDateTimePipe } from 'src/app/pipes/date_time.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -14,7 +20,17 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-lab-test-history',
   templateUrl: './lab-test-history.component.html',
-  styleUrls: ['./lab-test-history.component.scss']
+  styleUrls: ['./lab-test-history.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    ShowDateTimePipe,
+    RouterLink
+  ],
 })
 export class LabTestHistoryComponent {
   

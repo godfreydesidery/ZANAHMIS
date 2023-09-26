@@ -7,6 +7,13 @@ import { IPatient } from 'src/app/domain/patient';
 import { environment } from 'src/environments/environment';
 
 import * as pdfMake from 'pdfmake/build/pdfmake';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+import { ShowTimePipe } from 'src/app/pipes/show_time.pipe';
+import { ShowUserPipe } from 'src/app/pipes/show_user.pipe';
+import { RouterLink } from '@angular/router';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -14,7 +21,18 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-investigation-payment',
   templateUrl: './investigation-payment.component.html',
-  styleUrls: ['./investigation-payment.component.scss']
+  styleUrls: ['./investigation-payment.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    ShowUserPipe,
+    ShowTimePipe,
+    RouterLink
+  ], 
 })
 export class InvestigationPaymentComponent implements OnInit {
   searchKeys : string[] = []

@@ -1,11 +1,11 @@
 import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
+    standalone : true,
     name: 'dateOnly'
 })
 export class ShowDateOnlyPipe implements PipeTransform {
 
     transform(value: Date): string {
-
 
         var str = value.toString()
         var str1 = str.substring(0, str.length - 9)

@@ -1,11 +1,17 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 import { AuthService } from 'src/app/auth.service';
 import { IRadiologyType } from 'src/app/domain/radiology-type';
 import { IRadiologyTypePrice } from 'src/app/domain/radiology-type-price';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -13,6 +19,14 @@ const API_URL = environment.apiUrl;
 
 @Component({
   selector: 'app-radiology-type-price',
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    RouterLink
+  ],
   templateUrl: './radiology-type-price.component.html',
   styleUrls: ['./radiology-type-price.component.scss']
 })

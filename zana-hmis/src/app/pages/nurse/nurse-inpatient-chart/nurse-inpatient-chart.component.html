@@ -26,12 +26,12 @@
                         <div class="col-sm-12">
                             <div class="jumbotron jumbotron-fluid">
                                 <div class="container container-fluid" style="overflow: auto; width: 100%;">
-                                    <h4 class="text-primary" style="text-align: center;">To Pharmacy</h4>
+                                    <h4 class="text-primary" style="text-align: center;">Prescriptions</h4>
                                     <hr>
                                     <table class="table table-responsive table-small table-bordered">
                                         <thead>
                                             <tr style="font-weight: bold;">
-                                                <td>#</td>
+                                                <td>ID</td>
                                                 <td>Doctor</td>
                                                 <td>Drug Name</td>
                                                 <td>Dosage</td>
@@ -39,22 +39,22 @@
                                                 <td>Route</td>
                                                 <td>Days</td>
                                                 <td>Qty</td>
-                                                <td>Instructions</td>
+                                                <td>Status</td>
                                                 <td>Date</td>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                            <tr *ngFor="let p of prescriptions">
+                                                <td>{{p.id}}</td>
+                                                <td>{{p?.created | showUser}}</td>
+                                                <td>{{p?.medicine?.name}}</td>
+                                                <td>{{p?.dosage}}</td>
+                                                <td>{{p?.frequency}}</td>
+                                                <td>{{p?.route}}</td>
+                                                <td>{{p?.days}}</td>
+                                                <td>{{p?.qty}}</td>
+                                                <td>{{p?.status}}</td>
+                                                <td>{{p?.created | showTime}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -97,11 +97,15 @@
                                             <table class="table table-responsive table-striped table-bordered table-small">
                                                 <thead>
                                                     <tr style="font-weight: bold;">
+                                                        <td>ID</td>
                                                         <td>Procedure</td>
+                                                        <td></td>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
+                                                    <tr *ngFor="let p of procedures">
+                                                        <td>{{p?.id}}</td>
+                                                        <td>{{p?.procedureType?.name}}</td>
                                                         <td></td>
                                                     </tr>
                                                 </tbody>

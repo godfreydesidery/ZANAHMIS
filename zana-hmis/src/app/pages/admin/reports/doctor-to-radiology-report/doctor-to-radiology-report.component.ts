@@ -1,17 +1,17 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { AuthService } from 'src/app/auth.service';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 import { Workbook } from 'exceljs';
-import { formatDate } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { DataService } from 'src/app/services/data.service';
 
 import { HttpHeaders } from '@angular/common/http';
 import { OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { IPatient } from 'src/app/domain/patient';
 
@@ -19,6 +19,10 @@ import { IPatient } from 'src/app/domain/patient';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import { IRadiology } from 'src/app/domain/radiology';
 import { ShowDateOnlyPipe } from 'src/app/pipes/date.pipe';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from 'src/app/app-routing.module';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -26,6 +30,15 @@ const API_URL = environment.apiUrl;
 
 @Component({
   selector: 'app-doctor-to-radiology-report',
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    ShowDateOnlyPipe,
+    RouterLink
+  ],
   templateUrl: './doctor-to-radiology-report.component.html',
   styleUrls: ['./doctor-to-radiology-report.component.scss']
 })

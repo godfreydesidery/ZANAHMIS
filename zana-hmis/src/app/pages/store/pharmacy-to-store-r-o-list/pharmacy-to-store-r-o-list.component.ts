@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
@@ -14,6 +14,10 @@ import { environment } from 'src/environments/environment';
 import { IPharmacyToStoreRO } from 'src/app/domain/pharmacy-to-store-r-o';
 import { IPharmacyToStoreRODetail } from 'src/app/domain/pharmacy-to-store-r-o-detail';
 import { IStoreToPharmacyTO } from 'src/app/domain/store-to-pharmacy-t-o';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 
 const API_URL = environment.apiUrl;
 
@@ -21,7 +25,16 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-pharmacy-to-store-r-o-list',
   templateUrl: './pharmacy-to-store-r-o-list.component.html',
-  styleUrls: ['./pharmacy-to-store-r-o-list.component.scss']
+  styleUrls: ['./pharmacy-to-store-r-o-list.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    RouterLink
+  ],
 })
 export class PharmacyToStoreROListComponent {
 

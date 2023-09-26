@@ -1,11 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IPharmacyMedicine } from 'src/app/domain/pharmacy-medicine';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
@@ -14,7 +18,16 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-pharmacy-medicine-stock-status',
   templateUrl: './pharmacy-medicine-stock-status.component.html',
-  styleUrls: ['./pharmacy-medicine-stock-status.component.scss']
+  styleUrls: ['./pharmacy-medicine-stock-status.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    RouterLink
+  ],
 })
 export class PharmacyMedicineStockStatusComponent {
 

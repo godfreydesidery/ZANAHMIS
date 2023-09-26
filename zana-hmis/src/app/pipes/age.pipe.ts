@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
+    standalone : true,
     name: 'age'
 })
 export class AgePipe implements PipeTransform {

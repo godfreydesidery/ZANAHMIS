@@ -1,7 +1,8 @@
 
 import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
-    name: 'showTime'
+    name: 'showTime',
+    standalone : true
 })
 export class ShowTimePipe implements PipeTransform {
 

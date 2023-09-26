@@ -1,20 +1,32 @@
 import { Byte } from 'src/custom-packages/util';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { Component, NgModule } from '@angular/core';
 import { AuthService } from 'src/app/auth.service';
 import { environment } from 'src/environments/environment';
-import { DomSanitizer } from '@angular/platform-browser';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs/operators';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { ICompanyProfile } from 'src/app/domain/company';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AppRoutingModule } from 'src/app/app-routing.module';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+import { RouterLink } from '@angular/router';
 
 
 const API_URL = environment.apiUrl;
 
-
 @Component({
   selector: 'app-company-profile',
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    RouterLink
+  ],
   templateUrl: './company-profile.component.html',
   styleUrls: ['./company-profile.component.scss']
 })

@@ -22,4 +22,9 @@ public interface DressingRepository extends JpaRepository<Dressing, Long> {
 	 */
 	List<Dressing> findAllByProcedureType(ProcedureType procedureType);
 
+	/**
+	 * @param procedureType
+	 * @return
+	 */
+	Dressing findByProcedureType(ProcedureType procedureType);
 }

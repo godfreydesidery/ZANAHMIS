@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IDiagnosisType } from 'src/app/domain/diagnosis-type';
@@ -8,6 +8,12 @@ import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 import { Workbook } from 'exceljs';
 import * as XLSX from 'xlsx';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from 'src/app/app-routing.module';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+import { RouterLink } from '@angular/router';
 
 const fs = require('file-saver');
 
@@ -15,6 +21,14 @@ const API_URL = environment.apiUrl;
 
 @Component({
   selector: 'app-diagnosis-type',
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    RouterLink
+  ],
   templateUrl: './diagnosis-type.component.html',
   styleUrls: ['./diagnosis-type.component.scss']
 })

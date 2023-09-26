@@ -1,4 +1,4 @@
-import { Time } from '@angular/common';
+import { CommonModule, Time } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -25,6 +25,11 @@ import { IWardType } from 'src/app/domain/ward-type';
 import { IWorkingDiagnosis } from 'src/app/domain/working-diagnosis';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+import { RouterLink } from '@angular/router';
+import { ShowDateTimePipe } from 'src/app/pipes/date_time.pipe';
 
 
 
@@ -33,7 +38,18 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-doctor-inpatient',
   templateUrl: './doctor-inpatient.component.html',
-  styleUrls: ['./doctor-inpatient.component.scss']
+  styleUrls: ['./doctor-inpatient.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    ShowDateTimePipe,
+    RouterLink
+  ],
+  
 })
 export class DoctorInpatientComponent implements OnInit {
 

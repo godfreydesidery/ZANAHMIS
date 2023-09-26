@@ -56,7 +56,7 @@ public class DressingServiceImpl implements DressingService {
 		
 		dressing.setProcedureType(pt.get());
 		
-		dressing.setCreatedby(userService.getUser(request).getId());
+		dressing.setCreatedBy(userService.getUser(request).getId());
 		dressing.setCreatedOn(dayService.getDay().getId());
 		dressing.setCreatedAt(dayService.getTimeStamp());
 		

@@ -1,10 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IPatient } from 'src/app/domain/patient';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { environment } from 'src/environments/environment';
 
 //import {MatTableDataSource} from '@angular/material';
@@ -14,7 +19,16 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-patient-list',
   templateUrl: './patient-list.component.html',
-  styleUrls: ['./patient-list.component.scss']
+  styleUrls: ['./patient-list.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    RouterLink
+  ],
 })
 export class PatientListComponent implements OnInit {
 
