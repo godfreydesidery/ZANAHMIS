@@ -110,7 +110,7 @@ public class ConsumableResource {
 		return ResponseEntity.created(uri).body(consumableService.add(consumable, request));
 	}	
 	
-	@GetMapping("/consumables/delete")
+	@PostMapping("/consumables/delete")
 	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
 	public boolean deleteConsumable(
 			@RequestParam(name = "id") Long id,

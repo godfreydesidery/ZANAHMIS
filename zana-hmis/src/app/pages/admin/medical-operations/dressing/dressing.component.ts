@@ -33,7 +33,6 @@ export class DressingComponent {
   id          : any = null
   procedureType! : IProcedureType
 
-  procedureTypeId : any = null
 
   filterRecords : string = ''
 
@@ -55,7 +54,6 @@ export class DressingComponent {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var dressing = {
-      id          : this.id,
       procedureType : {id : this.procedureTypeId}
     }
 
@@ -69,12 +67,11 @@ export class DressingComponent {
         this.procedureTypeId = data?.procedureType?.id
         this.msgBox.showSuccessMessage('Dressing created successifully')
         this.loadDressings()
-        
       }
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not create Dressing')
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
 
@@ -99,7 +96,7 @@ export class DressingComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Dressings')
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
   }
@@ -107,10 +104,29 @@ export class DressingComponent {
   clear(){
     this.id           = null
     this.procedureTypeId = null
+    this.procedureTypeName = ''
+    this.procedureTypeCode = ''
   }
 
-  deleteDressing(id : any){
-
+  async deleteDressing(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/dressings/delete?id='+id, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Deleted')
+        this.loadDressings()
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
   }
 
   public grant(privilege : string[]) : boolean{
@@ -125,4 +141,56 @@ export class DressingComponent {
     )
     return granted
   }
+
+  procedureTypeId : any =  null
+  procedureTypeCode : string = ''
+  procedureTypeName : string = ''
+  procedureTypes : IProcedureType[] = []
+  async loadProcedureTypesLike(value : string){
+    this.procedureTypes = []
+    if(value.length < 2){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IProcedureType[]>(API_URL+'/procedure_types/load_procedure_types_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.procedureTypes = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getProcedureType(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.procedureTypes = []
+    this.spinner.show()
+    await this.http.get<IProcedureType>(API_URL+'/procedure_types/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.procedureTypeId = data?.id
+        this.procedureTypeCode = data!.code
+        this.procedureTypeName = data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
+
+  
 }

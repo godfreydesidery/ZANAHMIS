@@ -96,9 +96,9 @@ export class NurseInpatientListComponent {
       )
     }
 
-    async postAdmission(id : any){
-      
+    async postAdmission(id : any){     
       localStorage.setItem('admission-id', id)
+      localStorage.setItem('nurse-id', this.nurseId)
       this.router.navigate(['nurse-inpatient-chart'])    
     }
     

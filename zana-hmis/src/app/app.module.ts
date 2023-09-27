@@ -128,6 +128,7 @@ import { DoctorToLaboratoryReportComponent } from './pages/admin/reports/doctor-
 import { NurseComponent } from './pages/admin/personnel/nurse/nurse.component';
 import { NurseInpatientChartComponent } from './pages/nurse/nurse-inpatient-chart/nurse-inpatient-chart.component';
 import { DressingComponent } from './pages/admin/medical-operations/dressing/dressing.component';
+import { ConsumableComponent } from './pages/admin/medical-operations/consumable/consumable.component';
 
 @NgModule({
   declarations: [
@@ -222,6 +223,7 @@ import { DressingComponent } from './pages/admin/medical-operations/dressing/dre
     //LabTestReportComponent,
     //LabTestStatisticsReportComponent,
     LabSampleCollectionReportComponent,
+    //ConsumableComponent,
     //LabTestTypePriceComponent,
     //RadiologyTypePriceComponent,
     //ProcedureTypePriceComponent,

@@ -40,7 +40,6 @@ import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.PatientInvoice;
 import com.orbix.api.domain.PatientInvoiceDetail;
 import com.orbix.api.domain.PatientNursingCarePlan;
-import com.orbix.api.domain.PatientNursingCarePlanModel;
 import com.orbix.api.domain.PatientNursingChart;
 import com.orbix.api.domain.PatientNursingProgressNote;
 import com.orbix.api.domain.PatientObservationChart;
@@ -76,6 +75,7 @@ import com.orbix.api.models.GeneralExaminationModel;
 import com.orbix.api.models.LabTestModel;
 import com.orbix.api.models.PatientConsumableChartModel;
 import com.orbix.api.models.PatientDressingChartModel;
+import com.orbix.api.models.PatientNursingCarePlanModel;
 import com.orbix.api.models.PatientNursingChartModel;
 import com.orbix.api.models.PatientNursingProgressNoteModel;
 import com.orbix.api.models.PatientObservationChartModel;
@@ -1213,6 +1213,23 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(patientService.savePatientNursingProgressNote(note, c, nc, adm, n, request));
 	}
 	
+	@PostMapping("/patients/save_patient_nursing_care_plan")
+	public ResponseEntity<PatientNursingCarePlan>savePatientNursingCarePlan(
+			@RequestBody PatientNursingCarePlan plan,
+			@RequestParam Long consultation_id, 
+			@RequestParam Long non_consultation_id,
+			@RequestParam Long admission_id,
+			@RequestParam Long nurse_id,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		Optional<Admission> adm = admissionRepository.findById(admission_id);
+		Optional<Nurse> n = nurseRepository.findById(nurse_id);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_patient_nursing_care_plan").toUriString());
+		return ResponseEntity.created(uri).body(patientService.savePatientNursingCarePlan(plan, c, nc, adm, n, request));
+	}
+	
 	@GetMapping("/patients/load_lab_tests") 
 	public ResponseEntity<List<LabTestModel>> loadLabTests(
 			@RequestParam(name = "consultation_id") Long consultationId,
@@ -2100,7 +2117,7 @@ public class PatientResource {
 	
 	@PostMapping("/patients/delete_observation_chart")
 	public ResponseEntity<Boolean>deleteObservationChart(
-			@RequestParam Long id, 
+			@RequestParam(name = "id") Long id, 
 			HttpServletRequest request){
 		Optional<PatientObservationChart> t = patientObservationChartRepository.findById(id);
 		if(t.isEmpty()) {

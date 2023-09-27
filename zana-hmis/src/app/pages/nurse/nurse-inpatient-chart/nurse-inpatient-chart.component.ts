@@ -9,12 +9,20 @@ import { IAdmission } from 'src/app/domain/admission';
 import { IClinicalNote } from 'src/app/domain/clinical-note';
 import { IConsultation } from 'src/app/domain/consultation';
 import { IDiagnosisType } from 'src/app/domain/diagnosis-type';
+import { IDressing } from 'src/app/domain/dressing';
 import { IFinalDiagnosis } from 'src/app/domain/final-diagnosis';
 import { IGeneralExamination } from 'src/app/domain/general-examination';
 import { ILabTest } from 'src/app/domain/lab-test';
 import { ILabTestType } from 'src/app/domain/lab-test-type';
 import { IMedicine } from 'src/app/domain/medicine';
 import { IPatient } from 'src/app/domain/patient';
+import { IPatientConsumableChart } from 'src/app/domain/patient-consumable-chart';
+import { IPatientDressingChart } from 'src/app/domain/patient-dressing-chart';
+import { IPatientNursingCarePlan } from 'src/app/domain/patient-nursing-care-plan';
+import { IPatientNursingChart } from 'src/app/domain/patient-nursing-chart';
+import { IPatientNursingProgressNote } from 'src/app/domain/patient-nursing-progress-note';
+import { IPatientObservationChart } from 'src/app/domain/patient-observation-chart';
+import { IPatientPrescriptionChart } from 'src/app/domain/patient-prescription-chart';
 import { IPrescription } from 'src/app/domain/prescription';
 import { IProcedure } from 'src/app/domain/procedure';
 import { IProcedureType } from 'src/app/domain/procedure-type';
@@ -54,6 +62,8 @@ const API_URL = environment.apiUrl;
 })
 export class NurseInpatientChartComponent {
 
+  nurseId : any = null;
+
   id : any = null
 
   admission! : IAdmission
@@ -63,6 +73,61 @@ export class NurseInpatientChartComponent {
   radiologies   : IRadiology[]    = []
   procedures    : IProcedure[]    = []
 
+  patientObservationCharts : IPatientObservationChart[] = []
+  patientNursingCharts : IPatientNursingChart[] = []
+  patientNursingProgressNotes : IPatientNursingProgressNote[] = []
+  patientNursingCarePlans : IPatientNursingCarePlan[] = []
+  patientDressingCharts : IPatientDressingChart[] = []
+  patientConsumableCharts : IPatientConsumableChart[] = []
+  patientPrescriptionCharts : IPatientPrescriptionChart[] = []
+  
+  procedureId : any = null
+  procedureNote : string = ''
+  procedureTypeName : string = ''
+
+  /**Observation Chart */
+  observationChartBloodPressure : string = ''
+  observationChartMeanArterialPressure : string = ''
+  observationChartPressure : string = ''
+  observationChartTemperature : string = ''
+  observationChartRespiratoryRate : string = ''
+  observationChartSaturationOxygen : string = ''
+
+
+  /**Nursing Chart */
+  nursingChartFeeding : string = ''
+  nursingChartChangingPosition : string = ''
+  nursingChartBedBathing : string = ''
+  nursingChartRandomBloodSugar : string = ''
+  nursingChartFullBloodSugar : string = ''
+  nursingChartDrainageOutput : string = ''
+  nursingChartFluidIntake : string = ''
+  nursingChartUrineOutput : string = ''
+
+
+  /**Nursing Progress Note */
+  nursingProgressNote : string = ''
+
+  /**Nursing Care Plan */
+  nursingCarePlanNursingDiagnosis : string = ''
+  nursingCarePlanExpectedOutcome : string = ''
+  nursingCarePlanImplementation : string = ''
+  nursingCarePlanEvaluation : string = ''
+
+  /**Patient Dressing Chart */
+  dressing : string = ''
+
+  /**Patient Consumable Chart */
+  consumable : string = ''
+
+  /**Patient Prescription Chart */
+
+  dosage : string = ''
+  output : string = ''
+  remark : string = ''
+
+
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,
@@ -71,6 +136,8 @@ export class NurseInpatientChartComponent {
 
   async ngOnInit(): Promise<void> {
     this.id = localStorage.getItem('admission-id')
+    this.nurseId = localStorage.getItem('nurse-id')
+    localStorage.removeItem('nurse-id')
     localStorage.removeItem('admission-id')
     await this.refresh() 
   }
@@ -81,6 +148,12 @@ export class NurseInpatientChartComponent {
     this.loadProcedures(0, 0, this.id)
     this.loadLabTests(0, 0, this.id)
     this.loadRadiologies(0, 0, this.id)
+    /**Load charts */
+    this.loadPatientObservationCharts(0, 0, this.id) 
+    this.loadPatientNursingCharts(0, 0, this.id)
+    this.loadPatientNursingProgressNotes(0, 0, this.id)
+    this.loadPatientNursingCarePlans(0, 0, this.id)
+    this.loadPatientDressingChart(0, 0, this.id)
   }
 
   async setGlobalPatientId(){
@@ -116,7 +189,6 @@ export class NurseInpatientChartComponent {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    this.prescriptions = []
     this.spinner.show()
     await this.http.get<IPrescription[]>(API_URL+'/patients/load_prescriptions?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
     .pipe(finalize(() => this.spinner.hide()))
@@ -139,7 +211,6 @@ export class NurseInpatientChartComponent {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    this.prescriptions = []
     this.spinner.show()
     await this.http.get<ILabTest[]>(API_URL+'/patients/load_lab_tests?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
     .pipe(finalize(() => this.spinner.hide()))
@@ -185,7 +256,6 @@ export class NurseInpatientChartComponent {
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
-    this.prescriptions = []
     this.spinner.show()
     await this.http.get<IProcedure[]>(API_URL+'/patients/load_procedures?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
     .pipe(finalize(() => this.spinner.hide()))
@@ -204,4 +274,458 @@ export class NurseInpatientChartComponent {
     
   }
 
+  showProcedureNote(id : any, procedureTypeName : string, note : string){
+    this.procedureId = id
+    this.procedureTypeName = procedureTypeName
+    this.procedureNote = note
+  }
+
+  async savePatientObservationChart(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var chart = {
+      bloodPressure         : this.observationChartBloodPressure,
+      meanArterialPressure  : this.observationChartMeanArterialPressure,
+      pressure              : this.observationChartPressure,
+      temperature           : this.observationChartTemperature,
+      respiratoryRate       : this.observationChartRespiratoryRate,
+      saturationOxygen      : this.observationChartSaturationOxygen,
+      admission             : {id : this.id},
+      nurse                 : {id : this.nurseId}
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/save_patient_observation_chart?consultation_id='+0+'&non_consultation_id='+0+'&admission_id='+this.id+'&nurse_id='+this.nurseId, chart, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Success') 
+        this.clearObservationChart()
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientObservationCharts(0, 0, this.id) 
+  }
+
+  async loadPatientObservationCharts(consultationId : any, nonConsultationId : any, admissionId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IPatientObservationChart[]>(API_URL+'/patients/observation_charts?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.patientObservationCharts = data!
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load observation charts')
+      }
+    )
+    
+  }
+
+  async deleteObservationChart(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.post(API_URL+'/patients/delete_observation_chart?id='+id, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Deleted')
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientObservationCharts(0, 0, this.id) 
+  }
+
+  clearObservationChart(){
+    this.observationChartBloodPressure = ''
+    this.observationChartMeanArterialPressure = ''
+    this.observationChartPressure = ''
+    this.observationChartTemperature = ''
+    this.observationChartRespiratoryRate = ''
+    this.observationChartSaturationOxygen = ''
+  }
+
+  clearNursingChart(){
+    this.nursingChartFeeding = ''
+    this.nursingChartChangingPosition = ''
+    this.nursingChartBedBathing = ''
+    this.nursingChartRandomBloodSugar = ''
+    this.nursingChartFullBloodSugar = ''
+    this.nursingChartDrainageOutput = ''
+    this.nursingChartFluidIntake = ''
+    this.nursingChartUrineOutput = ''
+  }
+
+  clearNursingProgressNote(){
+    this.nursingProgressNote = ''
+  }
+
+
+  async savePatientNursingChart(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var chart = {
+      feeding : this.nursingChartFeeding,
+      changingPosition : this.nursingChartChangingPosition,
+      bedBathing : this.nursingChartBedBathing,
+      randomBloodSugar : this.nursingChartRandomBloodSugar,
+      fullBloodSugar : this.nursingChartFullBloodSugar,
+      drainageOutput : this.nursingChartDrainageOutput,
+      fluidIntake : this.nursingChartFluidIntake,
+      urineOutput : this.nursingChartUrineOutput,
+      admission : {id : this.id},
+      nurse : {id : this.nurseId}
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/save_patient_nursing_chart?consultation_id='+0+'&non_consultation_id='+0+'&admission_id='+this.id+'&nurse_id='+this.nurseId, chart, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Success') 
+        this.clearNursingChart()
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientNursingCharts(0, 0, this.id) 
+  }
+
+  async loadPatientNursingCharts(consultationId : any, nonConsultationId : any, admissionId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IPatientNursingChart[]>(API_URL+'/patients/nursing_charts?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.patientNursingCharts = data!
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load nursing charts')
+      }
+    )
+    
+  }
+
+  async deleteNursingChart(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.post(API_URL+'/patients/delete_nursing_chart?id='+id, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Deleted')
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientNursingCharts(0, 0, this.id) 
+  }
+
+  async savePatientNursingProgressNote(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var note = {
+      note : this.nursingProgressNote,
+      admission : {id : this.id},
+      nurse : {id : this.nurseId}
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/save_patient_nursing_progress_note?consultation_id='+0+'&non_consultation_id='+0+'&admission_id='+this.id+'&nurse_id='+this.nurseId, note, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Success') 
+        this.clearNursingProgressNote()
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientNursingProgressNotes(0, 0, this.id) 
+  }
+
+  async loadPatientNursingProgressNotes(consultationId : any, nonConsultationId : any, admissionId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IPatientNursingProgressNote[]>(API_URL+'/patients/nursing_progress_notes?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.patientNursingProgressNotes = data!
+      }
+    )
+    .catch(
+      () => {
+        this.msgBox.showErrorMessage('Could not load nursing progress notes')
+      }
+    )
+    
+  }
+
+  async deleteNursingProgressNote(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.post(API_URL+'/patients/delete_nursing_progress_note?id='+id, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Deleted')
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientNursingProgressNotes(0, 0, this.id) 
+  }
+
+  async savePatientNursingCarePlan(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var plan = {
+      nursingDiagnosis : this.nursingCarePlanNursingDiagnosis,
+      expectedOutcome : this.nursingCarePlanExpectedOutcome,
+      implementation : this.nursingCarePlanImplementation,
+      evaluation : this.nursingCarePlanEvaluation,
+      admission : {id : this.id},
+      nurse : {id : this.nurseId}
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/save_patient_nursing_care_plan?consultation_id='+0+'&non_consultation_id='+0+'&admission_id='+this.id+'&nurse_id='+this.nurseId, plan, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Success') 
+        this.clearNursingCarePlan()
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientNursingCarePlans(0, 0, this.id) 
+  }
+
+  async loadPatientNursingCarePlans(consultationId : any, nonConsultationId : any, admissionId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IPatientNursingCarePlan[]>(API_URL+'/patients/nursing_care_plans?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.patientNursingCarePlans = data!
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    
+  }
+
+  async deleteNursingCarePlan(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.post(API_URL+'/patients/delete_nursing_care_plan?id='+id, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Deleted')
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientNursingCarePlans(0, 0, this.id) 
+  }
+
+  clearNursingCarePlan(){
+    this.nursingCarePlanNursingDiagnosis = ''
+    this.nursingCarePlanExpectedOutcome = ''
+    this.nursingCarePlanImplementation = ''
+    this.nursingCarePlanEvaluation = ''
+  }
+
+
+
+  dressingProcedureTypeId : any =  null
+  dressingProcedureTypeName : string = ''
+  dressings : IDressing[] = []
+  async loadDressingLike(value : string){
+    this.dressings = []
+    if(value.length < 2){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IDressing[]>(API_URL+'/dressings/load_dressings_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.dressings = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getDressing(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.dressings = []
+    this.spinner.show()
+    await this.http.get<IDressing>(API_URL+'/dressings/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.dressingProcedureTypeId = data?.procedureType.id
+        this.dressingProcedureTypeName = data!.procedureType?.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
+
+  clearDressingChart(){
+    this.dressingProcedureTypeId = null
+    this.dressingProcedureTypeName = ''
+  }
+
+  async savePatientDressingChart(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var chart = {
+      procedureType : {id : this.dressingProcedureTypeId},
+      admission : {id : this.id},
+      nurse : {id : this.nurseId}
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/save_patient_dressing_chart?consultation_id='+0+'&non_consultation_id='+0+'&admission_id='+this.id+'&nurse_id='+this.nurseId, chart, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Success') 
+        this.clearDressingChart()
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientDressingChart(0, 0, this.id) 
+  }
+
+  async loadPatientDressingChart(consultationId : any, nonConsultationId : any, admissionId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IPatientDressingChart[]>(API_URL+'/patients/dressing_charts?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.patientDressingCharts = data!
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    
+  }
+
+  async deleteDressingChart(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.post(API_URL+'/patients/delete_dressing_chart?id='+id, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Deleted')
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientDressingChart(0, 0, this.id) 
+  }
 }
+
+

@@ -355,6 +355,8 @@ export class AppComponent {
         {path : 'lab-test-type-range', loadComponent : () => import('./pages/admin/medical-operations/lab-test-type-range/lab-test-type-range.component').then(m => m.LabTestTypeRangeComponent), canActivate: [AuthGuard]},
         {path : 'procedure-type', loadComponent : () => import('./pages/admin/medical-operations/procedure-type/procedure-type.component').then(m => m.ProcedureTypeComponent), canActivate: [AuthGuard]},
         {path : 'radiology-type', loadComponent : () => import('./pages/admin/medical-operations/radiology-type/radiology-type.component').then(m => m.RadiologyTypeComponent), canActivate: [AuthGuard]},
+        {path : 'dressing', loadComponent : () => import('./pages/admin/medical-operations/dressing/dressing.component').then(m => m.DressingComponent), canActivate: [AuthGuard]},
+        {path : 'consumable', loadComponent : () => import('./pages/admin/medical-operations/consumable/consumable.component').then(m => m.ConsumableComponent), canActivate: [AuthGuard]},
         {path : 'insurance-provider', loadComponent : () => import('./pages/admin/insurance-management/insurance-provider/insurance-provider.component').then(m => m.InsuranceProviderComponent), canActivate: [AuthGuard]},
         {path : 'insurance-plan', loadComponent : () => import('./pages/admin/insurance-management/insurance-plan/insurance-plan.component').then(m => m.InsurancePlanComponent), canActivate: [AuthGuard]},
         {path : 'registration-plan', loadComponent : () => import('./pages/admin/insurance-management/insurance-plan-pricing/registration-plan/registration-plan.component').then(m => m.RegistrationPlanComponent), canActivate: [AuthGuard]},

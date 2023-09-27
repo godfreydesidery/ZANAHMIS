@@ -108,7 +108,7 @@ public class DressingResource {
 		return ResponseEntity.created(uri).body(dressingService.add(dressing, request));
 	}	
 	
-	@GetMapping("/dressings/delete")
+	@PostMapping("/dressings/delete")
 	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
 	public boolean deleteDressing(
 			@RequestParam(name = "id") Long id,

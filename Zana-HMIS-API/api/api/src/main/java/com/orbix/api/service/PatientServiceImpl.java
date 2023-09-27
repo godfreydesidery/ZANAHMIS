@@ -2017,6 +2017,11 @@ public class PatientServiceImpl implements PatientService {
 		}
 		chart.setPatient(patient);
 		chart.setPatientBill(patientBill);
+		
+		chart.setCreatedby(userService.getUser(request).getId());
+		chart.setCreatedOn(dayService.getDay().getId());
+		chart.setCreatedAt(dayService.getTimeStamp());
+		
 		return patientDressingChartRepository.save(chart);	
 		
 	}
@@ -2261,9 +2266,15 @@ public class PatientServiceImpl implements PatientService {
 			patient =a.get().getPatient();
 			chart.setAdmission(a.get());
 			chart.setNurse(n.get());
-		}		
+		}	
+		
 		
 		chart.setPatient(patient);
+		
+		chart.setCreatedby(userService.getUser(request).getId());
+		chart.setCreatedOn(dayService.getDay().getId());
+		chart.setCreatedAt(dayService.getTimeStamp());
+		
 		return patientObservationChartRepository.save(chart);
 	}
 
@@ -2365,6 +2376,11 @@ public class PatientServiceImpl implements PatientService {
 		}		
 		
 		chart.setPatient(patient);
+		
+		chart.setCreatedby(userService.getUser(request).getId());
+		chart.setCreatedOn(dayService.getDay().getId());
+		chart.setCreatedAt(dayService.getTimeStamp());
+		
 		return patientNursingChartRepository.save(chart);
 	}
 
@@ -2414,6 +2430,11 @@ public class PatientServiceImpl implements PatientService {
 		}		
 		
 		note.setPatient(patient);
+		
+		note.setCreatedby(userService.getUser(request).getId());
+		note.setCreatedOn(dayService.getDay().getId());
+		note.setCreatedAt(dayService.getTimeStamp());
+		
 		return patientNursingProgressNoteRepository.save(note);
 	}
 	
@@ -2463,6 +2484,11 @@ public class PatientServiceImpl implements PatientService {
 		}		
 		
 		plan.setPatient(patient);
+		
+		plan.setCreatedby(userService.getUser(request).getId());
+		plan.setCreatedOn(dayService.getDay().getId());
+		plan.setCreatedAt(dayService.getTimeStamp());
+		
 		return patientNursingCarePlanRepository.save(plan);
 	}
 }
