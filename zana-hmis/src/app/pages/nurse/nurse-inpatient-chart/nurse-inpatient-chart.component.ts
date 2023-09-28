@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/auth.service';
 import { IAdmission } from 'src/app/domain/admission';
 import { IClinicalNote } from 'src/app/domain/clinical-note';
 import { IConsultation } from 'src/app/domain/consultation';
+import { IConsumable } from 'src/app/domain/consumable';
 import { IDiagnosisType } from 'src/app/domain/diagnosis-type';
 import { IDressing } from 'src/app/domain/dressing';
 import { IFinalDiagnosis } from 'src/app/domain/final-diagnosis';
@@ -122,9 +123,7 @@ export class NurseInpatientChartComponent {
 
   /**Patient Prescription Chart */
 
-  dosage : string = ''
-  output : string = ''
-  remark : string = ''
+  
 
 
 
@@ -154,6 +153,7 @@ export class NurseInpatientChartComponent {
     this.loadPatientNursingProgressNotes(0, 0, this.id)
     this.loadPatientNursingCarePlans(0, 0, this.id)
     this.loadPatientDressingChart(0, 0, this.id)
+    this.loadPatientConsumableChart(0, 0, this.id)
   }
 
   async setGlobalPatientId(){
@@ -725,6 +725,242 @@ export class NurseInpatientChartComponent {
       }
     )
     this.loadPatientDressingChart(0, 0, this.id) 
+  }
+
+  consumableMedicineId : any =  null
+  consumableMedicineName : string = ''
+  consumableQty : number = 0
+  consumables : IConsumable[] = []
+  async loadConsumableLike(value : string){
+    this.consumables = []
+    if(value.length < 2){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IConsumable[]>(API_URL+'/consumables/load_consumables_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.consumables = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getConsumable(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.consumables = []
+    this.spinner.show()
+    await this.http.get<IConsumable>(API_URL+'/consumables/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.consumableMedicineId = data?.medicine.id
+        this.consumableMedicineName = data!.medicine?.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
+
+  clearConsumableChart(){
+    this.consumableMedicineId = null
+    this.consumableMedicineName = ''
+    this.consumableQty = 0
+  }
+
+  async savePatientConsumableChart(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    //if()
+    var chart = {
+      medicine : {id : this.consumableMedicineId},
+      qty : this.consumableQty,
+      admission : {id : this.id},
+      nurse : {id : this.nurseId}
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/save_patient_consumable_chart?consultation_id='+0+'&non_consultation_id='+0+'&admission_id='+this.id+'&nurse_id='+this.nurseId, chart, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Success') 
+        this.clearConsumableChart()
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientConsumableChart(0, 0, this.id)
+  }
+
+  async loadPatientConsumableChart(consultationId : any, nonConsultationId : any, admissionId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IPatientConsumableChart[]>(API_URL+'/patients/consumable_charts?consultation_id='+consultationId+'&non_consultation_id='+nonConsultationId+'&admission_id='+admissionId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.patientConsumableCharts = data!
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    
+  }
+
+  async deleteConsumableChart(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.post(API_URL+'/patients/delete_consumable_chart?id='+id, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Deleted')
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPatientConsumableChart(0, 0, this.id) 
+  }
+
+  prescriptionId : any = null
+  prescription! : IPrescription
+  async loadPrescription(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IPrescription>(API_URL+'/patients/get_prescription_by_id?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.prescription = data!
+        this.prescriptionId = data?.id
+        this.loadPrescriptionChart(this.prescription.id)
+      }
+    )
+    .catch(
+      (error) => {
+        this.prescription!
+        this.prescriptionId = null
+        this.msgBox.showErrorMessage(error['error'])
+
+      }
+    )
+  }
+
+  prescriptionCharts : IPatientPrescriptionChart[] = []
+  async loadPrescriptionChart(prescrId : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.prescriptionCharts = []
+    await this.http.get<IPatientPrescriptionChart[]>(API_URL+'/patients/prescription_charts_by_id?prescription_id='+prescrId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.prescriptionCharts = data!
+      }
+    )
+    .catch(
+      (error) => {
+        this.prescription!
+        this.msgBox.showErrorMessage(error['error'])
+
+      }
+    )
+
+  }
+
+  clearPrescriptionChart(){
+    this.dosage = ''
+    this.output = ''
+    this.remark = ''
+  }
+
+  dosage : string = ''
+  output : string = ''
+  remark : string = '' 
+  async savePatientPrescriptionChart(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var chart = {
+      prescription : {id : this.prescriptionId},
+      dosage : this.dosage,
+      output : this.output,
+      remark : this.remark,
+      admission : {id : this.id},
+      nurse : {id : this.nurseId}
+    }
+    this.spinner.show()
+    await this.http.post(API_URL+'/patients/save_patient_prescription_chart?consultation_id='+0+'&non_consultation_id='+0+'&admission_id='+this.id+'&nurse_id='+this.nurseId, chart, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Success') 
+        this.clearPrescriptionChart()
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+        this.clearPrescriptionChart()
+      }
+    )
+    this.loadPrescriptionChart(this.prescriptionId)
+  }
+
+  async deletePrescriptionChart(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.post(API_URL+'/patients/delete_prescription_chart?id='+id, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Deleted')
+      }
+    )
+    .catch(
+      (error) => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.loadPrescriptionChart(this.prescriptionId)
   }
 }
 

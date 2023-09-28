@@ -43,4 +43,27 @@ public interface PatientPrescriptionChartRepository extends JpaRepository<Patien
 	 */
 	List<PatientPrescriptionChart> findAllByAdmission(Admission admission);
 
+	/**
+	 * @param consultation
+	 * @param prescription
+	 * @return
+	 */
+	List<PatientPrescriptionChart> findAllByConsultationAndPrescription(Consultation consultation,
+			Prescription prescription);
+
+	/**
+	 * @param nonConsultation
+	 * @param prescription
+	 * @return
+	 */
+	List<PatientPrescriptionChart> findAllByNonConsultationAndPrescription(NonConsultation nonConsultation,
+			Prescription prescription);
+
+	/**
+	 * @param admission
+	 * @param prescription
+	 * @return
+	 */
+	List<PatientPrescriptionChart> findAllByAdmissionAndPrescription(Admission admission, Prescription prescription);
+
 }

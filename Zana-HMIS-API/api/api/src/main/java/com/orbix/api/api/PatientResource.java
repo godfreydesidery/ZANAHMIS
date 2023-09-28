@@ -1128,7 +1128,7 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(patientService.savePatientDressingChart(chart, c, nc, adm, n, request));
 	}
 	
-	@PostMapping("/patients/save_patient_consumable")
+	@PostMapping("/patients/save_patient_consumable_chart")
 	public ResponseEntity<PatientConsumableChart>savePatientConssumableChart(
 			@RequestBody PatientConsumableChart chart,
 			@RequestParam Long consultation_id, 
@@ -1665,7 +1665,8 @@ public class PatientResource {
 			model.setPatientBill(l.getPatientBill());
 			model.setClinician(l.getClinician());
 			model.setNurse(l.getNurse());
-			model.setQty(l.getQty());				
+			model.setQty(l.getQty());	
+			model.setStatus(l.getStatus());
 			if(l.getCreatedAt() != null) {
 				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
 			}else {
@@ -1731,7 +1732,7 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(models);
 	}
 	
-	@GetMapping("/patients/prescription_charts") 
+	@GetMapping("/patients/prescription_charts") /////not to be used!!!
 	public ResponseEntity<List<PatientPrescriptionChartModel>> loadPatientPrescriptionCharts(
 			@RequestParam(name = "consultation_id") Long consultationId,
 			@RequestParam(name = "non_consultation_id") Long nonConsultationId,
@@ -1942,6 +1943,36 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(models);
 	}
 	
+	@GetMapping("/patients/prescription_charts_by_id") 
+	public ResponseEntity<List<PatientPrescriptionChartModel>> loadPatientPrescriptionChartsByPrescriptionId(
+			@RequestParam(name = "prescription_id") Long prescriptionId,
+			HttpServletRequest request){
+		Optional<Prescription> pre = prescriptionRepository.findById(prescriptionId);
+		if(pre.isEmpty()) {
+			throw new NotFoundException("Prescription not found");
+		}
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/prescription_charts").toUriString());		
+		List<PatientPrescriptionChart> patientPrescriptionCharts = new ArrayList<>();
+		patientPrescriptionCharts = patientPrescriptionChartRepository.findAllByPrescription(pre.get());
+		
+		List<PatientPrescriptionChartModel> models = new ArrayList<>();
+		for(PatientPrescriptionChart l : patientPrescriptionCharts) {
+			PatientPrescriptionChartModel model= new PatientPrescriptionChartModel();
+			model.setId(l.getId());
+			model.setNurse(l.getNurse());
+			model.setDosage(l.getDosage());
+			model.setOutput(l.getOutput());
+			model.setRemark(l.getRemark());
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+			}else {
+				model.setCreated("");
+			}		
+			models.add(model);
+		}
+		return ResponseEntity.created(uri).body(models);
+	}
+	
 	@PostMapping("/patients/delete_lab_test")
 	public ResponseEntity<Boolean>deleteLabTest(
 			@RequestParam Long id, 
@@ -2064,6 +2095,12 @@ public class PatientResource {
 		if(t.isEmpty()) {
 			throw new NotFoundException("Record not found");
 		}
+		if(t.get().getStatus() != null) {
+			if(t.get().getStatus().equals("GIVEN")) {
+				throw new InvalidOperationException("Could not delete. Consumable already given to patient");
+			}
+		}
+		
 		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
 		if(difference >= 24) {
 			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
@@ -2135,7 +2172,7 @@ public class PatientResource {
 	
 	@PostMapping("/patients/delete_prescription_chart")
 	public ResponseEntity<Boolean>deletePrescriptionChart(
-			@RequestParam Long id, 
+			@RequestParam(name = "id") Long id, 
 			HttpServletRequest request){
 		Optional<PatientPrescriptionChart> t = patientPrescriptionChartRepository.findById(id);
 		if(t.isEmpty()) {
@@ -3785,6 +3822,71 @@ public class PatientResource {
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/patients/get_all_prescriptions_by_patient_id").toUriString());
 		return ResponseEntity.created(uri).body(models);
+	}
+	
+	@GetMapping("/patients/get_prescription_by_id") 
+	public ResponseEntity<PrescriptionModel> getPrescriptionById(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		
+		Optional<Prescription> p = prescriptionRepository.findById(id);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Prescription not found");
+		}
+
+		PrescriptionModel model= new PrescriptionModel();
+		model.setId(p.get().getId());
+		model.setMedicine(p.get().getMedicine());
+		model.setDosage(p.get().getDosage());
+		model.setFrequency(p.get().getFrequency());			
+		model.setRoute(p.get().getRoute());
+		model.setDays(p.get().getDays());
+		model.setQty(p.get().getQty());
+		model.setIssued(p.get().getIssued());
+		model.setBalance(p.get().getBalance());
+		model.setPatientBill(p.get().getPatientBill());
+		model.setStatus(p.get().getStatus());
+
+		if(p.get().getCreatedAt() != null) {
+			model.setCreated(p.get().getCreatedAt().toString()+" | "+userService.getUserById(p.get().getCreatedby()).getNickname());
+		}else {
+			model.setCreated("");
+		}
+		if(p.get().getOrderedAt() != null) {
+			model.setOrdered(p.get().getOrderedAt().toString()+" | "+userService.getUserById(p.get().getOrderedby()).getNickname());
+		}else {
+			model.setOrdered("");
+		}
+		if(p.get().getRejectedAt() != null) {
+			model.setRejected(p.get().getRejectedAt().toString()+" | "+userService.getUserById(p.get().getRejectedby()).getNickname() + " | "+p.get().getRejectComment());
+		}else {
+			model.setRejected("");
+		}
+		model.setRejectComment(p.get().getRejectComment());			
+		if(p.get().getAcceptedAt() != null) {
+			model.setAccepted(p.get().getAcceptedAt().toString()+" | "+userService.getUserById(p.get().getAcceptedby()).getNickname());
+		}else {
+			model.setAccepted("");
+		}
+		if(p.get().getHeldAt() != null) {
+			model.setHeld(p.get().getHeldAt().toString()+" | "+userService.getUserById(p.get().getHeldby()).getNickname());
+		}else {
+			model.setHeld("");
+		}		
+		if(p.get().getVerifiedAt() != null) {
+			model.setVerified(p.get().getVerifiedAt().toString()+" | "+userService.getUserById(p.get().getVerifiedby()).getNickname());
+		}else {
+			model.setVerified("");
+		}
+		
+		if(p.get().getApprovedAt() != null) {
+			model.setApproved(p.get().getApprovedAt().toString()+" | "+userService.getUserById(p.get().getApprovedBy()).getNickname());
+		}else {
+			model.setApproved("");
+		}
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/patients/get_prescription_by_id").toUriString());
+		return ResponseEntity.created(uri).body(model);
 	}
 	
 	@GetMapping("/patients/load_patients_like")

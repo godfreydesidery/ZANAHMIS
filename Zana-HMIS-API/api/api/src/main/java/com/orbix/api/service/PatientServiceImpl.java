@@ -57,6 +57,7 @@ import com.orbix.api.domain.Theatre;
 import com.orbix.api.domain.Visit;
 import com.orbix.api.domain.WardBed;
 import com.orbix.api.domain.WardTypeInsurancePlan;
+import com.orbix.api.exceptions.InvalidEntryException;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.AdmissionBedRepository;
@@ -2033,6 +2034,9 @@ public class PatientServiceImpl implements PatientService {
 		if(med.isEmpty()) {
 			throw new NotFoundException("Medicine not found");
 		}
+		if(chart.getQty() <= 0) {
+			throw new InvalidEntryException("Qty can not be zero");
+		}
 		List<Consumable> consum = consumableRepository.findAllByMedicine(med.get());
 		if(consum.isEmpty()) {
 			throw new NotFoundException("Medicine is not listed as consumable");
@@ -2079,13 +2083,14 @@ public class PatientServiceImpl implements PatientService {
 			chart.setNurse(n.get());
 		}		
 		chart.setMedicine(med.get());
+		chart.setStatus("NOT-GIVEN");
 		
 		//dressingChart.setStatus("PENDING");
 		PatientBill patientBill = new PatientBill();
 		patientBill.setAmount(chart.getMedicine().getPrice());
 		patientBill.setPaid(0);
-		patientBill.setBalance(chart.getMedicine().getPrice());
-		patientBill.setQty(1);
+		patientBill.setBalance(chart.getMedicine().getPrice() * chart.getQty());
+		patientBill.setQty(chart.getQty());
 		patientBill.setDescription("Consumable: "+chart.getMedicine().getName());
 		patientBill.setStatus("UNPAID");		
 		patientBill.setCreatedby(userService.getUser(request).getId());
@@ -2099,8 +2104,8 @@ public class PatientServiceImpl implements PatientService {
 			Optional<MedicineInsurancePlan> medicinePricePlan = medicineInsurancePlanRepository.findByMedicineAndInsurancePlanAndCovered(med.get(), patient.getInsurancePlan(), true);
 			
 			if(medicinePricePlan.isPresent()) {
-				patientBill.setAmount(medicinePricePlan.get().getPrice());
-				patientBill.setPaid(medicinePricePlan.get().getPrice());
+				patientBill.setAmount(medicinePricePlan.get().getPrice() * chart.getQty());
+				patientBill.setPaid(medicinePricePlan.get().getPrice() * chart.getQty());
 				patientBill.setBalance(0);
 				patientBill.setStatus("COVERED");
 				patientBill.setPaymentType("INSURANCE");
@@ -2160,8 +2165,8 @@ public class PatientServiceImpl implements PatientService {
 				}
 			}else if(a.isPresent() == true) {
 				
-				patientBill.setAmount(chart.getMedicine().getPrice());
-				patientBill.setPaid(chart.getMedicine().getPrice());
+				patientBill.setAmount(chart.getMedicine().getPrice() * chart.getQty());
+				patientBill.setPaid(chart.getMedicine().getPrice() * chart.getQty());
 				patientBill.setBalance(0);
 				patientBill.setStatus("VERIFIED");
 				patientBill = patientBillRepository.save(patientBill);
@@ -2220,6 +2225,11 @@ public class PatientServiceImpl implements PatientService {
 		}
 		chart.setPatient(patient);
 		chart.setPatientBill(patientBill);
+		
+		chart.setCreatedby(userService.getUser(request).getId());
+		chart.setCreatedOn(dayService.getDay().getId());
+		chart.setCreatedAt(dayService.getTimeStamp());
+		
 		return patientConsumableChartRepository.save(chart);			
 	}
 
@@ -2289,7 +2299,10 @@ public class PatientServiceImpl implements PatientService {
 		Optional<Prescription> p = prescriptionRepository.findById(chart.getPrescription().getId());
 		if(p.isEmpty()) {
 			throw new NotFoundException("Medical prescription detail not found");
-		}		
+		}	
+		if(!p.get().getStatus().equals("GIVEN")) {
+			throw new InvalidOperationException("Prescription not picked from pharmacy");
+		}
 		Patient patient = new Patient();
 		
 		if(c.isPresent() && nc.isPresent() && a.isPresent()) {
@@ -2327,6 +2340,11 @@ public class PatientServiceImpl implements PatientService {
 			chart.setNurse(n.get());
 		}		
 		chart.setPatient(patient);
+		
+		chart.setCreatedby(userService.getUser(request).getId());
+		chart.setCreatedOn(dayService.getDay().getId());
+		chart.setCreatedAt(dayService.getTimeStamp());
+		
 		return patientPrescriptionChartRepository.save(chart);
 	}
 

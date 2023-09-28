@@ -12,6 +12,7 @@ export interface IPatientConsumableChart {
 
     id : any
     qty : number
+    status : string
     paymentType : string
     membershipNo : string
 

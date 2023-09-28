@@ -39,6 +39,7 @@ public class PatientConsumableChart {
 	private Long id;
 	@NotNull
 	private double qty;
+	private String status;
 	
 	private String paymentType;//CASH,DEBIT CARD, CREDIT CARD, MOBILE, INSURANCE
 	private String membershipNo;

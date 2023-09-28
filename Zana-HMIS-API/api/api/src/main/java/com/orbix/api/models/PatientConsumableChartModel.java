@@ -23,6 +23,7 @@ import lombok.Data;
 public class PatientConsumableChartModel {
 	private Long id;
 	private double qty;
+	private String status;
 	private String paymentType;
 	private String membershipNo;
     private Consultation consultation;	
