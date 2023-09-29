@@ -14,9 +14,11 @@ import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.orbix.api.domain.Admission;
@@ -33,10 +35,13 @@ import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.User;
+import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.LabTestRepository;
+import com.orbix.api.repositories.PatientBillRepository;
 import com.orbix.api.repositories.PatientInvoiceDetailRepository;
+import com.orbix.api.repositories.PatientRepository;
 import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.RadiologyRepository;
 import com.orbix.api.repositories.UserRepository;
@@ -67,6 +72,8 @@ public class ReportResource {
 	private final ClinicianRepository clinicianRepository;
 	private final LabTestRepository labTestRepository;
 	private final PatientInvoiceDetailRepository patientInvoiceDetailRepository;
+	private final PatientRepository patientRepository;
+	private final PatientBillRepository patientBillRepository;
 	
 	@PostMapping("/reports/consultation_report")
 	public ResponseEntity<List<Consultation>>getConsultationReport(
@@ -175,6 +182,29 @@ public class ReportResource {
 		return ResponseEntity.ok().body(doctorLabTests);
 	}
 	
+	@PostMapping("/reports/get_patient_bills_by_date")
+	public ResponseEntity<List<PatientBill>> getPatientBillsByDate(
+			@RequestBody PatientBillReportArgs args,
+			HttpServletRequest request){	
+		Optional<Patient> p = patientRepository.findById(args.getPatient().getId());
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PAID");
+		statuses.add("UNPAID");
+		statuses.add("COVERED");
+		statuses.add("VERIFIED");
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found");
+		}
+		
+		List<PatientBill> bills = new ArrayList<>();
+		
+		bills = patientBillRepository.findAllByPatientAndCreatedAtBetweenAndStatusIn(p.get(), args.from.atStartOfDay(), args.to.atStartOfDay().plusDays(1), statuses);
+		
+		
+		
+		return ResponseEntity.ok().body(bills);
+	}
+	
 }
 
 @Data
@@ -197,6 +227,13 @@ class RadiologyReportArgs {
 
 @Data
 class LabTestReportArgs {
+	LocalDate from;
+	LocalDate to;
+}
+
+@Data
+class PatientBillReportArgs {
+	Patient patient;
 	LocalDate from;
 	LocalDate to;
 }

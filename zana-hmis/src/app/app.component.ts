@@ -332,6 +332,7 @@ export class AppComponent {
         {path : 'medicine-prices', loadComponent : () => import('./pages').then(m => m), canActivate: [AuthGuard]},*/
 
         {path : 'inpatient-payment', loadComponent : () => import('./pages/payments/inpatient-payment/inpatient-payment.component').then(m => m.InpatientPaymentComponent)},
+        {path : 'patient-report', loadComponent : () => import('./pages/reports/patient-report/patient-report.component').then(m => m.PatientReportComponent)},
       )
     }
     loadStoreModule(){

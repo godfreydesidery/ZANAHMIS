@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,5 +35,24 @@ public interface PatientBillRepository extends JpaRepository<PatientBill, Long> 
 	 * @return
 	 */
 	List<PatientBill> findAllByPatientAndStatus(Patient patient, String string);
+
+	/**
+	 * @param patient
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @return
+	 */
+	List<PatientBill> findAllByPatientAndCreatedAtBetween(Patient patient, LocalDateTime atStartOfDay,
+			LocalDateTime plusDays);
+
+	/**
+	 * @param patient
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @param statuses
+	 * @return
+	 */
+	List<PatientBill> findAllByPatientAndCreatedAtBetweenAndStatusIn(Patient patient, LocalDateTime atStartOfDay,
+			LocalDateTime plusDays, List<String> statuses);
 
 }
