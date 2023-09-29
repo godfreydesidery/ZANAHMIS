@@ -347,11 +347,6 @@
                                                     <div class="col-sm-8">
                                                         <div class="row">
                                                             <div class="col-sm-12">
-                                                                <!--<h4>Select Procedure Type</h4>
-                                                                <select class="form-control" [(ngModel)]="procedureTypeName">
-                                                                    <option></option>
-                                                                    <option *ngFor="let name of procedureTypeNames">{{name}}</option>
-                                                                </select>-->
                                                                 <h4>Search Procedure (Enter 2 Characters to Search)</h4>
                                                                 <input type="text" class="form-control" [(ngModel)]="procedureTypeName" (ngModelChange)="loadProcedureTypesLike($event)">
                                                                 <div class="row"  *ngIf="procedureTypes.length > 0">
@@ -359,24 +354,17 @@
                                                                         <select class="form-control" multiple="multiple">
                                                                             <option *ngFor="let pro of procedureTypes" (click)="getProcedureType(pro.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{pro.name}}</option>
                                                                         </select>
-                                                                        <!--<button class="form-control btn btn-primary btn-outline" *ngFor="let pro of procedureTypes" (click)="getProcedureType(pro.id)" style="text-align: left;">{{pro.name}}</button>-->
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div class="col-sm-12">
-                                                                <!--<h4>Select Diagnosis</h4>
-                                                                <select class="form-control" [(ngModel)]="diagnosisTypeName">
-                                                                    <option></option>
-                                                                    <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
-                                                                </select>-->
                                                                 <h4>Search Diagnosis (Enter 2 Characters to Search)</h4>
-                                                                <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
+                                                                <input type="text" class="form-control" [(ngModel)]="diagnosisTypeCodeAndName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                                                                 <div class="row"  *ngIf="diagnosisTypes.length > 0">
                                                                     <div class="col-sm-12">
                                                                         <select class="form-control" multiple="multiple">
-                                                                            <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.name}}</option>
+                                                                            <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.code}} | {{diag.name}}</option>
                                                                         </select>
-                                                                        <!--<button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>-->
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -440,7 +428,7 @@
                                                         <tbody>
                                                             <tr *ngFor="let procedure of procedures">
                                                                 <td>{{procedure.procedureType?.name}}</td>
-                                                                <td>{{procedure.diagnosisType?.name}}</td>
+                                                                <td>{{procedure.diagnosisType?.code}} | {{procedure.diagnosisType?.name}}</td>
                                                                 <!--<td>{{procedure.theatre?.name}}</td>
                                                                 <td>{{procedure.time}}</td>
                                                                 <td>{{procedure.date | date}}</td>
@@ -555,11 +543,11 @@
                             <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
                         </select>-->
                         <h4>Search Diagnosis (Enter 2 Characters to Search)</h4>
-                        <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
+                        <input type="text" class="form-control" [(ngModel)]="diagnosisTypeCodeAndName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                         <div class="row"  *ngIf="diagnosisTypes.length > 0">
                             <div class="col-sm-12">
                                 <select class="form-control" multiple="multiple">
-                                    <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.name}}</option>
+                                    <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.code}} | {{diag.name}}</option>
                                 </select>
                                 <!--<button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>-->
                             </div>
@@ -568,8 +556,8 @@
                 </div>
                 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary pull-left" *ngIf="diagnosisTypeName != ''" (click)="saveWorkingDiagnosis()" data-dismiss="modal">Working</button>
-                    <button type="button" class="btn btn-success pull-right" *ngIf="diagnosisTypeName != ''" (click)="saveFinalDiagnosis()" data-dismiss="modal">Final</button>
+                    <button type="button" class="btn btn-primary pull-left" *ngIf="diagnosisTypeCodeAndName != ''" (click)="saveWorkingDiagnosis()" data-dismiss="modal">Working</button>
+                    <button type="button" class="btn btn-success pull-right" *ngIf="diagnosisTypeCodeAndName != ''" (click)="saveFinalDiagnosis()" data-dismiss="modal">Final</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -614,11 +602,11 @@
                             <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
                         </select>-->
                         <h4>Search Diagnosis (Enter 2 Characters to Search)</h4>
-                        <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
+                        <input type="text" class="form-control" [(ngModel)]="diagnosisTypeCodeAndName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                         <div class="row"  *ngIf="diagnosisTypes.length > 0">
                             <div class="col-sm-12">
                                 <select class="form-control" multiple="multiple">
-                                    <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.name}}</option>
+                                    <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.code}} | {{diag.name}}</option>
                                 </select>
                                 <!--<button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>-->
                             </div>
@@ -767,11 +755,11 @@
                             <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
                         </select>-->
                         <h4>Search Diagnosis (Enter 2 Characters to Search)</h4>
-                        <input type="text" class="form-control" [(ngModel)]="diagnosisTypeName" (ngModelChange)="loadDiagnosisTypesLike($event)">
+                        <input type="text" class="form-control" [(ngModel)]="diagnosisTypeCodeAndName" (ngModelChange)="loadDiagnosisTypesLike($event)">
                         <div class="row"  *ngIf="diagnosisTypes.length > 0">
                             <div class="col-sm-12">
                                 <select class="form-control" multiple="multiple">
-                                    <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.name}}</option>
+                                    <option *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{diag.code}} | {{diag.name}}</option>
                                 </select>
                                 <!--<button class="form-control btn btn-primary btn-outline" *ngFor="let diag of diagnosisTypes" (click)="getDiagnosisType(diag.id)" style="text-align: left;">{{diag.name}}</button>-->
                             </div>
@@ -894,72 +882,6 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 </div>
-
-<div class="modal fade modal-success" id="assign-procedure-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h3 class="modal-title">Assign Procedure</h3>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-8">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <h4>Select Procedure Type</h4>
-                                <select class="form-control" [(ngModel)]="procedureTypeName">
-                                    <option></option>
-                                    <option *ngFor="let name of procedureTypeNames">{{name}}</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-12">
-                                <h4>Select Diagnosis</h4>
-                                <select class="form-control" [(ngModel)]="diagnosisTypeName">
-                                    <option></option>
-                                    <option *ngFor="let name of diagnosisTypeNames">{{name}}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <button (click)="toggleTheatre()" style="width: 4cm; height: 4cm; background-color: rgba(244, 248, 247, 0.921);border-style: groove;">Need Theatre?</button>
-                    </div>
-                </div>
-                <div class="row" *ngIf="procedureNeedTheatre === true">
-                    <div  class="col-sm-12">
-                        <h4>Select Theatre</h4>
-                        <select class="form-control" [(ngModel)]="theatreName">
-                            <option></option>
-                            <option *ngFor="let name of theatreNames">{{name}}</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <h4>Time</h4>
-                        <input type="time" class="form-control" [(ngModel)]="procedureTime">
-                    </div>
-                    <div class="col-sm-3">
-                        <h4>Date</h4>
-                        <input type="date" class="form-control" [(ngModel)]="procedureDate">
-                    </div>
-                    <div class="col-sm-3">
-                        <h4>Hours</h4>
-                        <input type="number" class="form-control" [(ngModel)]="procedureHours">
-                    </div>
-                    <div class="col-sm-3">
-                        <h4>Minutes</h4>
-                        <input type="number" class="form-control" [(ngModel)]="procedureMinutes">
-                    </div>
-                </div>            
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success pull-right" (click)="saveProcedure()" data-dismiss="modal">Save</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-</div>
-
-
 
 <div class="modal fade modal-success" id="add-procedure-note-to-procedure-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">

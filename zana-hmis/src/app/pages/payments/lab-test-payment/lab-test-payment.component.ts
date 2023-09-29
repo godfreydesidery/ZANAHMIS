@@ -39,8 +39,6 @@ const API_URL = environment.apiUrl;
   ], 
 })
 export class LabTestPaymentComponent implements OnInit {
-  //searchKeysToDisplay : string[] = []
-  //searchKeys : string[] = []
   searchKey : string = ''
 
   id : any = null
@@ -95,10 +93,10 @@ export class LabTestPaymentComponent implements OnInit {
   
 
   ngOnInit(): void {
-    this.loadSearchKeys()
+    //this.loadSearchKeys()
   }
 
-  async loadSearchKeys(){//for unpaid registration
+  async loadSearchKeys1(){//for unpaid registration
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
@@ -165,7 +163,7 @@ export class LabTestPaymentComponent implements OnInit {
     .then(
       data => {
 
-        this.searchKey = key
+        //this.searchKey = key
 
         this.id = data!['id']
         this.no = data!['no']
@@ -221,7 +219,7 @@ export class LabTestPaymentComponent implements OnInit {
   }
 
   reset(){
-    this.searchKey = ''
+    //this.searchKey = ''
     this.clear()
   }
 
@@ -311,7 +309,7 @@ export class LabTestPaymentComponent implements OnInit {
         var temp = this.searchKey
         this.clear()
         this.searchKey = temp
-        this.searchBySearchKey(this.searchKey)
+        //this.searchBySearchKey(this.searchKey)
         
       }
     )
@@ -322,22 +320,6 @@ export class LabTestPaymentComponent implements OnInit {
       }
     )
   }
-
-
-  /*print = async () => {
-    const docDefinition : any = {
-      content : [
-        'content'
-      ]
-    }
-    const pdfDocGenerator = pdfMake.createPdf(docDefinition)
-    pdfDocGenerator.getDataUrl((dataUrl) => {
-      const targetElement = document.querySelector('#iframeContainer')!;
-      const iframe = document.createElement('iframe');
-      iframe.src = dataUrl;
-      targetElement.appendChild(iframe);
-    });
-  }*/
 
   printReceipt(){
     var items : ReceiptItem[] = []
@@ -417,7 +399,7 @@ export class LabTestPaymentComponent implements OnInit {
         this.patientLastName = data!.lastName
         this.patientPhoneNo = data!.phoneNo
 
-        this.searchKey = 'Name: '+ this.patientFirstName + ' ' +  this.patientMiddleName + ' ' + this.patientLastName + ' ' + 'File No: '+this.patientNo
+        //this.searchKey = 'Name: '+ this.patientFirstName + ' ' +  this.patientMiddleName + ' ' + this.patientLastName + ' ' + 'File No: '+this.patientNo
 
         this.id = data!['id']
         this.no = data!['no']

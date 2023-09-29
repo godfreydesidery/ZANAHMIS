@@ -82,14 +82,12 @@
                                                                 <thead class="success">
                                                                 <tr>
                                                                     <th>Lab Test</th>
-                                                                    <th>Price</th>
                                                                     <th>Status</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <tr *ngFor="let labTest of labTests">
                                                                         <td>{{labTest.labTestType?.name}}</td>
-                                                                        <td style="text-align: right;"><span *ngIf="labTest.patientBill?.status != 'COVERED'">{{labTest.patientBill?.amount | currency:'':''}}</span><span *ngIf="labTest.patientBill?.status === 'COVERED'">---</span></td>
                                                                         <td>{{labTest?.status}}</td>
                                                                     </tr>
                                                                 </tbody>
@@ -106,14 +104,12 @@
                                                                 <thead class="success">
                                                                 <tr>
                                                                     <th>Radiology</th>
-                                                                    <th>Price</th>
                                                                     <th>Status</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <tr *ngFor="let radiology of radiologies">
                                                                         <td>{{radiology.radiologyType?.name}}</td>
-                                                                        <td style="text-align: right;"><span *ngIf="radiology?.patientBill?.status != 'COVERED'">{{radiology?.patientBill?.amount | currency:'':''}}</span><span *ngIf="radiology.patientBill?.status === 'COVERED'">---</span></td>
                                                                         <td>{{radiology?.status}}</td>
                                                                     </tr>
                                                                 </tbody>

@@ -86,7 +86,7 @@ export class RadiologyPaymentComponent implements OnInit {
   
 
   ngOnInit(): void {
-    this.loadSearchKeys()
+    //this.loadSearchKeys()
   }
 
   async loadSearchKeys(){//for unpaid registration

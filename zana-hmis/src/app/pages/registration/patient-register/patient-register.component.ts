@@ -161,13 +161,8 @@ export class PatientRegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    //this.loadSearchKeys()
     this.loadClinicNames()
     this.loadInsurancePlanNames()
-    //this.loadLabTestTypeNames()
-    //this.loadRadiologyTypeNames()
-    //this.loadProcedureTypeNames()
-    //this.loadDiagnosisTypeNames()
     this.loadTheatreNames()
   }
 

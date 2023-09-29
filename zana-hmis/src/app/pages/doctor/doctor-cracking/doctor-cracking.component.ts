@@ -100,11 +100,11 @@ export class DoctorCrackingComponent implements OnInit {
     fDId : any
     
 
-  diagnosisTypeNames : string[] = []
-  labTestTypeNames : string[] = []
-  radiologyTypeNames : string[] = []
-  procedureTypeNames : string[] = []
-  medicineNames : string[] = []
+  //diagnosisTypeNames : string[] = []
+  //labTestTypeNames : string[] = []
+  //radiologyTypeNames : string[] = []
+  //procedureTypeNames : string[] = []
+  //medicineNames : string[] = []
 
   
 
@@ -454,30 +454,6 @@ export class DoctorCrackingComponent implements OnInit {
     this.loadFinalDiagnosis(this.id)
   }
 
-  async loadDiagnosisTypeNames(){
-    this.diagnosisTypeNames = []
-    let options = {
-      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
-    }
-    this.spinner.show()
-    await this.http.get<string[]>(API_URL+'/diagnosis_types/get_names', options)
-    .pipe(finalize(() => this.spinner.hide()))
-    .toPromise()
-    .then(
-      data => {
-        console.log(data)
-        data?.forEach(element => {
-          this.diagnosisTypeNames.push(element)
-        })
-      }
-    )
-    .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load diagnosis types names')
-      }
-    )
-  }
-
   async loadWorkingDiagnosis(id : string){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
@@ -572,6 +548,7 @@ export class DoctorCrackingComponent implements OnInit {
     this.diagnosisTypeId = null
     this.diagnosisTypeCode = ''
     this.diagnosisTypeName = ''
+    this.diagnosisTypeCodeAndName = ''
     this.diagnosisDescription = ''
   }
 
@@ -583,6 +560,7 @@ export class DoctorCrackingComponent implements OnInit {
     this.diagnosisTypeId = null
     this.diagnosisTypeCode = ''
     this.diagnosisTypeName = ''
+    this.diagnosisTypeCodeAndName = ''
   }
 
   clearRadiology(){
@@ -590,6 +568,7 @@ export class DoctorCrackingComponent implements OnInit {
     this.radiologyTypeCode = ''
     this.radiologyTypeName = ''
     this.diagnosisTypeName = ''
+    this.diagnosisTypeCodeAndName = ''
 
     this.diagnosisTypeId = null
     this.diagnosisTypeCode = ''
@@ -604,6 +583,7 @@ export class DoctorCrackingComponent implements OnInit {
     this.diagnosisTypeId = null
     this.diagnosisTypeCode = ''
     this.diagnosisTypeName = ''
+    this.diagnosisTypeCodeAndName = ''
 
     this.procedureNeedTheatre = false
     this.procedureTheatreName = ''
@@ -626,30 +606,6 @@ export class DoctorCrackingComponent implements OnInit {
     this.prescriptionPrice        = 0
     this.prescriptionQty          = 0
 
-  }
-
-  async loadLabTestTypeNames(){
-    this.labTestTypeNames = []
-    let options = {
-      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
-    }
-    this.spinner.show()
-    await this.http.get<string[]>(API_URL+'/lab_test_types/get_names', options)
-    .pipe(finalize(() => this.spinner.hide()))
-    .toPromise()
-    .then(
-      data => {
-        console.log(data)
-        data?.forEach(element => {
-          this.labTestTypeNames.push(element)
-        })
-      }
-    )
-    .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load lab test types names')
-      }
-    )
   }
 
   async getMedicineUnit(id : any){
@@ -675,78 +631,6 @@ export class DoctorCrackingComponent implements OnInit {
       () => {
         this.msgBox.showErrorMessage('Could not get units')
         return 0
-      }
-    )
-  }
-
-  async loadRadiologyTypeNames(){
-    this.radiologyTypeNames = []
-    let options = {
-      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
-    }
-    this.spinner.show()
-    await this.http.get<string[]>(API_URL+'/radiology_types/get_names', options)
-    .pipe(finalize(() => this.spinner.hide()))
-    .toPromise()
-    .then(
-      data => {
-        console.log(data)
-        data?.forEach(element => {
-          this.radiologyTypeNames.push(element)
-        })
-      }
-    )
-    .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load radiology types names')
-      }
-    )
-  }
-
-  async loadProcedureTypeNames(){
-    this.procedureTypeNames = []
-    let options = {
-      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
-    }
-    this.spinner.show()
-    await this.http.get<string[]>(API_URL+'/procedure_types/get_names', options)
-    .pipe(finalize(() => this.spinner.hide()))
-    .toPromise()
-    .then(
-      data => {
-        console.log(data)
-        data?.forEach(element => {
-          this.procedureTypeNames.push(element)
-        })
-      }
-    )
-    .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load procedure types names')
-      }
-    )
-  }
-
-  async loadMedicineNames(){
-    this.medicineNames = []
-    let options = {
-      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
-    }
-    this.spinner.show()
-    await this.http.get<string[]>(API_URL+'/medicines/get_names', options)
-    .pipe(finalize(() => this.spinner.hide()))
-    .toPromise()
-    .then(
-      data => {
-        console.log(data)
-        data?.forEach(element => {
-          this.medicineNames.push(element)
-        })
-      }
-    )
-    .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load medicine names')
       }
     )
   }
@@ -1245,6 +1129,7 @@ export class DoctorCrackingComponent implements OnInit {
   diagnosisTypeId : any =  null
   diagnosisTypeCode : string = ''
   diagnosisTypeName : string = ''
+  diagnosisTypeCodeAndName : string = ''
   diagnosisTypes : IDiagnosisType[] = []
   async loadDiagnosisTypesLike(value : string){
     this.diagnosisTypes = []
@@ -1282,6 +1167,7 @@ export class DoctorCrackingComponent implements OnInit {
         this.diagnosisTypeId = data?.id
         this.diagnosisTypeCode = data!.code
         this.diagnosisTypeName = data!.name
+        this.diagnosisTypeCodeAndName = data!.code +' | '+ data!.name
       }
     )
     .catch(

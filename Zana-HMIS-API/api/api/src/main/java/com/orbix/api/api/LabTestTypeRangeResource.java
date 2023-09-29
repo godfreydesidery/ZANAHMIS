@@ -6,6 +6,7 @@ package com.orbix.api.api;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.LabTestTypeRange;
+import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.domain.LabTestType;
 import com.orbix.api.repositories.LabTestTypeRangeRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
@@ -49,8 +51,14 @@ public class LabTestTypeRangeResource {
 	
 	
 	@GetMapping("/lab_test_type_ranges")
-	public ResponseEntity<List<LabTestTypeRange>>getLabTestTypeRanges(HttpServletRequest request){
-		return ResponseEntity.ok().body(labTestTypeRangeService.getLabTestTypeRanges(request));
+	public ResponseEntity<List<LabTestTypeRange>>getLabTestTypeRanges(
+			@RequestParam(name = "lab_test_type_id") Long labTestTypeId,
+			HttpServletRequest request){
+		Optional<LabTestType> ltt = labTestTypeRepository.findById(labTestTypeId);
+		if(ltt.isEmpty()) {
+			throw new NotFoundException("Lab Test Type not found");
+		}
+		return ResponseEntity.ok().body(labTestTypeRangeService.getLabTestTypeRanges(ltt.get(), request));
 	}
 	
 	@GetMapping("/lab_test_type_ranges/get")
@@ -58,6 +66,15 @@ public class LabTestTypeRangeResource {
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){
 		return ResponseEntity.ok().body(labTestTypeRangeService.getLabTestTypeRangeById(id, request));
+	}
+	
+	@GetMapping("/lab_test_type_ranges/delete")
+	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	public boolean delete(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		labTestTypeRangeRepository.deleteById(id);
+		return true;
 	}
 	
 	@GetMapping("/lab_test_type_ranges/get_names")
@@ -85,7 +102,7 @@ public class LabTestTypeRangeResource {
 	public ResponseEntity<LabTestTypeRange>save(
 			@RequestBody LabTestTypeRange labTestTypeRange,
 			HttpServletRequest request){
-		LabTestType labTestType = labTestTypeRepository.findByName(labTestTypeRange.getLabTestType().getName()).get();
+		LabTestType labTestType = labTestTypeRepository.findById(labTestTypeRange.getLabTestType().getId()).get();
 		labTestTypeRange.setLabTestType(labTestType);
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/lab_test_type_ranges/save").toUriString());

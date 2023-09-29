@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.api.accessories.Sanitizer;
+import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.LabTestTypeRange;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
@@ -49,9 +50,9 @@ public class LabTestTypeRangeServiceImpl implements LabTestTypeRangeService{
 	}
 
 	@Override
-	public List<LabTestTypeRange> getLabTestTypeRanges(HttpServletRequest request) {
+	public List<LabTestTypeRange> getLabTestTypeRanges(LabTestType labTestType, HttpServletRequest request) {
 		log.info("Fetching all labTestTypeRanges");
-		return labTestTypeRangeRepository.findAll();
+		return labTestTypeRangeRepository.findAllByLabTestType(labTestType);
 	}
 
 	@Override

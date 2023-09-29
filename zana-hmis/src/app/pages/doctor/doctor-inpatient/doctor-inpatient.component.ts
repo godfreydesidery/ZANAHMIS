@@ -547,6 +547,7 @@ export class DoctorInpatientComponent implements OnInit {
     this.diagnosisTypeId = null
     this.diagnosisTypeCode = ''
     this.diagnosisTypeName = ''
+    this.diagnosisTypeCodeAndName = ''
     this.diagnosisDescription = ''
   }
 
@@ -558,6 +559,7 @@ export class DoctorInpatientComponent implements OnInit {
     this.diagnosisTypeId = null
     this.diagnosisTypeCode = ''
     this.diagnosisTypeName = ''
+    this.diagnosisTypeCodeAndName = ''
   }
 
   clearRadiology(){
@@ -565,6 +567,7 @@ export class DoctorInpatientComponent implements OnInit {
     this.radiologyTypeCode = ''
     this.radiologyTypeName = ''
     this.diagnosisTypeName = ''
+    this.diagnosisTypeCodeAndName = ''
 
     this.diagnosisTypeId = null
     this.diagnosisTypeCode = ''
@@ -579,6 +582,7 @@ export class DoctorInpatientComponent implements OnInit {
     this.diagnosisTypeId = null
     this.diagnosisTypeCode = ''
     this.diagnosisTypeName = ''
+    this.diagnosisTypeCodeAndName = ''
 
     this.procedureNeedTheatre = false
     this.procedureTheatreName = ''
@@ -1124,6 +1128,7 @@ export class DoctorInpatientComponent implements OnInit {
   diagnosisTypeId : any =  null
   diagnosisTypeCode : string = ''
   diagnosisTypeName : string = ''
+  diagnosisTypeCodeAndName : string = ''
   diagnosisTypes : IDiagnosisType[] = []
   async loadDiagnosisTypesLike(value : string){
     this.diagnosisTypes = []
@@ -1161,6 +1166,7 @@ export class DoctorInpatientComponent implements OnInit {
         this.diagnosisTypeId = data?.id
         this.diagnosisTypeCode = data!.code
         this.diagnosisTypeName = data!.name
+        this.diagnosisTypeCodeAndName = data!.code + ' | '+ data!.name
       }
     )
     .catch(

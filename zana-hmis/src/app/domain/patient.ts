@@ -6,7 +6,7 @@ import { IUser } from "./user"
 export interface IPatient {
     id              : any
     no              : string
-    searchKey       : string
+    //searchKey       : string
     firstName       : string
     middleName      : string
     lastName        : string

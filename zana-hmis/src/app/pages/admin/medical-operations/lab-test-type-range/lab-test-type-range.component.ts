@@ -30,11 +30,12 @@ const API_URL = environment.apiUrl;
   styleUrls: ['./lab-test-type-range.component.scss']
 })
 export class LabTestTypeRangeComponent implements OnInit {
-  id          : any = null
   name        : string = ''
   active      : boolean = true
 
   labTestType! : ILabTestType
+
+  labTestTypes : ILabTestType[] = []
 
   labTestTypeRanges : ILabTestTypeRange[] = []
 
@@ -52,72 +53,66 @@ export class LabTestTypeRangeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadLabTestTypeRanges()
-    this.loadLabTestTypeNames()
+    this.loadLabTestTypes()
+    //this.loadLabTestTypeRanges()
   }
 
+  labTestTypeRangeName : string = ''
   public async saveLabTestTypeRange(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var labTestTypeRange = {
-      id          : this.id,
-      name        : this.name,
-      labTestType : { name : this.labTestTypeName},
+      name        : this.labTestTypeRangeName,
+      labTestType : { id : this.labTestTypeId},
       active      : true
     }
-    if(this.id == null || this.id == ''){
-      //save a new labTestTypeRange
-      this.spinner.show()
+    this.spinner.show()
       await this.http.post<ILabTestTypeRange>(API_URL+'/lab_test_type_ranges/save', labTestTypeRange, options)
       .pipe(finalize(() => this.spinner.hide()))
       .toPromise()
       .then(
         data => {
-          this.id     = data?.id
-          this.name   = data!.name
-          this.active = data!.active
+          this.loadLabTestTypeRanges(this.labTestTypeId)
           this.msgBox.showSuccessMessage('Range created successifully')
-          this.loadLabTestTypeRanges()
-          
         }
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create range')
+          this.msgBox.showErrorMessage(error['error'])
         }
       )
-
-    }else{
-      this.spinner.show()
-      await this.http.post<ILabTestTypeRange>(API_URL+'/lab_test_type_ranges/save', labTestTypeRange, options)
-      .pipe(finalize(() => this.spinner.hide()))
-      .toPromise()
-      .then(
-        data => {
-          this.id           = data?.id
-          this.name = data!.name
-          this.active       = data!.active
-          this.msgBox.showSuccessMessage('Range updated successifully')
-          this.loadLabTestTypeRanges()
-        }
-      )
-      .catch(
-        error => {
-          this.msgBox.showErrorMessage('Could not update range')
-        }
-      )
-    }
     this.clear()
   }
 
-  async loadLabTestTypeRanges(){
+  async loadLabTestTypes(){
+    this.labTestTypes = []
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<ILabTestType[]>(API_URL+'/lab_test_types', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.labTestTypes = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage('Could not Lab Test Types')
+      }
+    )
+  }
+
+  async loadLabTestTypeRanges(id : any){
     this.labTestTypeRanges = []
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<ILabTestTypeRange[]>(API_URL+'/lab_test_type_ranges', options)
+    await this.http.get<ILabTestTypeRange[]>(API_URL+'/lab_test_type_ranges?lab_test_type_id='+id, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -129,64 +124,56 @@ export class LabTestTypeRangeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load ranges')
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
   }
 
   clear(){
-    this.id               = null
-    this.name             = ''
-    this.labTestTypeName  = ''
-    this.active           = false
+    this.labTestTypeRangeName = ''
   }
 
-  async getLabTestTypeRange(key: string) {
-    if(key == ''){
-      return
-    }
+  labTestTypeId : any = null
+  async getLabTestType(id : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<ILabTestTypeRange>(API_URL+'/lab_test_type_ranges/get?id='+key, options)
-    .pipe(finalize(() => this.spinner.hide()))
-    .toPromise()
-    .then(
-      data=>{
-        this.id                 = data?.id
-          this.name             = data!.name
-          this.labTestTypeName  = data!.labTestType.name
-          this.active           = data!.active
-      }
-    )
-    .catch(
-      error=>{
-        console.log(error)        
-        this.msgBox.showErrorMessage('Could not find range')
-      }
-    )
-  }
-
-  async loadLabTestTypeNames(){
-    this.labTestTypeNames = []
-    let options = {
-      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
-    }
-    this.spinner.show()
-    await this.http.get<string[]>(API_URL+'/lab_test_types/get_names', options)
+    await this.http.get<ILabTestType>(API_URL+'/lab_test_types/get?id='+id, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
-        data?.forEach(element => {
-          this.labTestTypeNames.push(element)
-        })
+        this.labTestTypeId = data?.id
+        this.labTestType = data!
+        this.loadLabTestTypeRanges(this.labTestTypeId)
       }
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Lab Tests Types')
+        this.labTestTypeId = null
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  async deleteRange(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<ILabTestType>(API_URL+'/lab_test_type_ranges/delete?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Deleted')
+        this.loadLabTestTypeRanges(this.labTestTypeId)
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
       }
     )
   }

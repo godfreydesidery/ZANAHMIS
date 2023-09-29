@@ -35,7 +35,6 @@ const API_URL = environment.apiUrl;
   ], 
 })
 export class MedicationPaymentComponent implements OnInit {
-  //searchKeys : string[] = []
   searchKey : string = ''
 
   id : any = null
@@ -91,7 +90,7 @@ export class MedicationPaymentComponent implements OnInit {
   
 
   ngOnInit(): void {
-    this.loadSearchKeys()
+    //this.loadSearchKeys()
   }
 
   async loadSearchKeys(){//for unpaid registration
@@ -136,7 +135,7 @@ export class MedicationPaymentComponent implements OnInit {
   }
 
 
-  async searchBySearchKey(key : string): Promise<void> {
+  async searchBySearchKey1(key : string): Promise<void> {
     
     var searchElement = ''
     this.registrationAmount = 0
@@ -161,7 +160,7 @@ export class MedicationPaymentComponent implements OnInit {
     .then(
       data => {
 
-        this.searchKey = key
+        //this.searchKey = key
 
         this.id = data!['id']
         this.no = data!['no']
@@ -313,7 +312,7 @@ export class MedicationPaymentComponent implements OnInit {
         var temp = this.searchKey
         this.clear()
         this.searchKey = temp
-        this.searchBySearchKey(this.searchKey)
+        this.searchBySearchKey1(this.searchKey)
         
       }
     )
