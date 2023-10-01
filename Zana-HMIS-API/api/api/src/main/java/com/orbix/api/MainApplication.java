@@ -38,6 +38,7 @@ import com.orbix.api.domain.User;
 import com.orbix.api.repositories.AdmissionRepository;
 import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationRepository;
+import com.orbix.api.repositories.ConsultationTransferRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
@@ -53,6 +54,7 @@ import com.orbix.api.service.DayService;
 import com.orbix.api.service.UserService;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -70,7 +72,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Data
 @RequiredArgsConstructor
 public class MainApplication {
-protected ConfigurableApplicationContext springContext;
+	protected ConfigurableApplicationContext springContext;
 
     DayRepository dayRepository;
     CompanyProfileRepository companyProfileRepository;
@@ -85,6 +87,7 @@ protected ConfigurableApplicationContext springContext;
 	private final RadiologyRepository radiologyRepository;
 	private final ProcedureRepository procedureRepository;
 	private final PrescriptionRepository prescriptionRepository;
+	private final ConsultationTransferRepository consultationTransferRepository;
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -131,7 +134,8 @@ protected ConfigurableApplicationContext springContext;
 				labTestRepository, 
 				radiologyRepository, 
 				procedureRepository, 
-				prescriptionRepository);
+				prescriptionRepository,
+				consultationTransferRepository);
 	    Thread updatePatientThread = new Thread(updatePatient);
 	    updatePatientThread.start();
 	}

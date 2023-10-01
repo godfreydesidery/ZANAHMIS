@@ -2,13 +2,16 @@ import { CommonModule, Time } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IAdmission } from 'src/app/domain/admission';
+import { IClinic } from 'src/app/domain/clinic';
 import { IClinicalNote } from 'src/app/domain/clinical-note';
+import { IClinician } from 'src/app/domain/clinician';
 import { IConsultation } from 'src/app/domain/consultation';
+import { IConsultationTransfer } from 'src/app/domain/consultation-transfer';
 import { IDiagnosisType } from 'src/app/domain/diagnosis-type';
 import { IFinalDiagnosis } from 'src/app/domain/final-diagnosis';
 import { IGeneralExamination } from 'src/app/domain/general-examination';
@@ -172,7 +175,11 @@ export class DoctorCrackingComponent implements OnInit {
 
   filterRecords : string = '' // this is composite
 
-  constructor(private auth : AuthService,
+  clinics : IClinic[] = []
+
+  constructor(
+    private router : Router,
+    private auth : AuthService,
     private http :HttpClient,
     private spinner : NgxSpinnerService,
     private msgBox : MsgBoxService
@@ -1577,6 +1584,75 @@ export class DoctorCrackingComponent implements OnInit {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
+  }
+
+  transferClinicId : any = null
+  transferClinicName : string = ''
+  async loadClinics(){
+    this.clinics = []
+    this.transferClinicId = null
+    this.transferClinicName = ''
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get<IClinic[]>(API_URL+'/clinics', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        data?.forEach(element => {
+          this.clinics.push(element)
+        })
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage('Could not load clinics')
+      }
+    )
+  }
+
+  
+  async loadClinic(clinic : IClinic){
+    this.transferClinicId = clinic.id
+    this.transferClinicName = clinic.name
+    this.transferReason = ''
+  }
+
+  transferReason : string = ''
+
+  
+
+  async transfer(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var transfer = {
+      consultation : {id : this.id},
+      clinic : {id : this.transferClinicId},
+      reason : this.transferReason
+
+    }
+
+    this.spinner.show()
+    await this.http.post<IConsultationTransfer[]>(API_URL+'/patients/create_consultation_transfer', transfer, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Transfer created successifuly')
+        this.router.navigate(['my-consultation'])
+      }
+    )
+    .catch(
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+
   }
 
 

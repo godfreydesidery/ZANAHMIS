@@ -33,6 +33,7 @@ import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.ClinicalNote;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
+import com.orbix.api.domain.ConsultationTransfer;
 import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.FinalDiagnosis;
 import com.orbix.api.domain.GeneralExamination;
@@ -90,6 +91,7 @@ import com.orbix.api.repositories.ClinicalNoteRepository;
 import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationRepository;
+import com.orbix.api.repositories.ConsultationTransferRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
 import com.orbix.api.repositories.FinalDiagnosisRepository;
@@ -189,6 +191,7 @@ public class PatientResource {
 	private final PatientNursingChartRepository patientNursingChartRepository;
 	private final PatientNursingProgressNoteRepository patientNursingProgressNoteRepository;
 	private final PatientNursingCarePlanRepository patientNursingCarePlanRepository;
+	private final ConsultationTransferRepository consultationTransferRepository;
 	
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(
@@ -336,6 +339,40 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(patientService.doConsultation(p.get(), c.get(), cn.get(), request));
 	}
 	
+	@PostMapping("/patients/create_consultation_transfer")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<ConsultationTransfer>doConsultationTransfer(
+			@RequestBody ConsultationTransfer transfer, 
+			HttpServletRequest request){
+		Optional<Consultation> con = consultationRepository.findById(transfer.getConsultation().getId());		
+		Optional<Clinic> c = clinicRepository.findById(transfer.getClinic().getId());
+		
+		
+		if(con.isEmpty()) {
+			throw new NotFoundException("Consultation not found");
+		}
+		if(c.isEmpty()) {
+			throw new NotFoundException("Clinic not found");
+		}
+		
+		transfer.setConsultation(con.get());
+		transfer.setClinic(c.get());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/create_consultation_transfer").toUriString());
+		return ResponseEntity.created(uri).body(patientService.createConsultationTransfer(transfer, request));
+	}
+	
+	@GetMapping("/patients/get_consultation_transfers")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<List<ConsultationTransfer>>getConsultationTransfers(
+			HttpServletRequest request){
+		
+		List<ConsultationTransfer> transfers = consultationTransferRepository.findAllByStatus("PENDING");
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_consultation_transfers").toUriString());
+		return ResponseEntity.created(uri).body(transfers);
+	}
+	
 	@PostMapping("/patients/cancel_consultation")
 	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
 	public ResponseEntity<Boolean>cancelConsultation(
@@ -411,6 +448,26 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(true);
 	}
 	
+	@PostMapping("/patients/free_consultation")
+	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<Boolean>freeConsultation(
+			@RequestParam Long id, 
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(id);
+		if(!c.get().getStatus().equals("TRANSFERED")) {
+			throw new InvalidOperationException("Could not free, only a TRANSFERED consultation can be freed");
+		}
+		/**
+		 * Cancel the consultation
+		 */
+		Consultation consultation = c.get();
+		consultation.setStatus("SIGNED-OUT");
+		consultation = consultationRepository.save(consultation);		
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/free_consultation").toUriString());
+		return ResponseEntity.created(uri).body(true);
+	}
+	
 	@GetMapping("/patients/get_active_consultations")
 	public ResponseEntity<List<Consultation>>getActiveConsultations(
 			@RequestParam Long patient_id,
@@ -420,6 +477,7 @@ public class PatientResource {
 		List<String> statuses = new ArrayList<>();
 		statuses.add("PENDING");
 		statuses.add("IN-PROCESS");
+		statuses.add("TRANSFERED");
 		List<Consultation> consultations = consultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
 		
 		

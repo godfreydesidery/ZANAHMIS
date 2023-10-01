@@ -89,6 +89,25 @@ public class ClinicianResource {
 		return ResponseEntity.created(uri).body(clinicianService.save(clinician, request));
 	}
 	
+	@GetMapping("/clinicians/get_by_clinic_id")    // to do later
+	public ResponseEntity<List<Clinician>> getClinicianByClinicId(
+			@RequestParam(name = "clinic_id") Long clinicId,
+			HttpServletRequest request){
+		Clinic d = clinicRepository.findById(clinicId).get();
+		List<Clinician> cs = clinicianRepository.findAll();
+		List<Clinician> cst = new ArrayList<>();
+		for(Clinician c : cs) {
+			Collection<Clinic> cls = c.getClinics();
+			for(Clinic cl : cls) {
+				if(cl.getName().equals(d.getName())) {
+					cst.add(c);
+				}
+			}
+		}
+		
+		return ResponseEntity.ok().body(cst);
+	}
+	
 	@GetMapping("/clinicians/get_by_clinic_name")    // to do later
 	public ResponseEntity<List<Clinician>> getClinicianByClinicName(
 			@RequestParam(name = "clinic_name") String clinicName,

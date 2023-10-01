@@ -12,6 +12,7 @@ import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
+import com.orbix.api.domain.ConsultationTransfer;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Nurse;
@@ -35,6 +36,7 @@ import com.orbix.api.domain.WardBed;
 public interface PatientService {
 	Patient doRegister(Patient patient, HttpServletRequest request);
 	Patient doConsultation(Patient p, Clinic c, Clinician cn, HttpServletRequest request);
+	ConsultationTransfer createConsultationTransfer(ConsultationTransfer transfer, HttpServletRequest request);
 	Admission doAdmission(Patient p, WardBed wb, HttpServletRequest request);
 	Patient update(Patient patient, HttpServletRequest request);
 	List<Patient>getBySearchKey(String searchKey);

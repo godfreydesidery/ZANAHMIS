@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.domain.Consultation;
+import com.orbix.api.domain.ConsultationTransfer;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.PatientBill;
@@ -22,6 +23,7 @@ import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.Radiology;
 import com.orbix.api.repositories.AdmissionRepository;
 import com.orbix.api.repositories.ConsultationRepository;
+import com.orbix.api.repositories.ConsultationTransferRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.MedicineInsurancePlanRepository;
@@ -59,6 +61,8 @@ public class UpdatePatient implements Runnable{
 	private final RadiologyRepository radiologyRepository;
 	private final ProcedureRepository procedureRepository;
 	private final PrescriptionRepository prescriptionRepository;
+	
+	private final ConsultationTransferRepository consultationTransferRepository;
 	
 	
 	
@@ -165,6 +169,16 @@ public class UpdatePatient implements Runnable{
 						}
 					}
 				}
+				
+				List<ConsultationTransfer> cts = consultationTransferRepository.findAllByStatus("PENDING");
+				for(ConsultationTransfer ct : cts) {
+					long difference = ChronoUnit.HOURS.between(ct.getCreatedAt(), LocalDateTime.now());
+					if(difference >= 24) {
+						ct.setStatus("CANCELED");
+						consultationTransferRepository.save(ct);
+					}
+				}
+				
 			}catch(Exception e) {}	
 		}
 	}

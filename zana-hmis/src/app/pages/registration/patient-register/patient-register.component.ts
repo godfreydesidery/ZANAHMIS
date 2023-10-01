@@ -9,6 +9,7 @@ import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { IClinician } from 'src/app/domain/clinician';
 import { IConsultation } from 'src/app/domain/consultation';
+import { IConsultationTransfer } from 'src/app/domain/consultation-transfer';
 import { IDiagnosisType } from 'src/app/domain/diagnosis-type';
 import { IInsurancePlan } from 'src/app/domain/insurance-plan';
 import { ILabTest } from 'src/app/domain/lab-test';
@@ -830,7 +831,7 @@ export class PatientRegisterComponent implements OnInit {
 
   }
 
-  async cancelConsultation(consultationId : any){
+  async cancelConsultation(consultation : IConsultation){
     if(!window.confirm('Cancel this consultation?')){
       return
     }
@@ -839,7 +840,7 @@ export class PatientRegisterComponent implements OnInit {
     }
     
     this.spinner.show()
-    await this.http.post<IPatient>(API_URL+'/patients/cancel_consultation?id='+consultationId, null, options)
+    await this.http.post<IPatient>(API_URL+'/patients/cancel_consultation?id='+consultation.id, null, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -849,6 +850,38 @@ export class PatientRegisterComponent implements OnInit {
         this.clear()
         this.searchKey = temp
         this.searchBySearchKey(this.searchKey)
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+
+  }
+
+  async freeConsultation(consultation : IConsultation){
+    if(!window.confirm('Free patient from this consultation?')){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    
+    this.spinner.show()
+    await this.http.post<IPatient>(API_URL+'/patients/free_consultation?id='+consultation.id, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Patient freed successifuly')
+        var temp : string = this.clinicName
+        var temp2 = this.searchKey
+        this.clear()
+        this.clinicName = temp
+        this.searchKey = temp2
+        this.processTransfer(consultation.patient.id, this.clinicName)
+        this.loadConsultationFee()
       }
     )
     .catch(
@@ -1787,6 +1820,34 @@ export class PatientRegisterComponent implements OnInit {
         console.log(error)
       }
     )
+  }
+
+  consultationTransfers : IConsultationTransfer[] = []
+  async loadTransfers(){//for unpaid registration
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.consultationTransfers = []
+    this.spinner.show()
+    await this.http.get<IConsultationTransfer[]>(API_URL+'/patients/get_consultation_transfers', options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.consultationTransfers = data!
+      },
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  processTransfer(patientId : any, clinicName : string | undefined){
+    this.getPatient(patientId)
+    this.clinicName = clinicName!
+    this.loadClinicianNames(clinicName!)
   }
 
 }

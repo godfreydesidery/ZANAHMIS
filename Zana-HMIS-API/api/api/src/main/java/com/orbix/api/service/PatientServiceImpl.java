@@ -25,6 +25,7 @@ import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.CompanyProfile;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.ConsultationInsurancePlan;
+import com.orbix.api.domain.ConsultationTransfer;
 import com.orbix.api.domain.Consumable;
 import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.Dressing;
@@ -66,6 +67,7 @@ import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationInsurancePlanRepository;
 import com.orbix.api.repositories.ConsultationRepository;
+import com.orbix.api.repositories.ConsultationTransferRepository;
 import com.orbix.api.repositories.ConsumableRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
@@ -160,6 +162,7 @@ public class PatientServiceImpl implements PatientService {
 	private final PatientNursingChartRepository patientNursingChartRepository;
 	private final PatientNursingProgressNoteRepository patientNursingProgressNoteRepository;
 	private final PatientNursingCarePlanRepository patientNursingCarePlanRepository;
+	private final ConsultationTransferRepository consultationTransferRepository;
 	
 	@Override
 	public List<Patient> getAll() {
@@ -375,15 +378,26 @@ public class PatientServiceImpl implements PatientService {
 	
 	@Override
 	public Patient doConsultation(Patient p, Clinic c, Clinician cn, HttpServletRequest request) {
-		// TODO Auto-generated method stub
+		
+		Optional<ConsultationTransfer> conTrans = consultationTransferRepository.findByPatientAndStatus(p, "PENDING");
+		if(conTrans.isPresent()) {
+			if(c.getId() != conTrans.get().getClinic().getId()) {
+				throw new InvalidOperationException("Can not send to the specified clinic. Patient has been transfered to "+conTrans.get().getClinic().getName() +" clinic. Please send the patient to the specified clinic");
+			}else {
+				conTrans.get().setStatus("COMPLETED");
+				consultationTransferRepository.save(conTrans.get());
+			}
+		}
+		
 		/**
 		 * Check whether patient is assigned to a consultation, if yes, throws error
 		 */
 		List<String> statuses = new ArrayList<>();
 		statuses.add("PENDING");
+		statuses.add("TRANSFERED");
 		Optional<Consultation> pendingCon = consultationRepository.findByPatientAndStatusIn(p, statuses);
 		if(pendingCon.isPresent()) {
-			throw new InvalidOperationException("Patient has pending consultation, please consider freeing the patient");
+			throw new InvalidOperationException("Patient has pending or held consultation, please consider freeing the patient");
 		}
 		statuses.add("IN-PROCESS");
 		Optional<Consultation> activeCon = consultationRepository.findByPatientAndStatusIn(p, statuses);
@@ -2508,5 +2522,73 @@ public class PatientServiceImpl implements PatientService {
 		plan.setCreatedAt(dayService.getTimeStamp());
 		
 		return patientNursingCarePlanRepository.save(plan);
+	}
+
+	@Override
+	public ConsultationTransfer createConsultationTransfer(ConsultationTransfer transfer, HttpServletRequest request) {		
+		if(!transfer.getConsultation().getStatus().equals("IN-PROCESS")) {
+			throw new InvalidOperationException("Can not transfer. Not an active consultation");
+		}
+		List<LabTest> labTests = labTestRepository.findByConsultation(transfer.getConsultation());
+		List<Radiology> radiologies = radiologyRepository.findByConsultation(transfer.getConsultation());
+		List<Procedure> procedures = procedureRepository.findByConsultation(transfer.getConsultation());
+		List<Prescription> prescriptions = prescriptionRepository.findByConsultation(transfer.getConsultation());
+		
+		List<ConsultationTransfer> contras = consultationTransferRepository.findAllByPatientAndStatus(transfer.getConsultation().getPatient(), "PENDING");
+		if(!contras.isEmpty()) {
+			throw new InvalidOperationException("Can not transfer, the patient already have a pending transfer");
+		}
+		
+		for(LabTest test : labTests) {
+			if(test.getStatus() != null) {
+				if(test.getStatus().equals("PENDING")) {
+					throw new InvalidOperationException("Can not transfer. The patient has a pending lab test. Please consider canceling the test");
+				}
+			}
+			
+		}
+		for(Radiology test : radiologies) {
+			if(test.getStatus() != null) {
+				if(test.getStatus().equals("PENDING")) {
+					throw new InvalidOperationException("Can not transfer. The patient has a pending radiology test. Please consider canceling the test");
+				}
+			}
+			
+		}
+		for(Procedure test : procedures) {
+			if(test.getStatus() != null) {
+				if(test.getStatus().equals("PENDING")) {
+					throw new InvalidOperationException("Can not transfer. The patient has a pending procedure. Please consider canceling the procedure");
+				}
+			}
+			
+		}
+		for(Prescription test : prescriptions) {
+			if(test.getStatus() != null) {
+				if(test.getStatus().equals("PENDING")) {
+					throw new InvalidOperationException("Can not transfer. The patient has a pending prescription. Please consider canceling the prescription");
+				}
+			}
+			
+		}
+		
+		Consultation con = transfer.getConsultation();
+		
+		if(transfer.getClinic().getId() == con.getClinic().getId()) {
+			throw new InvalidOperationException("Can not transfer to the same clinic");
+		}
+		
+		con.setStatus("TRANSFERED");
+		con = consultationRepository.save(con);
+	
+		transfer.setStatus("PENDING");
+		transfer.setConsultation(con);///??
+		transfer.setPatient(con.getPatient());
+		
+		transfer.setCreatedby(userService.getUser(request).getId());
+		transfer.setCreatedOn(dayService.getDay().getId());
+		transfer.setCreatedAt(dayService.getTimeStamp());
+		
+		return consultationTransferRepository.save(transfer);
 	}
 }

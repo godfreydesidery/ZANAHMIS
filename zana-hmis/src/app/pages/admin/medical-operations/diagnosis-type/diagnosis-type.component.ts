@@ -15,6 +15,9 @@ import { AppRoutingModule } from 'src/app/app-routing.module';
 import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { RouterLink } from '@angular/router';
 
+import {MatPaginatorModule} from '@angular/material/paginator';
+import { NgbPaginationModule, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+
 const fs = require('file-saver');
 
 const API_URL = environment.apiUrl;
