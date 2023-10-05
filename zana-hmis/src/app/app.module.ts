@@ -222,7 +222,7 @@ import { ConsumableComponent } from './pages/admin/medical-operations/consumable
     //PharmacyMedicineStockStatusComponent,
     //LabTestReportComponent,
     //LabTestStatisticsReportComponent,
-    LabSampleCollectionReportComponent,
+    //LabSampleCollectionReportComponent,
     //ConsumableComponent,
     //LabTestTypePriceComponent,
     //RadiologyTypePriceComponent,

@@ -37,6 +37,7 @@
                                         <th>Patient's File No</th>
                                         <th>Payment Type</th>
                                         <th>Dr. Name</th>
+                                        <th>Clinic</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -47,6 +48,7 @@
                                             <td>{{consultation.patient.no}}</td>
                                             <td>{{consultation.paymentType}}</td>
                                             <td>{{consultation.clinician.nickname}}</td>
+                                            <td>{{consultation.clinic.name}}</td>
                                             <td><a class="btn btn-success" (click)="postConsultation(consultation.id)">Attend</a></td>
                                         </tr>
                                     </tbody>

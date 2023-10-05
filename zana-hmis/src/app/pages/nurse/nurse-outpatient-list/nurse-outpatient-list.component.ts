@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
@@ -26,7 +26,8 @@ const API_URL = environment.apiUrl;
     FormsModule,
     ReactiveFormsModule,
     SearchFilterPipe,
-    AgePipe
+    AgePipe,
+    RouterLink
   ],
 })
 export class NurseOutpatientListComponent {

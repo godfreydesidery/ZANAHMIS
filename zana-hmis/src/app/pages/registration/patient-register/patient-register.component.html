@@ -16,7 +16,7 @@
                             <a class="btn btn-primary" (click)="existingPatientPrompt()">Existing Patient</a>  
                         </div>
                         <div class="btn"> 
-                            <a class="btn btn-primary" (click)="loadTransfers()" (click)="existingPatientPrompt()" data-toggle="modal" data-target="#load-transfers-modal">Transfers</a>  
+                            <a class="btn btn-primary" (click)="loadTransfers()" (click)="existingPatientPrompt()" data-toggle="modal" data-target="#load-transfers-modal">Transfers to other Clinics</a>  
                         </div>
                         <div class="btn"> 
                             <!--<a class="btn btn-primary" routerLink="/patient-list"> <i class="fa fa-list"></i>Today List</a>-->  
@@ -156,7 +156,7 @@
                                             <div class="row">
                                                 <div class="col-xs-3"></div>
                                                 <div class="col-xs-6">
-                                                    <h4 class="text-primary"><b>Search Patient(Enter 4 characters)<br> Name, File No or Phone</b></h4>
+                                                    <h4 class="text-primary"><b>Search Patient(Enter 3 characters)<br> Name, File No or Phone</b></h4>
                                                     <input type="text" class="form-control" [(ngModel)]="searchKey" (ngModelChange)="loadPatientsLike($event)" [readonly]="lockSearchKey" style="max-width: 15cm;" placeholder="Search...">
                                                     <div class="row" *ngIf="lockSearchKey === false && patients.length > 0">
                                                         <div class="col-sm-12">
@@ -744,7 +744,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h2 class="modal-title">Transfers</h2>
+                <h2 class="modal-title">Transfers to Other Clinics</h2>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -757,7 +757,7 @@
                             </div>
                         </div>
                         <br>
-                        <table class="table table-responsive table-striped table-small">
+                        <table class="table table-responsive table-striped table-bordered">
                             <thead style="font-weight: bold;">
                                 <td>Name</td>
                                 <td>File No</td>

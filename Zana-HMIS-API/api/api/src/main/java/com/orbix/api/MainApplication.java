@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
@@ -189,7 +190,7 @@ public class MainApplication {
 				}
 			}
 			
-			List<Role> rs = roleRepository.findByOwner(null);
+			List<Role> rs = roleRepository.findAllByOwner(null);
 			for(Role r : rs) {
 				r.setOwner("SYSTEM");
 				roleRepository.save(r);
@@ -254,7 +255,43 @@ public class MainApplication {
 				userService.addPrivilegeToRole("ROOT", "ADMIN-ACCESS");
 				userService.addPrivilegeToRole("ROOT", "USER-ALL");				
 				userService.addPrivilegeToRole("ROOT", "ROLE-ALL");	
-			}catch(Exception e) {}			
+			}catch(Exception e) {}	
+			
+			Field[] operationFields = Operation.class.getDeclaredFields();
+			List<String> operations = new ArrayList<>();
+			for(int i = 0; i < operationFields.length; i++) {
+				String operation = operationFields[i].get(operationFields[i].getName()).toString();
+				operations.add(operation);
+				
+			}
+			List<Privilege> destroyedPrivileges = new ArrayList<>();	
+			
+			for(Role role : roleRepository.findAll()) {
+				for(Privilege privilege : role.getPrivileges()) {
+					String op2 = privilege.getName().substring(privilege.getName().lastIndexOf("-") + 1);
+					if(!operations.contains(op2)) {
+						userService.removePrivilegeFromRole(role.getName(), privilege.getName());
+						if(!destroyedPrivileges.contains(privilege)) {
+							destroyedPrivileges.add(privilege);
+						}
+					}
+				}
+			}
+			
+			for(Privilege privilege : privilegeRepository.findAll()) {
+				String op2 = privilege.getName().substring(privilege.getName().lastIndexOf("-") + 1);
+				if(!operations.contains(op2)) {
+					if(!destroyedPrivileges.contains(privilege)) {
+						destroyedPrivileges.add(privilege);
+					}
+				}
+			}
+			
+			for(Privilege privilege : destroyedPrivileges) {
+				privilegeRepository.delete(privilege);
+			}
+			
+			
 		};
 	}
 	

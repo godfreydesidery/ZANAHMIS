@@ -162,7 +162,7 @@
                             <li><a routerLink="/select-pharmacy">Select Pharmacy</a></li>
                         </ul>
                     </li>
-                    <li class="treeview" *ngIf="grant(['BILL-ALL','BILL-CREATE'])">
+                    <li class="treeview" *ngIf="grant(['CASHIER_SERVICE-ACCESS'])">
                         <a href="#" (click)="loadCashierModule()">
                             <i class="fa fa-dollar"></i><span>Cashier</span>
                             <span class="pull-right-container">

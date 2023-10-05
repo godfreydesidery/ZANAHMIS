@@ -232,7 +232,8 @@ export class PharmacyToStoreROComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+        this.msgBox.showErrorMessage(error['status'])
       }
     )
   }

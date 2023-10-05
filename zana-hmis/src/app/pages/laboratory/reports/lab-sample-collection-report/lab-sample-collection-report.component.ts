@@ -6,10 +6,14 @@ import { AuthService } from 'src/app/auth.service';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 import { Workbook } from 'exceljs';
-import { formatDate } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { DataService } from 'src/app/services/data.service';
 
 import * as pdfMake from 'pdfmake/build/pdfmake';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { AgePipe } from 'src/app/pipes/age.pipe';
+import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -18,7 +22,16 @@ const API_URL = environment.apiUrl;
 @Component({
   selector: 'app-lab-sample-collection-report',
   templateUrl: './lab-sample-collection-report.component.html',
-  styleUrls: ['./lab-sample-collection-report.component.scss']
+  styleUrls: ['./lab-sample-collection-report.component.scss'],
+  standalone : true,
+  imports : [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SearchFilterPipe,
+    AgePipe,
+    RouterLink
+  ],
 })
 export class LabSampleCollectionReportComponent {
 

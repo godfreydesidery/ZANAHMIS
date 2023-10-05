@@ -21,6 +21,8 @@ public class Operation {
 	 public static String H = "H";//ARCHIVE
 	 public static String P = "P";//PUBLISH
 	 */
+	
+	
 	 public static String ACCESS = "ACCESS";
 	 public static String ALL = "ALL";
 	 public static String CREATE = "CREATE";

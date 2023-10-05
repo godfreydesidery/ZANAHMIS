@@ -100,7 +100,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/pharmacy_to_store_r_os/verify")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-VERIFY')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<PharmacyToStoreROModel>verifyPharmacyToStoreRO(
 			@RequestBody PharmacyToStoreRO ro,
 			HttpServletRequest request){
@@ -110,7 +110,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/pharmacy_to_store_r_os/approve")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-APPROVE')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<PharmacyToStoreROModel> approvePharmacyToStoreRO(
 			@RequestBody PharmacyToStoreRO ro,
 			HttpServletRequest request){

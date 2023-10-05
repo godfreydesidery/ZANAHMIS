@@ -16,16 +16,15 @@ import com.orbix.api.domain.Role;
  */
 public interface RoleRepository extends JpaRepository<Role, Long> {
 	Optional<Role> findByName(String name);
-
-	/**
-	 * @param object
-	 * @return
-	 */
-	List<Role> findByOwner(Object object);
-
 	/**
 	 * @param roleName
 	 * @return
 	 */
 	boolean existsByName(String roleName);
+
+	/**
+	 * @param object
+	 * @return
+	 */
+	List<Role> findAllByOwner(Object object);
 }

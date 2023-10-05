@@ -2,6 +2,7 @@ import { CommonModule, Time } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
@@ -58,7 +59,8 @@ const API_URL = environment.apiUrl;
     SearchFilterPipe,
     AgePipe,
     ShowUserPipe,
-    ShowTimePipe
+    ShowTimePipe,
+    RouterLink
   ], 
 })
 export class NurseInpatientChartComponent {
