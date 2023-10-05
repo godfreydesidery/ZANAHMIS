@@ -56,7 +56,7 @@ public class CompanyProfileResource {
 	}
 	
 	@PostMapping("/company_profile/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<CompanyProfile>saveCompanyProfile(
 			@RequestBody CompanyProfile profile,
 			HttpServletRequest request){
@@ -65,7 +65,7 @@ public class CompanyProfileResource {
 	}
 	
 	@PostMapping("/company_profile/save_logo")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<CompanyProfile> saveCompanyLogo(
 			@RequestParam("logo") MultipartFile logo,
 			HttpServletRequest request) throws IOException{

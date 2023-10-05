@@ -65,7 +65,7 @@ public class WardTypeResource {
 	}
 	
 	@PostMapping("/ward_types/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<WardType>save(
 			@RequestBody WardType wardType,
 			HttpServletRequest request){

@@ -71,7 +71,7 @@ public class LabTestTypeResource {
 	}
 	
 	@PostMapping("/lab_test_types/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<LabTestType>save(
 			@RequestBody LabTestType labTestType,
 			HttpServletRequest request){

@@ -314,9 +314,10 @@ export class RegistrationPaymentComponent implements OnInit {
   printReceipt(){
     var items : ReceiptItem[] = []
     var item : ReceiptItem
+    var patient : IPatient
 
 
-    if(this.registrationBill != null){
+    if(this.registrationBill != null){    
       item  = new ReceiptItem()
       item.code = this.registrationBill.id
       item.name = this.registrationBill.description
@@ -333,7 +334,7 @@ export class RegistrationPaymentComponent implements OnInit {
       item.qty = this.consultationBill.qty
       items.push(item)
     }
-    this.printer.print(items, 'NA', 5000)
+    this.printer.print(items, 'NA', 5000, this.patient)
 
   }
 
@@ -380,6 +381,7 @@ export class RegistrationPaymentComponent implements OnInit {
       }
     )
   }
+  patient! : IPatient
   async getPatient(id : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
@@ -391,6 +393,8 @@ export class RegistrationPaymentComponent implements OnInit {
     .toPromise()
     .then(
       (data) => {
+        this.patient = data!
+
         this.patientId    = data?.id
         this.patientNo = data!.no
         this.patientFirstName = data!.firstName

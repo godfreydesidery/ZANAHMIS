@@ -140,7 +140,7 @@ public class InsurancePlanResource {
 	}
 	
 	@PostMapping("/insurance_plans/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<InsurancePlan>save(
 			@RequestBody InsurancePlan insurancePlan,
 			HttpServletRequest request){

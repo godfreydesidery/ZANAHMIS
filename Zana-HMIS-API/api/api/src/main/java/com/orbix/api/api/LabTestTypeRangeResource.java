@@ -69,7 +69,7 @@ public class LabTestTypeRangeResource {
 	}
 	
 	@GetMapping("/lab_test_type_ranges/delete")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public boolean delete(
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){
@@ -98,7 +98,7 @@ public class LabTestTypeRangeResource {
 	}
 	
 	@PostMapping("/lab_test_type_ranges/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<LabTestTypeRange>save(
 			@RequestBody LabTestTypeRange labTestTypeRange,
 			HttpServletRequest request){

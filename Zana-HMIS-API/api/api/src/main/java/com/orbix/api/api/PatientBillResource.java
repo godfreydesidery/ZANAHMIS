@@ -211,7 +211,7 @@ public class PatientBillResource {
 	}
 	
 	@PostMapping("/bills/confirm_bills_payment")
-	@PreAuthorize("hasAnyAuthority('BILL-A')")
+	//@PreAuthorize("hasAnyAuthority('BILL-A')")
 	public ResponseEntity<PatientBill> confirmBillsPayment(
 			@RequestBody List<PatientBill> bills,
 			@RequestParam(name = "total_amount") double totalAmount,

@@ -253,12 +253,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			}
 		}
 		
-		
-		
-		
-		
-		
-		
 		return user;
 	}
 	
@@ -307,13 +301,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 				throw new InvalidOperationException("Can not modify the ROOT role");
 			}
 		}
-		if(role.getName().equalsIgnoreCase("CLINICIAN")) {
-			Optional<Role> r = roleRepository.findByName("CLINICIAN");
-			if(r.isPresent()) {
-				throw new InvalidOperationException("Can not modify the CLINICIAN role");
-			}
-		}
-		log.info("Saving new role to the database");
+		
+		if(role.getOwner().equals("SYSTEM")) {
+			throw new InvalidOperationException("This role can not be modified");
+		}		
 		return roleRepository.save(role);
 	}
 

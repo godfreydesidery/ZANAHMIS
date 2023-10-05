@@ -71,7 +71,7 @@ public class RadiologyTypeResource {
 	}
 	
 	@PostMapping("/radiology_types/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<RadiologyType>save(
 			@RequestBody RadiologyType radiologyType,
 			HttpServletRequest request){

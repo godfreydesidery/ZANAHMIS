@@ -75,7 +75,7 @@ public class TheatreResource {
 	}
 	
 	@PostMapping("/theatres/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Theatre>save(
 			@RequestBody Theatre theatre,
 			HttpServletRequest request){

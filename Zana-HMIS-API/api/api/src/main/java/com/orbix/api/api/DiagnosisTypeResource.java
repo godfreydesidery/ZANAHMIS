@@ -71,7 +71,7 @@ public class DiagnosisTypeResource {
 	
 	
 	@PostMapping("/diagnosis_types/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<DiagnosisType>save(
 			@RequestBody DiagnosisType diagnosisType,
 			HttpServletRequest request){

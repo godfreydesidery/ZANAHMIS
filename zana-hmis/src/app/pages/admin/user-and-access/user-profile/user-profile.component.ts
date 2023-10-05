@@ -344,10 +344,6 @@ export class UserProfileComponent implements OnInit {
   }
 
   clearFields(){
-    if(!this.grant(['USER-C'])){
-      alert('Access denied')
-      return
-    }
     /**Clear the specified fields */
     this.id               = null
     this.username         = ''

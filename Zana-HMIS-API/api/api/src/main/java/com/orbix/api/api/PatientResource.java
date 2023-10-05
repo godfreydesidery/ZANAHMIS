@@ -221,7 +221,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/register")
-	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C')")
+	@PreAuthorize("hasAnyAuthority('PATIENT-ALL','PATIENT-CREATE')")
 	public ResponseEntity<Patient>registerPatient(
 			@RequestBody Patient patient,
 			HttpServletRequest request){
@@ -243,7 +243,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/update")
-	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-U')")
+	@PreAuthorize("hasAnyAuthority('PATIENT-ALL','PATIENT-UPDATE')")
 	public ResponseEntity<Patient>updatePatient(
 			@RequestBody Patient patient,
 			HttpServletRequest request){
@@ -263,7 +263,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/change_type")
-	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-U')")
+	@PreAuthorize("hasAnyAuthority('PATIENT-ALL','PATIENT-UPDATE')")
 	public ResponseEntity<Patient>changeType(
 			@RequestBody Patient patient,
 			@RequestParam(name = "type") String type,
@@ -318,7 +318,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/do_consultation")
-	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	@PreAuthorize("hasAnyAuthority('PATIENT-ALL','PATIENT-CREATE','PATIENT-UPDATE')")
 	public ResponseEntity<Patient>consultation(
 
 			@RequestParam Long patient_id, @RequestParam String clinic_name, @RequestParam String clinician_name, 
@@ -374,7 +374,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/cancel_consultation")
-	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	@PreAuthorize("hasAnyAuthority('PATIENT-ALL','PATIENT-CREATE','PATIENT-UPDATE')")
 	public ResponseEntity<Boolean>cancelConsultation(
 			@RequestParam Long id, 
 			HttpServletRequest request){
@@ -449,7 +449,7 @@ public class PatientResource {
 	}
 	
 	@PostMapping("/patients/free_consultation")
-	@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	@PreAuthorize("hasAnyAuthority('PATIENT-ALL','PATIENT-CREATE','PATIENT-UPDATE')")
 	public ResponseEntity<Boolean>freeConsultation(
 			@RequestParam Long id, 
 			HttpServletRequest request){

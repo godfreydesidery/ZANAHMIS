@@ -101,7 +101,7 @@ public class ItemResource {
 	}
 	
 	@PostMapping("/items/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Item>save(
 			@RequestBody Item item,
 			HttpServletRequest request){

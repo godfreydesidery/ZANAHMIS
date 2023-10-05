@@ -163,24 +163,31 @@ public class MainApplication {
 				log.info("Creating the first day "+(new Day()).toString());
 				dayService.saveDay(new Day());
 			}
-			try {
-				userService.saveRole(new Role(null, "ROOT", "SYSTEM", null), null);
-			}catch(Exception e) {}	
-			try {
-				userService.saveRole(new Role(null, "CLINICIAN", "SYSTEM", null), null);
-			}catch(Exception e) {}
-			try {
-				userService.saveRole(new Role(null, "NURSE", "SYSTEM", null), null);
-			}catch(Exception e) {}
-			try {
-				userService.saveRole(new Role(null, "PHARMACIST", "SYSTEM", null), null);
-			}catch(Exception e) {}
-			try {
-				userService.saveRole(new Role(null, "LABORATORIST", "SYSTEM", null), null);
-			}catch(Exception e) {}
-			try {
-				userService.saveRole(new Role(null, "RADIOLOGIST", "SYSTEM", null), null);
-			}catch(Exception e) {}
+			
+			List<String> roleNames = new ArrayList<>();
+			roleNames.add("ROOT");
+			roleNames.add("ADMIN");
+			roleNames.add("RECEPTION");
+			roleNames.add("CASHIER");
+			roleNames.add("HUMAN-RESOURCE");
+			roleNames.add("PROCUREMENT");
+			roleNames.add("MANAGER");
+			roleNames.add("ACCOUNTANT");
+			roleNames.add("STORE-KEEPER");
+			roleNames.add("CLINICIAN");
+			roleNames.add("NURSE");
+			roleNames.add("PHARMACIST");
+			roleNames.add("LABORATORIST");
+			roleNames.add("RADIOGRAPHER");
+			roleNames.add("RADIOLOGIST");
+			
+			for(String roleName : roleNames) {
+				if(!roleRepository.existsByName(roleName)) {
+					try {
+						userService.saveRole(new Role(null, roleName, "SYSTEM", null), null);
+					}catch(Exception e) {}	
+				}
+			}
 			
 			List<Role> rs = roleRepository.findByOwner(null);
 			for(Role r : rs) {
@@ -188,74 +195,65 @@ public class MainApplication {
 				roleRepository.save(r);
 			}
 			
-			
-			try {
-				userService.saveUser(new User(null, "ROOT", "Root", "Root", "Root", "Root@Root", "root", "r00tpA55", true, new ArrayList<>(), null, null, LocalDateTime.now()), null);
-			}catch(Exception e) {}				
+			if(!roleRepository.existsByName("ROOT")) {
+				try {
+					userService.saveUser(new User(null, "ROOT", "Root", "Root", "Root", "Root@Root", "root", "r00tpA55", true, new ArrayList<>(), null, null, LocalDateTime.now()), null);
+				}catch(Exception e) {}	
+			}
+					
 			try {
 				userService.addRoleToUser("root", "ROOT", null);
 			}catch(Exception e) {}		
 			
 			Field[] objectFields = Object_.class.getDeclaredFields();
-			Field[] operationFields = Operation.class.getDeclaredFields();
+			//Field[] operationFields = Operation.class.getDeclaredFields();
 			for(int i = 0; i < objectFields.length; i++) {
-				String objectWithProhibition = objectFields[i].get(objectFields[i].getName()).toString();
-				String prohibitedSequence = "";
+				//String objectWithProhibition = objectFields[i].get(objectFields[i].getName()).toString();
+				String objectWithAllowedOperation = objectFields[i].get(objectFields[i].getName()).toString();
+				//String prohibitedSequence = "";
+				String allowedSequence = "";
 				String object = "";
-				if(objectWithProhibition.contains("-")) {								        
-					prohibitedSequence = objectWithProhibition.substring(objectWithProhibition.lastIndexOf("-") + 1);
+				if(objectWithAllowedOperation.contains("-")) {								        
+					allowedSequence = objectWithAllowedOperation.substring(objectWithAllowedOperation.lastIndexOf("-") + 1);
 				}else {
-					prohibitedSequence = "";
+					allowedSequence = "";
 				}
-				if(prohibitedSequence.equals("")) {
-					object = objectWithProhibition;
+				if(allowedSequence.equals("")) {
+					//object = objectWithProhibition;
+					object = "";
 				}else {
-					object = objectWithProhibition.substring(0, objectWithProhibition.indexOf("-"));
+					//object = objectWithProhibition.substring(0, objectWithProhibition.indexOf("-"));
+					object = objectWithAllowedOperation.substring(0, objectWithAllowedOperation.indexOf("-"));
 				}
-				List<String> prohibitedOperations = new ArrayList<>();
-				Scanner sc = new Scanner(prohibitedSequence);
-				if(!prohibitedSequence.equals("")) {
+				//List<String> prohibitedOperations = new ArrayList<>();
+				List<String> allowedOperations = new ArrayList<>();
+				Scanner sc = new Scanner(allowedSequence);
+				if(!allowedSequence.equals("")) {
 					while (sc.hasNext()) {
-						prohibitedOperations.add(sc.next());						
+						allowedOperations.add(sc.next());						
 					}
 					sc.close();
 				}
-				for(int j = 0; j < operationFields.length; j++) {
+				
+				for(String allowedOperation : allowedOperations) {
 					Privilege privilege = new Privilege();
+					privilege.setName(object+"-"+allowedOperation);
 					
-					//privilege.setName(objectFields[i].getName()+"-"+operationFields[j].getName());
-					if(!prohibitedOperations.contains(operationFields[j].getName().toString())) {
-						privilege.setName(object+"-"+operationFields[j].getName());
-						try {
-							if(!privilegeRepository.existsByName(privilege.getName())) {
-								userService.savePrivilege(privilege, null);
-							}
-						}catch(Exception e) {
-							System.out.println("Could not save privilege");
+					try {
+						if(!privilegeRepository.existsByName(privilege.getName())) {
+							userService.savePrivilege(privilege, null);
 						}
-					}										
+					}catch(Exception e) {
+						System.out.println("Could not save privilege");
+					}
+					
 				}
+				
 			}
 			try {
-				userService.addPrivilegeToRole("ROOT", "ADMIN-A");
-				userService.addPrivilegeToRole("ROOT", "ADMIN-C");
-				userService.addPrivilegeToRole("ROOT", "ADMIN-R");
-				userService.addPrivilegeToRole("ROOT", "ADMIN-U");
-				userService.addPrivilegeToRole("ROOT", "ADMIN-D");
-				
-				userService.addPrivilegeToRole("ROOT", "USER-A");
-				userService.addPrivilegeToRole("ROOT", "USER-C");
-				userService.addPrivilegeToRole("ROOT", "USER-R");
-				userService.addPrivilegeToRole("ROOT", "USER-U");
-				userService.addPrivilegeToRole("ROOT", "USER-D");
-				
-				userService.addPrivilegeToRole("ROOT", "ROLE-A");
-				userService.addPrivilegeToRole("ROOT", "ROLE-C");
-				userService.addPrivilegeToRole("ROOT", "ROLE-R");
-				userService.addPrivilegeToRole("ROOT", "ROLE-U");
-				userService.addPrivilegeToRole("ROOT", "ROLE-D");
-				userService.addPrivilegeToRole("ROOT", "ROLE-T");
-					
+				userService.addPrivilegeToRole("ROOT", "ADMIN-ACCESS");
+				userService.addPrivilegeToRole("ROOT", "USER-ALL");				
+				userService.addPrivilegeToRole("ROOT", "ROLE-ALL");	
 			}catch(Exception e) {}			
 		};
 	}

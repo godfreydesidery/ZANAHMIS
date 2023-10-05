@@ -332,7 +332,7 @@ export class ProcedurePaymentComponent implements OnInit {
       items.push(item)
     })
 
-    this.printer.print(items, 'NA', 0)
+    this.printer.print(items, 'NA', 0, this.patient)
 
   }
 
@@ -379,6 +379,7 @@ export class ProcedurePaymentComponent implements OnInit {
       }
     )
   }
+  patient! : IPatient
   async getPatient(id : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
@@ -390,6 +391,9 @@ export class ProcedurePaymentComponent implements OnInit {
     .toPromise()
     .then(
       (data) => {
+
+        this.patient = data!
+
         this.patientId    = data?.id
         this.patientNo = data!.no
         this.patientFirstName = data!.firstName

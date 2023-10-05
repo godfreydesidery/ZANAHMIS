@@ -22,4 +22,10 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 	 * @return
 	 */
 	List<Role> findByOwner(Object object);
+
+	/**
+	 * @param roleName
+	 * @return
+	 */
+	boolean existsByName(String roleName);
 }

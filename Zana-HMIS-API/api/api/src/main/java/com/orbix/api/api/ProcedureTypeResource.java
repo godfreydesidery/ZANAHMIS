@@ -71,7 +71,7 @@ public class ProcedureTypeResource {
 	}
 	
 	@PostMapping("/procedure_types/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<ProcedureType>save(
 			@RequestBody ProcedureType procedureType,
 			HttpServletRequest request){

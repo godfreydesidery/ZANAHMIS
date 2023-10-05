@@ -4,6 +4,7 @@ import { DatePipe } from '@angular/common';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import { ReceiptItem } from '../domain/receipt-item';
 import { DataService } from './data.service';
+import { IPatient } from '../domain/patient';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -65,7 +66,7 @@ export class PosReceiptPrinterService {
     
   }
 
-  print = async (items : ReceiptItem[], receiptNo :string, cash : number) => {
+  print = async (items : ReceiptItem[], receiptNo :string, cash : number, patient : IPatient) => {
 
     var companyName = localStorage.getItem('company-name')!
 
@@ -120,7 +121,9 @@ export class PosReceiptPrinterService {
           {
             layout : 'noBorders',
             table : address
-          },   
+          }, 
+          
+          
           
           {
             layout : 'noBorders',
@@ -132,6 +135,17 @@ export class PosReceiptPrinterService {
               ]
             }
           }, 
+          {
+            layout : 'noBorders',
+            table : {
+              headerRows : 0,
+              widths : [200],
+              body : [
+                [{text : patient?.firstName + ' '+ patient?.middleName + ' '+ patient?.lastName + ' ' +patient?.no+ ' '+patient?.address + ' '+patient?.phoneNo, alignment : 'center', fontSize : 9}],
+              ]
+            }
+          },  
+          ' ',
           {
             layout : 'noBorders',
             table : {

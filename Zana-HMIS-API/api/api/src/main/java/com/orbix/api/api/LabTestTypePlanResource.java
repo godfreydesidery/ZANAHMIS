@@ -66,7 +66,7 @@ public class LabTestTypePlanResource {
 	}
 	
 	@PostMapping("/lab_test_type_insurance_plans/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<LabTestTypeInsurancePlan>save(
 			@RequestBody LabTestTypeInsurancePlan labTestTypePlan,
 			HttpServletRequest request){
@@ -100,7 +100,7 @@ public class LabTestTypePlanResource {
 	}
 	
 	@PostMapping("/lab_test_type_insurance_plans/delete")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Boolean>delete(
 			@RequestParam Long id,
 			HttpServletRequest request){

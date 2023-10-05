@@ -71,7 +71,7 @@ public class WardCategoryResource {
 	}
 	
 	@PostMapping("/ward_categories/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<WardCategory>save(
 			@RequestBody WardCategory wardCategory,
 			HttpServletRequest request){

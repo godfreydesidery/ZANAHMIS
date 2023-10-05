@@ -20,26 +20,11 @@
                                 <td style="vertical-align: top; height: 75vh;">
                                     <div class="container-fluid">
                                         <div class="row">
-                                            <div class="col-sm-3">
-                                                <h4>Key</h4>
-                                                <ul>
-                                                    <li>A-ALL</li>
-                                                    <li>C-CREATE</li>
-                                                    <li>R-READ</li>
-                                                    <li>U-UPDATE</li>
-                                                    <li>D-DELETE</li>
-                                                    <li>Y-VERIFY</li>
-                                                    <li>V-APPROVE</li>
-                                                    <li>X-CANCEL</li>
-                                                    <li>T-ACTIVATE</li>
-                                                    <li>H-ARCHIVE</li>
-                                                    <li>P-PUBLISH</li>
-                                                </ul>
-                                            </div>
-                                            <div class="col-sm-9">
+                                            
+                                            <div class="col-sm-12">
                                                 <div>
                                                     <label>Select Role:</label><br>
-                                                    <select *ngIf="grant(['ROLE-C','ROLE-U','ROLE-D'])" [ngModel]="selectedRole" (ngModelChange)="selectRole($event)" class="form-control">
+                                                    <select [ngModel]="selectedRole" (ngModelChange)="selectRole($event)" class="form-control">
                                                         <option></option>
                                                         <option *ngFor="let role of roles">{{role}}</option>
                                                     </select>
@@ -71,11 +56,11 @@
                                                 <table class="table">
                                                     <tbody>
                                                         <tr>
-                                                            <td><button class="btn btn-success" *ngIf="grant(['ROLE-C','ROLE-U','ROLE-D'])" (click)="addPrivilegeToRole(selectedRole)">Save</button></td>
+                                                            <td><button class="btn btn-success" (click)="addPrivilegeToRole(selectedRole)">Save</button></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                                <div *ngIf="grant(['ROLE-C','ROLE-R','ROLE-U','ROLE-D'])">
+                                                <div>
                                                     <label>Access Summary</label><br>
                                                     <table class="table table-bordered table-striped table-sm">
                                                         <thead>

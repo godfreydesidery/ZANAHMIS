@@ -68,7 +68,7 @@ public class ConsultationInsurancePlanResource {
 	}
 	
 	@PostMapping("/consultation_insurance_plans/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<ConsultationInsurancePlan>save(
 			@RequestBody ConsultationInsurancePlan consultationPlan,
 			HttpServletRequest request){
@@ -100,7 +100,7 @@ public class ConsultationInsurancePlanResource {
 	}
 	
 	@PostMapping("/consultation_insurance_plans/delete")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Boolean>delete(
 			@RequestParam Long id,
 			HttpServletRequest request){

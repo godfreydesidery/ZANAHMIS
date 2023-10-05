@@ -90,7 +90,7 @@ public class InternalOrderResource {
 
 	
 	@PostMapping("/pharmacy_to_store_r_os/save")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-A','PHARMACY_ORDER-C','PHARMACY_ORDER-U')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL','PHARMACY_ORDER-CREATE','PHARMACY_ORDER-UPDATE')")
 	public ResponseEntity<PharmacyToStoreROModel>savePharmacyToStoreRO(
 			@RequestBody PharmacyToStoreRO ro,
 			HttpServletRequest request){
@@ -100,7 +100,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/pharmacy_to_store_r_os/verify")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-Y')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-VERIFY')")
 	public ResponseEntity<PharmacyToStoreROModel>verifyPharmacyToStoreRO(
 			@RequestBody PharmacyToStoreRO ro,
 			HttpServletRequest request){
@@ -110,7 +110,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/pharmacy_to_store_r_os/approve")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-V')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-APPROVE')")
 	public ResponseEntity<PharmacyToStoreROModel> approvePharmacyToStoreRO(
 			@RequestBody PharmacyToStoreRO ro,
 			HttpServletRequest request){
@@ -120,7 +120,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/pharmacy_to_store_r_os/submit")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<PharmacyToStoreROModel>submitPharmacyToStoreRO(
 			@RequestBody PharmacyToStoreRO ro,
 			HttpServletRequest request){
@@ -130,7 +130,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/pharmacy_to_store_r_os/return")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<PharmacyToStoreROModel>returnPharmacyToStoreRO(
 			@RequestBody PharmacyToStoreRO ro,
 			HttpServletRequest request){
@@ -140,7 +140,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/pharmacy_to_store_r_os/reject")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<PharmacyToStoreROModel>rejectPharmacyToStoreRO(
 			@RequestBody PharmacyToStoreRO ro,
 			HttpServletRequest request){
@@ -186,7 +186,7 @@ public class InternalOrderResource {
 	}
 	
 	@GetMapping("/pharmacy_to_store_r_os/get")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<PharmacyToStoreROModel> getPharmacyOrder(
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){
@@ -244,7 +244,7 @@ public class InternalOrderResource {
 	}
 	
 	@GetMapping("/pharmacy_to_store_r_os/search")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<PharmacyToStoreROModel> searchPharmacyOrderAndPharmacy(
 			@RequestParam(name = "id") Long id,
 			@RequestParam(name = "pharmacy_id") Long pharmacyId,
@@ -306,7 +306,7 @@ public class InternalOrderResource {
 	}
 	
 	@GetMapping("/pharmacy_to_store_r_os/search_by_no")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<PharmacyToStoreROModel> searchPharmacyOrderByNoAndPharmacy(
 			@RequestParam(name = "no") String no,
 			@RequestParam(name = "pharmacy_id") Long pharmacyId,
@@ -368,7 +368,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/pharmacy_to_store_r_os/save_detail")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<Boolean>savePharmacyToStoreRODetail(
 			@RequestBody PharmacyToStoreRODetail detail,
 			HttpServletRequest request){
@@ -378,7 +378,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/pharmacy_to_store_r_os/delete_detail")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public boolean deletePharmacyToStoreRODetail(
 			@RequestBody PharmacyToStoreRODetail detail,
 			HttpServletRequest request){
@@ -400,7 +400,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/store_to_pharmacy_t_os/create")
-	@PreAuthorize("hasAnyAuthority('STORE_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('STORE_ORDER-ALL')")
 	public ResponseEntity<StoreToPharmacyTOModel>createStoreToPharmacyTO(
 			@RequestBody PharmacyToStoreRO ro,
 			HttpServletRequest request){
@@ -415,7 +415,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/store_to_pharmacy_t_os/verify")
-	@PreAuthorize("hasAnyAuthority('STORE_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('STORE_ORDER-ALL')")
 	public ResponseEntity<StoreToPharmacyTOModel>verifyStoreToPharmacyTO(
 			@RequestBody StoreToPharmacyTO to,
 			HttpServletRequest request){
@@ -425,7 +425,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/store_to_pharmacy_t_os/approve")
-	@PreAuthorize("hasAnyAuthority('STORE_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('STORE_ORDER-ALL')")
 	public ResponseEntity<StoreToPharmacyTOModel>approveStoreToPharmacyTO(
 			@RequestBody StoreToPharmacyTO to,
 			HttpServletRequest request){
@@ -435,7 +435,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/store_to_pharmacy_t_os/issue")
-	@PreAuthorize("hasAnyAuthority('STORE_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('STORE_ORDER-ALL')")
 	public ResponseEntity<StoreToPharmacyTOModel>issueStoreToPharmacyTO(
 			@RequestBody StoreToPharmacyTO to,
 			HttpServletRequest request){
@@ -506,7 +506,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/store_to_pharmacy_t_os/add_batch")
-	@PreAuthorize("hasAnyAuthority('STORE_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('STORE_ORDER-ALL')")
 	public boolean storeToPharmacyAddBatch(
 			@RequestBody StoreToPharmacyBatch batch,
 			HttpServletRequest request){
@@ -558,7 +558,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/store_to_pharmacy_t_os/delete_batch")
-	@PreAuthorize("hasAnyAuthority('STORE_ORDER-A')")
+	@PreAuthorize("hasAnyAuthority('STORE_ORDER-ALL')")
 	public boolean storeToPharmacyDeleteBatch(
 			@RequestBody StoreToPharmacyBatch batch,
 			HttpServletRequest request){
@@ -630,7 +630,7 @@ public class InternalOrderResource {
 	
 	
 	@PostMapping("/store_to_pharmacy_r_ns/create")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_GRN-A')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<StoreToPharmacyRNModel>createStoreToPharmacyRN(
 			@RequestBody PharmacyToStoreRO ro,
 			HttpServletRequest request){
@@ -656,7 +656,7 @@ public class InternalOrderResource {
 	}
 	
 	@PostMapping("/store_to_pharmacy_r_ns/approve_receipt")
-	@PreAuthorize("hasAnyAuthority('PHARMACY_GRN-A')")
+	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<StoreToPharmacyRNModel>approveReceiptStoreToPharmacyRN(
 			@RequestBody StoreToPharmacyRN rn,
 			HttpServletRequest request){

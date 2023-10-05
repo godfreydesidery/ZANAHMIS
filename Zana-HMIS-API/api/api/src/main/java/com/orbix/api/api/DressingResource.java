@@ -99,7 +99,7 @@ public class DressingResource {
 	}
 	
 	@PostMapping("/dressings/add")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Dressing>add(
 			@RequestBody Dressing dressing,
 			HttpServletRequest request){		
@@ -109,7 +109,7 @@ public class DressingResource {
 	}	
 	
 	@PostMapping("/dressings/delete")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public boolean deleteDressing(
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){		

@@ -101,7 +101,7 @@ public class ConsumableResource {
 	}
 	
 	@PostMapping("/consumables/add")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Consumable>save(
 			@RequestBody Consumable consumable,
 			HttpServletRequest request){		
@@ -111,7 +111,7 @@ public class ConsumableResource {
 	}	
 	
 	@PostMapping("/consumables/delete")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public boolean deleteConsumable(
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){		

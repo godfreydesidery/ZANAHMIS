@@ -99,7 +99,7 @@ public class MedicineResource {
 	}
 	
 	@PostMapping("/medicines/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Medicine>save(
 			@RequestBody Medicine medicine,
 			HttpServletRequest request){

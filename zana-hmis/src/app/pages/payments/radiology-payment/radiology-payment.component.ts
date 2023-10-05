@@ -331,7 +331,7 @@ export class RadiologyPaymentComponent implements OnInit {
       items.push(item)
     })
 
-    this.printer.print(items, 'NA', 5000)
+    this.printer.print(items, 'NA', 0,this.patient)
 
   }
 
@@ -378,6 +378,7 @@ export class RadiologyPaymentComponent implements OnInit {
       }
     )
   }
+  patient! : IPatient
   async getPatient(id : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
@@ -389,6 +390,8 @@ export class RadiologyPaymentComponent implements OnInit {
     .toPromise()
     .then(
       (data) => {
+        this.patient = data!
+
         this.patientId    = data?.id
         this.patientNo = data!.no
         this.patientFirstName = data!.firstName

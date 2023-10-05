@@ -112,7 +112,7 @@ public class WardResource {
 	}
 	
 	@PostMapping("/wards/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Ward>save(
 			@RequestBody Ward ward,
 			HttpServletRequest request){
@@ -123,7 +123,7 @@ public class WardResource {
 	}
 	
 	@PostMapping("/wards/register_bed")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<WardBed>registerBed(
 			@RequestBody WardBed wardBed,
 			HttpServletRequest request){
@@ -156,7 +156,7 @@ public class WardResource {
 	}
 	
 	@PostMapping("/wards/update_bed")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<WardBed>updateBed(
 			@RequestBody WardBed wardBed,
 			HttpServletRequest request){
@@ -166,7 +166,7 @@ public class WardResource {
 	}
 	
 	@PostMapping("/wards/activate_bed")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<WardBed>activateBed(
 			@RequestBody WardBed wardBed,
 			HttpServletRequest request){
@@ -176,7 +176,7 @@ public class WardResource {
 	}
 	
 	@PostMapping("/wards/deactivate_bed")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<WardBed>deactivateBed(
 			@RequestBody WardBed wardBed,
 			HttpServletRequest request){

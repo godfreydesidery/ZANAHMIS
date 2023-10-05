@@ -76,7 +76,7 @@ public class PharmacistResource {
 	}
 	
 	@PostMapping("/pharmacists/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Pharmacist>save(
 			@RequestBody Pharmacist pharmacist,
 			HttpServletRequest request){

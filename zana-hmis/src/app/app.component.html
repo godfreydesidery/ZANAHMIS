@@ -71,7 +71,7 @@
                     <li>
                       <a routerLink="/dashboard"><i class="fa fa-hospital-o"></i><span>My Dashboard</span></a>
                     </li>
-                    <li class="treeview" *ngIf="grant(['PATIENT-A','PATIENT-C','PATIENT-U'])">
+                    <li class="treeview" *ngIf="grant(['PATIENT-ALL','PATIENT-CREATE','PATIENT-UPDATE'])">
                         <a href="#" (click)="loadRegistrationModule()">
                             <i class="fa fa-wheelchair"></i><span>Patient</span>
                             <span class="pull-right-container">
@@ -84,7 +84,7 @@
                             <li><a href="#">NHIF Patient List</a></li>-->
                         </ul>
                     </li>
-                    <li class="treeview" *ngIf="grant(['CLINIC_SERVICE-A'])">
+                    <li class="treeview" *ngIf="grant(['CLINIC_SERVICE-ACCESS'])">
                         <a href="#" (click)="loadClinicModule()">
                             <i class="fa fa-stethoscope"></i><span>Doctor</span>
                             <span class="pull-right-container">
@@ -98,7 +98,7 @@
                         </ul>
                         
                     </li>
-                    <li class="treeview" *ngIf="grant(['NURSING-A'])">
+                    <li class="treeview" *ngIf="grant(['NURSING_SERVICE-ACCESS'])">
                         <a href="#" (click)="loadNursingModule()">
                             <i class="fa fa-thermometer"></i><span>Nurse</span>
                             <span class="pull-right-container">
@@ -112,7 +112,7 @@
                         </ul>
                     </li>
 
-                    <li class="treeview" *ngIf="grant(['LAB_SERVICE-A'])">
+                    <li class="treeview" *ngIf="grant(['LAB_SERVICE-ACCESS'])">
                         <a href="#" (click)="loadLaboratoryModule()">
                             <i class="fa fa-thermometer"></i><span>Laboratory</span>
                             <span class="pull-right-container">
@@ -138,7 +138,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="treeview" *ngIf="grant(['RADIOLOGY_SERVICE-A'])">
+                    <li class="treeview" *ngIf="grant(['RADIOLOGY_SERVICE-ACCESS'])">
                         <a href="#" (click)="loadRadiologyModule()">
                             <i class="fa fa-flash"></i><span>Radiology</span>
                             <span class="pull-right-container">
@@ -151,7 +151,7 @@
                             <li><a routerLink="/radiology-outsider-list">Outsider List</a></li>
                         </ul>
                     </li>
-                    <li class="treeview" *ngIf="grant(['PHARMACY_SERVICE-A'])">
+                    <li class="treeview" *ngIf="grant(['PHARMACY_SERVICE-ACCESS'])">
                         <a href="#" (click)="loadPharmacyModule()">
                             <i class="fa fa-eyedropper"></i><span>Pharmacy</span>
                             <span class="pull-right-container">
@@ -162,7 +162,7 @@
                             <li><a routerLink="/select-pharmacy">Select Pharmacy</a></li>
                         </ul>
                     </li>
-                    <li class="treeview" *ngIf="grant(['BILL-A'])">
+                    <li class="treeview" *ngIf="grant(['BILL-ALL','BILL-CREATE'])">
                         <a href="#" (click)="loadCashierModule()">
                             <i class="fa fa-dollar"></i><span>Cashier</span>
                             <span class="pull-right-container">
@@ -182,7 +182,7 @@
                             <li><a routerLink="/patient-report">Patient Report</a></li>
                         </ul>
                     </li>
-                    <li class="treeview" *ngIf="grant(['STORE_SERVICE-A'])">
+                    <li class="treeview" *ngIf="grant(['STORE_SERVICE-ACCESS'])">
                         <a href="#" (click)="loadStoreModule()">
                             <i class="fa fa-university"></i><span>Store</span>
                             <span class="pull-right-container">
@@ -205,7 +205,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="treeview" *ngIf="grant(['ADMIN-A'])">
+                    <li class="treeview" *ngIf="grant(['ADMIN-ACCESS'])">
                         <a href="#" (click)="loadAdminModule()">
                             <i class="fa fa-user-o"></i><span>Admin</span>
                             <span class="pull-right-container">
@@ -385,7 +385,7 @@
                         </ul>
                     </li>
                   
-                  <li class="treeview" *ngIf="grant(['REPORT_SERVICE-A'])">
+                  <li class="treeview" *ngIf="grant(['REPORT_SERVICE-ACCESS'])">
                       <a href="#" (click)="loadReportModule()">
                           <i class="fa fa-file-text"></i><span>Report</span>
                           <span class="pull-right-container">

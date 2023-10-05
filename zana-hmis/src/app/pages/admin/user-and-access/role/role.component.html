@@ -57,7 +57,7 @@
                                 <tr *ngFor="let role of roles | searchFilter : filterRecords">
                                     <td style="vertical-align: top;">{{role.name}}</td>
                                     <td style="vertical-align: top;">{{role?.owner}}</td>
-                                    <td style="vertical-align: top;"><font (click)="getRole(role.name)" style="cursor: pointer; color: rgb(35, 32, 224);">Select</font></td>
+                                    <td style="vertical-align: top;"><font (click)="getRole(role.name)" *ngIf="role?.owner != 'SYSTEM'" style="cursor: pointer; color: rgb(35, 32, 224);">Select</font></td>
                                 </tr>
                             </tbody>
                         </table>

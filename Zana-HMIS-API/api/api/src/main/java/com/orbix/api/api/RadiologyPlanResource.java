@@ -65,7 +65,7 @@ public class RadiologyPlanResource {
 	}
 	
 	@PostMapping("/radiology_type_insurance_plans/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<RadiologyTypeInsurancePlan>save(
 			@RequestBody RadiologyTypeInsurancePlan radiologyTypePlan,
 			HttpServletRequest request){
@@ -97,7 +97,7 @@ public class RadiologyPlanResource {
 	}
 	
 	@PostMapping("/radiology_type_insurance_plans/delete")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Boolean>delete(
 			@RequestParam Long id,
 			HttpServletRequest request){

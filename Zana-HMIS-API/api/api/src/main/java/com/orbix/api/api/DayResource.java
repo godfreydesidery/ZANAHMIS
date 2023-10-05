@@ -47,7 +47,7 @@ public class DayResource {
 	}
 	
 	@GetMapping("/days/end_day")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A','DAY-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS','DAY-ACCESS')")
 	public boolean endDay(HttpServletRequest request){		
 		return dayService.endDay();
 	}

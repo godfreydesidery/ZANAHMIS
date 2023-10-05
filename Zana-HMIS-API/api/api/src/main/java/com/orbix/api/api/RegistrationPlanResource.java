@@ -63,7 +63,7 @@ public class RegistrationPlanResource {
 	}
 	
 	@PostMapping("/registration_insurance_plans/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<RegistrationInsurancePlan>save(
 			@RequestBody RegistrationInsurancePlan registrationPlan,
 			HttpServletRequest request){
@@ -95,7 +95,7 @@ public class RegistrationPlanResource {
 	}
 	
 	@PostMapping("/registration_insurance_plans/delete")
-	@PreAuthorize("hasAnyAuthority('ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Boolean>delete(
 			@RequestParam Long id,
 			HttpServletRequest request){

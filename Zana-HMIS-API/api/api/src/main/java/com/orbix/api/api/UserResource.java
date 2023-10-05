@@ -110,7 +110,7 @@ public class UserResource {
 	
 	
 	@PostMapping("/users/create")
-	@PreAuthorize("hasAnyAuthority('USER-A','ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('USER-ALL','ADMIN-ACCESS')")
 	public ResponseEntity<User>createUser(
 			@RequestBody User user,
 			HttpServletRequest request){
@@ -122,7 +122,7 @@ public class UserResource {
 	}
 		
 	@PutMapping("/users/update")
-	@PreAuthorize("hasAnyAuthority('USER-A','ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('USER-ALL','ADMIN-ACCESS')")
 	public ResponseEntity<User>updateUser(
 			@RequestBody User user, 
 			HttpServletRequest request){
@@ -157,7 +157,7 @@ public class UserResource {
 	}
 	
 	@DeleteMapping("/users/delete")
-	@PreAuthorize("hasAnyAuthority('USER-A','ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('USER-ALL','ADMIN-ACCESS')")
 	public ResponseEntity<Boolean> deleteUser(
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){
@@ -177,13 +177,38 @@ public class UserResource {
 	}
 	
 	@PostMapping("/roles/create")
-	@PreAuthorize("hasAnyAuthority('ROLE-A','ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ROLE-ALL','ADMIN-ACCESS')")
 	public ResponseEntity<Role>saveRole(
 			@RequestBody Role role,
 			HttpServletRequest request){
 		if(role.getName().equalsIgnoreCase("ROOT")) {
 			throw new InvalidOperationException("Role name not available");
 		}
+		
+		List<String> roleNames = new ArrayList<>();
+		roleNames.add("ROOT");
+		roleNames.add("ADMIN");
+		roleNames.add("RECEPTION");
+		roleNames.add("CASHIER");
+		roleNames.add("HUMAN-RESOURCE");
+		roleNames.add("PROCUREMENT");
+		roleNames.add("MANAGER");
+		roleNames.add("ACCOUNTANT");
+		roleNames.add("STORE-KEEPER");
+		roleNames.add("CLINICIAN");
+		roleNames.add("NURSE");
+		roleNames.add("PHARMACIST");
+		roleNames.add("LABORATORIST");
+		roleNames.add("RADIOGRAPHER");
+		roleNames.add("RADIOLOGIST");
+		
+		for(String roleName : roleNames) {
+			if(role.getName().equalsIgnoreCase(roleName)) {
+				throw new InvalidOperationException("Role name not available");
+			}
+		}
+		
+		
 		if(role.getName().equalsIgnoreCase("CLINICIAN")) {
 			throw new InvalidOperationException("Role name not available");
 		}
@@ -205,7 +230,7 @@ public class UserResource {
 	}
 	
 	@PutMapping("/roles/update")
-	@PreAuthorize("hasAnyAuthority('ROLE-A','ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ROLE-ALL','ADMIN-ACCESS')")
 	public ResponseEntity<Role>updateRole(
 			@RequestBody Role role,
 			HttpServletRequest request){
@@ -213,6 +238,31 @@ public class UserResource {
 		if(roleToUpdate.getName().equalsIgnoreCase("ROOT")) {
 			throw new InvalidOperationException("Editing the ROOT role is not allowed");
 		}
+		
+		List<String> roleNames = new ArrayList<>();
+		roleNames.add("ROOT");
+		roleNames.add("ADMIN");
+		roleNames.add("RECEPTION");
+		roleNames.add("CASHIER");
+		roleNames.add("HUMAN-RESOURCE");
+		roleNames.add("PROCUREMENT");
+		roleNames.add("MANAGER");
+		roleNames.add("ACCOUNTANT");
+		roleNames.add("STORE-KEEPER");
+		roleNames.add("CLINICIAN");
+		roleNames.add("NURSE");
+		roleNames.add("PHARMACIST");
+		roleNames.add("LABORATORIST");
+		roleNames.add("RADIOGRAPHER");
+		roleNames.add("RADIOLOGIST");
+		
+		for(String roleName : roleNames) {
+			if(roleToUpdate.getName().equalsIgnoreCase(roleName)) {
+				throw new InvalidOperationException("Editing this role is not allowed");
+			}
+		}
+		
+		
 		if(roleToUpdate.getName().equalsIgnoreCase("CLINICIAN")) {
 			throw new InvalidOperationException("Editing the CLINICIAN role is not allowed");
 		}
@@ -234,7 +284,7 @@ public class UserResource {
 	}
 	
 	@DeleteMapping("/roles/delete")
-	@PreAuthorize("hasAnyAuthority('ROLE-A','ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('ROLE-ALL','ADMIN-ACCESS')")
 	public ResponseEntity<Boolean> deleteRole(
 			@RequestParam(name = "id") Long id,
 			HttpServletRequest request){
@@ -247,7 +297,7 @@ public class UserResource {
 	}
 
 	@PostMapping("/roles/addtouser")
-	@PreAuthorize("hasAnyAuthority('USER-A','USER-U','ROLE-A','ADMIN-A')")
+	@PreAuthorize("hasAnyAuthority('USER-ALL','USER-UPDATE','ROLE-ALL','ADMIN-ACCESS')")
 	public ResponseEntity<Role>addRoleToUser(
 			@RequestBody RoleToUserForm form,
 			HttpServletRequest request){
