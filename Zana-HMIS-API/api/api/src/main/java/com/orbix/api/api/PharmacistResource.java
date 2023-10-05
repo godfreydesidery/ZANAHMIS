@@ -63,6 +63,11 @@ public class PharmacistResource {
 		return ResponseEntity.ok().body(pharmacistService.getPharmacists(request));
 	}
 	
+	@GetMapping("/pharmacists/get_all_active")
+	public ResponseEntity<List<Pharmacist>>getActivePharmacists(HttpServletRequest request){
+		return ResponseEntity.ok().body(pharmacistService.getActivePharmacists(request));
+	}
+	
 	@GetMapping("/pharmacists/get")
 	public ResponseEntity<Pharmacist> getPharmacist(
 			@RequestParam(name = "id") Long id,

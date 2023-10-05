@@ -77,19 +77,44 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <h4>Active/Inactive</h4>
                                 <input type="checkbox" id="active" name="active" [(ngModel)]="active"><label for="active"> Active</label><br>
                             </div>
                         </div>
                         <hr>
                         <div class="row">
+                            <small>Check roles<br>System and user defined roles<br>System defined roles are roles defined inside the system. Checking this role will add the user in the respective role list<br>User defined roles are roles defined by the organization, depending on its routine tasks and assignment of tasks to users. Checking these roles will give the user access to the respective objects defined in the access maangement</small>
                             <div class="col-sm-12">
-                                <h4>Check Roles</h4>
-                                <div class="row">
-                                    <div class="col-12" *ngFor="let role of roles">
-                                        <input type="checkbox" id="role.name" name="role.name" [(ngModel)]="role.granted"><label for="{{role.name}}">{{role.name}}</label>
-                                    </div>
-                                </div>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <td style="font-weight: bold;">System Defined Roles</td>
+                                            <td style="font-weight: bold;">Organization Defined Roles</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="margin: 2mm;">
+                                                <div class="row">
+                                                    <div class="col-12" *ngFor="let role of roles">
+                                                        <span *ngIf="role.owner === 'SYSTEM'">
+                                                            <input type="checkbox" id="role.name" name="role.name" [(ngModel)]="role.granted"><label for="{{role.name}}">{{role.name}}</label>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="margin: 2mm;">
+                                                <div class="row">
+                                                    <div class="col-12" *ngFor="let role of roles">
+                                                        <span *ngIf="role.owner === 'ORGANIZATION'">
+                                                            <input type="checkbox" id="role.name" name="role.name" [(ngModel)]="role.granted"><label for="{{role.name}}">{{role.name}}</label>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -129,22 +154,3 @@
          </div>
      </div>     
  </section> <!-- /.content -->
-
- <!-- Modal success -->
- <div class="modal fade modal-success" id="add-edit-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h1 class="modal-title">Add User</h1>
-            </div>
-            <div class="modal-body">
-                    
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->

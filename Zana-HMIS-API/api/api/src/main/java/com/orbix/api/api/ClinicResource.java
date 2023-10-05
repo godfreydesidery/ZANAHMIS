@@ -48,9 +48,6 @@ public class ClinicResource {
 	private final ClinicService clinicService;
 	
 
-	private final UserService userService;
-	private final DayService dayService;
-	
 	@GetMapping("/clinics")
 	public ResponseEntity<List<Clinic>>getClinics(HttpServletRequest request){
 		return ResponseEntity.ok().body(clinicService.getClinics(request));

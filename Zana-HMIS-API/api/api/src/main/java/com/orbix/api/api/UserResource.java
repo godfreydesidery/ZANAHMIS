@@ -184,6 +184,22 @@ public class UserResource {
 		if(role.getName().equalsIgnoreCase("ROOT")) {
 			throw new InvalidOperationException("Role name not available");
 		}
+		if(role.getName().equalsIgnoreCase("CLINICIAN")) {
+			throw new InvalidOperationException("Role name not available");
+		}
+		if(role.getName().equalsIgnoreCase("NURSE")) {
+			throw new InvalidOperationException("Role name not available");
+		}
+		if(role.getName().equalsIgnoreCase("PHARMACIST")) {
+			throw new InvalidOperationException("Role name not available");
+		}
+		if(role.getName().equalsIgnoreCase("LABORATORIST")) {
+			throw new InvalidOperationException("Role name not available");
+		}
+		if(role.getName().equalsIgnoreCase("RADIOLOGIST")) {
+			throw new InvalidOperationException("Role name not available");
+		}
+		role.setOwner("ORGANIZATION");
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/roles/save").toUriString());
 		return ResponseEntity.created(uri).body(userService.saveRole(role, request));
 	}
@@ -197,6 +213,22 @@ public class UserResource {
 		if(roleToUpdate.getName().equalsIgnoreCase("ROOT")) {
 			throw new InvalidOperationException("Editing the ROOT role is not allowed");
 		}
+		if(roleToUpdate.getName().equalsIgnoreCase("CLINICIAN")) {
+			throw new InvalidOperationException("Editing the CLINICIAN role is not allowed");
+		}
+		if(roleToUpdate.getName().equalsIgnoreCase("NURSE")) {
+			throw new InvalidOperationException("Editing the NURSE role is not allowed");
+		}
+		if(roleToUpdate.getName().equalsIgnoreCase("PHARMACIST")) {
+			throw new InvalidOperationException("Editing the PHARMACIST role is not allowed");
+		}
+		if(roleToUpdate.getName().equalsIgnoreCase("LABORATORIST")) {
+			throw new InvalidOperationException("Editing the LABORATORIST role is not allowed");
+		}
+		if(roleToUpdate.getName().equalsIgnoreCase("RADIOLOGIST")) {
+			throw new InvalidOperationException("Editing the RADIOLOGIST role is not allowed");
+		}
+		role.setOwner("ORGANIZATION");
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/roles/update").toUriString());
 		return ResponseEntity.created(uri).body(userService.saveRole(role, request));
 	}

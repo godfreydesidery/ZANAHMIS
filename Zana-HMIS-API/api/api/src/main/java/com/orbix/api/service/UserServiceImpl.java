@@ -22,6 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.accessories.Formater;
+import com.orbix.api.domain.Clinician;
+import com.orbix.api.domain.Nurse;
+import com.orbix.api.domain.Pharmacist;
 import com.orbix.api.domain.Privilege;
 import com.orbix.api.domain.Role;
 import com.orbix.api.domain.Shortcut;
@@ -32,6 +35,9 @@ import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.RecordModel;
+import com.orbix.api.repositories.ClinicianRepository;
+import com.orbix.api.repositories.NurseRepository;
+import com.orbix.api.repositories.PharmacistRepository;
 import com.orbix.api.repositories.PrivilegeRepository;
 import com.orbix.api.repositories.RoleRepository;
 import com.orbix.api.repositories.ShortcutRepository;
@@ -57,6 +63,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	private final PrivilegeRepository privilegeRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final ShortcutRepository shortcutRepository;
+	
+	//private final UserService userService; //do not use this here
+	private final DayService dayService;
+	
+	private final ClinicianRepository clinicianRepository;
+	private final PharmacistRepository pharmacistRepository;
+	private final NurseRepository nurseRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {		
@@ -102,7 +115,151 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			}
 			user.setActive(true);// use this in the mean time before implementing actiavate and deactivate user
 		}
-		return userRepository.save(user);
+		user = userRepository.saveAndFlush(user);
+		
+		/**
+		 * First get user roles
+		 */
+		Collection<Role> roleCollection = user.getRoles();		
+		List<Role> roles = List.copyOf(roleCollection);
+		/**
+		 * Check the roles for specific roles, these roles are special for they carry out critical operations
+		 */
+		for(Role role : roles) {
+			if(role.getName().equals("CLINICIAN")) {
+				Optional<Clinician> cl = clinicianRepository.findByUser(user);
+				Clinician clinician;
+				if(cl.isEmpty()) {
+					clinician = new Clinician();
+					clinician.setUser(user);
+					clinician.setCode(user.getCode());
+					clinician.setFirstName(user.getFirstName());
+					clinician.setMiddleName(user.getMiddleName());
+					clinician.setLastName(user.getLastName());
+					clinician.setNickname(user.getNickname());
+					
+					clinician.setActive(true);
+					
+					clinician.setCreatedby(getUser(request).getId());
+					clinician.setCreatedOn(dayService.getDay().getId());
+					clinician.setCreatedAt(dayService.getTimeStamp());
+					
+					clinicianRepository.save(clinician);
+				}else {
+					clinician = cl.get();
+					clinician.setActive(true);
+					clinicianRepository.save(clinician);
+				}
+			}
+			
+			if(role.getName().equals("PHARMACIST")) {
+				Optional<Pharmacist> cl = pharmacistRepository.findByUser(user);
+				Pharmacist pharmacist;
+				if(cl.isEmpty()) {
+					pharmacist = new Pharmacist();
+					pharmacist.setUser(user);
+					pharmacist.setCode(user.getCode());
+					pharmacist.setFirstName(user.getFirstName());
+					pharmacist.setMiddleName(user.getMiddleName());
+					pharmacist.setLastName(user.getLastName());
+					pharmacist.setNickname(user.getNickname());
+					
+					pharmacist.setActive(true);
+					
+					pharmacist.setCreatedby(getUser(request).getId());
+					pharmacist.setCreatedOn(dayService.getDay().getId());
+					pharmacist.setCreatedAt(dayService.getTimeStamp());
+					
+					pharmacistRepository.save(pharmacist);
+				}else {
+					pharmacist = cl.get();
+					pharmacist.setActive(true);
+					pharmacistRepository.save(pharmacist);
+				}
+			}
+			
+			if(role.getName().equals("NURSE")) {
+				Optional<Nurse> cl = nurseRepository.findByUser(user);
+				Nurse nurse;
+				if(cl.isEmpty()) {
+					nurse = new Nurse();
+					nurse.setUser(user);
+					nurse.setCode(user.getCode());
+					nurse.setFirstName(user.getFirstName());
+					nurse.setMiddleName(user.getMiddleName());
+					nurse.setLastName(user.getLastName());
+					nurse.setNickname(user.getNickname());
+					
+					nurse.setActive(true);
+					
+					nurse.setCreatedby(getUser(request).getId());
+					nurse.setCreatedOn(dayService.getDay().getId());
+					nurse.setCreatedAt(dayService.getTimeStamp());
+					
+					nurseRepository.save(nurse);
+				}else {
+					nurse = cl.get();
+					nurse.setActive(true);
+					nurseRepository.save(nurse);
+				}
+			}
+		}
+		
+		//check for presence of a particular personnel
+		boolean isClinicianRolePresent = false;
+		for(Role role : roles) {
+			if(role.getName().equals("CLINICIAN")) {
+				isClinicianRolePresent = true;
+				break;
+			}
+		}
+		if(isClinicianRolePresent == false) {
+			Optional<Clinician> cl = clinicianRepository.findByUser(user);
+			if(cl.isPresent()) {
+				cl.get().setActive(false);
+				clinicianRepository.save(cl.get());
+			}
+		}
+		
+		//check for presence of a particular personnel
+		boolean isPharmacistRolePresent = false;
+		for(Role role : roles) {
+			if(role.getName().equals("PHARMACIST")) {
+				isPharmacistRolePresent = true;
+				break;
+			}
+		}
+		if(isPharmacistRolePresent == false) {
+			Optional<Pharmacist> cl = pharmacistRepository.findByUser(user);
+			if(cl.isPresent()) {
+				cl.get().setActive(false);
+				pharmacistRepository.save(cl.get());
+			}
+		}
+		
+		//check for presence of a particular personnel
+		boolean isNurseRolePresent = false;
+		for(Role role : roles) {
+			if(role.getName().equals("NURSE")) {
+				isNurseRolePresent = true;
+				break;
+			}
+		}
+		if(isNurseRolePresent == false) {
+			Optional<Nurse> cl = nurseRepository.findByUser(user);
+			if(cl.isPresent()) {
+				cl.get().setActive(false);
+				nurseRepository.save(cl.get());
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		return user;
 	}
 	
 	private boolean validateUser(User user) {
@@ -143,11 +300,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public Role saveRole(Role role, HttpServletRequest request) {
+	public Role saveRole(Role role, HttpServletRequest request) {		
 		if(role.getName().equalsIgnoreCase("ROOT")) {
 			Optional<Role> r = roleRepository.findByName("ROOT");
 			if(r.isPresent()) {
 				throw new InvalidOperationException("Can not modify the ROOT role");
+			}
+		}
+		if(role.getName().equalsIgnoreCase("CLINICIAN")) {
+			Optional<Role> r = roleRepository.findByName("CLINICIAN");
+			if(r.isPresent()) {
+				throw new InvalidOperationException("Can not modify the CLINICIAN role");
 			}
 		}
 		log.info("Saving new role to the database");

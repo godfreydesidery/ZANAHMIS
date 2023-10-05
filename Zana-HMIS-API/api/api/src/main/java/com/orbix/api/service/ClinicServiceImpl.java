@@ -33,12 +33,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ClinicServiceImpl implements ClinicService{
 	
-	private final UserRepository userRepository;
 	private final UserService userService;
-	private final DayRepository dayRepository;
 	private final DayService dayService;
 	private final ClinicRepository clinicRepository;
-	private final ClinicianRepository clinicianRepository;
+	//private final ClinicianRepository clinicianRepository;
 	
 	@Override
 	public Clinic save(Clinic clinic, HttpServletRequest request) {
@@ -105,11 +103,11 @@ public class ClinicServiceImpl implements ClinicService{
 		return clinicRepository.findByName(clinicName).get();
 	}
 
-	@Override
-	public List<Clinician> getClinicians(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		return clinicianRepository.findAll();
-	}
+	//@Override
+	//public List<Clinician> getClinicians(HttpServletRequest request) {
+		//// TODO Auto-generated method stub
+		//return clinicianRepository.findAll();
+	//}
 
 	
 }

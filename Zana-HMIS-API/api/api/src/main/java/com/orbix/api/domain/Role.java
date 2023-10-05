@@ -39,6 +39,7 @@ public class Role {
 	@NotBlank
 	@Column(unique = true)
 	private String name;
+	private String owner = "SYSTEM";
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@Fetch(FetchMode.SUBSELECT)

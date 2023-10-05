@@ -49,6 +49,11 @@ public class NurseResource {
 		return ResponseEntity.ok().body(nurseService.getNurses(request));
 	}
 	
+	@GetMapping("/nurses/get_all_active")
+	public ResponseEntity<List<Nurse>>getActiveNurses(HttpServletRequest request){
+		return ResponseEntity.ok().body(nurseService.getActiveNurses(request));
+	}
+	
 	@GetMapping("/nurses/get")
 	public ResponseEntity<Nurse> getNurse(
 			@RequestParam(name = "id") Long id,

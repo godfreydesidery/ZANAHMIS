@@ -379,6 +379,10 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public Patient doConsultation(Patient p, Clinic c, Clinician cn, HttpServletRequest request) {
 		
+		if(cn.isActive() == false) {
+			throw new InvalidOperationException("Process failed. Clinician/Doctor not active");
+		}
+		
 		Optional<ConsultationTransfer> conTrans = consultationTransferRepository.findByPatientAndStatus(p, "PENDING");
 		if(conTrans.isPresent()) {
 			if(c.getId() != conTrans.get().getClinic().getId()) {

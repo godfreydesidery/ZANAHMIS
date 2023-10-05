@@ -16,6 +16,7 @@ import com.orbix.api.domain.Pharmacist;
 public interface PharmacistService {
 	Pharmacist save(Pharmacist pharmacist, HttpServletRequest request);	
 	List<Pharmacist>getPharmacists(HttpServletRequest request); // return all the clinics
+	List<Pharmacist>getActivePharmacists(HttpServletRequest request);
 	Pharmacist getPharmacistByName(String name, HttpServletRequest request);
 	Pharmacist getPharmacistById(Long id, HttpServletRequest request);
 	boolean deletePharmacist(Pharmacist pharmacist, HttpServletRequest request);

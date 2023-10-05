@@ -30,6 +30,6 @@ public interface ClinicService {
 	/**
 	 * @return
 	 */
-	List<Clinician> getClinicians( HttpServletRequest request);
+	//List<Clinician> getClinicians( HttpServletRequest request);
 	
 }

@@ -34,6 +34,7 @@
                                     <td>Middle Name</td>
                                     <td>Last Name</td>
                                     <td>Type</td>
+                                    <td>Active</td>
                                     <td>Action</td>
                                 </tr>
                             </thead>
@@ -43,6 +44,7 @@
                                     <td>{{clinician.firstName}}</td>
                                     <td>{{clinician.middleName}}</td>
                                     <td>{{clinician.lastName}}</td>
+                                    <td>{{clinician.active}}</td>
                                     <td>{{clinician.type}}</td>
                                     <td>
                                         <button class="btn btn-primary" (click)="getClinician(clinician.id)" data-toggle="modal" data-target="#add-edit-modal" style="margin: 1px;">Edit</button>
@@ -72,25 +74,25 @@
                         <input type="hidden" [(ngModel)]="id">
                         <div class="col-xs-12">
                             <label>Code*</label>
-                            <input type="text" class="form-control" [(ngModel)]="code">
+                            <input type="text" class="form-control" [(ngModel)]="code" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
                             <label>First Name*</label>
-                            <input type="text" class="form-control" [(ngModel)]="firstName">
+                            <input type="text" class="form-control" [(ngModel)]="firstName" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
                             <label>Middle Name</label>
-                            <input type="text" class="form-control" [(ngModel)]="middleName">
+                            <input type="text" class="form-control" [(ngModel)]="middleName" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
                             <label>Last Name*</label>
-                            <input type="text" class="form-control" [(ngModel)]="lastName">
+                            <input type="text" class="form-control" [(ngModel)]="lastName" readonly>
                         </div>
                     </div>
                     <div class="row">
@@ -105,12 +107,6 @@
                                 <option>Padiatrician</option>
                                 <option>Other</option>
                             </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label>Active</label>
-                            <input type="checkbox" [(ngModel)]="active" style="text-align: right;">
                         </div>
                     </div>
                     <hr>
@@ -134,54 +130,3 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-
-    <!-- Modal success -->
- <div class="modal fade modal-success" id="assign-user-profile" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h1 class="modal-title">Assign User Profile to Doctor</h1>
-            </div>
-            <div class="modal-body">
-                    <div class="row">
-                        <input type="hidden" [(ngModel)]="id">
-                        <div class="col-xs-12">
-                            <label>Doctor Code*</label>
-                            <input type="text" class="form-control" [(ngModel)]="code" readonly>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label>First Name*</label>
-                            <input type="text" class="form-control" [(ngModel)]="firstName">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label>Middle Name</label>
-                            <input type="text" class="form-control" [(ngModel)]="middleName">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label>Last Name*</label>
-                            <input type="text" class="form-control" [(ngModel)]="lastName">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label>User Code</label>
-                            <input type="text" class="form-control" [(ngModel)]="userCode">
-                        </div>
-                    </div>
-                    
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" (click)="assignUserProfile()" data-dismiss="modal">Save</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-

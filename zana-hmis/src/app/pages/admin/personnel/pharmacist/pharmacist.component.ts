@@ -144,7 +144,7 @@ export class PharmacistComponent {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IPharmacist[]>(API_URL+'/pharmacists', options)
+    await this.http.get<IPharmacist[]>(API_URL+'/pharmacists/get_all_active', options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(

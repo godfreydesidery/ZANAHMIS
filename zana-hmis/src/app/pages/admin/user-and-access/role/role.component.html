@@ -49,12 +49,14 @@
                             <thead>
                                 <tr>
                                     <td>Role Name</td>
+                                    <td>Owner</td>
                                     <td>Select</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let role of roles | searchFilter : filterRecords">
                                     <td style="vertical-align: top;">{{role.name}}</td>
+                                    <td style="vertical-align: top;">{{role?.owner}}</td>
                                     <td style="vertical-align: top;"><font (click)="getRole(role.name)" style="cursor: pointer; color: rgb(35, 32, 224);">Select</font></td>
                                 </tr>
                             </tbody>

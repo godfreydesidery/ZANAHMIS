@@ -34,6 +34,7 @@
                                     <td>Middle Name</td>
                                     <td>Last Name</td>
                                     <td>Type</td>
+                                    <td>Active</td>
                                     <td>Action</td>
                                 </tr>
                             </thead>
@@ -44,6 +45,7 @@
                                     <td>{{pharmacist.middleName}}</td>
                                     <td>{{pharmacist.lastName}}</td>
                                     <td>{{pharmacist.type}}</td>
+                                    <td>{{pharmacist.active}}</td>
                                     <td>
                                         <button class="btn btn-primary" (click)="getPharmacist(pharmacist.id)" data-toggle="modal" data-target="#add-edit-modal" style="margin: 1px;">Edit</button>
                                         <!--<button class="btn btn-primary" (click)="getPharmacist(pharmacist.id)" (click)="clearUser()" data-toggle="modal" data-target="#assign-user-profile" style="margin: 1px;">Assign User Profile</button>-->
@@ -72,25 +74,25 @@
                         <input type="hidden" [(ngModel)]="id">
                         <div class="col-xs-12">
                             <label>Code*</label>
-                            <input type="text" class="form-control" [(ngModel)]="code">
+                            <input type="text" class="form-control" [(ngModel)]="code" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
                             <label>First Name*</label>
-                            <input type="text" class="form-control" [(ngModel)]="firstName">
+                            <input type="text" class="form-control" [(ngModel)]="firstName" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
                             <label>Middle Name</label>
-                            <input type="text" class="form-control" [(ngModel)]="middleName">
+                            <input type="text" class="form-control" [(ngModel)]="middleName" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
                             <label>Last Name*</label>
-                            <input type="text" class="form-control" [(ngModel)]="lastName">
+                            <input type="text" class="form-control" [(ngModel)]="lastName" readonly>
                         </div>
                     </div>
                     <div class="row">
@@ -100,12 +102,6 @@
                                 <option></option>
                                 <option>General Pharmacist</option>
                             </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <label>Active</label>
-                            <input type="checkbox" [(ngModel)]="active" style="text-align: right;">
                         </div>
                     </div>
                     <hr>

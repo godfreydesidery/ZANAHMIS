@@ -71,6 +71,12 @@ public class PharmacistServiceImpl implements PharmacistService{
 		log.info("Fetching all pharmacists");
 		return pharmacistRepository.findAll();
 	}
+	
+	@Override
+	public List<Pharmacist> getActivePharmacists(HttpServletRequest request) {
+		log.info("Fetching all pharmacists");
+		return pharmacistRepository.findAllByActive(true);
+	}
 
 	@Override
 	public Pharmacist getPharmacistByName(String name, HttpServletRequest request) {

@@ -31,5 +31,11 @@ public interface ClinicianRepository extends JpaRepository<Clinician, Long> {
 	 */
 	Optional<Clinician> findByUser(User user);
 
+	/**
+	 * @param b 
+	 * @return
+	 */
+	List<Clinician> findAllByActive(boolean b);
+
 	
 }

@@ -63,6 +63,11 @@ public class ClinicianResource {
 		return ResponseEntity.ok().body(clinicianService.getClinicians(request));
 	}
 	
+	@GetMapping("/clinicians/get_all_active")
+	public ResponseEntity<List<Clinician>>getActiveClinicians(HttpServletRequest request){
+		return ResponseEntity.ok().body(clinicianService.getActiveClinicians(request));
+	}
+	
 	@GetMapping("/clinicians/get")
 	public ResponseEntity<Clinician> getClinician(
 			@RequestParam(name = "id") Long id,
@@ -119,7 +124,9 @@ public class ClinicianResource {
 			Collection<Clinic> cls = c.getClinics();
 			for(Clinic cl : cls) {
 				if(cl.getName().equals(d.getName())) {
-					cst.add(c);
+					if(c.isActive()) {
+						cst.add(c);
+					}					
 				}
 			}
 		}

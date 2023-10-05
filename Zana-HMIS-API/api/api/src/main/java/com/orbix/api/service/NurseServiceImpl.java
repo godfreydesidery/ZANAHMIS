@@ -68,6 +68,12 @@ public class NurseServiceImpl implements NurseService {
 		log.info("Fetching all nurses");
 		return nurseRepository.findAll();
 	}
+	
+	@Override
+	public List<Nurse> getActiveNurses(HttpServletRequest request) {
+		log.info("Fetching all active nurses");
+		return nurseRepository.findAllByActive(true);
+	}
 
 	@Override
 	public Nurse getNurseByName(String name, HttpServletRequest request) {

@@ -71,6 +71,12 @@ public class ClinicianServiceImpl implements ClinicianService{
 		log.info("Fetching all clinicians");
 		return clinicianRepository.findAll();
 	}
+	
+	@Override
+	public List<Clinician> getActiveClinicians(HttpServletRequest request) {
+		log.info("Fetching all clinicians");
+		return clinicianRepository.findAllByActive(true);
+	}
 
 	@Override
 	public Clinician getClinicianByName(String name, HttpServletRequest request) {

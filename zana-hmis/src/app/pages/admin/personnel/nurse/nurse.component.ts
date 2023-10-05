@@ -62,7 +62,7 @@ export class NurseComponent {
   }
 
   ngOnInit(): void {
-    this.loadNurses()
+    this.loadActiveNurses()
     this.loadClinics()
   }
 
@@ -102,7 +102,7 @@ export class NurseComponent {
           this.type       = data!.type
           this.active     = data!.active
           this.msgBox.showSuccessMessage('Nurse created successifully')
-          this.loadNurses()
+          this.loadActiveNurses()
           this.clear()
         }
       )
@@ -128,7 +128,7 @@ export class NurseComponent {
           this.type       = data!.type
           this.active     = data!.active
           this.msgBox.showSuccessMessage('Nurse updated successifully')
-          this.loadNurses()
+          this.loadActiveNurses()
         }
       )
       .catch(
@@ -139,13 +139,13 @@ export class NurseComponent {
     }
   }
 
-  async loadNurses(){
+  async loadActiveNurses(){
     this.nurses = []
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<INurse[]>(API_URL+'/nurses', options)
+    await this.http.get<INurse[]>(API_URL+'/nurses/get_all_active', options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -157,7 +157,7 @@ export class NurseComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load nurses')
+        this.msgBox.showErrorMessage('Could not load active nurses')
       }
     )
   }
@@ -281,7 +281,7 @@ export class NurseComponent {
           this.type       = data!.type
           this.active     = data!.active
           this.msgBox.showSuccessMessage('Saved successifully')
-          this.loadNurses()
+          this.loadActiveNurses()
           this.clear()
         }
       )

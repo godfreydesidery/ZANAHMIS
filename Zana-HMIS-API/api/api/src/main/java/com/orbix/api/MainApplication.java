@@ -47,6 +47,7 @@ import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.PrivilegeRepository;
 import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.RadiologyRepository;
+import com.orbix.api.repositories.RoleRepository;
 import com.orbix.api.security.Object_;
 import com.orbix.api.security.Operation;
 import com.orbix.api.service.CompanyProfileService;
@@ -88,6 +89,7 @@ public class MainApplication {
 	private final ProcedureRepository procedureRepository;
 	private final PrescriptionRepository prescriptionRepository;
 	private final ConsultationTransferRepository consultationTransferRepository;
+	private final RoleRepository roleRepository;
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -162,11 +164,34 @@ public class MainApplication {
 				dayService.saveDay(new Day());
 			}
 			try {
-				userService.saveRole(new Role(null, "ROOT", null), null);
+				userService.saveRole(new Role(null, "ROOT", "SYSTEM", null), null);
 			}catch(Exception e) {}	
 			try {
+				userService.saveRole(new Role(null, "CLINICIAN", "SYSTEM", null), null);
+			}catch(Exception e) {}
+			try {
+				userService.saveRole(new Role(null, "NURSE", "SYSTEM", null), null);
+			}catch(Exception e) {}
+			try {
+				userService.saveRole(new Role(null, "PHARMACIST", "SYSTEM", null), null);
+			}catch(Exception e) {}
+			try {
+				userService.saveRole(new Role(null, "LABORATORIST", "SYSTEM", null), null);
+			}catch(Exception e) {}
+			try {
+				userService.saveRole(new Role(null, "RADIOLOGIST", "SYSTEM", null), null);
+			}catch(Exception e) {}
+			
+			List<Role> rs = roleRepository.findByOwner(null);
+			for(Role r : rs) {
+				r.setOwner("SYSTEM");
+				roleRepository.save(r);
+			}
+			
+			
+			try {
 				userService.saveUser(new User(null, "ROOT", "Root", "Root", "Root", "Root@Root", "root", "r00tpA55", true, new ArrayList<>(), null, null, LocalDateTime.now()), null);
-			}catch(Exception e) {}		
+			}catch(Exception e) {}				
 			try {
 				userService.addRoleToUser("root", "ROOT", null);
 			}catch(Exception e) {}		

@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,4 +29,9 @@ public interface NurseRepository extends JpaRepository<Nurse, Long> {
 	 */
 	Optional<Nurse> findByUser(User user);
 
+	/**
+	 * @param b
+	 * @return
+	 */
+	List<Nurse> findAllByActive(boolean b);
 }

@@ -62,7 +62,7 @@ export class ClinicianComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadClinicians()
+    this.loadActiveClinicians()
     this.loadClinics()
   }
 
@@ -100,10 +100,10 @@ export class ClinicianComponent implements OnInit {
           this.middleName = data!.middleName
           this.lastName   = data!.lastName
           this.type       = data!.type
-          this.clinics    = data!.clinics
+          //this.clinics    = data!.clinics
           this.active     = data!.active
           this.msgBox.showSuccessMessage('Clinician created successifully')
-          this.loadClinicians()
+          this.loadActiveClinicians()
           this.clear()
         }
       )
@@ -127,10 +127,10 @@ export class ClinicianComponent implements OnInit {
           this.middleName = data!.middleName
           this.lastName   = data!.lastName
           this.type       = data!.type
-          this.clinics    = data!.clinics
+          //this.clinics    = data!.clinics
           this.active     = data!.active
           this.msgBox.showSuccessMessage('Clinician updated successifully')
-          this.loadClinicians()
+          this.loadActiveClinicians()
         }
       )
       .catch(
@@ -141,13 +141,13 @@ export class ClinicianComponent implements OnInit {
     }
   }
 
-  async loadClinicians(){
+  async loadActiveClinicians(){
     this.clinicians = []
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IClinician[]>(API_URL+'/clinicians', options)
+    await this.http.get<IClinician[]>(API_URL+'/clinicians/get_all_active', options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -302,7 +302,7 @@ export class ClinicianComponent implements OnInit {
           this.clinics    = data!.clinics
           this.active     = data!.active
           this.msgBox.showSuccessMessage('Saved successifully')
-          this.loadClinicians()
+          this.loadActiveClinicians()
           this.clear()
         }
       )
