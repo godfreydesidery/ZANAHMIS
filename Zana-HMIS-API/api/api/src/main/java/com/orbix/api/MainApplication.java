@@ -36,6 +36,7 @@ import com.orbix.api.domain.Day;
 import com.orbix.api.domain.Privilege;
 import com.orbix.api.domain.Role;
 import com.orbix.api.domain.User;
+import com.orbix.api.repositories.AdmissionBedRepository;
 import com.orbix.api.repositories.AdmissionRepository;
 import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationRepository;
@@ -44,11 +45,14 @@ import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
 import com.orbix.api.repositories.PatientBillRepository;
+import com.orbix.api.repositories.PatientInvoiceDetailRepository;
+import com.orbix.api.repositories.PatientInvoiceRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.PrivilegeRepository;
 import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.RadiologyRepository;
 import com.orbix.api.repositories.RoleRepository;
+import com.orbix.api.repositories.WardTypeInsurancePlanRepository;
 import com.orbix.api.security.Object_;
 import com.orbix.api.security.Operation;
 import com.orbix.api.service.CompanyProfileService;
@@ -91,6 +95,11 @@ public class MainApplication {
 	private final PrescriptionRepository prescriptionRepository;
 	private final ConsultationTransferRepository consultationTransferRepository;
 	private final RoleRepository roleRepository;
+	private final AdmissionBedRepository admissionBedRepository;	
+	private final DayService dayService;
+	private final WardTypeInsurancePlanRepository wardTypeInsurancePlanRepository;
+	private final PatientInvoiceRepository patientInvoiceRepository;
+	private final PatientInvoiceDetailRepository patientInvoiceDetailRepository;
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -138,7 +147,12 @@ public class MainApplication {
 				radiologyRepository, 
 				procedureRepository, 
 				prescriptionRepository,
-				consultationTransferRepository);
+				consultationTransferRepository,
+				admissionBedRepository,
+				dayService,
+				wardTypeInsurancePlanRepository,
+				patientInvoiceRepository,
+				patientInvoiceDetailRepository);
 	    Thread updatePatientThread = new Thread(updatePatient);
 	    updatePatientThread.start();
 	}

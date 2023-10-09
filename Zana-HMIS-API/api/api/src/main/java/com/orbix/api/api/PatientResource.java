@@ -266,53 +266,106 @@ public class PatientResource {
 	@PreAuthorize("hasAnyAuthority('PATIENT-ALL','PATIENT-UPDATE')")
 	public ResponseEntity<Patient>changeType(
 			@RequestBody Patient patient,
-			@RequestParam(name = "type") String type,
 			HttpServletRequest request){
 		Optional<Patient> p = patientRepository.findById(patient.getId());
 		if(!p.isPresent()) {
 			throw new NotFoundException("Could not process, patient not available");
 		}
-		if((type.equals("OUTPATIENT") || type.equals("OUTSIDER"))){
-			//continue change
-		}else {
-			throw new InvalidOperationException("Invalid patient types. Only OUTPATIENT and OUTSIDER types are allowed");
-		}
-		if(p.get().getType().equals("INPATIENT")) {
-			throw new InvalidOperationException("Active inpatients can only be discharged");
-		}
-		/**
-		 * From OUTPATIENT to OUTSIDER
-		 */
-		List<String> statuses = new ArrayList<>();
-		statuses.add("PENDING");
-		statuses.add("IN-PROCESS");
-		statuses.add("TRANSFERED");
 		
-		if(type.equals("OUTSIDER")) {
-			if(p.get().getType().equals("OUTSIDER")) {
-				throw new InvalidOperationException("Can not transform to the same type");
+		
+		
+		if(p.get().getType() == null) {
+			p.get().setType("OUTPATIENT");{
+				patientRepository.save(p.get());
 			}
-			
-			List<Consultation> cs = consultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
-			if(cs.isEmpty() == false) {
-				throw new InvalidOperationException("Can not change patient type, the patient has an active consultation.");
-			}else {
-				p.get().setType("OUTSIDER");
-				patient = patientRepository.save(p.get());
-			}
-		}else if(type.equals("OUTPATIENT")) {
+		}
+		
+		if((p.get().getType().equals("OUTPATIENT") || p.get().getType().equals("OUTSIDER"))){
+			List<String> statuses = new ArrayList<>();
+			statuses.add("PENDING");
+			statuses.add("IN-PROCESS");
+			statuses.add("TRANSFERED");
 			if(p.get().getType().equals("OUTPATIENT")) {
-				throw new InvalidOperationException("Can not transform to the same type");
-			}
-			List<NonConsultation> ncs = nonConsultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
-			
-			if(ncs.isEmpty() == false) {
-				throw new InvalidOperationException("Can not change patient type, the has pending services. Please consider clearing with the patient.");
-			}else {
+				List<Consultation> cs = consultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
+				if(cs.isEmpty() == false) {
+					throw new InvalidOperationException("Can not change patient type, the patient has an active consultation.");
+				}else {
+					p.get().setType("OUTSIDER");
+					patient = patientRepository.save(p.get());
+				}
+			}else if(p.get().getType().equals("OUTSIDER")) {
+				List<NonConsultation> ncs = nonConsultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);				
+				boolean cancelable = true;	
+				if(ncs.isEmpty() == false) {					
+					for(NonConsultation nc : ncs) {						
+						List<LabTest> tests = labTestRepository.findAllByNonConsultation(nc);
+						for(LabTest test : tests) {
+							if(test.getStatus() != null) {
+								if(test.getStatus().equals("PENDING")) {
+									PatientBill bill = test.getPatientBill();
+									if(bill.getStatus() != null) {
+										if(bill.getStatus().equals("UNPAID")) {
+											labTestRepository.delete(test);
+											patientBillRepository.delete(bill);
+										}else {
+											cancelable = false;
+										}
+									}else {
+										labTestRepository.delete(test);
+										patientBillRepository.delete(bill);
+									}
+								}
+							}
+						}						
+						List<Radiology> radiologies = radiologyRepository.findAllByNonConsultation(nc);
+						for(Radiology radiology : radiologies) {
+							if(radiology.getStatus() != null) {
+								if(radiology.getStatus().equals("PENDING")) {
+									PatientBill bill = radiology.getPatientBill();
+									if(bill.getStatus() != null) {
+										if(bill.getStatus().equals("UNPAID")) {
+											radiologyRepository.delete(radiology);
+											patientBillRepository.delete(bill);
+										}else {
+											cancelable = false;
+										}
+									}else {
+										radiologyRepository.delete(radiology);
+										patientBillRepository.delete(bill);
+									}
+								}
+							}
+						}						
+						List<Procedure> procedures = procedureRepository.findAllByNonConsultation(nc);
+						for(Procedure procedure : procedures) {
+							if(procedure.getStatus() != null) {
+								if(procedure.getStatus().equals("PENDING")) {
+									PatientBill bill = procedure.getPatientBill();
+									if(bill.getStatus() != null) {
+										if(bill.getStatus().equals("UNPAID")) {
+											procedureRepository.delete(procedure);
+											patientBillRepository.delete(bill);
+										}else {
+											cancelable = false;
+										}
+									}else {
+										procedureRepository.delete(procedure);
+										patientBillRepository.delete(bill);
+									}
+								}
+							}
+						}
+					}
+				}
+				if(cancelable == false) {
+					throw new InvalidOperationException("Can not change patient type, the has pending paid services. Please consider clearing with the patient.");
+				}
 				p.get().setType("OUTPATIENT");
 				patient = patientRepository.save(p.get());
 			}
-		}				
+		}else if(p.get().getType().equals("INPATIENT")) {
+			throw new InvalidOperationException("This operation is not allowed for inpatients");
+		}			
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/change_type").toUriString());
 		return ResponseEntity.created(uri).body(patient);
 	}
@@ -542,6 +595,7 @@ public class PatientResource {
 		
 		List<String> statuses = new ArrayList<>();
 		statuses.add("IN-PROCESS");
+		statuses.add("TRANSFERED");
 		List<Consultation> cons = consultationRepository.findAllByClinicianAndStatusIn(c.get(), statuses);
 		
 		return ResponseEntity.ok().body(cons);
@@ -572,6 +626,33 @@ public class PatientResource {
 		Optional<Consultation> c = consultationRepository.findById(id);
 		if(c.isPresent()) {
 			URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_consultation").toUriString());
+			return ResponseEntity.created(uri).body(c.get());
+		}else {
+			throw new NotFoundException("Consultation not found");
+		}
+	}
+	
+	@GetMapping("/patients/cancel_consultation_transfer")    // to do later
+	public ResponseEntity<Consultation> cancelConsultationTransfer(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		Optional<Consultation> c = consultationRepository.findById(id);
+		if(c.isPresent()) {			
+			if(c.get().getStatus().equals("TRANSFERED")) {
+				Optional<ConsultationTransfer> conTra = consultationTransferRepository.findByConsultationAndStatus(c.get(), "PENDING");
+				if(conTra.isPresent()) {
+					if(conTra.get().getStatus().equals("PENDING")) {
+						conTra.get().setStatus("CANCELED");
+						consultationTransferRepository.save(conTra.get());
+						c.get().setStatus("IN-PROCESS");	
+						consultationRepository.save(c.get());
+					}else {
+						throw new InvalidOperationException("Could not cancel transfer");
+					}
+				}
+			}
+			
+			URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/consultation_transfer").toUriString());
 			return ResponseEntity.created(uri).body(c.get());
 		}else {
 			throw new NotFoundException("Consultation not found");
@@ -2416,6 +2497,7 @@ public class PatientResource {
 		}
 		if(r.get().getPatientBill().getStatus().equals("PAID") || r.get().getPatientBill().getStatus().equals("COVERED") || r.get().getPatientBill().getStatus().equals("VERIFIED")) {
 			r.get().setNote(procedure.getNote());
+			r.get().setStatus("VERIFIED");
 			procedureRepository.save(r.get());
 		}else {
 			throw new InvalidOperationException("Could not add procedure note. Payment not verified");

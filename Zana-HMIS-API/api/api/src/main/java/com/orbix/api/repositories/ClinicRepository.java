@@ -28,4 +28,11 @@ public interface ClinicRepository extends JpaRepository<Clinic, Long> {
 	@Query("SELECT c.name FROM Clinic c")
 	List<String> getNames();
 
+	/**
+	 * @param value
+	 * @param value2
+	 * @return
+	 */
+	List<Clinic> findAllByNameContainingOrCodeContaining(String value, String value2);
+
 }

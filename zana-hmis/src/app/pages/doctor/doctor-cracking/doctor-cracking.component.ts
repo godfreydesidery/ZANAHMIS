@@ -175,7 +175,7 @@ export class DoctorCrackingComponent implements OnInit {
 
   filterRecords : string = '' // this is composite
 
-  clinics : IClinic[] = []
+  //clinics : IClinic[] = []
 
   constructor(
     private router : Router,
@@ -1166,7 +1166,7 @@ export class DoctorCrackingComponent implements OnInit {
     }
     this.diagnosisTypes = []
     this.spinner.show()
-    await this.http.get<IProcedureType>(API_URL+'/diagnosis_types/get?id='+id, options)
+    await this.http.get<IDiagnosisType>(API_URL+'/diagnosis_types/get?id='+id, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -1270,7 +1270,7 @@ export class DoctorCrackingComponent implements OnInit {
     }
     this.radiologyTypes = []
     this.spinner.show()
-    await this.http.get<IProcedureType>(API_URL+'/radiology_types/get?id='+id, options)
+    await this.http.get<IRadiologyType>(API_URL+'/radiology_types/get?id='+id, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -1355,9 +1355,6 @@ export class DoctorCrackingComponent implements OnInit {
     .then(
       data => {
         console.log(data)
-        //data?.forEach(element => {
-          //this.medicines.push(element)
-        //})
         this.medicines = data!
       }
     )
@@ -1586,34 +1583,6 @@ export class DoctorCrackingComponent implements OnInit {
     )
   }
 
-  transferClinicId : any = null
-  transferClinicName : string = ''
-  async loadClinics(){
-    this.clinics = []
-    this.transferClinicId = null
-    this.transferClinicName = ''
-    let options = {
-      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
-    }
-    this.spinner.show()
-    await this.http.get<IClinic[]>(API_URL+'/clinics', options)
-    .pipe(finalize(() => this.spinner.hide()))
-    .toPromise()
-    .then(
-      data => {
-        data?.forEach(element => {
-          this.clinics.push(element)
-        })
-      }
-    )
-    .catch(
-      error => {
-        this.msgBox.showErrorMessage('Could not load clinics')
-      }
-    )
-  }
-
-  
   async loadClinic(clinic : IClinic){
     this.transferClinicId = clinic.id
     this.transferClinicName = clinic.name
@@ -1653,6 +1622,72 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
 
+  }
+
+  clearTransferClinic(){
+    this.transferClinicId = null
+    this.transferClinicName = ''
+    this.clinics = []
+  }
+
+  clinicId : any =  null
+  clinicCode : string = ''
+  clinicName : string = ''
+  clinics : IClinic[] = []
+
+  transferClinicId : any = null
+  transferClinicName : string = ''
+
+  async loadClinicsLike(value : string){
+    this.clinics = []
+
+    this.transferClinicId = null
+    this.transferClinicName = ''
+
+    if(value.length < 2){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IClinic[]>(API_URL+'/clinics/load_clinics_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      (data) => {
+        console.log(data)
+        this.clinics = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+
+  async getClinic(clinic : IClinic){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.clinics = []
+    this.spinner.show()
+    await this.http.get<IClinic>(API_URL+'/clinics/get?id='+clinic.id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.transferClinicId = data?.id
+        this.transferClinicName = data!.name
+        this.transferReason = ''
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
   }
 
 

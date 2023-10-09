@@ -85,11 +85,7 @@ export class MyConsultationComponent implements OnInit {
     .then(
       data => {
         console.log(data)
-        data?.forEach(element => {
-          
-          this.consultations.push(element)
-        })
-        
+        this.consultations = data!
       }
     )
     .catch(
@@ -106,6 +102,32 @@ export class MyConsultationComponent implements OnInit {
      */
     localStorage.setItem('consultation-id', id)
     this.router.navigate(['doctor-cracking'])    
+  }
+
+  async cancelTransfer(id : any){
+    if(!window.confirm('Confirm canceling this transfer?')){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    await this.http.get(API_URL+'/patients/cancel_consultation_transfer?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.loadOpenedList(this.clinicianId)
+        
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
   }
 
   public grant(privilege : string[]) : boolean{

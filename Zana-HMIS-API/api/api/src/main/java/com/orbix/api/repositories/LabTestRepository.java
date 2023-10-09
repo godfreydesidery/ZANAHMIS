@@ -141,7 +141,6 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
 	 */
 	List<LabTest> findByNonConsultation(NonConsultation c);
 
-
 	
 	
 }

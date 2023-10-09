@@ -22,6 +22,13 @@
                         <div class="col-sm-6">
                             <input type="hidden" name="id" [(ngModel)]="id">
                             <div class="row">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4">
+                                    <button class="btn btn-success form-control" *ngIf="grant(['USER-ALL'])" (click)="getUser(username)"><i class="glyphicon glyphicon-search"></i>Search by Username</button>                               
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-sm-12">
                                     <h4>Code</h4>
                                     <input type="text" name="code" [(ngModel)]="code" class="form-control input-sm special" readonly autocomplete="off">                               
@@ -34,9 +41,6 @@
                                     <datalist id="users" style="padding: 0px;">
                                         <option *ngFor="let user of users" [ngValue]="user">{{user.username}}</option>
                                     </datalist>
-                                </div>
-                                <div class="col-sm-12">
-                                    <button class="btn btn-success form-control" *ngIf="grant(['USER-READ'])" (click)="getUser(username)"><i class="fas fa-search"></i>Search</button>                               
                                 </div>
                             </div>
                             <div class="row">

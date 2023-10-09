@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.ConsultationTransfer;
 import com.orbix.api.domain.Patient;
 
@@ -36,5 +37,12 @@ public interface ConsultationTransferRepository extends JpaRepository<Consultati
 	 * @return
 	 */
 	Optional<ConsultationTransfer> findByPatientAndStatus(Patient p, String string);
+
+	/**
+	 * @param consultation
+	 * @param string
+	 * @return
+	 */
+	Optional<ConsultationTransfer> findByConsultationAndStatus(Consultation consultation, String string);
 
 }

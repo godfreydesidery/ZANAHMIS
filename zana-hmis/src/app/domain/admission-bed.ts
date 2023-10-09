@@ -16,7 +16,6 @@ export interface IAdmissionBed {
     patientBill : IPatientBill
     admission   : IAdmission
 
-
     opened : string
 
     closed : string

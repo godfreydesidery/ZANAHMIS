@@ -141,11 +141,13 @@ export class PosReceiptPrinterService {
               headerRows : 0,
               widths : [200],
               body : [
-                [{text : patient?.firstName + ' '+ patient?.middleName + ' '+ patient?.lastName + ' ' +patient?.no+ ' '+patient?.address + ' '+patient?.phoneNo, alignment : 'center', fontSize : 9}],
+                [{text : patient?.firstName + ' '+ patient?.middleName + ' '+ patient?.lastName , fontSize : 8}],
+                [{text : patient?.no, fontSize : 8}],
+                [{text : patient?.address, fontSize : 8}],
+                [{text : patient?.phoneNo, fontSize : 8}],
               ]
             }
           },  
-          ' ',
           {
             layout : 'noBorders',
             table : {
@@ -172,7 +174,7 @@ export class PosReceiptPrinterService {
               body : [
                 [{text : '=============================='}],
                 [{text : 'Served By : '+ localStorage.getItem('user-name'), fontSize : 9, alignment : 'left'}],
-                [{text : '@Orbix Systems', fontSize : 10, bold : true, alignment : 'center'}],
+                [{text : 'Developed By @Zana Systems', fontSize : 10, bold : true, alignment : 'center'}],
                 [{text : '***End of Receipt***', fontSize : 9, alignment : 'center'}]
               ]
             }

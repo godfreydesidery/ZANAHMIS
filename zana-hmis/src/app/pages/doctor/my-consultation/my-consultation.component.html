@@ -38,6 +38,7 @@
                                         <th>Payment Type</th>
                                         <th>Dr. Name</th>
                                         <th>Clinic</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -49,7 +50,11 @@
                                             <td>{{consultation.paymentType}}</td>
                                             <td>{{consultation.clinician.nickname}}</td>
                                             <td>{{consultation.clinic.name}}</td>
-                                            <td><a class="btn btn-success" (click)="postConsultation(consultation.id)">Attend</a></td>
+                                            <td>{{consultation.status}}</td>
+                                            <td>
+                                                <a class="btn btn-success" *ngIf="consultation?.status === 'IN-PROCESS'" (click)="postConsultation(consultation.id)">Attend</a>
+                                                <a class="btn btn-success" *ngIf="consultation?.status === 'TRANSFERED'" (click)="cancelTransfer(consultation.id)">Cancel Transfer</a>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>    

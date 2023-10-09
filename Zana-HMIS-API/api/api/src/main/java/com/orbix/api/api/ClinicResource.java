@@ -25,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
+import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.repositories.ClinicRepository;
 import com.orbix.api.service.ClinicService;
 import com.orbix.api.service.DayService;
@@ -85,5 +86,14 @@ public class ClinicResource {
 		Clinic d = clinicRepository.findByName(clinicName).get();
 		
 		return ResponseEntity.ok().body(d.getConsultationFee());
+	}
+	
+	@GetMapping("/clinics/load_clinics_like")
+	public ResponseEntity<List<Clinic>> getClinicNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<Clinic> clinics = new ArrayList<Clinic>();
+		clinics = clinicRepository.findAllByNameContainingOrCodeContaining(value, value);
+		return ResponseEntity.ok().body(clinics);
 	}
 }

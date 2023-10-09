@@ -260,8 +260,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		/**
 		 * Validate Username, username should be >=6 and <=16 in length
 		 */
-		if((user.getUsername().length() < 6 || user.getUsername().length() > 50) && !user.getUsername().equalsIgnoreCase("root")) {
-			throw new InvalidEntryException("Invalid length in username, length should be between 6 and 50");
+		if((user.getUsername().length() < 3 || user.getUsername().length() > 50) && !user.getUsername().equalsIgnoreCase("root")) {
+			throw new InvalidEntryException("Invalid length in username, length should be between 3 and 50");
 		}
 		/**
 		 * Validate password, password should have a valid length
@@ -269,12 +269,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if(user.getId() == null) {
 			if(user.getPassword().equals("")) {
 				throw new MissingInformationException("The password field is required");
-			}else if(user.getPassword().length() < 6 || user.getPassword().length() >50) {
+			}else if(user.getPassword().length() < 4 || user.getPassword().length() >50) {
 				throw new InvalidEntryException("Password length should be more than 5 and less than 51");
 			}
 		}else {
 			if(user.getPassword().length() > 0 && (user.getPassword().length() < 6 || user.getPassword().length() > 50)){
-				throw new InvalidEntryException("Password length should be more than 5 and less than 51");
+				throw new InvalidEntryException("Password length should be more than 3 and less than 51");
 			}
 		}
 		/**

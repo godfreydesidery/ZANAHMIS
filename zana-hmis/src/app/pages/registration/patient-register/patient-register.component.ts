@@ -917,7 +917,11 @@ export class PatientRegisterComponent implements OnInit {
     )
   }
 
-  async changeType(type : string){
+  async changeType(){
+
+    if(!window.confirm('Confirm changing patient type. Confirm?')){
+      return
+    }
   
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
@@ -928,16 +932,17 @@ export class PatientRegisterComponent implements OnInit {
     }
     
     this.spinner.show()
-    await this.http.post(API_URL+'/patients/change_type?type='+type, patient, options)
+    await this.http.post(API_URL+'/patients/change_type', patient, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {        
-        var temp = this.searchKey
+        var temp = this.patientId
         this.clear()
-        this.searchKey = temp
-        this.searchBySearchKey(this.searchKey) 
-        this.msgBox.showSuccessMessage('Status changed: '+type)       
+        this.patientId = temp
+        this.getPatient(this.patientId)
+        //this.searchBySearchKey(this.searchKey) 
+        this.msgBox.showSuccessMessage('Status changed')       
       }
     )
     .catch(

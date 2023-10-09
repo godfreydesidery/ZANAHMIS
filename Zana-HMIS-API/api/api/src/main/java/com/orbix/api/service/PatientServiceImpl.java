@@ -1712,9 +1712,14 @@ public class PatientServiceImpl implements PatientService {
 					supplementaryWardBedBill.setPaid(0);
 					supplementaryWardBedBill.setBalance(wb.getWard().getWardType().getPrice() - eligiblePlan.getPrice());
 					supplementaryWardBedBill.setStatus("UNPAID");
+					supplementaryWardBedBill.setDescription("Ward Bed / Room (Top up)");
 					supplementaryWardBedBill.setPrincipalPatientBill(wardBedBill);
 					
-					supplementaryWardBedBill = patientBillRepository.save(wardBedBill);					
+					supplementaryWardBedBill.setCreatedby(userService.getUser(request).getId());
+					supplementaryWardBedBill.setCreatedOn(dayService.getDay().getId());
+					supplementaryWardBedBill.setCreatedAt(dayService.getTimeStamp());
+					
+					supplementaryWardBedBill = patientBillRepository.save(supplementaryWardBedBill);
 					wardBedBill.setSupplementaryPatientBill(supplementaryWardBedBill);
 					wardBedBill = patientBillRepository.save(wardBedBill);
 					
@@ -1744,7 +1749,7 @@ public class PatientServiceImpl implements PatientService {
 						patientInvoiceDetail.setPatientInvoice(patientInvoice);
 						patientInvoiceDetail.setPatientBill(supplementaryWardBedBill);
 						patientInvoiceDetail.setAmount(supplementaryWardBedBill.getAmount());
-						patientInvoiceDetail.setDescription("Ward Bed / Room");
+						patientInvoiceDetail.setDescription("Ward Bed / Room (Top up)");
 						patientInvoiceDetail.setQty(1);
 						
 						patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
@@ -1760,7 +1765,7 @@ public class PatientServiceImpl implements PatientService {
 						patientInvoiceDetail.setPatientInvoice(supInv.get());
 						patientInvoiceDetail.setPatientBill(supplementaryWardBedBill);
 						patientInvoiceDetail.setAmount(supplementaryWardBedBill.getAmount());
-						patientInvoiceDetail.setDescription("Ward Bed / Room");
+						patientInvoiceDetail.setDescription("Ward Bed / Room (Top up)");
 						patientInvoiceDetail.setQty(1);
 						
 						patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());

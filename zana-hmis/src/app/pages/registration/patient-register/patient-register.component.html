@@ -10,13 +10,13 @@
                 <div class="panel panel-bd lobidrag">
                     <div class="panel-heading">
                         <div class="btn"> 
-                            <a class="btn btn-primary" (click)="newPatientPrompt()">New Patient</a>  
+                            <a class="btn btn-primary btn-outline" (click)="newPatientPrompt()">New Patient</a>  
                         </div>
                         <div class="btn"> 
-                            <a class="btn btn-primary" (click)="existingPatientPrompt()">Existing Patient</a>  
+                            <a class="btn btn-primary btn-outline" (click)="existingPatientPrompt()">Existing Patient</a>  
                         </div>
                         <div class="btn"> 
-                            <a class="btn btn-primary" (click)="loadTransfers()" (click)="existingPatientPrompt()" data-toggle="modal" data-target="#load-transfers-modal">Transfers to other Clinics</a>  
+                            <a class="btn btn-primary btn-outline" (click)="loadTransfers()" (click)="existingPatientPrompt()" data-toggle="modal" data-target="#load-transfers-modal">Transfers to other Clinics</a>  
                         </div>
                         <div class="btn"> 
                             <!--<a class="btn btn-primary" routerLink="/patient-list"> <i class="fa fa-list"></i>Today List</a>-->  
@@ -219,7 +219,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <span class="label label-primary label-lg m-r-15">Patient Type: {{type}}</span><span class="label label-success label-lg m-r-15" (click)="clearEditType()" data-toggle="modal" data-target="#change-patient-type-modal">Change Patient Type</span><br><br>
+                                            <span class="label label-primary label-lg m-r-15">Patient Type: {{type}}</span><span class="label label-success label-lg m-r-15" (click)="changeType()">Change Patient Type</span><br><br>
                                             <span class="label label-primary m-r-15">Payment Type: {{paymentType}}</span><span class="label label-success label-lg m-r-15" (click)="clearEditPaymentType()" (click)="clearEditMembershipNo()" (click)="clearEditInsurancePlanName()" data-toggle="modal" data-target="#change-payment-type-modal">Change Payment Type</span><br><br>
                                             <div *ngIf="paymentType === 'INSURANCE'">
                                                 <span class="label label-primary m-r-15">Insurance: {{insurancePlanName}}</span><br><br>
@@ -533,7 +533,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success pull-right" *ngIf="editType != ''" (click)="changeType(editType)" data-dismiss="modal">Save Change</button>
+                <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Save Change</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

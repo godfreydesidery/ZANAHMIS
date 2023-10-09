@@ -4,6 +4,7 @@
 package com.orbix.api.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -29,5 +30,11 @@ public interface AdmissionBedRepository extends JpaRepository <AdmissionBed, Lon
 	 * @return
 	 */
 	List<AdmissionBed> findAllByAdmission(Admission admission);
+
+	/**
+	 * @param adm
+	 * @return
+	 */
+	Optional<AdmissionBed> findLastByAdmission(Admission adm);
 
 }
