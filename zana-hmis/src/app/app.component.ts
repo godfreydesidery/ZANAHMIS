@@ -112,7 +112,6 @@ import { NurseInpatientChartComponent } from './pages/nurse/nurse-inpatient-char
 import { ReportTemplateComponent } from './pages/reports/report-template/report-template.component';
 import { CommonModule } from '@angular/common';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
-const fs = require('file-saver');
 
 const API_URL = environment.apiUrl;
 
@@ -129,20 +128,10 @@ export class AppComponent {
 
   constructor(private router : Router,
     private http  : HttpClient,
-    private auth : AuthService,
-    private titleService: Title,
-    private spinner: NgxSpinnerService,
-    private data : DataService,
-    private printer : PosReceiptPrinterService) { (window as any).pdfMake.vfs = pdfFonts.pdfMake.vfs; }
+    private auth : AuthService) { (window as any).pdfMake.vfs = pdfFonts.pdfMake.vfs; }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
 
-    
-    
-    this.ping()
-    this.loadCompanyName()
-
-    this.router.navigate(['/dashboard'])//Navigates to home if url is entered on address bar
     var currentUser = null
     if(localStorage.getItem('user-name') != null){
       this.userName = localStorage.getItem('user-name')!
@@ -157,6 +146,11 @@ export class AppComponent {
     }else{
       this.isLoggedIn = false
     }
+
+    await this.router.navigate(['/dashboard'])//Navigates to home if url is entered on address bar
+    
+    //this.ping()
+    this.loadCompanyName()
     this.getLogo()
   }
 
@@ -185,7 +179,7 @@ export class AppComponent {
         localStorage.setItem('system-date', data?.bussinessDate!+'')        
       }
     )
-    .catch(error => {})
+    .catch(() => {})
   }
 
   async loadCompanyName(){
@@ -199,13 +193,13 @@ export class AppComponent {
         localStorage.setItem('company-name', data?.companyName!+'')        
       }
     )
-    .catch(error => {})
+    .catch(() => {})
   }
 
   public async logout() : Promise<any>{
     localStorage.removeItem('current-user')
     alert('You have logged out!')
-    await this.router.navigate([''])
+    //await this.router.navigate([''])
     window.location.reload()
   }
 
@@ -323,6 +317,9 @@ export class AppComponent {
         {path : 'radiology-payment', loadComponent : () => import('./pages/payments/radiology-payment/radiology-payment.component').then(m => m.RadiologyPaymentComponent), canActivate: [AuthGuard]},
         {path : 'medication-payment', loadComponent : () => import('./pages/payments/medication-payment/medication-payment.component').then(m => m.MedicationPaymentComponent), canActivate: [AuthGuard]},
         {path : 'procedure-payment', loadComponent : () => import('./pages/payments/procedure-payment/procedure-payment.component').then(m => m.ProcedurePaymentComponent), canActivate: [AuthGuard]},
+        {path : 'patient-direct-pending-invoices', loadComponent : () => import('./pages/payments/patient-direct-invoices/patient-direct-invoices.component').then(m => m.PatientDirectInvoicesComponent), canActivate: [AuthGuard]},
+        {path : 'patient-insurance-pending-invoices', loadComponent : () => import('./pages/payments/patient-insurance-invoices/patient-insurance-invoices.component').then(m => m.PatientInsuranceInvoicesComponent), canActivate: [AuthGuard]},
+        {path : 'patient-invoice', loadComponent : () => import('./pages/payments/patient-invoice/patient-invoice.component').then(m => m.PatientInvoiceComponent), canActivate: [AuthGuard]},
 
         /*{path : 'registration-prices', loadComponent : () => import('./pages/payments/pri').then(m => m), canActivate: [AuthGuard]},
         {path : 'consultation-prices', loadComponent : () => import('./pages').then(m => m), canActivate: [AuthGuard]},
@@ -424,6 +421,4 @@ interface ICompanyData{
   companyName : String
 }
 
-function jspmWSStatus() {
-  throw new Error('Function not implemented.');
-}
+

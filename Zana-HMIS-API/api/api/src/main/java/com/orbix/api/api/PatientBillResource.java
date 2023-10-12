@@ -30,6 +30,7 @@ import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientBill;
+import com.orbix.api.domain.PatientInvoice;
 import com.orbix.api.domain.PatientInvoiceDetail;
 import com.orbix.api.domain.PatientPayment;
 import com.orbix.api.domain.PatientPaymentDetail;
@@ -48,6 +49,7 @@ import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
 import com.orbix.api.repositories.PatientBillRepository;
 import com.orbix.api.repositories.PatientInvoiceDetailRepository;
+import com.orbix.api.repositories.PatientInvoiceRepository;
 import com.orbix.api.repositories.PatientPaymentDetailRepository;
 import com.orbix.api.repositories.PatientPaymentRepository;
 import com.orbix.api.repositories.PatientRepository;
@@ -90,6 +92,7 @@ public class PatientBillResource {
 	private final RegistrationRepository registrationRepository;
 	private final WardBedRepository wardBedRepository;
 	
+	private final PatientInvoiceRepository patientInvoiceRepository;
 	private final PatientInvoiceDetailRepository patientInvoiceDetailRepository;
 	
 	private final UserService userService;
@@ -233,10 +236,10 @@ public class PatientBillResource {
 			if(!b.isPresent()) {
 				throw new NotFoundException("Bill not found; Bill ID :"+bill.getId().toString());
 			}
-			if(!b.get().getStatus().equals("UNPAID")) {
-				throw new InvalidOperationException("One or more bills have been paid/covered/canceled. Only unpaid bills can be paid");
+			if(!(b.get().getStatus().equals("UNPAID") || b.get().getStatus().equals("VERIFIED"))) {
+				throw new InvalidOperationException("One or more bills have been paid/covered/canceled. Only unpaid or verified bills can be paid");
 			}
-			if(b.get().getStatus().equals("UNPAID")) {
+			if(b.get().getStatus().equals("UNPAID") || b.get().getStatus().equals("VERIFIED")) {
 				b.get().setBalance(0);
 				b.get().setPaid(b.get().getAmount());
 				b.get().setStatus("PAID");
@@ -258,8 +261,11 @@ public class PatientBillResource {
 				List<PatientInvoiceDetail> invds = patientInvoiceDetailRepository.findAllByPatientBill(b.get());
 				if(!invds.isEmpty()) {
 					for(PatientInvoiceDetail invd : invds) {
+						PatientInvoice invoice = invd.getPatientInvoice();
 						invd.setStatus("PAID");
 						patientInvoiceDetailRepository.save(invd);
+						invoice.setAmountPaid(invoice.getAmountPaid() + invd.getAmount());
+						patientInvoiceRepository.save(invoice);
 					}
 				}
 				

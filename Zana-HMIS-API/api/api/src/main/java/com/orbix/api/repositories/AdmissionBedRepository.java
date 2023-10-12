@@ -37,4 +37,25 @@ public interface AdmissionBedRepository extends JpaRepository <AdmissionBed, Lon
 	 */
 	Optional<AdmissionBed> findLastByAdmission(Admission adm);
 
+	/**
+	 * @param adm
+	 * @param string
+	 * @return
+	 */
+	Optional<AdmissionBed> findLastByAdmissionAndStatus(Admission adm, String string);
+
+	/**
+	 * @param adm
+	 * @param string
+	 * @return
+	 */
+	Optional<AdmissionBed> findByAdmissionAndStatus(Admission adm, String string);
+
+	/**
+	 * @param adm
+	 * @param string
+	 * @return
+	 */
+	List<AdmissionBed> findAllByAdmissionAndStatus(Admission adm, String string);
+
 }

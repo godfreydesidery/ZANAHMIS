@@ -91,6 +91,7 @@ public class UpdatePatient implements Runnable{
 		while(true) {
 			try {
 				try {
+					//Thread.sleep(6000);
 					Thread.sleep(300000);///waits for 5 minutes
 					//Thread.sleep(5000);//to use for testing
 				}catch(Exception e) {}				
@@ -235,16 +236,40 @@ public class UpdatePatient implements Runnable{
 				
 				for(Admission adm : adms) {
 					WardBed wardBed = adm.getWardBed();
-					Optional<AdmissionBed> admBed = admissionBedRepository.findLastByAdmission(adm);
+					
+					List<AdmissionBed> admissionBeds = admissionBedRepository.findAllByAdmissionAndStatus(adm, "OPENED");
+					int no = 0;
+					for(AdmissionBed b : admissionBeds) {
+						no = no + 1;
+					}
+					if(no > 1) {
+						int i = 0;
+						for(AdmissionBed b : admissionBeds) {
+							if(i < no) {
+								b.setClosedAt(LocalDateTime.now());
+								b.setStatus("CLOSED");
+								b =  admissionBedRepository.save(b);
+								i = i + 1;
+							}
+						}
+						continue;
+					}
+					
+					Optional<AdmissionBed> admBed = admissionBedRepository.findByAdmissionAndStatus(adm, "OPENED");
+					
 					if(admBed.isEmpty()) {
 						continue;
 					}
+									
 					long difference = ChronoUnit.HOURS.between(admBed.get().getOpenedAt(), LocalDateTime.now());					
 					if(difference >= 24) {
 						
-						admBed.get().setClosedAt(LocalDateTime.now());
-						admBed.get().setStatus("CLOSED");
-						admissionBedRepository.save(admBed.get());
+						AdmissionBed admissionBed = new AdmissionBed();
+						admissionBed = admBed.get();
+						
+						admissionBed.setClosedAt(LocalDateTime.now());
+						admissionBed.setStatus("CLOSED");
+						admissionBed =  admissionBedRepository.save(admissionBed);
 						
 						
 						
@@ -255,11 +280,11 @@ public class UpdatePatient implements Runnable{
 						wardBedBill.setBalance(wardBed.getWard().getWardType().getPrice());
 						wardBedBill.setQty(1);
 						wardBedBill.setDescription("Ward Bed / Room");
-						wardBedBill.setStatus("UNPAID");
+						wardBedBill.setStatus("VERIFIED");
 						/**
 						 * Add forensic data to registration patientBill
 						 */
-						wardBedBill.setCreatedby(wardBed.getCreatedby());
+						wardBedBill.setCreatedby(admissionBed.getPatientBill().getCreatedby());
 						wardBedBill.setCreatedOn(dayService.getDay().getId());
 						wardBedBill.setCreatedAt(dayService.getTimeStamp());
 						/**
@@ -271,7 +296,7 @@ public class UpdatePatient implements Runnable{
 						 */
 						wardBedBill = patientBillRepository.save(wardBedBill);
 						
-						AdmissionBed admissionBed = new AdmissionBed();
+						admissionBed = new AdmissionBed();
 						admissionBed.setAdmission(adm);
 						admissionBed.setPatient(adm.getPatient());
 						admissionBed.setWardBed(wardBed);
@@ -289,7 +314,9 @@ public class UpdatePatient implements Runnable{
 							WardTypeInsurancePlan eligiblePlan = null;
 							
 							List<WardTypeInsurancePlan> wardTypePricePlans = wardTypeInsurancePlanRepository.findByInsurancePlanAndCovered(adm.getPatient().getInsurancePlan(), true);
+							
 							double eligiblePrice = 0;
+							
 							for(WardTypeInsurancePlan plan : wardTypePricePlans) {
 								if(plan.getPrice() > eligiblePrice || plan.getInsurancePlan().getId() == adm.getPatient().getInsurancePlan().getId()) {
 									eligiblePrice = plan.getPrice();
@@ -321,7 +348,7 @@ public class UpdatePatient implements Runnable{
 									patientInvoice.setInsurancePlan(adm.getPatient().getInsurancePlan());
 									patientInvoice.setStatus("PENDING");
 									
-									patientInvoice.setCreatedby(wardBed.getCreatedby());
+									patientInvoice.setCreatedby(wardBedBill.getCreatedby());
 									patientInvoice.setCreatedOn(dayService.getDay().getId());
 									patientInvoice.setCreatedAt(dayService.getTimeStamp());
 									
@@ -338,7 +365,7 @@ public class UpdatePatient implements Runnable{
 									patientInvoiceDetail.setDescription("Ward Bed / Room");
 									patientInvoiceDetail.setQty(1);
 									
-									patientInvoiceDetail.setCreatedby(wardBed.getCreatedby());
+									patientInvoiceDetail.setCreatedby(wardBedBill.getCreatedby());
 									patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
 									patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
 									
@@ -354,15 +381,12 @@ public class UpdatePatient implements Runnable{
 									patientInvoiceDetail.setDescription("Ward Bed / Room");
 									patientInvoiceDetail.setQty(1);
 									
-									patientInvoiceDetail.setCreatedby(wardBed.getCreatedby());
+									patientInvoiceDetail.setCreatedby(wardBedBill.getCreatedby());
 									patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
 									patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
 									
 									patientInvoiceDetailRepository.save(patientInvoiceDetail);
 								}
-								
-								
-								
 								
 								if(eligiblePlan.getInsurancePlan().getId() != adm.getPatient().getInsurancePlan().getId() && (wardBed.getWard().getWardType().getPrice() - eligiblePlan.getPrice() > 0)) {
 									PatientBill supplementaryWardBedBill = new PatientBill();
@@ -370,11 +394,11 @@ public class UpdatePatient implements Runnable{
 									supplementaryWardBedBill.setAmount(wardBed.getWard().getWardType().getPrice() - eligiblePlan.getPrice());
 									supplementaryWardBedBill.setPaid(0);
 									supplementaryWardBedBill.setBalance(wardBed.getWard().getWardType().getPrice() - eligiblePlan.getPrice());
-									supplementaryWardBedBill.setStatus("UNPAID");
+									supplementaryWardBedBill.setStatus("VERIFIED");
 									supplementaryWardBedBill.setDescription("Ward Bed / Room (Topup)");
 									supplementaryWardBedBill.setPrincipalPatientBill(wardBedBill);
 									
-									supplementaryWardBedBill.setCreatedby(wardBed.getCreatedby());
+									supplementaryWardBedBill.setCreatedby(wardBedBill.getCreatedby());
 									supplementaryWardBedBill.setCreatedOn(dayService.getDay().getId());
 									supplementaryWardBedBill.setCreatedAt(dayService.getTimeStamp());
 									
@@ -388,13 +412,13 @@ public class UpdatePatient implements Runnable{
 										 * If no pending patientInvoice
 										 */
 										PatientInvoice patientInvoice = new PatientInvoice();
-										patientInvoice.setNo("NA");
+										patientInvoice.setNo("NAA");
 										patientInvoice.setPatient(adm.getPatient());
 										patientInvoice.setAdmission(adm);
 										patientInvoice.setInsurancePlan(null);
 										patientInvoice.setStatus("PENDING");
 										
-										patientInvoice.setCreatedby(wardBed.getCreatedby());
+										patientInvoice.setCreatedby(wardBedBill.getCreatedby());
 										patientInvoice.setCreatedOn(dayService.getDay().getId());
 										patientInvoice.setCreatedAt(dayService.getTimeStamp());
 										
@@ -411,7 +435,7 @@ public class UpdatePatient implements Runnable{
 										patientInvoiceDetail.setDescription("Ward Bed / Room (Top up)");
 										patientInvoiceDetail.setQty(1);
 										
-										patientInvoiceDetail.setCreatedby(wardBed.getCreatedby());
+										patientInvoiceDetail.setCreatedby(wardBedBill.getCreatedby());
 										patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
 										patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
 										
@@ -427,15 +451,13 @@ public class UpdatePatient implements Runnable{
 										patientInvoiceDetail.setDescription("Ward Bed / Room (Top up)");
 										patientInvoiceDetail.setQty(1);
 										
-										patientInvoiceDetail.setCreatedby(wardBed.getCreatedby());
+										patientInvoiceDetail.setCreatedby(wardBedBill.getCreatedby());
 										patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
 										patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
 										
 										patientInvoiceDetailRepository.save(patientInvoiceDetail);
 									}					
 								}
-							}else {
-								//throw new InvalidOperationException("")
 							}
 						}else {
 							Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndInsurancePlanAndStatus(adm.getPatient(), null,"PENDING");
@@ -450,7 +472,7 @@ public class UpdatePatient implements Runnable{
 								patientInvoice.setInsurancePlan(null);
 								patientInvoice.setStatus("PENDING");
 								
-								patientInvoice.setCreatedby(wardBed.getCreatedby());
+								patientInvoice.setCreatedby(wardBedBill.getCreatedby());
 								patientInvoice.setCreatedOn(dayService.getDay().getId());
 								patientInvoice.setCreatedAt(dayService.getTimeStamp());
 								
@@ -467,7 +489,7 @@ public class UpdatePatient implements Runnable{
 								patientInvoiceDetail.setDescription("Ward Bed / Room");
 								patientInvoiceDetail.setQty(1);
 								
-								patientInvoiceDetail.setCreatedby(wardBed.getCreatedby());
+								patientInvoiceDetail.setCreatedby(wardBedBill.getCreatedby());
 								patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
 								patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
 								
@@ -483,7 +505,7 @@ public class UpdatePatient implements Runnable{
 								patientInvoiceDetail.setDescription("Ward Bed / Room");
 								patientInvoiceDetail.setQty(1);
 								
-								patientInvoiceDetail.setCreatedby(wardBed.getCreatedby());
+								patientInvoiceDetail.setCreatedby(wardBedBill.getCreatedby());
 								patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
 								patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
 								
@@ -491,18 +513,8 @@ public class UpdatePatient implements Runnable{
 							}
 						}
 						
-						
-						
-						
-						
-						
-						
-						
-						
 					}
 				}
-				
-				
 				
 				List<ConsultationTransfer> cts = consultationTransferRepository.findAllByStatus("PENDING");				
 				for(ConsultationTransfer ct : cts) {
@@ -513,7 +525,8 @@ public class UpdatePatient implements Runnable{
 					}
 				}
 				
-			}catch(Exception e) {}	
+				
+			}catch(Exception e) {}
 		}
 	}
 }

@@ -328,7 +328,7 @@ export class InpatientPaymentComponent {
       item = new ReceiptItem()
       item.code = element.id
       item.name = element.description
-      item.price = element.amount
+      item.amount = element.amount
       item.qty = element.qty
       items.push(item)
     })

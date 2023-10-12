@@ -321,7 +321,7 @@ export class RegistrationPaymentComponent implements OnInit {
       item  = new ReceiptItem()
       item.code = this.registrationBill.id
       item.name = this.registrationBill.description
-      item.price = this.registrationBill.amount
+      item.amount = this.registrationBill.amount
       item.qty = this.registrationBill.qty
       items.push(item)
     }
@@ -330,7 +330,7 @@ export class RegistrationPaymentComponent implements OnInit {
       item  = new ReceiptItem()
       item.code = this.consultationBill.id
       item.name = this.consultationBill.description
-      item.price = this.consultationBill.amount
+      item.amount = this.consultationBill.amount
       item.qty = this.consultationBill.qty
       items.push(item)
     }

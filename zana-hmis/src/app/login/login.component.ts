@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
       .pipe(first())
       .toPromise()
       .then(
-        async data => {
+        async () => {
           this.status = 'Loading User... Please wait.'
           await this.auth.loadUserSession(this.username)
           this.status = 'Authenticated'

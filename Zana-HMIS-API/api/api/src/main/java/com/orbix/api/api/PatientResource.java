@@ -4070,6 +4070,44 @@ public class PatientResource {
 		return ResponseEntity.created(uri).body(patientService.doAdmission(p.get(), wb.get(), request));
 	}
 	
+	@GetMapping("/patients/get_patient_direct_pending_invoices")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<List<PatientInvoice>>getPatientDirectPendingInvoices(
+			HttpServletRequest request){
+		
+		List<PatientInvoice> invoices = patientInvoiceRepository.findAllByInsurancePlanAndStatus(null, "PENDING");
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_patient_pending_invoices").toUriString());
+		return ResponseEntity.created(uri).body(invoices);
+	}
+	
+	@GetMapping("/patients/get_patient_insurance_pending_invoices")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<List<PatientInvoice>>getPatientInsurancePendingInvoices(
+			HttpServletRequest request){
+		
+		List<InsurancePlan> plans = insurancePlanRepository.findAll();
+		
+		List<PatientInvoice> invoices = patientInvoiceRepository.findAllByInsurancePlanInAndStatus(plans, "PENDING");
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_patient_pending_invoices").toUriString());
+		return ResponseEntity.created(uri).body(invoices);
+	}
+	
+	@GetMapping("/patients/get_patient_invoice")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<PatientInvoice>getPatientInvoice(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		
+		Optional<PatientInvoice> inv = patientInvoiceRepository.findById(id);
+		if(inv.isEmpty()) {
+			throw new NotFoundException("Invoice not found");
+		}
+				
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_patient_invoice").toUriString());
+		return ResponseEntity.created(uri).body(inv.get());
+	}
 }
 
 @Data

@@ -6,10 +6,14 @@ import { IUser } from "./user"
 
 export interface IPatientInvoiceDetail {
     id : any
-    
+
     patientInvoice  : IPatientInvoice
     patient         : IPatient
-    bill            : IPatientBill
+    patientBill     : IPatientBill
+
+    checked : boolean
+
+
     
     createdBy : IUser
     createdOn : IDay

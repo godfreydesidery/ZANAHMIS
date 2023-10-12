@@ -48,6 +48,9 @@ public class PatientInvoice {
 	@Column(unique = true)
 	private String no;
 	private String status = "PENDING";
+	private double amountPaid = 0;
+	private double amountAllocated = 0;
+	private double amountUnallocated = 0;
 	
 	@ManyToOne(targetEntity = Patient.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "patient_id", nullable = false , updatable = false)

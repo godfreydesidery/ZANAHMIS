@@ -829,8 +829,8 @@ public class PatientServiceImpl implements PatientService {
 			}else if(a.isPresent() == true) {
 				
 				patientBill.setAmount(test.getLabTestType().getPrice());
-				patientBill.setPaid(test.getLabTestType().getPrice());
-				patientBill.setBalance(0);
+				patientBill.setPaid(0);
+				patientBill.setBalance(test.getLabTestType().getPrice());
 				patientBill.setStatus("VERIFIED");
 				patientBill = patientBillRepository.save(patientBill);
 				
@@ -1046,8 +1046,8 @@ public class PatientServiceImpl implements PatientService {
 			}else if(a.isPresent() == true) {
 				
 				patientBill.setAmount(radio.getRadiologyType().getPrice());
-				patientBill.setPaid(radio.getRadiologyType().getPrice());
-				patientBill.setBalance(0);
+				patientBill.setPaid(0);
+				patientBill.setBalance(radio.getRadiologyType().getPrice());
 				patientBill.setStatus("VERIFIED");
 				patientBill = patientBillRepository.save(patientBill);
 				
@@ -1274,8 +1274,8 @@ public class PatientServiceImpl implements PatientService {
 			}else if(a.isPresent() == true) {
 				
 				patientBill.setAmount(procedure.getProcedureType().getPrice());
-				patientBill.setPaid(procedure.getProcedureType().getPrice());
-				patientBill.setBalance(0);
+				patientBill.setPaid(0);
+				patientBill.setBalance(procedure.getProcedureType().getPrice());
 				patientBill.setStatus("VERIFIED");
 				patientBill = patientBillRepository.save(patientBill);
 				
@@ -1469,9 +1469,9 @@ public class PatientServiceImpl implements PatientService {
 				}
 			}else if(a.isPresent() == true) {
 				
-				patientBill.setAmount(prescription.getMedicine().getPrice());
-				patientBill.setPaid(prescription.getMedicine().getPrice());
-				patientBill.setBalance(0);
+				patientBill.setAmount(prescription.getMedicine().getPrice() * prescription.getQty());
+				patientBill.setPaid(0);
+				patientBill.setBalance(prescription.getMedicine().getPrice() * prescription.getQty());
 				patientBill.setStatus("VERIFIED");
 				patientBill = patientBillRepository.save(patientBill);
 				
@@ -1982,8 +1982,8 @@ public class PatientServiceImpl implements PatientService {
 			}else if(a.isPresent() == true) {
 				
 				patientBill.setAmount(chart.getProcedureType().getPrice());
-				patientBill.setPaid(chart.getProcedureType().getPrice());
-				patientBill.setBalance(0);
+				patientBill.setPaid(0);
+				patientBill.setBalance(chart.getProcedureType().getPrice());
 				patientBill.setStatus("VERIFIED");
 				patientBill = patientBillRepository.save(patientBill);
 				
@@ -2189,8 +2189,8 @@ public class PatientServiceImpl implements PatientService {
 			}else if(a.isPresent() == true) {
 				
 				patientBill.setAmount(chart.getMedicine().getPrice() * chart.getQty());
-				patientBill.setPaid(chart.getMedicine().getPrice() * chart.getQty());
-				patientBill.setBalance(0);
+				patientBill.setPaid(0);
+				patientBill.setBalance(chart.getMedicine().getPrice() * chart.getQty());
 				patientBill.setStatus("VERIFIED");
 				patientBill = patientBillRepository.save(patientBill);
 				

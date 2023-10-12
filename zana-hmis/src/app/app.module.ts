@@ -129,6 +129,9 @@ import { NurseComponent } from './pages/admin/personnel/nurse/nurse.component';
 import { NurseInpatientChartComponent } from './pages/nurse/nurse-inpatient-chart/nurse-inpatient-chart.component';
 import { DressingComponent } from './pages/admin/medical-operations/dressing/dressing.component';
 import { ConsumableComponent } from './pages/admin/medical-operations/consumable/consumable.component';
+import { PatientDirectInvoicesComponent } from './pages/payments/patient-direct-invoices/patient-direct-invoices.component';
+import { PatientInvoiceComponent } from './pages/payments/patient-invoice/patient-invoice.component';
+import { PatientInsuranceInvoicesComponent } from './pages/payments/patient-insurance-invoices/patient-insurance-invoices.component';
 
 @NgModule({
   declarations: [
