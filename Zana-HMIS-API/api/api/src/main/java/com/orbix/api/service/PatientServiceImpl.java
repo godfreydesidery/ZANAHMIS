@@ -345,7 +345,9 @@ public class PatientServiceImpl implements PatientService {
 			 */
 			regBill.setStatus("COVERED");
 			regBill.setPaymentType("INSURANCE");
+			regBill.setInsurancePlan(patient.getInsurancePlan());
 			regBill.setMembershipNo(patient.getMembershipNo());
+			
 			/**
 			 * Save registration patientBill
 			 */
@@ -499,7 +501,7 @@ public class PatientServiceImpl implements PatientService {
 				
 			}else if(p.getPaymentType().equals("CASH")){
 				if(pendingInv.isPresent()) {
-					throw new InvalidOperationException("Use of two or more insurance plan. The patient should sign of the iniitial patientInvoice before proceeding with another plan");
+					throw new InvalidOperationException("Use of two or more insurance plan. The patient should sign of the initial patientInvoice before proceeding with another plan");
 				}
 			}
 			p.setPaymentType("INSURANCE");
@@ -553,6 +555,7 @@ public class PatientServiceImpl implements PatientService {
 			conBill.setBalance(0);
 			conBill.setStatus("COVERED");
 			conBill.setPaymentType("INSURANCE");
+			conBill.setInsurancePlan(p.getInsurancePlan());
 			conBill.setMembershipNo(p.getMembershipNo());
 			conBill.setCreatedby(userService.getUser(request).getId());
 			conBill.setCreatedOn(dayService.getDay().getId());
@@ -1646,6 +1649,7 @@ public class PatientServiceImpl implements PatientService {
 				wardBedBill.setPaid(eligiblePlan.getPrice());
 				wardBedBill.setBalance(0);
 				wardBedBill.setPaymentType("INSURANCE");
+				wardBedBill.setInsurancePlan(eligiblePlan.getInsurancePlan());
 				wardBedBill.setMembershipNo(p.getMembershipNo());
 				wardBedBill.setStatus("COVERED");				
 				wardBedBill = patientBillRepository.save(wardBedBill);
