@@ -266,8 +266,12 @@ export class PatientRegisterComponent implements OnInit {
       .toPromise()
       .then(
         data => {
-          //swal.fire()
-          this.msgBox.showSuccessMessage('Success')
+          var temp = this.patientId
+          this.clear()
+          this.patientId = temp
+          this.getPatient(this.patientId)
+          
+          this.msgBox.showSuccessMessage('Payment Type changed successifuly')
         }
       )
       .catch(

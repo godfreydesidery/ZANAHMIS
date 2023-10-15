@@ -133,6 +133,7 @@ import { PatientDirectInvoicesComponent } from './pages/payments/patient-direct-
 import { PatientInvoiceComponent } from './pages/payments/patient-invoice/patient-invoice.component';
 import { PatientInsuranceInvoicesComponent } from './pages/payments/patient-insurance-invoices/patient-insurance-invoices.component';
 import { DischargeListComponent } from './pages/payments/discharge-list/discharge-list.component';
+import { DeceasedListComponent } from './pages/payments/deceased-list/deceased-list.component';
 
 @NgModule({
   declarations: [

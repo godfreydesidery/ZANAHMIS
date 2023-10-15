@@ -34,6 +34,7 @@ import com.orbix.api.domain.ClinicalNote;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.ConsultationTransfer;
+import com.orbix.api.domain.DeceasedNote;
 import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.DischargePlan;
 import com.orbix.api.domain.FinalDiagnosis;
@@ -95,6 +96,7 @@ import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.ConsultationTransferRepository;
 import com.orbix.api.repositories.DayRepository;
+import com.orbix.api.repositories.DeceasedNoteRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
 import com.orbix.api.repositories.DischargePlanRepository;
 import com.orbix.api.repositories.FinalDiagnosisRepository;
@@ -197,6 +199,7 @@ public class PatientResource {
 	private final ConsultationTransferRepository consultationTransferRepository;
 	
 	private final DischargePlanRepository dischargePlanRepository;
+	private final DeceasedNoteRepository deceasedNoteRepository;
 	
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(
@@ -269,8 +272,23 @@ public class PatientResource {
 			throw new InvalidOperationException("Could not change. Patient has an ongoing medical operation s");
 		}
 		List<NonConsultation> nonConsultations = nonConsultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
-		if(!nonConsultations.isEmpty()) {
-			throw new InvalidOperationException("Could not change. Patient has an ongoing medical operation s");
+		if(!nonConsultations.isEmpty()) {			
+			for(NonConsultation nonConsultation : nonConsultations) {
+				List<LabTest> labTests = labTestRepository.findByNonConsultation(nonConsultation);
+				if(!labTests.isEmpty()) {
+					throw new InvalidOperationException("Could not change. Patient has an ongoing medical operation s");
+				}
+				List<Radiology> radiologies = radiologyRepository.findByNonConsultation(nonConsultation);
+				if(!radiologies.isEmpty()) {
+					throw new InvalidOperationException("Could not change. Patient has an ongoing medical operation s");
+				}
+				List<Procedure> procedures = procedureRepository.findByNonConsultation(nonConsultation);
+				if(!procedures.isEmpty()) {
+					throw new InvalidOperationException("Could not change. Patient has an ongoing medical operation s");
+				}
+				nonConsultation.setStatus("SIGNED-OUT");
+				nonConsultationRepository.save(nonConsultation);
+			}
 		}
 		List<Admission> admissions = admissionRepository.findAllByPatientAndStatusIn(p.get(), statuses);
 		if(!admissions.isEmpty()) {
@@ -286,11 +304,6 @@ public class PatientResource {
 				throw new MissingInformationException("Membership number required");
 			}
 			patientRepository.save(p.get());
-			
-			for(int i = 0; i < 1000; i++) {
-				System.out.println(patient.getPaymentType());
-			}
-			
 		}else {
 			p.get().setInsurancePlan(null);
 			p.get().setMembershipNo("");
@@ -424,7 +437,9 @@ public class PatientResource {
 			}
 		}else if(p.get().getType().equals("INPATIENT")) {
 			throw new InvalidOperationException("This operation is not allowed for inpatients");
-		}			
+		}else {
+			throw new InvalidOperationException("Patient type could not be changed.");
+		}
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/change_type").toUriString());
 		return ResponseEntity.created(uri).body(patient);
 	}
@@ -3073,9 +3088,11 @@ public class PatientResource {
 		visit.setCreatedOn(dayService.getDay().getId());
 		visit.setCreatedAt(dayService.getTimeStamp());
 		
-		visit = visitRepository.save(visit);
+		
 		NonConsultation nonConsultation = new NonConsultation();
 		if(nc.isEmpty()) {
+			visit = visitRepository.save(visit);
+			
 			nonConsultation.setCreatedby(userService.getUserId(request));
 			nonConsultation.setCreatedOn(dayService.getDayId());
 			nonConsultation.setCreatedAt(dayService.getTimeStamp());
@@ -4149,7 +4166,7 @@ public class PatientResource {
 		
 		if(adm.getStatus() != null) {
 			if(adm.getStatus().equals("STOPPED")) {
-				adm.setStatus("SIGNED-OFF");
+				adm.setStatus("SIGNED-OUT");
 				adm.setDischargedBy(p.get().getCreatedBy());
 				adm.setDischargedOn(p.get().getCreatedOn());
 				adm.setDischargedAt(p.get().getCreatedAt());
@@ -4176,7 +4193,231 @@ public class PatientResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_discharge_summary").toUriString());
 		
 		return ResponseEntity.created(uri).body(plan);
-	}	
+	}
+	
+	@PostMapping("/patients/save_deceased_note")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<DeceasedNote>saveDeceasedNote(
+
+			@RequestBody DeceasedNote note, 
+			HttpServletRequest request){
+		if(note.getPatientSummary().isEmpty() || note.getCauseOfDeath().isEmpty()) {
+			throw new InvalidOperationException("Summary and cause of death are missing");
+		}
+		if(note.getAdmission().getId() == null && note.getConsultation().getId() == null) {
+			throw new InvalidOperationException("Patient should be inpatient or outpatioent, but not both");
+		}
+		if(note.getAdmission().getId() != null && note.getConsultation().getId() != null) {
+			throw new InvalidOperationException("Patient should be inpatient or outpatioent, but not both");
+		}
+		
+		DeceasedNote deceasedNote = new DeceasedNote();
+		if(note.getAdmission().getId() != null) {
+			Optional<Admission> a = admissionRepository.findById(note.getAdmission().getId());
+			if(a.isEmpty()) {
+				throw new NotFoundException("Admission not found");
+			}
+			Optional<DeceasedNote> n = deceasedNoteRepository.findByAdmission(a.get());
+			if(n.isPresent()) {
+				deceasedNote = n.get();
+			}else {
+				Admission admission = a.get();
+				if(admission.getStatus() == null) {
+					admission.setStatus("IN-PROCESS");
+					admission = admissionRepository.save(admission);
+				}
+				if(admission.getStatus().equals("IN-PROCESS")) {
+					admission.setStatus("HELD");
+					admission = admissionRepository.save(admission);
+					WardBed wardBed = admission.getWardBed();
+					if(wardBed != null) {
+						wardBed.setStatus("EMPTY");
+						wardBedRepository.save(wardBed);
+					}
+				}
+				
+				deceasedNote.setAdmission(admission);
+				deceasedNote.setPatient(admission.getPatient());
+				
+				deceasedNote.setDate(note.getDate());
+				deceasedNote.setTime(note.getTime());
+				
+				deceasedNote.setCreatedBy(userService.getUser(request).getId());
+				deceasedNote.setCreatedOn(dayService.getDay().getId());
+				deceasedNote.setCreatedAt(dayService.getTimeStamp());
+			}
+			
+		}
+		if(note.getConsultation().getId() != null) {
+			Optional<Consultation> c = consultationRepository.findById(note.getConsultation().getId());
+			if(c.isEmpty()) {
+				throw new NotFoundException("Consultation not found");
+			}
+			Optional<DeceasedNote> n = deceasedNoteRepository.findByConsultation(c.get());
+			if(n.isPresent()) {
+				deceasedNote = n.get();
+			}else {
+				Consultation consultation = c.get();
+				consultation.setStatus("HELD");
+				consultation = consultationRepository.save(consultation);
+				
+				deceasedNote.setConsultation(consultation);
+				deceasedNote.setPatient(consultation.getPatient());
+				
+				deceasedNote.setCreatedBy(userService.getUser(request).getId());
+				deceasedNote.setCreatedOn(dayService.getDay().getId());
+				deceasedNote.setCreatedAt(dayService.getTimeStamp());
+			}
+		}		
+		deceasedNote.setPatientSummary(note.getPatientSummary());
+		deceasedNote.setCauseOfDeath(note.getCauseOfDeath());
+		deceasedNote.setStatus("PENDING");
+		
+		deceasedNote = deceasedNoteRepository.save(deceasedNote);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_deceased_note").toUriString());
+		return ResponseEntity.created(uri).body(deceasedNote);
+	}
+	
+	@GetMapping("/patients/load_deceased_note")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<DeceasedNote>getDeceasedNote(
+			@RequestParam(name = "admission_id") Long admissionId,
+			@RequestParam(name = "consultation_id") Long consultationId,
+			HttpServletRequest request){
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_deceased_note").toUriString());
+		
+		if(admissionId == null && consultationId == null) {
+			throw new InvalidOperationException("Can only be Outpatient or inpatient");
+		}
+		if(admissionId != null && consultationId != null) {
+			throw new InvalidOperationException("Can only be Outpatient or inpatient, but not both");
+		}
+		
+		if(admissionId != null) {
+			Optional<Admission> a = admissionRepository.findById(admissionId);
+			if(a.isEmpty()) {
+				throw new NotFoundException("Admission not found");
+			}
+			Optional<DeceasedNote> n = deceasedNoteRepository.findByAdmission(a.get());
+			if(n.isEmpty()) {
+				return ResponseEntity.created(uri).body(null);
+			}else {
+				return ResponseEntity.created(uri).body(n.get());
+			}
+		}
+		
+		if(consultationId != null) {
+			Optional<Consultation> c = consultationRepository.findById(consultationId);
+			if(c.isEmpty()) {
+				throw new NotFoundException("Consultation not found");
+			}
+			Optional<DeceasedNote> n = deceasedNoteRepository.findByConsultation(c.get());
+			if(n.isEmpty()) {
+				return ResponseEntity.created(uri).body(null);
+			}else {
+				return ResponseEntity.created(uri).body(n.get());
+			}
+		}
+		return ResponseEntity.created(uri).body(null);
+	}
+	
+	@GetMapping("/patients/load_deceased_list")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<List<DeceasedNote>>loadDeceasedList(
+			HttpServletRequest request){
+		
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		statuses.add("APPROVED");
+		
+		List<DeceasedNote> notes = deceasedNoteRepository.findAllByStatusIn(statuses);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_deceased_list").toUriString());
+		
+		return ResponseEntity.created(uri).body(notes);
+	}
+	
+	@GetMapping("/patients/get_deceased_summary")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<DeceasedNote>getDeceasedSummary(
+			@RequestParam(name = "deceased_note_id") Long deceasedNoteId,
+			HttpServletRequest request){
+		
+		Optional<DeceasedNote> n = deceasedNoteRepository.findById(deceasedNoteId);
+		if(n.isEmpty()) {
+			throw new NotFoundException("Deceased note not found");
+		}
+		
+		Admission adm = n.get().getAdmission();
+		Consultation con = n.get().getConsultation();
+		
+		List<PatientInvoice> invoices = patientInvoiceRepository.findAllByAdmission(adm);
+		for(PatientInvoice invoice : invoices) {
+			List<PatientInvoiceDetail> details = invoice.getPatientInvoiceDetails();
+			for(PatientInvoiceDetail detail : details) {
+				if(detail.getPatientBill().getStatus() != null) {
+					if(detail.getPatientBill().getStatus().equals("UNPAID") || detail.getPatientBill().getStatus().equals("VERIFIED")) {
+						throw new InvalidOperationException("Could not get deceased summary. Patient have uncleared bills.");
+					}
+				}
+			}
+		}
+		
+		for(PatientInvoice invoice : invoices) {
+			invoice.setStatus("APPROVED");
+			patientInvoiceRepository.save(invoice);
+		}
+		
+		if(adm != null) {
+			if(adm.getStatus() != null) {
+				if(adm.getStatus().equals("HELD")) {
+					adm.setStatus("SIGNED-OUT");
+					
+					adm = admissionRepository.save(adm);
+					
+					WardBed wardBed = adm.getWardBed(); 
+					wardBed.setStatus("EMPTY");
+					wardBedRepository.save(wardBed);
+					
+					Patient patient = adm.getPatient();
+					patient.setType("DECEASED");
+					patientRepository.save(patient);
+					
+					n.get().setStatus("APPROVED");
+					n.get().setApprovedBy(n.get().getCreatedBy());
+					n.get().setApprovedOn(n.get().getCreatedOn());
+					n.get().setApprovedAt(LocalDateTime.now());	
+				}
+			}
+		}
+		
+		if(con != null) {
+			if(con.getStatus() != null) {
+				if(con.getStatus().equals("HELD")) {
+					con.setStatus("SIGNED-OUT");
+					
+					con = consultationRepository.save(con);
+					
+					Patient patient = adm.getPatient();
+					patient.setType("DECEASED");
+					patientRepository.save(patient);
+					
+					n.get().setStatus("APPROVED");
+					n.get().setApprovedBy(n.get().getCreatedBy());
+					n.get().setApprovedOn(n.get().getCreatedOn());
+					n.get().setApprovedAt(LocalDateTime.now());	
+				}
+			}
+		}
+		
+		DeceasedNote note = deceasedNoteRepository.save(n.get());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_deceased_summary").toUriString());
+		
+		return ResponseEntity.created(uri).body(note);
+	}
 }
 
 @Data

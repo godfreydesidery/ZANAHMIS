@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.orbix.api.domain.Admission;
+import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientInvoice;
@@ -54,5 +55,12 @@ public interface PatientInvoiceRepository extends JpaRepository<PatientInvoice, 
 	 * @return
 	 */
 	List<PatientInvoice> findAllByAdmission(Admission adm);
+
+	/**
+	 * @param con
+	 * @param adm
+	 * @return
+	 */
+	List<PatientInvoice> findAllByConsultationOrAdmission(Consultation con, Admission adm);
 
 }

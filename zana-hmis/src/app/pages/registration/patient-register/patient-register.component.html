@@ -184,7 +184,7 @@
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <div class="table-responsive">
-                                                <h4 class="text-primary"><b>Patient Details</b>   <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#edit-modal" style="margin-bottom: 2mm;">Edit Patient</button></h4>
+                                                <h4 class="text-primary"><b>Patient Details</b>   <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#edit-modal" *ngIf="type != 'DECEASED'" style="margin-bottom: 2mm;">Edit Patient</button></h4>
                                                 <table class="table table-bordered table-small table-striped" style="text-align: center;">
                                                     <tbody>
                                                         <tr><td>First Name</td><td>{{firstName}}</td></tr>
