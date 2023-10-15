@@ -34,6 +34,7 @@ export class MedicineComponent implements OnInit {
   name        : string = ''
   description : string = ''
   uom         : string = ''
+  category    : string = ''
   type        : string = ''
   price       : number = 0
   active      : boolean = true
@@ -64,6 +65,7 @@ export class MedicineComponent implements OnInit {
       description : this.description,
       uom         : this.uom,
       type        : this.type,
+      category    : this.category,
       price       : this.price,
       active      : true
     }
@@ -82,6 +84,7 @@ export class MedicineComponent implements OnInit {
           this.price        = data!.price
           this.uom          = data!.uom
           this.type         = data!.type
+          this.category     = data!.category
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Medicine created successifully')
           this.loadMedicines()
@@ -109,6 +112,7 @@ export class MedicineComponent implements OnInit {
           this.price        = data!.price
           this.uom          = data!.uom
           this.type         = data!.type
+          this.category     = data!.category
           this.active       = data!.active
           this.msgBox.showSuccessMessage('Medicine updated successifully')
           this.loadMedicines()
@@ -153,6 +157,7 @@ export class MedicineComponent implements OnInit {
     this.description  = ''
     this.uom          = ''
     this.type         = ''
+    this.category     = ''
     this.price        = 0
     this.active       = false
   }
@@ -177,6 +182,7 @@ export class MedicineComponent implements OnInit {
         this.price        = data!.price
         this.uom          = data!.uom
         this.type         = data!.type
+        this.category     = data!.category
         this.active       = data!.active
       }
     )

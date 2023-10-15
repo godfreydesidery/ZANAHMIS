@@ -220,7 +220,6 @@ public class PatientServiceImpl implements PatientService {
 		 * Create registration patientBill and assign it to patient
 		 */
 		PatientBill regBill = new PatientBill();
-		//fetch this value from database, later
 		regBill.setAmount(regFee);
 		regBill.setQty(1);
 		regBill.setBalance(regFee);
@@ -273,92 +272,90 @@ public class PatientServiceImpl implements PatientService {
 			 * Load Registration plan
 			 */
 			Optional<RegistrationInsurancePlan> plan = registrationInsurancePlanRepository.findByInsurancePlanAndCovered(patient.getInsurancePlan(), true);
-			if(!plan.isPresent()) {
-				throw new NotFoundException("There is no registration plan for this insurance plan. Please change payment method");
+			if(plan.isPresent()) {
+				
+				/**
+				 * If plan is present, edit registration patientBill to reflect plan price
+				 */
+				regBill.setAmount(plan.get().getRegistrationFee());
+				regBill.setPaid(plan.get().getRegistrationFee());
+				regBill.setBalance(0);
+				regBill = patientBillRepository.save(regBill);
+				/**
+				 * Find a pending patientInvoice to register claims, if there is no pending patientInvoice, create one
+				 */
+				Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
+				if(!inv.isPresent()) {
+					/**
+					 * If no pending patientInvoice
+					 */
+					PatientInvoice patientInvoice = new PatientInvoice();
+					patientInvoice.setNo("NA");
+					patientInvoice.setPatient(patient);
+					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
+					patientInvoice.setStatus("PENDING");
+					
+					patientInvoice.setCreatedby(userService.getUser(request).getId());
+					patientInvoice.setCreatedOn(dayService.getDay().getId());
+					patientInvoice.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					patientInvoice.setNo(patientInvoice.getId().toString());
+					
+					
+					
+					patientInvoice = patientInvoiceRepository.save(patientInvoice);
+					/**
+					 * Add registration patientBill claim to patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(patientInvoice);
+					patientInvoiceDetail.setPatientBill(regBill);
+					patientInvoiceDetail.setAmount(regBill.getAmount());
+					patientInvoiceDetail.setDescription("Registration Fee");
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
+				}else {
+					/**
+					 * If there is a .pending patientInvoice
+					 */
+					PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
+					patientInvoiceDetail.setPatientInvoice(inv.get());
+					patientInvoiceDetail.setPatientBill(regBill);
+					patientInvoiceDetail.setAmount(regBill.getAmount());
+					patientInvoiceDetail.setDescription("Registration Fee");
+					patientInvoiceDetail.setQty(1);
+					
+					patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
+					patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
+					patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
+					
+					patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
+				}
+				
+				/**
+				 * Set registration patientBill to COVERED status, after assigning it to insurance cover
+				 */
+				regBill.setStatus("COVERED");
+				regBill.setPaymentType("INSURANCE");
+				regBill.setInsurancePlan(patient.getInsurancePlan());
+				regBill.setMembershipNo(patient.getMembershipNo());
+				
+				/**
+				 * Save registration patientBill
+				 */
+				regBill = patientBillRepository.save(regBill);
+				/**
+				 * Set patient Registration fee status to PAID
+				 */
+				patient = patientRepository.save(patient);
 			}
-			/**
-			 * If plan is present, edit registration patientBill to reflect plan price
-			 */
-			regBill.setAmount(plan.get().getRegistrationFee());
-			regBill.setPaid(plan.get().getRegistrationFee());
-			regBill.setBalance(0);
-			regBill = patientBillRepository.save(regBill);
-			/**
-			 * Find a pending patientInvoice to register claims, if there is no pending patientInvoice, create one
-			 */
-			Optional<PatientInvoice> inv = patientInvoiceRepository.findByPatientAndStatus(patient, "PENDING");
-			if(!inv.isPresent()) {
-				/**
-				 * If no pending patientInvoice
-				 */
-				PatientInvoice patientInvoice = new PatientInvoice();
-				patientInvoice.setNo("NA");
-				patientInvoice.setPatient(patient);
-				patientInvoice.setInsurancePlan(patient.getInsurancePlan());
-				patientInvoice.setStatus("PENDING");
-				
-				patientInvoice.setCreatedby(userService.getUser(request).getId());
-				patientInvoice.setCreatedOn(dayService.getDay().getId());
-				patientInvoice.setCreatedAt(dayService.getTimeStamp());
-				
-				patientInvoice = patientInvoiceRepository.save(patientInvoice);
-				patientInvoice.setNo(patientInvoice.getId().toString());
-				
-				
-				
-				patientInvoice = patientInvoiceRepository.save(patientInvoice);
-				/**
-				 * Add registration patientBill claim to patientInvoice
-				 */
-				PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
-				patientInvoiceDetail.setPatientInvoice(patientInvoice);
-				patientInvoiceDetail.setPatientBill(regBill);
-				patientInvoiceDetail.setAmount(regBill.getAmount());
-				patientInvoiceDetail.setDescription("Registration Fee");
-				patientInvoiceDetail.setQty(1);
-				
-				patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
-				patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
-				patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
-				
-				patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
-			}else {
-				/**
-				 * If there is a .pending patientInvoice
-				 */
-				PatientInvoiceDetail patientInvoiceDetail = new PatientInvoiceDetail();
-				patientInvoiceDetail.setPatientInvoice(inv.get());
-				patientInvoiceDetail.setPatientBill(regBill);
-				patientInvoiceDetail.setAmount(regBill.getAmount());
-				patientInvoiceDetail.setDescription("Registration Fee");
-				patientInvoiceDetail.setQty(1);
-				
-				patientInvoiceDetail.setCreatedby(userService.getUser(request).getId());
-				patientInvoiceDetail.setCreatedOn(dayService.getDay().getId());
-				patientInvoiceDetail.setCreatedAt(dayService.getTimeStamp());
-				
-				patientInvoiceDetailRepository.saveAndFlush(patientInvoiceDetail);
-			}
-			
-			/**
-			 * Set registration patientBill to COVERED status, after assigning it to insurance cover
-			 */
-			regBill.setStatus("COVERED");
-			regBill.setPaymentType("INSURANCE");
-			regBill.setInsurancePlan(patient.getInsurancePlan());
-			regBill.setMembershipNo(patient.getMembershipNo());
-			
-			/**
-			 * Save registration patientBill
-			 */
-			regBill = patientBillRepository.save(regBill);
-			/**
-			 * Set patient Registration fee status to PAID
-			 */
-			//patient.setRegistrationFeeStatus("PAID");
-			patient = patientRepository.save(patient);
-			
-			patient = patientRepository.saveAndFlush(patient);			
+					
 		}	
 		/**
 		 * Create patient visit
@@ -448,24 +445,17 @@ public class PatientServiceImpl implements PatientService {
 		/**
 		 * Set visit, create one if the last visit is not for today
 		 */
-		Optional<Visit> v = visitRepository.findLastByPatient(p);
 		Visit visit = new Visit();
-		if(!v.isPresent() || !v.get().getStatus().equals("PENDING")) {			
-			visit.setPatient(p);
-			if(!v.isPresent()) {
-				visit.setSequence("FIRST");
-			}else {
-				visit.setSequence("SUBSEQUENT");
-			}
-			
-			visit.setCreatedby(userService.getUser(request).getId());
-			visit.setCreatedOn(dayService.getDay().getId());
-			visit.setCreatedAt(dayService.getTimeStamp());
-			
-			visitRepository.save(visit);
-		}else {
-			visit = v.get();
-		}
+		visit.setPatient(p);
+		visit.setSequence("SUBSEQUENT");
+		visit.setType(p.getType());
+		visit.setStatus("PENDING");
+		
+		visit.setCreatedby(userService.getUser(request).getId());
+		visit.setCreatedOn(dayService.getDay().getId());
+		visit.setCreatedAt(dayService.getTimeStamp());
+		
+		visit = visitRepository.save(visit);
 		consultation.setVisit(visit);
 		
 		/**
@@ -738,7 +728,7 @@ public class PatientServiceImpl implements PatientService {
 			}else if(a.get().getStatus().equals("IN-PROCESS")) {
 				adm = a.get();
 			}else {
-				throw new InvalidOperationException("Could not be done. Patient already signed off");
+				throw new InvalidOperationException("Could not be done. Patient already signed off/ or discharged");
 			}
 			patient = adm.getPatient();
 			test.setAdmission(adm);
@@ -1561,24 +1551,20 @@ public class PatientServiceImpl implements PatientService {
 		/**
 		 * Set visit, create one if the last visit is not for today
 		 */
-		Optional<Visit> v = visitRepository.findLastByPatient(p);
 		Visit visit = new Visit();
-		if(!v.isPresent() || !v.get().getStatus().equals("PENDING")) {			
-			visit.setPatient(p);
-			if(!v.isPresent()) {
-				visit.setSequence("FIRST");
-			}else {
-				visit.setSequence("SUBSEQUENT");
-			}
-			
-			visit.setCreatedby(userService.getUser(request).getId());
-			visit.setCreatedOn(dayService.getDay().getId());
-			visit.setCreatedAt(dayService.getTimeStamp());
-			
-			visitRepository.save(visit);
-		}else {
-			visit = v.get();
-		}
+		visit.setPatient(p);
+		
+		visit.setStatus("PENDING");
+		visit.setType(p.getType());
+		
+		
+		visit.setSequence("SUBSEQUENT");
+		
+		visit.setCreatedby(userService.getUser(request).getId());
+		visit.setCreatedOn(dayService.getDay().getId());
+		visit.setCreatedAt(dayService.getTimeStamp());
+		
+		visit = visitRepository.save(visit);
 		admission.setVisit(visit);
 		
 		admission.setCreatedBy(userService.getUser(request).getId());
@@ -2112,7 +2098,6 @@ public class PatientServiceImpl implements PatientService {
 		chart.setMedicine(med.get());
 		chart.setStatus("NOT-GIVEN");
 		
-		//dressingChart.setStatus("PENDING");
 		PatientBill patientBill = new PatientBill();
 		patientBill.setAmount(chart.getMedicine().getPrice());
 		patientBill.setPaid(0);

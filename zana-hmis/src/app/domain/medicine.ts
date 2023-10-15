@@ -9,6 +9,7 @@ export interface IMedicine {
     type        : string
     price       : number
     uom         : string
+    category    : string
     active      : boolean
     
     createdBy       : IUser

@@ -245,8 +245,36 @@ export class PatientRegisterComponent implements OnInit {
     this.editMembershipNo = ''
   }
 
-  searchPatient(regNo : string){
-    this.id = 1
+  async savePaymentType(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var patient = {
+      id                  : this.id, //
+      no                  : this.no,
+      paymentType         : this.editPaymentType, //
+      membershipNo        : this.editMembershipNo, //
+      insurancePlan   : {
+        name : this.editInsurancePlanName //
+      }
+    }
+    
+    this.spinner.show()
+      await this.http.post<IPatient>(API_URL+'/patients/change_payment_type', patient, options)
+      .pipe(finalize(() => this.spinner.hide()))
+      .toPromise()
+      .then(
+        data => {
+          //swal.fire()
+          this.msgBox.showSuccessMessage('Success')
+        }
+      )
+      .catch(
+        error => {
+          this.msgBox.showErrorMessage(error['error'])
+        }
+      )
   }
 
   async registerPatient(){

@@ -132,6 +132,7 @@ import { ConsumableComponent } from './pages/admin/medical-operations/consumable
 import { PatientDirectInvoicesComponent } from './pages/payments/patient-direct-invoices/patient-direct-invoices.component';
 import { PatientInvoiceComponent } from './pages/payments/patient-invoice/patient-invoice.component';
 import { PatientInsuranceInvoicesComponent } from './pages/payments/patient-insurance-invoices/patient-insurance-invoices.component';
+import { DischargeListComponent } from './pages/payments/discharge-list/discharge-list.component';
 
 @NgModule({
   declarations: [

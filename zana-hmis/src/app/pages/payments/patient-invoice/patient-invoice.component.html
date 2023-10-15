@@ -49,6 +49,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th>Date-Time</th>
                                     <th>Item</th>
                                     <th>Quantity</th>
                                     <th>Amount</th>
@@ -58,6 +59,7 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let detail of invoice.patientInvoiceDetails">
+                                    <td>{{detail.patientBill.createdAt | dateTime}}</td>
                                     <td>{{detail?.patientBill?.description}}</td>
                                     <td>{{detail?.patientBill?.qty}}</td>
                                     <td style="text-align: right;">{{detail?.patientBill?.amount | currency:'':''}}</td>

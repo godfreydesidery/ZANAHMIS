@@ -211,6 +211,7 @@ export class PatientInvoiceComponent {
     var report = [
       [
         {text : 'SN', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Date-Time', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Service/Item', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Qty', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Amount/Cov', fontSize : 9, fillColor : '#bdc6c7'},
@@ -228,6 +229,7 @@ export class PatientInvoiceComponent {
     this.invoice.patientInvoiceDetails.forEach((element) => {
       var detail = [
         {text : sn.toString(), fontSize : 9, fillColor : '#ffffff'}, 
+        {text : (new ShowDateTimePipe).transform(element?.patientBill.createdAt) , fontSize : 9, fillColor : '#ffffff'},
         {text : element?.patientBill.description, fontSize : 9, fillColor : '#ffffff'},
         {text : element?.patientBill.qty.toString(), fontSize : 9, fillColor : '#ffffff'},
         {text : this.getAmount(element.patientBill), fontSize : 9, alignment : 'right', fillColor : '#ffffff'},
@@ -242,6 +244,7 @@ export class PatientInvoiceComponent {
 
     var detailSummary = [
       {text : '', fontSize : 9, fillColor : '#ffffff'}, 
+      {text : '', fontSize : 9, fillColor : '#ffffff'},
       {text : '', fontSize : 9, fillColor : '#ffffff'},
       {text : 'Total', fontSize : 9, fillColor : '#ffffff'},
       {text : this.getTotal(total), fontSize : 9, alignment : 'right', bold : true, fillColor : '#ffffff'},
@@ -335,7 +338,7 @@ export class PatientInvoiceComponent {
             //layout : 'noBorders',
             table : {
                 headerRows : 1,
-                widths : [20, 250, 30, 80, 50],
+                widths : [20, 90, 200, 30, 60, 40],
                 body : report
             }
         }, 
@@ -348,7 +351,7 @@ export class PatientInvoiceComponent {
     if(invoice.insurancePlan === null){
       return invoice?.patient?.firstName + ' ' + invoice?.patient?.middleName + ' ' + invoice?.patient?.lastName  + ' ' + invoice?.patient?.no  + ' ' + invoice?.patient?.address  + ' ' + invoice?.patient?.phoneNo
     }else{
-      return invoice?.insurancePlan?.name
+      return invoice?.insurancePlan?.name + ' | ' + invoice?.insurancePlan?.insuranceProvider?.name
     }
   }
 

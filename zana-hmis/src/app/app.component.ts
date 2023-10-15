@@ -264,7 +264,8 @@ export class AppComponent {
         {path : 'doctor-inpatient' , loadComponent : () => import('./pages/doctor/doctor-inpatient/doctor-inpatient.component').then(m => m.DoctorInpatientComponent)},
         {path : 'my-consultation', loadComponent : () => import('./pages/doctor/my-consultation/my-consultation.component').then(m => m.MyConsultationComponent), canActivate: [AuthGuard]}, 
         {path : 'doctor-cracking', loadComponent : () => import('./pages/doctor/doctor-cracking/doctor-cracking.component').then(m => m.DoctorCrackingComponent), canActivate: [AuthGuard]},
-        {path : 'list-from-reception', loadComponent : () => import('./pages/doctor/list-from-reception/list-from-reception.component').then(m => m.ListFromReceptionComponent), canActivate: [AuthGuard]}
+        {path : 'list-from-reception', loadComponent : () => import('./pages/doctor/list-from-reception/list-from-reception.component').then(m => m.ListFromReceptionComponent), canActivate: [AuthGuard]},
+        {path : 'discharge-plan', loadComponent : () => import('./pages/doctor/discharge-plan/discharge-plan.component').then(m => m.DischargePlanComponent), canActivate: [AuthGuard]}
         
       )
     }
@@ -320,6 +321,7 @@ export class AppComponent {
         {path : 'patient-direct-pending-invoices', loadComponent : () => import('./pages/payments/patient-direct-invoices/patient-direct-invoices.component').then(m => m.PatientDirectInvoicesComponent), canActivate: [AuthGuard]},
         {path : 'patient-insurance-pending-invoices', loadComponent : () => import('./pages/payments/patient-insurance-invoices/patient-insurance-invoices.component').then(m => m.PatientInsuranceInvoicesComponent), canActivate: [AuthGuard]},
         {path : 'patient-invoice', loadComponent : () => import('./pages/payments/patient-invoice/patient-invoice.component').then(m => m.PatientInvoiceComponent), canActivate: [AuthGuard]},
+        {path : 'discharge-list', loadComponent : () => import('./pages/payments/discharge-list/discharge-list.component').then(m => m.DischargeListComponent), canActivate: [AuthGuard]},
 
         /*{path : 'registration-prices', loadComponent : () => import('./pages/payments/pri').then(m => m), canActivate: [AuthGuard]},
         {path : 'consultation-prices', loadComponent : () => import('./pages').then(m => m), canActivate: [AuthGuard]},

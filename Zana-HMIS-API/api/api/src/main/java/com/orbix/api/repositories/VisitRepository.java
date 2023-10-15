@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +22,11 @@ public interface VisitRepository extends JpaRepository<Visit, Long> {
 	 * @return
 	 */
 	Optional<Visit> findLastByPatient(Patient p);
+
+	/**
+	 * @param patient
+	 * @return
+	 */
+	List<Visit> findAllByPatient(Patient patient);
 
 }

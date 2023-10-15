@@ -35,6 +35,7 @@ import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.ConsultationTransfer;
 import com.orbix.api.domain.DiagnosisType;
+import com.orbix.api.domain.DischargePlan;
 import com.orbix.api.domain.FinalDiagnosis;
 import com.orbix.api.domain.GeneralExamination;
 import com.orbix.api.domain.InsurancePlan;
@@ -76,6 +77,7 @@ import com.orbix.api.models.GeneralExaminationModel;
 import com.orbix.api.models.LabTestModel;
 import com.orbix.api.models.PatientConsumableChartModel;
 import com.orbix.api.models.PatientDressingChartModel;
+import com.orbix.api.models.PatientModel;
 import com.orbix.api.models.PatientNursingCarePlanModel;
 import com.orbix.api.models.PatientNursingChartModel;
 import com.orbix.api.models.PatientNursingProgressNoteModel;
@@ -94,6 +96,7 @@ import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.ConsultationTransferRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
+import com.orbix.api.repositories.DischargePlanRepository;
 import com.orbix.api.repositories.FinalDiagnosisRepository;
 import com.orbix.api.repositories.GeneralExaminationRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
@@ -193,6 +196,8 @@ public class PatientResource {
 	private final PatientNursingCarePlanRepository patientNursingCarePlanRepository;
 	private final ConsultationTransferRepository consultationTransferRepository;
 	
+	private final DischargePlanRepository dischargePlanRepository;
+	
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(
 			HttpServletRequest request){
@@ -240,6 +245,60 @@ public class PatientResource {
 		}
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/register").toUriString());
 		return ResponseEntity.created(uri).body(patientService.doRegister(patient, request));
+	}
+	
+	@PostMapping("/patients/change_payment_type")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-ALL','PATIENT-CREATE')")
+	public ResponseEntity<Patient>changePaymentType(
+			@RequestBody PatientModel patient,
+			HttpServletRequest request){
+		
+		Optional<Patient> p = patientRepository.findById(patient.getId());
+		if(p.isEmpty()) {
+			throw new NotFoundException("Patient not found");
+		}
+				
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		statuses.add("IN-PROCESS");
+		statuses.add("STOPPED");
+		statuses.add("HELD");
+		
+		List<Consultation> consultations = consultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
+		if(!consultations.isEmpty()) {
+			throw new InvalidOperationException("Could not change. Patient has an ongoing medical operation s");
+		}
+		List<NonConsultation> nonConsultations = nonConsultationRepository.findAllByPatientAndStatusIn(p.get(), statuses);
+		if(!nonConsultations.isEmpty()) {
+			throw new InvalidOperationException("Could not change. Patient has an ongoing medical operation s");
+		}
+		List<Admission> admissions = admissionRepository.findAllByPatientAndStatusIn(p.get(), statuses);
+		if(!admissions.isEmpty()) {
+			throw new InvalidOperationException("Could not change. Patient has an ongoing medical operation s");
+		}
+		
+		if(patient.getPaymentType().equals("INSURANCE")) {
+			InsurancePlan plan = insurancePlanRepository.findByName(patient.getInsurancePlan().getName()).get();
+			p.get().setPaymentType(patient.getPaymentType());
+			p.get().setInsurancePlan(plan);
+			p.get().setMembershipNo(patient.getMembershipNo());			
+			if(patient.getMembershipNo().equals("")) {
+				throw new MissingInformationException("Membership number required");
+			}
+			patientRepository.save(p.get());
+			
+			for(int i = 0; i < 1000; i++) {
+				System.out.println(patient.getPaymentType());
+			}
+			
+		}else {
+			p.get().setInsurancePlan(null);
+			p.get().setMembershipNo("");
+			p.get().setPaymentType("CASH");
+			patientRepository.save(p.get());			
+		}
+		
+		return null;
 	}
 	
 	@PostMapping("/patients/update")
@@ -545,12 +604,11 @@ public class PatientResource {
 			
 		Optional<Patient> p = patientRepository.findById(patient_id);
 		
-		LocalDateTime lastVistiDateTime = visitRepository.findLastByPatient(p.get()).get().getCreatedAt();
-		
-		//for(int i = 0; i< 1000; i++) {
-			//System.out.println(lastVistiDateTime.toString());
-		//}
-		
+		List<Visit> visits = visitRepository.findAllByPatient(p.get());
+		LocalDateTime lastVistiDateTime = null;
+		for(Visit visit : visits) {
+			lastVistiDateTime = visit.getCreatedAt();
+		}
 		
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/last_visit_date_time").toUriString());
@@ -1006,7 +1064,6 @@ public class PatientResource {
 			throw new NotFoundException("Consultation not found");
 		}		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_final_diagnosis").toUriString());
-		//return ResponseEntity.created(uri).body(c.get().getFinalDiagnosises());
 		
 		List<FinalDiagnosis> finalDiagnosises = finalDiagnosisRepository.findAllByConsultation(c.get());
 		
@@ -1380,26 +1437,16 @@ public class PatientResource {
 		Optional<Admission> adm = admissionRepository.findById(admissionId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_lab_test").toUriString());
 		Patient patient = new Patient();
-		Visit visit = new Visit();
 		List<LabTest> labTests = new ArrayList<>();
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				labTests = labTestRepository.findAllByConsultation(c.get());
-			}						
+			labTests = labTestRepository.findAllByConsultation(c.get());
 		}else if(nc.isPresent()){		
 			patient = nc.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				labTests = labTestRepository.findAllByNonConsultation(nc.get());
-			}						
+			labTests = labTestRepository.findAllByNonConsultation(nc.get());
 		}else if(adm.isPresent()){
 			patient = adm.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				labTests = labTestRepository.findAllByAdmission(adm.get());
-			}						
+			labTests = labTestRepository.findAllByAdmission(adm.get());
 		}
 		List<LabTestModel> models = new ArrayList<>();
 		for(LabTest l : labTests) {
@@ -1469,27 +1516,16 @@ public class PatientResource {
 		Optional<Admission> adm = admissionRepository.findById(admissionId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_radiologies").toUriString());
 		Patient patient = new Patient();
-		Visit visit = new Visit();
 		List<Radiology> radiologies = new ArrayList<>();
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				radiologies = radiologyRepository.findAllByConsultation(c.get());
-			}
-			
+			radiologies = radiologyRepository.findAllByConsultation(c.get());
 		}else if(nc.isPresent()){	
 			patient = nc.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				radiologies = radiologyRepository.findAllByNonConsultation(nc.get());
-			}					
+			radiologies = radiologyRepository.findAllByNonConsultation(nc.get());
 		}else if(adm.isPresent()){	
 			patient = adm.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				radiologies = radiologyRepository.findAllByAdmission(adm.get());
-			}					
+			radiologies = radiologyRepository.findAllByAdmission(adm.get());
 		}
 		List<RadiologyModel> models = new ArrayList<>();
 		for(Radiology r : radiologies) {
@@ -1545,27 +1581,17 @@ public class PatientResource {
 		Optional<Admission> adm = admissionRepository.findById(admissionId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_procedures").toUriString());
 		Patient patient = new Patient();
-		Visit visit = new Visit();
 		List<Procedure> procedures = new ArrayList<>();
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				procedures = procedureRepository.findAllByConsultation(c.get());
-			}
+			procedures = procedureRepository.findAllByConsultation(c.get());
 			
 		}else if(nc.isPresent()){	
 			patient = nc.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				procedures = procedureRepository.findAllByNonConsultation(nc.get());
-			}					
+			procedures = procedureRepository.findAllByNonConsultation(nc.get());
 		}else if(adm.isPresent()){	
 			patient = adm.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				procedures = procedureRepository.findAllByAdmission(adm.get());
-			}					
+			procedures = procedureRepository.findAllByAdmission(adm.get());
 		}
 		List<ProcedureModel> models = new ArrayList<>();
 		for(Procedure l : procedures) {
@@ -1631,26 +1657,16 @@ public class PatientResource {
 		Optional<Admission> adm = admissionRepository.findById(admissionId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_prescriptions").toUriString());
 		Patient patient = new Patient();
-		Visit visit = new Visit();
 		List<Prescription> prescriptions = new ArrayList<>();
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				prescriptions = prescriptionRepository.findAllByConsultation(c.get());
-			}
+			prescriptions = prescriptionRepository.findAllByConsultation(c.get());
 		}else if(nc.isPresent()){	
 			patient = nc.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				prescriptions = prescriptionRepository.findAllByNonConsultation(nc.get());
-			}
+			prescriptions = prescriptionRepository.findAllByNonConsultation(nc.get());
 		}else if(adm.isPresent()){	
 			patient = adm.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				prescriptions = prescriptionRepository.findAllByAdmission(adm.get());
-			}				
+			prescriptions = prescriptionRepository.findAllByAdmission(adm.get());
 		}
 		List<PrescriptionModel> models = new ArrayList<>();
 		for(Prescription l : prescriptions) {
@@ -1661,7 +1677,6 @@ public class PatientResource {
 			model.setFrequency(l.getFrequency());			
 			model.setRoute(l.getRoute());
 			model.setDays(l.getDays());
-			//model.setPrice(l.getPrice());
 			model.setQty(l.getQty());
 			model.setIssued(l.getIssued());
 			model.setBalance(l.getBalance());
@@ -1722,27 +1737,16 @@ public class PatientResource {
 		Optional<Admission> adm = admissionRepository.findById(admissionId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/dressing_charts").toUriString());
 		Patient patient = new Patient();
-		Visit visit = new Visit();
 		List<PatientDressingChart> patientDressingCharts = new ArrayList<>();
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientDressingCharts = patientDressingChartRepository.findAllByConsultation(c.get());
-			}
-			
+			patientDressingCharts = patientDressingChartRepository.findAllByConsultation(c.get());
 		}else if(nc.isPresent()){	
 			patient = nc.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientDressingCharts = patientDressingChartRepository.findAllByNonConsultation(nc.get());
-			}					
+			patientDressingCharts = patientDressingChartRepository.findAllByNonConsultation(nc.get());
 		}else if(adm.isPresent()){	
 			patient = adm.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientDressingCharts = patientDressingChartRepository.findAllByAdmission(adm.get());
-			}					
+			patientDressingCharts = patientDressingChartRepository.findAllByAdmission(adm.get());
 		}
 		List<PatientDressingChartModel> models = new ArrayList<>();
 		for(PatientDressingChart l : patientDressingCharts) {
@@ -1774,27 +1778,16 @@ public class PatientResource {
 		Optional<Admission> adm = admissionRepository.findById(admissionId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/consumable_charts").toUriString());
 		Patient patient = new Patient();
-		Visit visit = new Visit();
 		List<PatientConsumableChart> patientConsumableCharts = new ArrayList<>();
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientConsumableCharts = patientConsumableChartRepository.findAllByConsultation(c.get());
-			}
-			
+			patientConsumableCharts = patientConsumableChartRepository.findAllByConsultation(c.get());
 		}else if(nc.isPresent()){	
 			patient = nc.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientConsumableCharts = patientConsumableChartRepository.findAllByNonConsultation(nc.get());
-			}					
+			patientConsumableCharts = patientConsumableChartRepository.findAllByNonConsultation(nc.get());
 		}else if(adm.isPresent()){	
 			patient = adm.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientConsumableCharts = patientConsumableChartRepository.findAllByAdmission(adm.get());
-			}					
+			patientConsumableCharts = patientConsumableChartRepository.findAllByAdmission(adm.get());
 		}
 		List<PatientConsumableChartModel> models = new ArrayList<>();
 		for(PatientConsumableChart l : patientConsumableCharts) {
@@ -1827,27 +1820,17 @@ public class PatientResource {
 		Optional<Admission> adm = admissionRepository.findById(admissionId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/observation_charts").toUriString());
 		Patient patient = new Patient();
-		Visit visit = new Visit();
 		List<PatientObservationChart> patientObservationCharts = new ArrayList<>();
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientObservationCharts = patientObservationChartRepository.findAllByConsultation(c.get());
-			}
+			patientObservationCharts = patientObservationChartRepository.findAllByConsultation(c.get());
 			
 		}else if(nc.isPresent()){	
 			patient = nc.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientObservationCharts = patientObservationChartRepository.findAllByNonConsultation(nc.get());
-			}					
+			patientObservationCharts = patientObservationChartRepository.findAllByNonConsultation(nc.get());
 		}else if(adm.isPresent()){	
 			patient = adm.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientObservationCharts = patientObservationChartRepository.findAllByAdmission(adm.get());
-			}					
+			patientObservationCharts = patientObservationChartRepository.findAllByAdmission(adm.get());
 		}
 		List<PatientObservationChartModel> models = new ArrayList<>();
 		for(PatientObservationChart l : patientObservationCharts) {
@@ -1882,27 +1865,16 @@ public class PatientResource {
 		Optional<Admission> adm = admissionRepository.findById(admissionId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/prescription_charts").toUriString());
 		Patient patient = new Patient();
-		Visit visit = new Visit();
 		List<PatientPrescriptionChart> patientPrescriptionCharts = new ArrayList<>();
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientPrescriptionCharts = patientPrescriptionChartRepository.findAllByConsultation(c.get());
-			}
-			
+			patientPrescriptionCharts = patientPrescriptionChartRepository.findAllByConsultation(c.get());
 		}else if(nc.isPresent()){	
 			patient = nc.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientPrescriptionCharts = patientPrescriptionChartRepository.findAllByNonConsultation(nc.get());
-			}					
+			patientPrescriptionCharts = patientPrescriptionChartRepository.findAllByNonConsultation(nc.get());
 		}else if(adm.isPresent()){	
 			patient = adm.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientPrescriptionCharts = patientPrescriptionChartRepository.findAllByAdmission(adm.get());
-			}					
+			patientPrescriptionCharts = patientPrescriptionChartRepository.findAllByAdmission(adm.get());
 		}
 		List<PatientPrescriptionChartModel> models = new ArrayList<>();
 		for(PatientPrescriptionChart l : patientPrescriptionCharts) {
@@ -1935,27 +1907,16 @@ public class PatientResource {
 		Optional<Admission> adm = admissionRepository.findById(admissionId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/nursing_charts").toUriString());
 		Patient patient = new Patient();
-		Visit visit = new Visit();
 		List<PatientNursingChart> patientNursingCharts = new ArrayList<>();
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientNursingCharts = patientNursingChartRepository.findAllByConsultation(c.get());
-			}
-			
+			patientNursingCharts = patientNursingChartRepository.findAllByConsultation(c.get());
 		}else if(nc.isPresent()){	
 			patient = nc.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientNursingCharts = patientNursingChartRepository.findAllByNonConsultation(nc.get());
-			}					
+			patientNursingCharts = patientNursingChartRepository.findAllByNonConsultation(nc.get());
 		}else if(adm.isPresent()){	
 			patient = adm.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientNursingCharts = patientNursingChartRepository.findAllByAdmission(adm.get());
-			}					
+			patientNursingCharts = patientNursingChartRepository.findAllByAdmission(adm.get());
 		}
 		List<PatientNursingChartModel> models = new ArrayList<>();
 		for(PatientNursingChart l : patientNursingCharts) {
@@ -1992,27 +1953,16 @@ public class PatientResource {
 		Optional<Admission> adm = admissionRepository.findById(admissionId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/nursing_progress_notes").toUriString());
 		Patient patient = new Patient();
-		Visit visit = new Visit();
 		List<PatientNursingProgressNote> patientNursingProgressNotes = new ArrayList<>();
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientNursingProgressNotes = patientNursingProgressNoteRepository.findAllByConsultation(c.get());
-			}
-			
+			patientNursingProgressNotes = patientNursingProgressNoteRepository.findAllByConsultation(c.get());
 		}else if(nc.isPresent()){	
 			patient = nc.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientNursingProgressNotes = patientNursingProgressNoteRepository.findAllByNonConsultation(nc.get());
-			}					
+			patientNursingProgressNotes = patientNursingProgressNoteRepository.findAllByNonConsultation(nc.get());
 		}else if(adm.isPresent()){	
 			patient = adm.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientNursingProgressNotes = patientNursingProgressNoteRepository.findAllByAdmission(adm.get());
-			}					
+			patientNursingProgressNotes = patientNursingProgressNoteRepository.findAllByAdmission(adm.get());
 		}
 		List<PatientNursingProgressNoteModel> models = new ArrayList<>();
 		for(PatientNursingProgressNote l : patientNursingProgressNotes) {
@@ -2041,27 +1991,16 @@ public class PatientResource {
 		Optional<Admission> adm = admissionRepository.findById(admissionId);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/nursing_care_plans").toUriString());
 		Patient patient = new Patient();
-		Visit visit = new Visit();
 		List<PatientNursingCarePlan> patientNursingCarePlans = new ArrayList<>();
 		if(c.isPresent()) {
 			patient = c.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientNursingCarePlans = patientNursingCarePlanRepository.findAllByConsultation(c.get());
-			}
-			
+			patientNursingCarePlans = patientNursingCarePlanRepository.findAllByConsultation(c.get());
 		}else if(nc.isPresent()){	
 			patient = nc.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientNursingCarePlans = patientNursingCarePlanRepository.findAllByNonConsultation(nc.get());
-			}					
+			patientNursingCarePlans = patientNursingCarePlanRepository.findAllByNonConsultation(nc.get());
 		}else if(adm.isPresent()){	
 			patient = adm.get().getPatient();
-			visit = visitRepository.findLastByPatient(patient).get();
-			if(visit.getStatus().equals("PENDING")) {
-				patientNursingCarePlans = patientNursingCarePlanRepository.findAllByAdmission(adm.get());
-			}					
+			patientNursingCarePlans = patientNursingCarePlanRepository.findAllByAdmission(adm.get());
 		}
 		List<PatientNursingCarePlanModel> models = new ArrayList<>();
 		for(PatientNursingCarePlan l : patientNursingCarePlans) {
@@ -2698,7 +2637,11 @@ public class PatientResource {
 	public ResponseEntity<List<Admission>> getDoctorInpatientList(
 			HttpServletRequest request){
 		
-		List<Admission> admissions = admissionRepository.findAllByStatus("IN-PROCESS");
+		List<String> statuses = new ArrayList<>();
+		statuses.add("IN-PROCESS");
+		statuses.add("STOPPED");
+		
+		List<Admission> admissions = admissionRepository.findAllByStatusIn(statuses);
 		
 		//HashSet<Admission> h = new HashSet<Admission>(admissions);
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_doctor_inpatient_list").toUriString());
@@ -3119,27 +3062,18 @@ public class PatientResource {
 		statuses.add("IN-PROCESS");
 		Optional<NonConsultation> nc = nonConsultationRepository.findByPatientAndStatusIn(p.get(), statuses);
 		
-		Optional<Visit> v = visitRepository.findLastByPatient(p.get());
 		Visit visit = new Visit();
-		if(!v.isPresent() || !v.get().getStatus().equals("PENDING")) {			
-			visit.setPatient(p.get());
-			visit.setStatus("PENDING");
-			visit.setType("OUTSIDER");
-			if(!v.isPresent()) {
-				visit.setSequence("FIRST");
-			}else {
-				visit.setSequence("SUBSEQUENT");
-			}
-			
-			visit.setCreatedby(userService.getUser(request).getId());
-			visit.setCreatedOn(dayService.getDay().getId());
-			visit.setCreatedAt(dayService.getTimeStamp());
-			
-			visit = visitRepository.save(visit);
-		}else {
-			v.get().setType("OUTSIDER");
-			visit = visitRepository.save(v.get());
-		}
+		visit.setPatient(p.get());
+		visit.setStatus("PENDING");
+		visit.setType("OUTSIDER");
+		
+		visit.setSequence("SUBSEQUENT");
+		
+		visit.setCreatedby(userService.getUser(request).getId());
+		visit.setCreatedOn(dayService.getDay().getId());
+		visit.setCreatedAt(dayService.getTimeStamp());
+		
+		visit = visitRepository.save(visit);
 		NonConsultation nonConsultation = new NonConsultation();
 		if(nc.isEmpty()) {
 			nonConsultation.setCreatedby(userService.getUserId(request));
@@ -3423,7 +3357,6 @@ public class PatientResource {
 				m.setFrequency(pres.getFrequency());
 				m.setRoute(pres.getRoute());
 				m.setDays(pres.getDays());
-				//m.setPrice(pres.getPrice());
 				m.setQty(pres.getQty());
 				m.setStatus(pres.getStatus());
 				m.setMedicine(pres.getMedicine());
@@ -3670,8 +3603,6 @@ public class PatientResource {
 		List<Consultation> cons = consultationRepository.findAllByPatient(p.get());
 		
 		List<FinalDiagnosis> finalDiagnosises = finalDiagnosisRepository.findAllByConsultationIn(cons);
-		
-		HashSet<FinalDiagnosis> h = new HashSet<FinalDiagnosis>(finalDiagnosises);
 		
 		List<FinalDiagnosisModel> models = new ArrayList<>();
 		for(FinalDiagnosis l : finalDiagnosises) {
@@ -4108,6 +4039,144 @@ public class PatientResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_patient_invoice").toUriString());
 		return ResponseEntity.created(uri).body(inv.get());
 	}
+	
+	
+	@PostMapping("/patients/save_discharge_plan")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<DischargePlan>saveDischargePlan(
+
+			@RequestBody DischargePlan plan, 
+			HttpServletRequest request){		
+		Optional<Admission> a = admissionRepository.findById(plan.getAdmission().getId());
+		if(a.isEmpty()) {
+			throw new NotFoundException("Admission not found");
+		}
+		DischargePlan dischargePlan = new DischargePlan();
+		Optional<DischargePlan> p = dischargePlanRepository.findByAdmission(a.get());
+		if(p.isPresent()) {
+			dischargePlan = p.get();
+		}else {
+			Admission admission = a.get();
+			admission.setStatus("STOPPED");
+			admission = admissionRepository.save(admission);
+			
+			dischargePlan.setAdmission(admission);
+			
+			dischargePlan.setCreatedBy(userService.getUser(request).getId());
+			dischargePlan.setCreatedOn(dayService.getDay().getId());
+			dischargePlan.setCreatedAt(dayService.getTimeStamp());
+		}
+		dischargePlan.setHistory(plan.getHistory());
+		dischargePlan.setInvestigation(plan.getInvestigation());
+		dischargePlan.setManagement(plan.getManagement());
+		dischargePlan.setOperationNote(plan.getOperationNote());
+		dischargePlan.setIcuAdmissionNote(plan.getIcuAdmissionNote());
+		dischargePlan.setGeneralRecommendation(plan.getGeneralRecommendation());
+		dischargePlan.setStatus("PENDING");
+		
+		dischargePlan = dischargePlanRepository.save(dischargePlan);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_discharge_plan").toUriString());
+		return ResponseEntity.created(uri).body(dischargePlan);
+	}
+	
+	@GetMapping("/patients/load_discharge_plan")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<DischargePlan>getDischargePlan(
+			@RequestParam(name = "admission_id") Long admissionId,
+			HttpServletRequest request){
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_discharge_plan").toUriString());
+		
+		Optional<Admission> a = admissionRepository.findById(admissionId);
+		if(a.isEmpty()) {
+			throw new NotFoundException("Admission not found");
+		}
+		
+		Optional<DischargePlan> p = dischargePlanRepository.findByAdmission(a.get());
+		if(p.isEmpty()) {
+			return ResponseEntity.created(uri).body(null);
+		}				
+		return ResponseEntity.created(uri).body(p.get());
+	}
+	
+	@GetMapping("/patients/load_discharge_list")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<List<DischargePlan>>loadDischargeList(
+			HttpServletRequest request){
+		
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		statuses.add("APPROVED");
+		
+		List<DischargePlan> plans = dischargePlanRepository.findAllByStatusIn(statuses);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_discharge_list").toUriString());
+		
+		return ResponseEntity.created(uri).body(plans);
+	}
+	
+	
+	@GetMapping("/patients/get_discharge_summary")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<DischargePlan>getDischargeSummary(
+			@RequestParam(name = "discharge_plan_id") Long dischargePlanId,
+			HttpServletRequest request){
+		
+		Optional<DischargePlan> p = dischargePlanRepository.findById(dischargePlanId);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Discharge plan not found");
+		}
+		
+		Admission adm = p.get().getAdmission();
+		
+		List<PatientInvoice> invoices = patientInvoiceRepository.findAllByAdmission(adm);
+		for(PatientInvoice invoice : invoices) {
+			List<PatientInvoiceDetail> details = invoice.getPatientInvoiceDetails();
+			for(PatientInvoiceDetail detail : details) {
+				if(detail.getPatientBill().getStatus() != null) {
+					if(detail.getPatientBill().getStatus().equals("UNPAID") || detail.getPatientBill().getStatus().equals("VERIFIED")) {
+						throw new InvalidOperationException("Could not get discharge summary. Patient have uncleared bills.");
+					}
+				}
+			}
+		}
+		
+		for(PatientInvoice invoice : invoices) {
+			invoice.setStatus("APPROVED");
+			patientInvoiceRepository.save(invoice);
+		}
+		
+		if(adm.getStatus() != null) {
+			if(adm.getStatus().equals("STOPPED")) {
+				adm.setStatus("SIGNED-OFF");
+				adm.setDischargedBy(p.get().getCreatedBy());
+				adm.setDischargedOn(p.get().getCreatedOn());
+				adm.setDischargedAt(p.get().getCreatedAt());
+				
+				adm = admissionRepository.save(adm);
+				
+				WardBed wardBed = adm.getWardBed(); 
+				wardBed.setStatus("EMPTY");
+				wardBedRepository.save(wardBed);
+				
+				Patient patient = adm.getPatient();
+				patient.setType("OUTPATIENT");
+				patientRepository.save(patient);
+				
+				p.get().setStatus("APPROVED");
+				p.get().setApprovedBy(p.get().getCreatedBy());
+				p.get().setApprovedOn(p.get().getCreatedOn());
+				p.get().setApprovedAt(LocalDateTime.now());	
+			}
+		}
+		
+		DischargePlan plan = dischargePlanRepository.save(p.get());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_discharge_summary").toUriString());
+		
+		return ResponseEntity.created(uri).body(plan);
+	}	
 }
 
 @Data

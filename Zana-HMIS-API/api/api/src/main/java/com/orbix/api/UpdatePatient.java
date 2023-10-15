@@ -18,6 +18,7 @@ import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.AdmissionBed;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.ConsultationTransfer;
+import com.orbix.api.domain.DischargePlan;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.PatientBill;
@@ -33,6 +34,7 @@ import com.orbix.api.repositories.AdmissionRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.ConsultationTransferRepository;
 import com.orbix.api.repositories.DayRepository;
+import com.orbix.api.repositories.DischargePlanRepository;
 import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.MedicineInsurancePlanRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
@@ -82,6 +84,8 @@ public class UpdatePatient implements Runnable{
 	private final WardTypeInsurancePlanRepository wardTypeInsurancePlanRepository;
 	private final PatientInvoiceRepository patientInvoiceRepository;
 	private final PatientInvoiceDetailRepository patientInvoiceDetailRepository;
+	
+	private final DischargePlanRepository dischargePlanRepository;
 	
 	
 	
@@ -231,8 +235,11 @@ public class UpdatePatient implements Runnable{
 					}
 				}
 				
+				List<String> admissionStatuses = new ArrayList<>();
+				admissionStatuses.add("IN-PROCESS");
+				admissionStatuses.add("STOPPED");
 				
-				List<Admission> adms = admissionRepository.findAllByStatus("IN-PROCESS");
+				List<Admission> adms = admissionRepository.findAllByStatusIn(admissionStatuses);
 				
 				for(Admission adm : adms) {
 					WardBed wardBed = adm.getWardBed();
@@ -522,6 +529,20 @@ public class UpdatePatient implements Runnable{
 					if(difference >= 24) {
 						ct.setStatus("CANCELED");
 						consultationTransferRepository.save(ct);
+					}
+				}
+				
+				List<DischargePlan> dischargePlans = dischargePlanRepository.findAllByStatus("APPROVED");
+				for(DischargePlan dischargePlan : dischargePlans) {
+					if(dischargePlan.getApprovedAt() != null) {
+						long difference = ChronoUnit.HOURS.between(dischargePlan.getApprovedAt(), LocalDateTime.now());
+						if(difference >= 48) {
+							dischargePlan.setStatus("ARCHIVED");
+							dischargePlanRepository.save(dischargePlan);
+						}
+					}else {
+						dischargePlan.setStatus("ARCHIVED");
+						dischargePlanRepository.save(dischargePlan);
 					}
 				}
 				
