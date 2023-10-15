@@ -4239,9 +4239,6 @@ public class PatientResource {
 				deceasedNote.setAdmission(admission);
 				deceasedNote.setPatient(admission.getPatient());
 				
-				deceasedNote.setDate(note.getDate());
-				deceasedNote.setTime(note.getTime());
-				
 				deceasedNote.setCreatedBy(userService.getUser(request).getId());
 				deceasedNote.setCreatedOn(dayService.getDay().getId());
 				deceasedNote.setCreatedAt(dayService.getTimeStamp());
@@ -4272,6 +4269,9 @@ public class PatientResource {
 		deceasedNote.setPatientSummary(note.getPatientSummary());
 		deceasedNote.setCauseOfDeath(note.getCauseOfDeath());
 		deceasedNote.setStatus("PENDING");
+		
+		deceasedNote.setDate(note.getDate());
+		deceasedNote.setTime(note.getTime());
 		
 		deceasedNote = deceasedNoteRepository.save(deceasedNote);
 		
@@ -4353,19 +4353,40 @@ public class PatientResource {
 		Admission adm = n.get().getAdmission();
 		Consultation con = n.get().getConsultation();
 		
-		List<PatientInvoice> invoices = patientInvoiceRepository.findAllByAdmission(adm);
-		for(PatientInvoice invoice : invoices) {
-			List<PatientInvoiceDetail> details = invoice.getPatientInvoiceDetails();
-			for(PatientInvoiceDetail detail : details) {
-				if(detail.getPatientBill().getStatus() != null) {
-					if(detail.getPatientBill().getStatus().equals("UNPAID") || detail.getPatientBill().getStatus().equals("VERIFIED")) {
-						throw new InvalidOperationException("Could not get deceased summary. Patient have uncleared bills.");
+		List<PatientInvoice> admissionInvoices = patientInvoiceRepository.findAllByAdmission(adm);
+		if(adm != null) {
+			for(PatientInvoice invoice : admissionInvoices) {
+				List<PatientInvoiceDetail> details = invoice.getPatientInvoiceDetails();
+				for(PatientInvoiceDetail detail : details) {
+					if(detail.getPatientBill().getStatus() != null) {
+						if(detail.getPatientBill().getStatus().equals("UNPAID") || detail.getPatientBill().getStatus().equals("VERIFIED")) {
+							throw new InvalidOperationException("Could not get deceased summary. Patient have uncleared bills.");
+						}
 					}
 				}
 			}
 		}
 		
-		for(PatientInvoice invoice : invoices) {
+		for(PatientInvoice invoice : admissionInvoices) {
+			invoice.setStatus("APPROVED");
+			patientInvoiceRepository.save(invoice);
+		}
+		
+		List<PatientInvoice> consultationInvoices = patientInvoiceRepository.findAllByConsultation(con);
+		if(con != null) {
+			for(PatientInvoice invoice : consultationInvoices) {
+				List<PatientInvoiceDetail> details = invoice.getPatientInvoiceDetails();
+				for(PatientInvoiceDetail detail : details) {
+					if(detail.getPatientBill().getStatus() != null) {
+						if(detail.getPatientBill().getStatus().equals("UNPAID") || detail.getPatientBill().getStatus().equals("VERIFIED")) {
+							throw new InvalidOperationException("Could not get deceased summary. Patient have uncleared bills.");
+						}
+					}
+				}
+			}
+		}
+		
+		for(PatientInvoice invoice : consultationInvoices) {
 			invoice.setStatus("APPROVED");
 			patientInvoiceRepository.save(invoice);
 		}
@@ -4400,7 +4421,7 @@ public class PatientResource {
 					
 					con = consultationRepository.save(con);
 					
-					Patient patient = adm.getPatient();
+					Patient patient = con.getPatient();
 					patient.setType("DECEASED");
 					patientRepository.save(patient);
 					

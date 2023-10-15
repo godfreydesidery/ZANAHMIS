@@ -36,4 +36,10 @@ public interface DeceasedNoteRepository extends JpaRepository<DeceasedNote, Long
 	 */
 	List<DeceasedNote> findAllByStatusIn(List<String> statuses);
 
+	/**
+	 * @param string
+	 * @return
+	 */
+	List<DeceasedNote> findAllByStatus(String string);
+
 }

@@ -18,6 +18,7 @@ import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.AdmissionBed;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.ConsultationTransfer;
+import com.orbix.api.domain.DeceasedNote;
 import com.orbix.api.domain.DischargePlan;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
@@ -34,6 +35,7 @@ import com.orbix.api.repositories.AdmissionRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.ConsultationTransferRepository;
 import com.orbix.api.repositories.DayRepository;
+import com.orbix.api.repositories.DeceasedNoteRepository;
 import com.orbix.api.repositories.DischargePlanRepository;
 import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.MedicineInsurancePlanRepository;
@@ -86,6 +88,7 @@ public class UpdatePatient implements Runnable{
 	private final PatientInvoiceDetailRepository patientInvoiceDetailRepository;
 	
 	private final DischargePlanRepository dischargePlanRepository;
+	private final DeceasedNoteRepository deceasedNoteRepository;
 	
 	
 	
@@ -546,6 +549,19 @@ public class UpdatePatient implements Runnable{
 					}
 				}
 				
+				List<DeceasedNote> deceasedNotes = deceasedNoteRepository.findAllByStatus("APPROVED");
+				for(DeceasedNote deceasedNote : deceasedNotes) {
+					if(deceasedNote.getApprovedAt() != null) {
+						long difference = ChronoUnit.HOURS.between(deceasedNote.getApprovedAt(), LocalDateTime.now());
+						if(difference >= 48) {
+							deceasedNote.setStatus("ARCHIVED");
+							deceasedNoteRepository.save(deceasedNote);
+						}
+					}else {
+						deceasedNote.setStatus("ARCHIVED");
+						deceasedNoteRepository.save(deceasedNote);
+					}
+				}
 				
 			}catch(Exception e) {}
 		}

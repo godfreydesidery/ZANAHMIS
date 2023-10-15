@@ -42,6 +42,7 @@ import com.orbix.api.repositories.CompanyProfileRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.ConsultationTransferRepository;
 import com.orbix.api.repositories.DayRepository;
+import com.orbix.api.repositories.DeceasedNoteRepository;
 import com.orbix.api.repositories.DischargePlanRepository;
 import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
@@ -102,6 +103,7 @@ public class MainApplication {
 	private final PatientInvoiceRepository patientInvoiceRepository;
 	private final PatientInvoiceDetailRepository patientInvoiceDetailRepository;
 	private final DischargePlanRepository dischargePlanRepository;
+	private final DeceasedNoteRepository deceasedNoteRepository;
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -155,7 +157,8 @@ public class MainApplication {
 				wardTypeInsurancePlanRepository,
 				patientInvoiceRepository,
 				patientInvoiceDetailRepository,
-				dischargePlanRepository);
+				dischargePlanRepository,
+				deceasedNoteRepository);
 	    Thread updatePatientThread = new Thread(updatePatient);
 	    updatePatientThread.start();
 	}

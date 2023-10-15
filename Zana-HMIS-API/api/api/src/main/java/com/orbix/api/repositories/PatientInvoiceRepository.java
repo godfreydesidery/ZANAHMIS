@@ -63,4 +63,24 @@ public interface PatientInvoiceRepository extends JpaRepository<PatientInvoice, 
 	 */
 	List<PatientInvoice> findAllByConsultationOrAdmission(Consultation con, Admission adm);
 
+	/**
+	 * @param adm
+	 * @param string
+	 * @return
+	 */
+	List<PatientInvoice> findAllByAdmissionAndStatus(Admission adm, String string);
+
+	/**
+	 * @param adm
+	 * @param con 
+	 * @return
+	 */
+	List<PatientInvoice> findAllByAdmissionOrConsultation(Admission adm, Consultation con);
+
+	/**
+	 * @param con
+	 * @return
+	 */
+	List<PatientInvoice> findAllByConsultation(Consultation con);
+
 }

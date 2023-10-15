@@ -332,8 +332,8 @@ export class AppComponent {
         {path : 'radiology-price', loadComponent : () => import('./pages').then(m => m), canActivate: [AuthGuard]},
         {path : 'medicine-prices', loadComponent : () => import('./pages').then(m => m), canActivate: [AuthGuard]},*/
 
-        {path : 'inpatient-payment', loadComponent : () => import('./pages/payments/inpatient-payment/inpatient-payment.component').then(m => m.InpatientPaymentComponent)},
-        {path : 'patient-report', loadComponent : () => import('./pages/reports/patient-report/patient-report.component').then(m => m.PatientReportComponent)},
+        {path : 'inpatient-payment', loadComponent : () => import('./pages/payments/inpatient-payment/inpatient-payment.component').then(m => m.InpatientPaymentComponent), canActivate: [AuthGuard]},
+        {path : 'patient-report', loadComponent : () => import('./pages/reports/patient-report/patient-report.component').then(m => m.PatientReportComponent), canActivate: [AuthGuard]},
       )
     }
     loadStoreModule(){
@@ -374,25 +374,25 @@ export class AppComponent {
         {path : 'company-profile', loadComponent : () => import('./pages/admin/company/company-profile/company-profile.component').then(m => m.CompanyProfileComponent), canActivate: [AuthGuard]},
         {path : 'item-register', loadComponent : () => import('./pages/admin/inventory/item-register/item-register.component').then(m => m.ItemRegisterComponent), canActivate: [AuthGuard]},
 
-        {path : 'nurse', loadComponent : () => import('./pages/admin/personnel/nurse/nurse.component').then(m => m.NurseComponent)}, 
+        {path : 'nurse', loadComponent : () => import('./pages/admin/personnel/nurse/nurse.component').then(m => m.NurseComponent), canActivate: [AuthGuard]}, 
 
-        {path : 'ward-plan', loadComponent : () => import('./pages/admin/insurance-management/insurance-plan-pricing/ward-plan/ward-plan.component').then(m => m.WardPlanComponent)},   
-        {path : 'lab-test-type-price', loadComponent : () => import('./pages/admin/insurance-management/prices/lab-test-type-price/lab-test-type-price.component').then(m => m.LabTestTypePriceComponent)},
-        {path : 'radiology-type-price', loadComponent : () => import('./pages/admin/insurance-management/prices/radiology-type-price/radiology-type-price.component').then(m => m.RadiologyTypePriceComponent)},
-        {path : 'procedure-type-price', loadComponent : () => import('./pages/admin/insurance-management/prices/procedure-type-price/procedure-type-price.component').then(m => m.ProcedureTypePriceComponent)},
-        {path : 'medicine-price', loadComponent : () => import('./pages/admin/insurance-management/prices/medicine-price/medicine-price.component').then(m => m.MedicinePriceComponent)},
-        {path : 'consultation-price', loadComponent : () => import('./pages/admin/insurance-management/prices/consultation-price/consultation-price.component').then(m => m.ConsultationPriceComponent)},
-        {path : 'registration-price', loadComponent : () => import('./pages/admin/insurance-management/prices/registration-price/registration-price.component').then(m => m.RegistrationPriceComponent)},
-        {path : 'ward-type-price', loadComponent : () => import('./pages/admin/insurance-management/prices/ward-type-price/ward-type-price.component').then(m => m.WardTypePriceComponent)},
-        {path : 'ward', loadComponent : () => import('./pages/admin/medical-units/ward-management/ward/ward.component').then(m => m.WardComponent)},
-        {path : 'ward-configuration', loadComponent : () => import('./pages/admin/medical-units/ward-management/ward-configuration/ward-configuration.component').then(m => m.WardConfigurationComponent)},
-        {path : 'ward-category', loadComponent : () => import('./pages/admin/medical-units/ward-management/ward-category/ward-category.component').then(m => m.WardCategoryComponent)},
-        {path : 'ward-type', loadComponent : () => import('./pages/admin/medical-units/ward-management/ward-type/ward-type.component').then(m => m.WardTypeComponent)},
+        {path : 'ward-plan', loadComponent : () => import('./pages/admin/insurance-management/insurance-plan-pricing/ward-plan/ward-plan.component').then(m => m.WardPlanComponent), canActivate: [AuthGuard]},   
+        {path : 'lab-test-type-price', loadComponent : () => import('./pages/admin/insurance-management/prices/lab-test-type-price/lab-test-type-price.component').then(m => m.LabTestTypePriceComponent), canActivate: [AuthGuard]},
+        {path : 'radiology-type-price', loadComponent : () => import('./pages/admin/insurance-management/prices/radiology-type-price/radiology-type-price.component').then(m => m.RadiologyTypePriceComponent), canActivate: [AuthGuard]},
+        {path : 'procedure-type-price', loadComponent : () => import('./pages/admin/insurance-management/prices/procedure-type-price/procedure-type-price.component').then(m => m.ProcedureTypePriceComponent), canActivate: [AuthGuard]},
+        {path : 'medicine-price', loadComponent : () => import('./pages/admin/insurance-management/prices/medicine-price/medicine-price.component').then(m => m.MedicinePriceComponent), canActivate: [AuthGuard]},
+        {path : 'consultation-price', loadComponent : () => import('./pages/admin/insurance-management/prices/consultation-price/consultation-price.component').then(m => m.ConsultationPriceComponent), canActivate: [AuthGuard]},
+        {path : 'registration-price', loadComponent : () => import('./pages/admin/insurance-management/prices/registration-price/registration-price.component').then(m => m.RegistrationPriceComponent), canActivate: [AuthGuard]},
+        {path : 'ward-type-price', loadComponent : () => import('./pages/admin/insurance-management/prices/ward-type-price/ward-type-price.component').then(m => m.WardTypePriceComponent), canActivate: [AuthGuard]},
+        {path : 'ward', loadComponent : () => import('./pages/admin/medical-units/ward-management/ward/ward.component').then(m => m.WardComponent), canActivate: [AuthGuard]},
+        {path : 'ward-configuration', loadComponent : () => import('./pages/admin/medical-units/ward-management/ward-configuration/ward-configuration.component').then(m => m.WardConfigurationComponent), canActivate: [AuthGuard]},
+        {path : 'ward-category', loadComponent : () => import('./pages/admin/medical-units/ward-management/ward-category/ward-category.component').then(m => m.WardCategoryComponent), canActivate: [AuthGuard]},
+        {path : 'ward-type', loadComponent : () => import('./pages/admin/medical-units/ward-management/ward-type/ward-type.component').then(m => m.WardTypeComponent), canActivate: [AuthGuard]},
 
-        {path : 'consultation-report', loadComponent : () => import('./pages/admin/reports/consultation-report/consultation-report.component').then(m => m.ConsultationReportComponent)},
-        {path : 'procedure-report', loadComponent : () => import('./pages/admin/reports/procedure-report/procedure-report.component').then(m => m.ProcedureReportComponent)},
-        {path : 'doctor-to-radiology-report', loadComponent : () => import('./pages/admin/reports/doctor-to-radiology-report/doctor-to-radiology-report.component').then(m => m.DoctorToRadiologyReportComponent)},
-        {path : 'doctor-to-laboratory-report', loadComponent : () => import('./pages/admin/reports/doctor-to-laboratory-report/doctor-to-laboratory-report.component').then(m => m.DoctorToLaboratoryReportComponent)},
+        {path : 'consultation-report', loadComponent : () => import('./pages/admin/reports/consultation-report/consultation-report.component').then(m => m.ConsultationReportComponent), canActivate: [AuthGuard]},
+        {path : 'procedure-report', loadComponent : () => import('./pages/admin/reports/procedure-report/procedure-report.component').then(m => m.ProcedureReportComponent), canActivate: [AuthGuard]},
+        {path : 'doctor-to-radiology-report', loadComponent : () => import('./pages/admin/reports/doctor-to-radiology-report/doctor-to-radiology-report.component').then(m => m.DoctorToRadiologyReportComponent), canActivate: [AuthGuard]},
+        {path : 'doctor-to-laboratory-report', loadComponent : () => import('./pages/admin/reports/doctor-to-laboratory-report/doctor-to-laboratory-report.component').then(m => m.DoctorToLaboratoryReportComponent), canActivate: [AuthGuard]},
 
         {path : 'supplier-register', loadComponent : () => import('./pages/admin/stakeholders/supplier-register/supplier-register.component').then(m => m.SupplierRegisterComponent), canActivate: [AuthGuard]},
       )      
