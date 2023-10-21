@@ -27,6 +27,7 @@ import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.InsurancePlan;
 import com.orbix.api.domain.LabTest;
+import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientBill;
@@ -36,9 +37,11 @@ import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.reports.models.LabTestTypeReport;
 import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.LabTestRepository;
+import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.repositories.PatientBillRepository;
 import com.orbix.api.repositories.PatientInvoiceDetailRepository;
 import com.orbix.api.repositories.PatientRepository;
@@ -74,6 +77,7 @@ public class ReportResource {
 	private final PatientInvoiceDetailRepository patientInvoiceDetailRepository;
 	private final PatientRepository patientRepository;
 	private final PatientBillRepository patientBillRepository;
+	private final LabTestTypeRepository labTestTypeRepository;
 	
 	@PostMapping("/reports/consultation_report")
 	public ResponseEntity<List<Consultation>>getConsultationReport(
@@ -116,6 +120,37 @@ public class ReportResource {
 		}
 		
 		return ResponseEntity.ok().body(procedures);
+	}
+	
+	@PostMapping("/reports/lab_test_type_report")
+	public ResponseEntity<List<LabTestTypeReport>>getLabTestTypeReport(
+			@RequestBody LabTestTypeReportArgs args,
+			HttpServletRequest request){
+		
+		List<LabTest> labTests = labTestRepository.findAllByCreatedAtBetween(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		
+		List<LabTestType> labTestTypes = labTestTypeRepository.findAll();
+		
+		List<LabTestTypeReport> labTestTypeReport = new ArrayList<>();
+		
+		for(LabTestType testType : labTestTypes) {
+			
+		}
+		
+		for(LabTest test : labTests) {
+			boolean present = false;
+			for(LabTestTypeReport detail : labTestTypeReport) {
+				if(test.getLabTestType().getId() == detail.getLabTestType().getId()){
+					detail.setQty(detail.getQty() + test.getPatientBill().getQty());
+					present = true;
+				}
+			}
+			if(present == false) {
+				//labTest
+			}
+		}
+		
+		return ResponseEntity.ok().body(labTestTypeReport);
 	}
 	
 	@PostMapping("/reports/doctor_to_radiology_report")
@@ -227,6 +262,12 @@ class RadiologyReportArgs {
 
 @Data
 class LabTestReportArgs {
+	LocalDate from;
+	LocalDate to;
+}
+
+@Data
+class LabTestTypeReportArgs {
 	LocalDate from;
 	LocalDate to;
 }

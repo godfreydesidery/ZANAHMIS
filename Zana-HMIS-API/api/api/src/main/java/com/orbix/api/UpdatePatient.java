@@ -112,7 +112,7 @@ public class UpdatePatient implements Runnable{
 				List<Consultation> cs = consultationRepository.findAllByStatusIn(conStatuses);
 				
 				for(Consultation c : cs) {
-					long difference = ChronoUnit.HOURS.between(c.getCreatedAt(), LocalDateTime.now());
+					long difference = ChronoUnit.HOURS.between(c.getCreatedAt(), dayService.getTimeStamp());
 					if(difference >= 24) {
 						//
 						c.setStatus("SIGNED-OUT");
@@ -177,7 +177,7 @@ public class UpdatePatient implements Runnable{
 				List<NonConsultation> ncs = nonConsultationRepository.findAllByStatusIn(conStatuses);
 				
 				for(NonConsultation c : ncs) {
-					long difference = ChronoUnit.HOURS.between(c.getCreatedAt(), LocalDateTime.now());
+					long difference = ChronoUnit.HOURS.between(c.getCreatedAt(), dayService.getTimeStamp());
 					if(difference >= 24) {
 						//
 						c.setStatus("SIGNED-OUT");
@@ -256,7 +256,7 @@ public class UpdatePatient implements Runnable{
 						int i = 0;
 						for(AdmissionBed b : admissionBeds) {
 							if(i < no) {
-								b.setClosedAt(LocalDateTime.now());
+								b.setClosedAt(dayService.getTimeStamp());
 								b.setStatus("CLOSED");
 								b =  admissionBedRepository.save(b);
 								i = i + 1;
@@ -271,13 +271,13 @@ public class UpdatePatient implements Runnable{
 						continue;
 					}
 									
-					long difference = ChronoUnit.HOURS.between(admBed.get().getOpenedAt(), LocalDateTime.now());					
+					long difference = ChronoUnit.HOURS.between(admBed.get().getOpenedAt(), dayService.getTimeStamp());					
 					if(difference >= 24) {
 						
 						AdmissionBed admissionBed = new AdmissionBed();
 						admissionBed = admBed.get();
 						
-						admissionBed.setClosedAt(LocalDateTime.now());
+						admissionBed.setClosedAt(dayService.getTimeStamp());
 						admissionBed.setStatus("CLOSED");
 						admissionBed =  admissionBedRepository.save(admissionBed);
 						
@@ -312,7 +312,7 @@ public class UpdatePatient implements Runnable{
 						admissionBed.setWardBed(wardBed);
 						admissionBed.setPatientBill(wardBedBill);
 						admissionBed.setStatus("OPENED");
-						admissionBed.setOpenedAt(LocalDateTime.now());
+						admissionBed.setOpenedAt(dayService.getTimeStamp());
 						admissionBed = admissionBedRepository.save(admissionBed);
 						
 						
@@ -528,7 +528,7 @@ public class UpdatePatient implements Runnable{
 				
 				List<ConsultationTransfer> cts = consultationTransferRepository.findAllByStatus("PENDING");				
 				for(ConsultationTransfer ct : cts) {
-					long difference = ChronoUnit.HOURS.between(ct.getCreatedAt(), LocalDateTime.now());
+					long difference = ChronoUnit.HOURS.between(ct.getCreatedAt(), dayService.getTimeStamp());
 					if(difference >= 24) {
 						ct.setStatus("CANCELED");
 						consultationTransferRepository.save(ct);
@@ -538,7 +538,7 @@ public class UpdatePatient implements Runnable{
 				List<DischargePlan> dischargePlans = dischargePlanRepository.findAllByStatus("APPROVED");
 				for(DischargePlan dischargePlan : dischargePlans) {
 					if(dischargePlan.getApprovedAt() != null) {
-						long difference = ChronoUnit.HOURS.between(dischargePlan.getApprovedAt(), LocalDateTime.now());
+						long difference = ChronoUnit.HOURS.between(dischargePlan.getApprovedAt(), dayService.getTimeStamp());
 						if(difference >= 48) {
 							dischargePlan.setStatus("ARCHIVED");
 							dischargePlanRepository.save(dischargePlan);
@@ -552,7 +552,7 @@ public class UpdatePatient implements Runnable{
 				List<DeceasedNote> deceasedNotes = deceasedNoteRepository.findAllByStatus("APPROVED");
 				for(DeceasedNote deceasedNote : deceasedNotes) {
 					if(deceasedNote.getApprovedAt() != null) {
-						long difference = ChronoUnit.HOURS.between(deceasedNote.getApprovedAt(), LocalDateTime.now());
+						long difference = ChronoUnit.HOURS.between(deceasedNote.getApprovedAt(), dayService.getTimeStamp());
 						if(difference >= 48) {
 							deceasedNote.setStatus("ARCHIVED");
 							deceasedNoteRepository.save(deceasedNote);

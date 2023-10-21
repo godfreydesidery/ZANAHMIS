@@ -134,6 +134,8 @@ import { PatientInvoiceComponent } from './pages/payments/patient-invoice/patien
 import { PatientInsuranceInvoicesComponent } from './pages/payments/patient-insurance-invoices/patient-insurance-invoices.component';
 import { DischargeListComponent } from './pages/payments/discharge-list/discharge-list.component';
 import { DeceasedListComponent } from './pages/payments/deceased-list/deceased-list.component';
+import { ExternalMedicalProviderComponent } from './pages/admin/medical-units/external-medical-provider/external-medical-provider.component';
+import { ReferralListComponent } from './pages/payments/referral-list/referral-list.component';
 
 @NgModule({
   declarations: [

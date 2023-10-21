@@ -5,6 +5,7 @@ package com.orbix.api.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

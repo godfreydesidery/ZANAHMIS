@@ -184,18 +184,18 @@
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <div class="table-responsive">
-                                                <h4 class="text-primary"><b>Patient Details</b>   <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#edit-modal" *ngIf="type != 'DECEASED'" style="margin-bottom: 2mm;">Edit Patient</button></h4>
+                                                <h3 class="text-primary"><b>Patient Details</b>   <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#edit-modal" *ngIf="type != 'DECEASED'" style="margin-bottom: 2mm;">Edit Patient</button></h3>
                                                 <table class="table table-bordered table-small table-striped" style="text-align: center;">
                                                     <tbody>
-                                                        <tr><td>First Name</td><td>{{firstName}}</td></tr>
-                                                        <tr><td>Last Name</td><td>{{lastName}}</td></tr>
-                                                        <tr><td>Other Names</td><td>{{middleName}}</td></tr>
-                                                        <tr><td>File No</td><td>{{no}}</td></tr>
-                                                        <tr><td>Phone No</td><td>{{phoneNo}}</td></tr>
-                                                        <tr><td>Date of Birth</td><td>{{dateOfBirth | date}}</td></tr>  
-                                                        <tr><td>Gender</td><td>{{gender}}</td></tr>  
-                                                        <tr><td>Address</td><td>{{address}}</td></tr>
-                                                        <tr><td>Country Name</td><td>{{nationality}}</td></tr> 
+                                                        <tr><td><b>First Name</b></td><td>{{firstName}}</td></tr>
+                                                        <tr><td><b>Last Name</b></td><td>{{lastName}}</td></tr>
+                                                        <tr><td><b>Other Names</b></td><td>{{middleName}}</td></tr>
+                                                        <tr><td><b>File No</b></td><td>{{no}}</td></tr>
+                                                        <tr><td><b>Phone No</b></td><td>{{phoneNo}}</td></tr>
+                                                        <tr><td><b>Date of Birth</b></td><td>{{dateOfBirth | date}}</td></tr>  
+                                                        <tr><td><b>Gender</b></td><td>{{gender}}</td></tr>  
+                                                        <tr><td><b>Address</b></td><td>{{address}}</td></tr>
+                                                        <tr><td><b>Country Name</b></td><td>{{nationality}}</td></tr> 
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -272,8 +272,8 @@
                                                 </div>
                                             </div>
                                             <div *ngIf="consultations.length > 0 && id != null && type ==='OUTPATIENT'">
-                                                <div class="col-sm-12 alert alert-success" role="alert" style="text-align: center;">
-                                                    This patient has been assigned to the following clinic(s).
+                                                <div class="col-sm-12" style="text-align: center;">
+                                                    <h4 class="text-primary"><b>This patient has been assigned to the following clinic(s).</b></h4>
                                                 </div>
                                                 <div class="col-sm-12">
                                                     <table class="table table-bordered table-small table-striped">
@@ -293,17 +293,27 @@
                                                                 <td>
                                                                     <button class="btn btn-danger form-control" *ngIf="consultation.status === 'PENDING'" (click)="cancelConsultation(consultation)"><i class="glyphicon glyphicon-trash"></i> </button>
                                                                     <button class="btn btn-danger form-control" *ngIf="consultation.status === 'TRANSFERED'" (click)="freeConsultation(consultation)">Free Patient </button>
-                                                                    <span  *ngIf="consultation.status === 'IN-PROCESS'">No Action Required</span>
+                                                                    <!--<button class="btn btn-danger form-control" *ngIf="consultation.status === 'IN-PROCESS'">Free Patient </button>-->
+                                                                    <div *ngIf="consultation.status === 'IN-PROCESS'">
+                                                                        <div *ngIf="showFree === false">
+                                                                            <button class="btn btn-danger form-control" (click)="freeShow()">Free Patient </button>
+                                                                        </div>
+                                                                        <div *ngIf="showFree === true">
+                                                                            <div>To free this patient, enter File No</div>
+                                                                            <div><input type="text" class="form-control" [(ngModel)]="regNoToFree"></div>
+                                                                            <br>
+                                                                            <button class="btn btn-danger pull-right" *ngIf="regNoToFree != ''" (click)="freeInProcessConsultation(consultation)">Free</button>
+                                                                        </div>
+                                                                        
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
-
 
                                     <div class="row" *ngIf="type === 'OUTSIDER'">
                                         <div class=" col-sm-6">

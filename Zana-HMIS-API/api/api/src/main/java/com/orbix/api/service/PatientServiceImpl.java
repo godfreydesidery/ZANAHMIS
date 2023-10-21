@@ -1608,7 +1608,7 @@ public class PatientServiceImpl implements PatientService {
 		admissionBed.setWardBed(wb);
 		admissionBed.setPatientBill(wardBedBill);
 		admissionBed.setStatus("OPENED");
-		admissionBed.setOpenedAt(LocalDateTime.now());
+		admissionBed.setOpenedAt(dayService.getTimeStamp());
 		admissionBed = admissionBedRepository.save(admissionBed);
 		
 		p.setType("INPATIENT");

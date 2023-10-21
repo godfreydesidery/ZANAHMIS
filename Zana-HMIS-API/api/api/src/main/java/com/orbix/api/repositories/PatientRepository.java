@@ -40,4 +40,10 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 	 */
 	List<Patient> findAllByNoContainingOrFirstNameContainingOrMiddleNameContainingOrLastNameContainingOrPhoneNoContaining(
 			String value, String value2, String value3, String value4, String value5);
+
+	/**
+	 * @param no
+	 * @return
+	 */
+	Optional<Patient> findByNo(String no);
 }

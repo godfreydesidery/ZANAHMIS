@@ -12,29 +12,9 @@ import { ShowTimePipe } from 'src/app/pipes/show_time.pipe';
 import { ShowUserPipe } from 'src/app/pipes/show_user.pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 
-import { Time } from '@angular/common';
 import { HttpHeaders } from '@angular/common/http';
-import { OnInit } from '@angular/core';
 import { finalize } from 'rxjs';
-import { IClinicalNote } from 'src/app/domain/clinical-note';
 import { IAdmission } from 'src/app/domain/admission';
-import { IDiagnosisType } from 'src/app/domain/diagnosis-type';
-import { IFinalDiagnosis } from 'src/app/domain/final-diagnosis';
-import { IGeneralExamination } from 'src/app/domain/general-examination';
-import { ILabTest } from 'src/app/domain/lab-test';
-import { ILabTestType } from 'src/app/domain/lab-test-type';
-import { IMedicine } from 'src/app/domain/medicine';
-import { IPatient } from 'src/app/domain/patient';
-import { IPrescription } from 'src/app/domain/prescription';
-import { IProcedure } from 'src/app/domain/procedure';
-import { IProcedureType } from 'src/app/domain/procedure-type';
-import { IRadiology } from 'src/app/domain/radiology';
-import { IRadiologyType } from 'src/app/domain/radiology-type';
-import { IWard } from 'src/app/domain/ward';
-import { IWardBed } from 'src/app/domain/ward-bed';
-import { IWardCategory } from 'src/app/domain/ward-category';
-import { IWardType } from 'src/app/domain/ward-type';
-import { IWorkingDiagnosis } from 'src/app/domain/working-diagnosis';
 import { environment } from 'src/environments/environment';
 import { IDischargePlan } from 'src/app/domain/discharge-plan';
 
@@ -70,6 +50,8 @@ export class DischargePlanComponent {
   operationNote : string = ''
   icuAdmissionNote : string = ''
   generalRecommendation : string = ''
+
+  
 
 
   admissionId : any = null

@@ -187,7 +187,7 @@ public class InsurancePlanResource {
 					
 					plan.setCreatedby(userService.getUserId(request));
 					plan.setCreatedOn(dayService.getDayId());
-					plan.setCreatedAt(LocalDateTime.now());
+					plan.setCreatedAt(dayService.getTimeStamp());
 					
 					plan = labTestTypeInsurancePlanRepository.save(plan);
 				}else {
@@ -319,7 +319,7 @@ public class InsurancePlanResource {
 					
 					plan.setCreatedby(userService.getUserId(request));
 					plan.setCreatedOn(dayService.getDayId());
-					plan.setCreatedAt(LocalDateTime.now());
+					plan.setCreatedAt(dayService.getTimeStamp());
 					
 					plan = procedureTypeInsurancePlanRepository.save(plan);
 				}else {
@@ -450,7 +450,7 @@ public class InsurancePlanResource {
 					
 					plan.setCreatedby(userService.getUserId(request));
 					plan.setCreatedOn(dayService.getDayId());
-					plan.setCreatedAt(LocalDateTime.now());
+					plan.setCreatedAt(dayService.getTimeStamp());
 					
 					plan = radiologyTypeInsurancePlanRepository.save(plan);
 				}else {
@@ -581,7 +581,7 @@ public class InsurancePlanResource {
 					
 					plan.setCreatedby(userService.getUserId(request));
 					plan.setCreatedOn(dayService.getDayId());
-					plan.setCreatedAt(LocalDateTime.now());
+					plan.setCreatedAt(dayService.getTimeStamp());
 					
 					plan = medicineInsurancePlanRepository.save(plan);
 				}else {
@@ -711,7 +711,7 @@ public class InsurancePlanResource {
 					
 					plan.setCreatedby(userService.getUserId(request));
 					plan.setCreatedOn(dayService.getDayId());
-					plan.setCreatedAt(LocalDateTime.now());
+					plan.setCreatedAt(dayService.getTimeStamp());
 					
 					plan = consultationInsurancePlanRepository.save(plan);
 				}else {
@@ -844,7 +844,7 @@ public class InsurancePlanResource {
 					
 					plan.setCreatedby(userService.getUserId(request));
 					plan.setCreatedOn(dayService.getDayId());
-					plan.setCreatedAt(LocalDateTime.now());
+					plan.setCreatedAt(dayService.getTimeStamp());
 					
 					plan = registrationInsurancePlanRepository.save(plan);
 				}else {
@@ -967,7 +967,7 @@ public class InsurancePlanResource {
 					
 					plan.setCreatedby(userService.getUserId(request));
 					plan.setCreatedOn(dayService.getDayId());
-					plan.setCreatedAt(LocalDateTime.now());
+					plan.setCreatedAt(dayService.getTimeStamp());
 					
 					plan = wardTypeInsurancePlanRepository.save(plan);
 				}else {

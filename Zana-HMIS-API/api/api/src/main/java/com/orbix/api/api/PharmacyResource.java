@@ -137,7 +137,7 @@ public class PharmacyResource {
 		
 		pharmacyStockCard.setCreatedBy(userService.getUserId(request));
 		pharmacyStockCard.setCreatedOn(dayService.getDayId());
-		pharmacyStockCard.setCreatedAt(LocalDateTime.now());
+		pharmacyStockCard.setCreatedAt(dayService.getTimeStamp());
 		
 		pharmacyStockCardRepository.save(pharmacyStockCard);
 		

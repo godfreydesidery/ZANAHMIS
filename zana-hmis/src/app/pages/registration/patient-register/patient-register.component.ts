@@ -208,6 +208,8 @@ export class PatientRegisterComponent implements OnInit {
 
     this.patients = []
 
+    this.showFree = false
+
   }
 
   newPatientPrompt(){
@@ -892,6 +894,46 @@ export class PatientRegisterComponent implements OnInit {
 
   }
 
+  freeShow(){
+    this.showFree = true
+  }
+
+  showFree : boolean = false
+
+  regNoToFree : string = ''
+
+  async freeInProcessConsultation(consultation : IConsultation){
+    if(!window.confirm('Free patient from this consultation?')){
+      return
+    }
+    if(!window.confirm('Freing the patient will remove the patient from doctor list!. Continue freing the patient?')){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    
+    this.spinner.show()
+    await this.http.post<IPatient>(API_URL+'/patients/free_consultation?id='+consultation.id + '&no='+this.regNoToFree, null, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.msgBox.showSuccessMessage('Patient freed successifuly')
+        var temp : string = this.id
+        this.clear()
+        this.id = temp
+        this.getPatient(this.id)
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+    this.regNoToFree = ''
+  }
+
   async freeConsultation(consultation : IConsultation){
     if(!window.confirm('Free patient from this consultation?')){
       return
@@ -901,7 +943,7 @@ export class PatientRegisterComponent implements OnInit {
     }
     
     this.spinner.show()
-    await this.http.post<IPatient>(API_URL+'/patients/free_consultation?id='+consultation.id, null, options)
+    await this.http.post<IPatient>(API_URL+'/patients/free_consultation?id='+consultation.id + '&no='+this.regNoToFree, null, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -921,6 +963,7 @@ export class PatientRegisterComponent implements OnInit {
         this.msgBox.showErrorMessage(error['error'])
       }
     )
+    this.regNoToFree = ''
 
   }
 

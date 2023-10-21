@@ -37,6 +37,7 @@ import com.orbix.api.domain.ConsultationTransfer;
 import com.orbix.api.domain.DeceasedNote;
 import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.DischargePlan;
+import com.orbix.api.domain.ExternalMedicalProvider;
 import com.orbix.api.domain.FinalDiagnosis;
 import com.orbix.api.domain.GeneralExamination;
 import com.orbix.api.domain.InsurancePlan;
@@ -64,10 +65,12 @@ import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.ProcedureType;
 import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
+import com.orbix.api.domain.ReferralPlan;
 import com.orbix.api.domain.User;
 import com.orbix.api.domain.Visit;
 import com.orbix.api.domain.WardBed;
 import com.orbix.api.domain.WorkingDiagnosis;
+import com.orbix.api.exceptions.InvalidEntryException;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
 import com.orbix.api.exceptions.NotFoundException;
@@ -99,6 +102,7 @@ import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.DeceasedNoteRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
 import com.orbix.api.repositories.DischargePlanRepository;
+import com.orbix.api.repositories.ExternalMedicalProviderRepository;
 import com.orbix.api.repositories.FinalDiagnosisRepository;
 import com.orbix.api.repositories.GeneralExaminationRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
@@ -129,6 +133,7 @@ import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.ProcedureTypeRepository;
 import com.orbix.api.repositories.RadiologyRepository;
 import com.orbix.api.repositories.RadiologyTypeRepository;
+import com.orbix.api.repositories.ReferralPlanRepository;
 import com.orbix.api.repositories.VisitRepository;
 import com.orbix.api.repositories.WardBedRepository;
 import com.orbix.api.repositories.WorkingDiagnosisRepository;
@@ -200,6 +205,9 @@ public class PatientResource {
 	
 	private final DischargePlanRepository dischargePlanRepository;
 	private final DeceasedNoteRepository deceasedNoteRepository;
+	private final ReferralPlanRepository referralPlanRepository;
+	
+	private final ExternalMedicalProviderRepository externalMedicalProviderRepository;
 	
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(
@@ -579,10 +587,81 @@ public class PatientResource {
 	@PreAuthorize("hasAnyAuthority('PATIENT-ALL','PATIENT-CREATE','PATIENT-UPDATE')")
 	public ResponseEntity<Boolean>freeConsultation(
 			@RequestParam Long id, 
+			@RequestParam String no,
 			HttpServletRequest request){
 		Optional<Consultation> c = consultationRepository.findById(id);
 		if(!c.get().getStatus().equals("TRANSFERED")) {
-			throw new InvalidOperationException("Could not free, only a TRANSFERED consultation can be freed");
+			if(c.get().getStatus().equals("IN-PROCESS")) {
+				if(no.isEmpty()) {
+					throw new InvalidEntryException("To free the patient, please enter patients registration number");
+				}
+				Optional<Patient> p = patientRepository.findByNo(no);
+				if(p.isEmpty()) {
+					throw new NotFoundException("Invalid number");
+				}
+				if(p.get().getId() != c.get().getPatient().getId()) {
+					throw new NotFoundException("Invalid number");
+				}
+				c.get().setStatus("SIGNED-OUT");
+				consultationRepository.save(c.get());
+				List<LabTest> labTests = labTestRepository.findByConsultation(c.get());
+				for (LabTest labTest : labTests) {
+					PatientBill patientBill = labTest.getPatientBill();
+					if(patientBill.getStatus() != null) {
+						if(patientBill.getStatus().equals("UNPAID")) {
+							patientBill.setStatus("CANCELED");
+							patientBillRepository.save(patientBill);
+						}
+					}else {
+						patientBill.setStatus("CANCELED");
+						patientBillRepository.save(patientBill);
+					}
+					
+				}
+				List<Radiology> radiologies = radiologyRepository.findByConsultation(c.get());
+				for (Radiology radiology : radiologies) {
+					PatientBill patientBill = radiology.getPatientBill();
+					if(patientBill.getStatus() != null) {
+						if(patientBill.getStatus().equals("UNPAID")) {
+							patientBill.setStatus("CANCELED");
+							patientBillRepository.save(patientBill);
+						}
+					}else {
+						patientBill.setStatus("CANCELED");
+						patientBillRepository.save(patientBill);
+					}
+				}
+				List<Procedure> procedures = procedureRepository.findByConsultation(c.get());
+				for (Procedure procedure : procedures) {
+					PatientBill patientBill = procedure.getPatientBill();
+					if(patientBill.getStatus() != null) {
+						if(patientBill.getStatus().equals("UNPAID")) {
+							patientBill.setStatus("CANCELED");
+							patientBillRepository.save(patientBill);
+						}
+					}else {
+						patientBill.setStatus("CANCELED");
+						patientBillRepository.save(patientBill);
+					}
+				}
+				
+				List<Prescription> prescriptions = prescriptionRepository.findByConsultation(c.get());
+				for (Prescription prescription : prescriptions) {
+					PatientBill patientBill = prescription.getPatientBill();
+					if(patientBill.getStatus() != null) {
+						if(patientBill.getStatus().equals("UNPAID")) {
+							patientBill.setStatus("CANCELED");
+							patientBillRepository.save(patientBill);
+						}
+					}else {
+						patientBill.setStatus("CANCELED");
+						patientBillRepository.save(patientBill);
+					}
+				}
+				
+			}else {
+				throw new InvalidOperationException("Could not free, only a TRANSFERED or IN-PROCESS consultation can be freed");
+			}
 		}
 		/**
 		 * Cancel the consultation
@@ -2129,7 +2208,7 @@ public class PatientResource {
 		if(t.isEmpty()) {
 			throw new NotFoundException("Record not found");
 		}
-		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), dayService.getTimeStamp());
 		if(difference >= 24) {
 			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
 		}
@@ -2194,7 +2273,7 @@ public class PatientResource {
 			}
 		}
 		
-		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), dayService.getTimeStamp());
 		if(difference >= 24) {
 			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
 		}
@@ -2253,7 +2332,7 @@ public class PatientResource {
 		if(t.isEmpty()) {
 			throw new NotFoundException("Record not found");
 		}
-		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), dayService.getTimeStamp());
 		if(difference >= 24) {
 			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
 		}		
@@ -2271,7 +2350,7 @@ public class PatientResource {
 		if(t.isEmpty()) {
 			throw new NotFoundException("Record not found");
 		}
-		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), dayService.getTimeStamp());
 		if(difference >= 24) {
 			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
 		}		
@@ -2289,7 +2368,7 @@ public class PatientResource {
 		if(t.isEmpty()) {
 			throw new NotFoundException("Record not found");
 		}
-		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), dayService.getTimeStamp());
 		if(difference >= 24) {
 			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
 		}		
@@ -2307,7 +2386,7 @@ public class PatientResource {
 		if(t.isEmpty()) {
 			throw new NotFoundException("Record not found");
 		}
-		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), dayService.getTimeStamp());
 		if(difference >= 24) {
 			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
 		}		
@@ -2325,7 +2404,7 @@ public class PatientResource {
 		if(t.isEmpty()) {
 			throw new NotFoundException("Record not found");
 		}
-		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), LocalDateTime.now());
+		long difference = ChronoUnit.HOURS.between(t.get().getCreatedAt(), dayService.getTimeStamp());
 		if(difference >= 24) {
 			throw new InvalidOperationException("Could not delete record. only records not exceeding 24 hours can be deleted");
 		}		
@@ -2415,7 +2494,7 @@ public class PatientResource {
 			
 			pharmacyStockCard.setCreatedBy(userService.getUserId(request));
 			pharmacyStockCard.setCreatedOn(dayService.getDayId());
-			pharmacyStockCard.setCreatedAt(LocalDateTime.now());
+			pharmacyStockCard.setCreatedAt(dayService.getTimeStamp());
 			
 			pharmacyStockCardRepository.save(pharmacyStockCard);
 			
@@ -4184,13 +4263,309 @@ public class PatientResource {
 				p.get().setStatus("APPROVED");
 				p.get().setApprovedBy(p.get().getCreatedBy());
 				p.get().setApprovedOn(p.get().getCreatedOn());
-				p.get().setApprovedAt(LocalDateTime.now());	
+				p.get().setApprovedAt(dayService.getTimeStamp());	
 			}
 		}
 		
 		DischargePlan plan = dischargePlanRepository.save(p.get());
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_discharge_summary").toUriString());
+		
+		return ResponseEntity.created(uri).body(plan);
+	}
+	
+	@PostMapping("/patients/save_referral_plan")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<ReferralPlan>saveReferralPlan(
+
+			@RequestBody ReferralPlan plan, 
+			HttpServletRequest request){
+		Optional<ExternalMedicalProvider> prov = externalMedicalProviderRepository.findById(plan.getExternalMedicalProvider().getId());
+		if(prov.isEmpty()) {
+			throw new NotFoundException("Medical Provider not found");
+		}		
+		if(plan.getAdmission().getId() != null && plan.getConsultation().getId() != null) {
+			throw new InvalidOperationException("Could not process. Patient can be an inpatient or outpatient but not both");
+		}
+		if(plan.getAdmission().getId() == null && plan.getConsultation().getId() == null) {
+			throw new InvalidOperationException("Could not process. Patient should either be an inpatient or outpatient");
+		}
+		
+		Optional<Admission> a = null;
+		Optional<Consultation> c = null;
+		
+		if(plan.getAdmission().getId() != null) {
+			a = admissionRepository.findById(plan.getAdmission().getId());
+		}
+		
+		if(plan.getConsultation().getId() != null) {
+			c = consultationRepository.findById(plan.getConsultation().getId());
+		}
+		
+		if(a != null && c != null) {
+			if(a.isPresent() && c.isPresent()) {
+				throw new InvalidOperationException("Could not process. Patient can be an inpatient or outpatient but not both");
+			}
+		}
+		if(a != null && c != null) {
+			if(a.isEmpty() && c.isEmpty()) {
+				throw new InvalidOperationException("Could not process. Patient should either be an inpatient or outpatient");
+			}
+		}
+		
+		Admission admission = null;
+		Consultation consultation = null;
+		if(a != null) {
+			if(a.isPresent()) {
+				admission = a.get();
+			}
+		}
+		if(c != null) {
+			if(c.isPresent()) {
+				consultation = c.get();
+			}
+		}
+		
+		ReferralPlan referralPlan = new ReferralPlan();
+		Optional<ReferralPlan> p = null;
+		if(admission != null) {
+			p = referralPlanRepository.findByAdmissionAndStatus(admission, "PENDING");
+			if(p.isPresent()) {
+				referralPlan = p.get();
+			}else {
+				admission.setStatus("STOPPED");
+				admission = admissionRepository.save(admission);
+				referralPlan.setExternalMedicalProvider(prov.get());
+				referralPlan.setAdmission(admission);
+				referralPlan.setPatient(admission.getPatient());
+				referralPlan.setCreatedBy(userService.getUser(request).getId());
+				referralPlan.setCreatedOn(dayService.getDay().getId());
+				referralPlan.setCreatedAt(dayService.getTimeStamp());
+			}
+		}else if(consultation != null) {
+			p = referralPlanRepository.findByConsultationAndStatus(consultation, "PENDING");
+			if(p.isPresent()) {
+				referralPlan = p.get();
+			}else {
+				List<LabTest> labTests = labTestRepository.findAllByConsultation(consultation);
+				for(LabTest test : labTests) {
+					if(test.getPatientBill().getStatus() != null) {
+						if(test.getPatientBill().getStatus().equals("UNPAID")) {
+							throw new InvalidOperationException("Could not save. Patient have uncleared lab test bill(s)");
+						}
+					}
+				}
+				
+				List<Radiology> radiologies = radiologyRepository.findAllByConsultation(consultation);
+				for(Radiology radiology : radiologies) {
+					if(radiology.getPatientBill().getStatus() != null) {
+						if(radiology.getPatientBill().getStatus().equals("UNPAID")) {
+							throw new InvalidOperationException("Could not save. Patient have uncleared radiology test bill(s)");
+						}
+					}
+				}
+				
+				List<Procedure> procedures = procedureRepository.findAllByConsultation(consultation);
+				for(Procedure test : procedures) {
+					if(test.getPatientBill().getStatus() != null) {
+						if(test.getPatientBill().getStatus().equals("UNPAID")) {
+							throw new InvalidOperationException("Could not save. Patient have uncleared procedure bill(s)");
+						}
+					}
+				}
+				
+				List<Prescription> prescriptions = prescriptionRepository.findAllByConsultation(consultation);
+				for(Prescription test : prescriptions) {
+					if(test.getPatientBill().getStatus() != null) {
+						if(test.getPatientBill().getStatus().equals("UNPAID")) {
+							throw new InvalidOperationException("Could not save. Patient have uncleared medication bill(s)");
+						}
+					}
+				}
+				
+				consultation.setStatus("SIGNED-OUT");
+				consultation = consultationRepository.save(consultation);
+				
+				referralPlan.setConsultation(consultation);
+				referralPlan.setPatient(consultation.getPatient());
+				referralPlan.setExternalMedicalProvider(prov.get());
+				
+				referralPlan.setCreatedBy(userService.getUser(request).getId());
+				referralPlan.setCreatedOn(dayService.getDay().getId());
+				referralPlan.setCreatedAt(dayService.getTimeStamp());
+			}
+		}else {
+			throw new InvalidOperationException("Patient should either be inpatient or outpatient");
+		}
+		referralPlan.setReferringDiagnosis(plan.getReferringDiagnosis());
+		referralPlan.setExternalMedicalProvider(prov.get());
+		referralPlan.setHistory(plan.getHistory());
+		referralPlan.setInvestigation(plan.getInvestigation());
+		referralPlan.setManagement(plan.getManagement());
+		referralPlan.setOperationNote(plan.getOperationNote());
+		referralPlan.setIcuAdmissionNote(plan.getIcuAdmissionNote());
+		referralPlan.setGeneralRecommendation(plan.getGeneralRecommendation());
+		referralPlan.setStatus("PENDING");
+		
+		referralPlan = referralPlanRepository.save(referralPlan);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_referral_plan").toUriString());
+		return ResponseEntity.created(uri).body(referralPlan);
+	}
+	
+	@GetMapping("/patients/load_referral_plan")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<ReferralPlan>getReferralPlan(
+			@RequestParam(name = "admission_id") Long admissionId,
+			@RequestParam(name = "consultation_id") Long consultationId,
+			HttpServletRequest request){
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_referral_plan").toUriString());
+		Optional<Admission> a = admissionRepository.findById(admissionId);
+		Optional<Consultation> c = consultationRepository.findById(consultationId);
+		if(a.isPresent()) {
+			Optional<ReferralPlan> p = referralPlanRepository.findByAdmissionAndStatus(a.get(), "PENDING");
+			if(p.isEmpty()) {
+				return ResponseEntity.created(uri).body(null);
+			}
+			return ResponseEntity.created(uri).body(p.get());
+		}else if(c.isPresent()) {
+			Optional<ReferralPlan> p = referralPlanRepository.findByConsultationAndStatus(c.get(), "PENDING");
+			if(p.isEmpty()) {
+				return ResponseEntity.created(uri).body(null);
+			}
+			return ResponseEntity.created(uri).body(p.get());
+		}
+		return ResponseEntity.created(uri).body(null);
+	}
+	
+	@GetMapping("/patients/load_referral_list")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<List<ReferralPlan>>loadReferralList(
+			HttpServletRequest request){
+		
+		List<String> statuses = new ArrayList<>();
+		statuses.add("PENDING");
+		statuses.add("APPROVED");
+		
+		List<ReferralPlan> plans = referralPlanRepository.findAllByStatusIn(statuses);
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_referral_list").toUriString());
+		
+		return ResponseEntity.created(uri).body(plans);
+	}
+	
+	@GetMapping("/patients/get_referral_summary")
+	//@PreAuthorize("hasAnyAuthority('PATIENT-A','PATIENT-C','PATIENT-U')")
+	public ResponseEntity<ReferralPlan>getRefarralSummary(
+			@RequestParam(name = "referral_plan_id") Long referralPlanId,
+			HttpServletRequest request){
+		
+		Optional<ReferralPlan> p = referralPlanRepository.findById(referralPlanId);
+		if(p.isEmpty()) {
+			throw new NotFoundException("Referral plan not found");
+		}
+		
+		Admission adm = p.get().getAdmission();
+		Consultation con = p.get().getConsultation();
+		
+		if(adm != null) {
+			List<PatientInvoice> invoices = patientInvoiceRepository.findAllByAdmission(adm);
+			for(PatientInvoice invoice : invoices) {
+				List<PatientInvoiceDetail> details = invoice.getPatientInvoiceDetails();
+				for(PatientInvoiceDetail detail : details) {
+					if(detail.getPatientBill().getStatus() != null) {
+						if(detail.getPatientBill().getStatus().equals("UNPAID") || detail.getPatientBill().getStatus().equals("VERIFIED")) {
+							throw new InvalidOperationException("Could not get discharge summary. Patient have uncleared bills.");
+						}
+					}
+				}
+			}
+			
+			for(PatientInvoice invoice : invoices) {
+				invoice.setStatus("APPROVED");
+				patientInvoiceRepository.save(invoice);
+			}
+			
+			if(adm.getStatus() != null) {
+				if(adm.getStatus().equals("STOPPED")) {
+					adm.setStatus("SIGNED-OUT");
+					adm.setDischargedBy(p.get().getCreatedBy());
+					adm.setDischargedOn(p.get().getCreatedOn());
+					adm.setDischargedAt(p.get().getCreatedAt());
+					
+					adm = admissionRepository.save(adm);
+					
+					WardBed wardBed = adm.getWardBed(); 
+					wardBed.setStatus("EMPTY");
+					wardBedRepository.save(wardBed);
+					
+					Patient patient = adm.getPatient();
+					patient.setType("OUTPATIENT");
+					patientRepository.save(patient);
+					
+					p.get().setStatus("APPROVED");
+					p.get().setApprovedBy(p.get().getCreatedBy());
+					p.get().setApprovedOn(p.get().getCreatedOn());
+					p.get().setApprovedAt(dayService.getTimeStamp());	
+				}
+			}
+		}else if(con != null) {
+			List<LabTest> labTests = labTestRepository.findAllByConsultation(con);
+			for(LabTest test : labTests) {
+				if(test.getPatientBill().getStatus() != null) {
+					if(test.getPatientBill().getStatus().equals("UNPAID")) {
+						throw new InvalidOperationException("Could not save. Patient have uncleared lab test bill(s)");
+					}
+				}
+			}
+			
+			List<Radiology> radiologies = radiologyRepository.findAllByConsultation(con);
+			for(Radiology radiology : radiologies) {
+				if(radiology.getPatientBill().getStatus() != null) {
+					if(radiology.getPatientBill().getStatus().equals("UNPAID")) {
+						throw new InvalidOperationException("Could not save. Patient have uncleared radiology test bill(s)");
+					}
+				}
+			}
+			
+			List<Procedure> procedures = procedureRepository.findAllByConsultation(con);
+			for(Procedure test : procedures) {
+				if(test.getPatientBill().getStatus() != null) {
+					if(test.getPatientBill().getStatus().equals("UNPAID")) {
+						throw new InvalidOperationException("Could not save. Patient have uncleared procedure bill(s)");
+					}
+				}
+			}
+			
+			List<Prescription> prescriptions = prescriptionRepository.findAllByConsultation(con);
+			for(Prescription test : prescriptions) {
+				if(test.getPatientBill().getStatus() != null) {
+					if(test.getPatientBill().getStatus().equals("UNPAID")) {
+						throw new InvalidOperationException("Could not save. Patient have uncleared medication bill(s)");
+					}
+				}
+			}
+			
+			con.setStatus("SIGNED-OUT");
+			con = consultationRepository.save(con);
+			
+			Patient patient = con.getPatient();
+			patient.setType("OUTPATIENT");
+			patientRepository.save(patient);
+			
+			p.get().setStatus("APPROVED");
+			
+			p.get().setApprovedBy(p.get().getCreatedBy());
+			p.get().setApprovedOn(p.get().getCreatedOn());
+			p.get().setApprovedAt(dayService.getTimeStamp());
+		}else {
+			throw new InvalidOperationException("Patient should either be inpatient or outpatient");
+		}
+		
+		ReferralPlan plan = referralPlanRepository.save(p.get());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/get_referral_summary").toUriString());
 		
 		return ResponseEntity.created(uri).body(plan);
 	}
@@ -4409,7 +4784,7 @@ public class PatientResource {
 					n.get().setStatus("APPROVED");
 					n.get().setApprovedBy(n.get().getCreatedBy());
 					n.get().setApprovedOn(n.get().getCreatedOn());
-					n.get().setApprovedAt(LocalDateTime.now());	
+					n.get().setApprovedAt(dayService.getTimeStamp());	
 				}
 			}
 		}
@@ -4428,7 +4803,7 @@ public class PatientResource {
 					n.get().setStatus("APPROVED");
 					n.get().setApprovedBy(n.get().getCreatedBy());
 					n.get().setApprovedOn(n.get().getCreatedOn());
-					n.get().setApprovedAt(LocalDateTime.now());	
+					n.get().setApprovedAt(dayService.getTimeStamp());	
 				}
 			}
 		}

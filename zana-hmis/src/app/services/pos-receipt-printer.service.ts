@@ -92,6 +92,7 @@ export class PosReceiptPrinterService {
                 [{text : patient?.no, fontSize : 8}],
                 [{text : patient?.address, fontSize : 8}],
                 [{text : patient?.phoneNo, fontSize : 8}],
+                [{text : '________________________________',alignment : 'center',}],
               ]
             }
           },  

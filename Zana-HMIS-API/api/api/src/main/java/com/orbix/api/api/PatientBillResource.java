@@ -151,7 +151,7 @@ public class PatientBillResource {
 		
 		payment.setCreatedby(userService.getUser(request).getId());
 		payment.setCreatedOn(dayService.getDay().getId());
-		payment.setCreatedAt(LocalDateTime.now());
+		payment.setCreatedAt(dayService.getTimeStamp());
 		
 		payment.setStatus("RECEIVED");
 		payment = patientPaymentRepository.save(payment);
@@ -163,7 +163,7 @@ public class PatientBillResource {
 			
 			registrationBill.setCreatedby(userService.getUser(request).getId());
 			registrationBill.setCreatedOn(dayService.getDay().getId());
-			registrationBill.setCreatedAt(LocalDateTime.now());
+			registrationBill.setCreatedAt(dayService.getTimeStamp());
 			
 			registrationBill = patientBillRepository.save(registrationBill);
 			
@@ -175,7 +175,7 @@ public class PatientBillResource {
 			
 			pd.setCreatedby(userService.getUser(request).getId());
 			pd.setCreatedOn(dayService.getDay().getId());
-			pd.setCreatedAt(LocalDateTime.now());
+			pd.setCreatedAt(dayService.getTimeStamp());
 			
 			patientPaymentDetailRepository.save(pd);			
 		}
@@ -188,7 +188,7 @@ public class PatientBillResource {
 			
 			bill.setCreatedby(userService.getUser(request).getId());
 			bill.setCreatedOn(dayService.getDay().getId());
-			bill.setCreatedAt(LocalDateTime.now());
+			bill.setCreatedAt(dayService.getTimeStamp());
 			
 			patientBillRepository.save(bill);
 			PatientPaymentDetail pd = new PatientPaymentDetail();
@@ -199,7 +199,7 @@ public class PatientBillResource {
 			
 			pd.setCreatedby(userService.getUser(request).getId());
 			pd.setCreatedOn(dayService.getDay().getId());
-			pd.setCreatedAt(LocalDateTime.now());
+			pd.setCreatedAt(dayService.getTimeStamp());
 			
 			patientPaymentDetailRepository.save(pd);	
 			amount = amount + bill.getAmount();
@@ -226,7 +226,7 @@ public class PatientBillResource {
 		
 		payment.setCreatedby(userService.getUser(request).getId());
 		payment.setCreatedOn(dayService.getDay().getId());
-		payment.setCreatedAt(LocalDateTime.now());
+		payment.setCreatedAt(dayService.getTimeStamp());
 		payment.setStatus("RECEIVED");
 		
 		payment = patientPaymentRepository.save(payment);
@@ -253,7 +253,7 @@ public class PatientBillResource {
 				
 				pd.setCreatedby(userService.getUser(request).getId());
 				pd.setCreatedOn(dayService.getDay().getId());
-				pd.setCreatedAt(LocalDateTime.now());
+				pd.setCreatedAt(dayService.getTimeStamp());
 				
 				patientPaymentDetailRepository.save(pd);								
 				amount = amount + b.get().getAmount();

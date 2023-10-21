@@ -3,10 +3,13 @@
  */
 package com.orbix.api.service;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -81,7 +84,7 @@ public class DayServiceImpl implements DayService{
 	
 	@Override
 	public LocalDateTime getTimeStamp() {
-		return LocalDateTime.now();
+		return LocalDateTime.now().plusHours(3);
 	}
 
 }

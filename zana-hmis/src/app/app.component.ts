@@ -266,7 +266,8 @@ export class AppComponent {
         {path : 'doctor-cracking', loadComponent : () => import('./pages/doctor/doctor-cracking/doctor-cracking.component').then(m => m.DoctorCrackingComponent), canActivate: [AuthGuard]},
         {path : 'list-from-reception', loadComponent : () => import('./pages/doctor/list-from-reception/list-from-reception.component').then(m => m.ListFromReceptionComponent), canActivate: [AuthGuard]},
         {path : 'discharge-plan', loadComponent : () => import('./pages/doctor/discharge-plan/discharge-plan.component').then(m => m.DischargePlanComponent), canActivate: [AuthGuard]},
-        {path : 'deceased-note', loadComponent : () => import('./pages/doctor/deceased-note/deceased-note.component').then(m => m.DeceasedNoteComponent), canActivate: [AuthGuard]}
+        {path : 'deceased-note', loadComponent : () => import('./pages/doctor/deceased-note/deceased-note.component').then(m => m.DeceasedNoteComponent), canActivate: [AuthGuard]},
+        {path : 'referral-plan', loadComponent : () => import('./pages/doctor/referral-plan/referral-plan.component').then(m => m.ReferralPlanComponent), canActivate: [AuthGuard]}
         
       )
     }
@@ -324,6 +325,7 @@ export class AppComponent {
         {path : 'patient-invoice', loadComponent : () => import('./pages/payments/patient-invoice/patient-invoice.component').then(m => m.PatientInvoiceComponent), canActivate: [AuthGuard]},
         {path : 'discharge-list', loadComponent : () => import('./pages/payments/discharge-list/discharge-list.component').then(m => m.DischargeListComponent), canActivate: [AuthGuard]},
         {path : 'deceased-list', loadComponent : () => import('./pages/payments/deceased-list/deceased-list.component').then(m => m.DeceasedListComponent), canActivate: [AuthGuard]},
+        {path : 'referral-list', loadComponent : () => import('./pages/payments/referral-list/referral-list.component').then(m => m.ReferralListComponent), canActivate: [AuthGuard]},
 
         /*{path : 'registration-prices', loadComponent : () => import('./pages/payments/pri').then(m => m), canActivate: [AuthGuard]},
         {path : 'consultation-prices', loadComponent : () => import('./pages').then(m => m), canActivate: [AuthGuard]},
@@ -395,6 +397,7 @@ export class AppComponent {
         {path : 'doctor-to-laboratory-report', loadComponent : () => import('./pages/admin/reports/doctor-to-laboratory-report/doctor-to-laboratory-report.component').then(m => m.DoctorToLaboratoryReportComponent), canActivate: [AuthGuard]},
 
         {path : 'supplier-register', loadComponent : () => import('./pages/admin/stakeholders/supplier-register/supplier-register.component').then(m => m.SupplierRegisterComponent), canActivate: [AuthGuard]},
+        {path : 'external-medical-provider', loadComponent : () => import('./pages/admin/medical-units/external-medical-provider/external-medical-provider.component').then(m => m.ExternalMedicalProviderComponent), canActivate: [AuthGuard]},
       )      
     }
     loadReportModule(){
