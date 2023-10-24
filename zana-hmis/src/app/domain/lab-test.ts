@@ -10,6 +10,9 @@ import { IDiagnosisType } from "./diagnosis-type"
 import { IInsurancePlan } from "./insurance-plan"
 
 export interface ILabTest {
+
+    sn : number
+
     id      : any
     result  : string
     report  : string 
@@ -18,6 +21,9 @@ export interface ILabTest {
     level   : string
     unit    : string
     status  : string
+
+    membershipNo : string
+    paymentType : string
 
     patient         : IPatient
     consultation    : IConsultation

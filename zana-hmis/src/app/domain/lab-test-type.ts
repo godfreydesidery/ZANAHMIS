@@ -16,4 +16,9 @@ export interface ILabTestType {
     createdBy       : IUser
     createdOn       : IDay
     createdAt       : Date
+
+
+    //auxiliary attributes, to use in reports, backend specifications are yet to be established
+    qty : number
+    sn : number
 }

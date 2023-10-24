@@ -122,35 +122,14 @@ public class ReportResource {
 		return ResponseEntity.ok().body(procedures);
 	}
 	
-	@PostMapping("/reports/lab_test_type_report")
-	public ResponseEntity<List<LabTestTypeReport>>getLabTestTypeReport(
+	@PostMapping("/reports/lab_test_report")
+	public ResponseEntity<List<LabTest>>getLabTestReport(
 			@RequestBody LabTestTypeReportArgs args,
 			HttpServletRequest request){
 		
 		List<LabTest> labTests = labTestRepository.findAllByCreatedAtBetween(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
 		
-		List<LabTestType> labTestTypes = labTestTypeRepository.findAll();
-		
-		List<LabTestTypeReport> labTestTypeReport = new ArrayList<>();
-		
-		for(LabTestType testType : labTestTypes) {
-			
-		}
-		
-		for(LabTest test : labTests) {
-			boolean present = false;
-			for(LabTestTypeReport detail : labTestTypeReport) {
-				if(test.getLabTestType().getId() == detail.getLabTestType().getId()){
-					detail.setQty(detail.getQty() + test.getPatientBill().getQty());
-					present = true;
-				}
-			}
-			if(present == false) {
-				//labTest
-			}
-		}
-		
-		return ResponseEntity.ok().body(labTestTypeReport);
+		return ResponseEntity.ok().body(labTests);
 	}
 	
 	@PostMapping("/reports/doctor_to_radiology_report")

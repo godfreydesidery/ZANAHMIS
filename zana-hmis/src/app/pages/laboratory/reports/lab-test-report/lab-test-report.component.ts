@@ -14,10 +14,33 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AgePipe } from 'src/app/pipes/age.pipe';
 import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+
+import { HttpHeaders } from '@angular/common/http';
+import { OnInit } from '@angular/core';
+import { finalize } from 'rxjs';
+import { IPatient } from 'src/app/domain/patient';
+import { IPatientBill } from 'src/app/domain/patient-bill';
+import { ReceiptItem } from 'src/app/domain/receipt-item';
+import { ShowDateTimePipe } from 'src/app/pipes/date_time.pipe';
+import { ShowTimePipe } from 'src/app/pipes/show_time.pipe';
+import { ShowUserPipe } from 'src/app/pipes/show_user.pipe';
+import { PosReceiptPrinterService } from 'src/app/services/pos-receipt-printer.service';
+
+import { HttpClientModule } from '@angular/common/http';
+import { NgxSpinnerModule } from 'ngx-spinner';
+
+
+
+import { IProcedure } from 'src/app/domain/procedure';
+import { ShowDateOnlyPipe } from 'src/app/pipes/date.pipe';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from 'src/app/app-routing.module';
+import { ILabTest } from 'src/app/domain/lab-test';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
 const API_URL = environment.apiUrl;
+
 
 @Component({
   selector: 'app-lab-test-report',
@@ -36,12 +59,7 @@ const API_URL = environment.apiUrl;
 export class LabTestReportComponent {
 
   
-  logo!    : any
-  documentHeader! : any
   address  : any 
-
-  from! : Date
-  to!   : Date
 
 
   report : string[] = []
@@ -49,13 +67,11 @@ export class LabTestReportComponent {
   filterRecords : string = ''
 
   constructor(
-    //private shortcut : ShortCutHandlerService,
-              private auth : AuthService,
-              private http : HttpClient,
-              private modalService: NgbModal,
-              private spinner: NgxSpinnerService,
-              private msgBox : MsgBoxService,
-              private data : DataService,
+    private auth : AuthService,
+    private http : HttpClient,
+    private spinner: NgxSpinnerService,
+    private msgBox : MsgBoxService,
+    private data : DataService,
               
   ) {(window as any).pdfMake.vfs = pdfFonts.pdfMake.vfs;}
 
@@ -64,37 +80,109 @@ export class LabTestReportComponent {
     
   }
 
+  from! : Date
+  to! : Date
+  logo!    : any
+  documentHeader! : any
+  labTests : ILabTest[] = []
+  async loadLabTestReport(from : Date, to : Date){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    if(from === undefined || to === undefined){
+      this.msgBox.showErrorMessage('Could not run. Please select date range')
+      return
+    }
+
+    if(from > to){
+      this.msgBox.showErrorMessage('Could not run. Start date must be earlier or equal to end date')
+      return
+    }
+
+    var args = {
+      from : from,
+      to : to
+    }
+
+    this.spinner.show()
+    await this.http.post<ILabTest[]>(API_URL+'/reports/lab_test_report', args, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.labTests = data!
+        var sn = 1
+        this.labTests.forEach(element => {
+          element.sn = sn
+          sn = sn + 1
+        })
+      }
+    )
+    .catch(
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+
+  clear(){
+    this.labTests = []
+  }
 
 
-  exportToPdf = async () => {
+
+  print = async () => {
+
+    if(this.labTests.length === 0){
+      this.msgBox.showErrorMessage('No data to export')
+      return
+    }
+
     this.documentHeader = await this.data.getDocumentHeader()
-    var header = ''
-    var footer = ''
-    var title  = 'Lab Tests Report'
-    var logo : any = ''
+    var title  = 'Lab Test Report'
     var total : number = 0
-    var discount : number = 0
-    var tax : number = 0
+
+    var report = [
+      [
+        {text : 'SN', fontSize : 6, fillColor : '#bdc6c7'},
+        {text : 'Patient Name', fontSize : 6, fillColor : '#bdc6c7'},
+        {text : 'Age', fontSize : 6, fillColor : '#bdc6c7'},
+        {text : 'File No', fontSize : 6, fillColor : '#bdc6c7'},
+        {text : 'Gender', fontSize : 6, fillColor : '#bdc6c7'},
+        {text : 'Card No', fontSize : 6, fillColor : '#bdc6c7'},
+        {text : 'Phone No', fontSize : 6, fillColor : '#bdc6c7'},
+        {text : 'Payment Mode', fontSize : 6, fillColor : '#bdc6c7'},
+        {text : 'Results', fontSize : 6, fillColor : '#bdc6c7'},
+
+      ]
+    ]  
+
+    var sn : number = 1
+
+    var total = 0
+
     
-    /*this.report.forEach((element) => {
-      total = total + element.amount
-      discount = discount + element.discount
-      tax = tax + element.tax
+    
+    this.labTests.forEach((element) => {
       var detail = [
-        {text : formatDate(element.date, 'yyyy-MM-dd', 'en-US'), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element.amount.toLocaleString('en-US', { minimumFractionDigits: 2 }), fontSize : 9, alignment : 'right', fillColor : '#ffffff'},
-        {text : element.discount.toLocaleString('en-US', { minimumFractionDigits: 2 }), fontSize : 9, alignment : 'right', fillColor : '#ffffff'},  
-        {text : element.tax.toLocaleString('en-US', { minimumFractionDigits: 2 }), fontSize : 9, alignment : 'right', fillColor : '#ffffff'},
+        {text : element.sn.toString(), fontSize : 6, fillColor : '#ffffff'}, 
+        {text : element.patient.firstName + ' ' +element.patient.middleName + ' ' + element.patient.lastName, fontSize : 6, fillColor : '#ffffff'},
+        {text : new AgePipe().transform(element.patient.dateOfBirth), fontSize : 6, fillColor : '#ffffff'},
+        {text : element.patient.no, fontSize : 6, fillColor : '#ffffff'},
+        {text : element.patient.gender, fontSize : 6, fillColor : '#ffffff'},
+        {text : element.membershipNo, fontSize : 6, fillColor : '#ffffff'},
+        {text : element.patient.phoneNo, fontSize : 6, fillColor : '#ffffff'},
+        {text : element.paymentType, fontSize : 6, fillColor : '#ffffff'},
+        {text : element.result, fontSize : 6, fillColor : '#ffffff'},
       ]
       report.push(detail)
-    })*/
-    /*var detailSummary = [
-      {text : 'Total', fontSize : 9, fillColor : '#CCCCCC'}, 
-      {text : total.toLocaleString('en-US', { minimumFractionDigits: 2 }), fontSize : 9, alignment : 'right', fillColor : '#CCCCCC'},
-      {text : discount.toLocaleString('en-US', { minimumFractionDigits: 2 }), fontSize : 9, alignment : 'right', fillColor : '#CCCCCC'},  
-      {text : tax.toLocaleString('en-US', { minimumFractionDigits: 2 }), fontSize : 9, alignment : 'right', fillColor : '#CCCCCC'},        
-    ]
-    report.push(detailSummary)*/
+    })
+
+    
+   
     const docDefinition : any = {
       header: '',
       footer: function (currentPage: { toString: () => string; }, pageCount: string) {
@@ -111,19 +199,28 @@ export class LabTestReportComponent {
           '  ',
           {text : title, fontSize : 14, bold : true, alignment : 'center'},
           this.data.getHorizontalLine(),
+          ' ',
           {
             layout : 'noBorders',
             table : {
               widths : [80, 80],
               body : [
                 [
-                  {text : 'From: 2023-08-30', fontSize : 9}, 
-                  {text : 'To: 2023-08-30', fontSize : 9} 
+                  {text : 'From: '+this.from.toString(), fontSize : 9}, 
+                  {text : 'To: '+this.to.toString(), fontSize : 9} 
                 ],
               ]
             },
           },
           '  ',
+          {
+            //layout : 'noBorders',
+            table : {
+                headerRows : 1,
+                widths : [20, 90, 80, 50, 20, 40, 40, 40, 50],
+                body : report
+            }
+        }, 
       ]     
     };
     pdfMake.createPdf(docDefinition).print()
@@ -141,7 +238,7 @@ export class LabTestReportComponent {
       
     ];
     this.spinner.show()
-    this.report.forEach(element => {
+    this.report.forEach(() => {
       worksheet.addRow(
         {
           DATE      : formatDate('', 'yyyy-MM-dd', 'en-US'),
