@@ -36,6 +36,7 @@ import { ShowDateOnlyPipe } from 'src/app/pipes/date.pipe';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { ILabTest } from 'src/app/domain/lab-test';
+import { ILabTestType } from 'src/app/domain/lab-test-type';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -94,6 +95,10 @@ export class LabTestReportComponent {
       this.msgBox.showErrorMessage('Could not run. Please select date range')
       return
     }
+    if(this.labTestTypeId === null){
+      this.msgBox.showErrorMessage('Could not run. Please select lab test')
+      return
+    }
 
     if(from > to){
       this.msgBox.showErrorMessage('Could not run. Start date must be earlier or equal to end date')
@@ -102,7 +107,8 @@ export class LabTestReportComponent {
 
     var args = {
       from : from,
-      to : to
+      to : to,
+      labTestType : {id : this.labTestTypeId}
     }
 
     this.spinner.show()
@@ -132,12 +138,63 @@ export class LabTestReportComponent {
     this.labTests = []
   }
 
+  labTestTypeId : any =  null
+  labTestTypeCode : string = ''
+  labTestTypeName : string = ''
+  labTestTypes : ILabTestType[] = []
+  async loadLabTestTypesLike(value : string){
+    this.labTestTypes = []
+    if(value.length < 2){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.labTestTypes = []
+    await this.http.get<ILabTestType[]>(API_URL+'/lab_test_types/load_lab_test_types_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.labTestTypes = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+      }
+    )
+  }
+  async getLabTestType(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.labTestTypes = []
+    this.spinner.show()
+    await this.http.get<ILabTestType>(API_URL+'/lab_test_types/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.labTestTypeId    = data?.id
+        this.labTestTypeCode  = data!.code
+        this.labTestTypeName  = data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error['error'])
+        console.log(error)
+      }
+    )
+  }
+
 
 
   print = async () => {
 
     if(this.labTests.length === 0){
-      this.msgBox.showErrorMessage('No data to export')
+      this.msgBox.showErrorMessage('No data to print')
       return
     }
 
@@ -199,6 +256,8 @@ export class LabTestReportComponent {
           '  ',
           {text : title, fontSize : 14, bold : true, alignment : 'center'},
           this.data.getHorizontalLine(),
+          ' ',
+          'Test: ' + this.labTestTypeName,
           ' ',
           {
             layout : 'noBorders',

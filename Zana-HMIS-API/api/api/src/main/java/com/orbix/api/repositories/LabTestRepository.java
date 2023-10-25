@@ -141,6 +141,14 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
 	 */
 	List<LabTest> findByNonConsultation(NonConsultation c);
 
-	
+	/**
+	 * @param labTestType
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @return
+	 */
+	List<LabTest> findAllByLabTestTypeAndCreatedAtBetween(LabTestType labTestType, LocalDateTime atStartOfDay,
+			LocalDateTime plusDays);
+
 	
 }

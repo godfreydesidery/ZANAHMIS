@@ -98,44 +98,44 @@ public class LabTest {
     private InsurancePlan insurancePlan;
 	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
-    private Long createdby;
+    private Long createdBy;
 	@Column(name = "created_on_day_id", nullable = false , updatable = false)
     private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
 	
 	@Column(name = "ordered_by_user_id", nullable = false , updatable = false)
-    private Long orderedby;
+    private Long orderedBy;
 	@Column(name = "ordered_on_day_id", nullable = false , updatable = false)
     private Long orderedOn;
 	private LocalDateTime orderedAt = LocalDateTime.now();
 	
 	@Column(name = "accepted_by_user_id", nullable = true , updatable = true)
-    private Long acceptedby;
+    private Long acceptedBy;
 	@Column(name = "accepted_on_day_id", nullable = true , updatable = true)
     private Long acceptedOn;
 	private LocalDateTime acceptedAt;
 	
 	@Column(name = "held_by_user_id", nullable = true , updatable = true)
-    private Long heldby;
+    private Long heldBy;
 	@Column(name = "held_on_day_id", nullable = true , updatable = true)
     private Long heldOn;
 	private LocalDateTime heldAt;
 	
 	@Column(name = "rejected_by_user_id", nullable = true , updatable = true)
-    private Long rejectedby;
+    private Long rejectedBy;
 	@Column(name = "rejected_on_day_id", nullable = true , updatable = true)
     private Long rejectedOn;
 	private LocalDateTime rejectedAt;
 	private String rejectComment;
 	
 	@Column(name = "collected_by_user_id", nullable = true , updatable = true)
-    private Long collectedby;
+    private Long collectedBy;
 	@Column(name = "collected_on_day_id", nullable = true , updatable = true)
     private Long collectedOn;
 	private LocalDateTime collectedAt;	
 	
 	@Column(name = "verified_by_user_id", nullable = true , updatable = true)
-    private Long verifiedby;
+    private Long verifiedBy;
 	@Column(name = "verified_on_day_id", nullable = true , updatable = true)
     private Long verifiedOn;
 	private LocalDateTime verifiedAt;

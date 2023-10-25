@@ -1245,11 +1245,11 @@ public class PatientResource {
 		}
 		
 		if(labTest.getId() == null) {
-			labTest.setCreatedby(userService.getUser(request).getId());
+			labTest.setCreatedBy(userService.getUser(request).getId());
 			labTest.setCreatedOn(dayService.getDay().getId());
 			labTest.setCreatedAt(dayService.getTimeStamp());
 			
-			labTest.setOrderedby(userService.getUser(request).getId());
+			labTest.setOrderedBy(userService.getUser(request).getId());
 			labTest.setOrderedOn(dayService.getDay().getId());
 			labTest.setOrderedAt(dayService.getTimeStamp());
 		}
@@ -1557,39 +1557,39 @@ public class PatientResource {
 			model.setStatus(l.getStatus());
 
 			if(l.getCreatedAt() != null) {
-				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedBy()).getNickname());
 			}else {
 				model.setCreated("");
 			}
 			if(l.getOrderedAt() != null) {
-				model.setOrdered(l.getOrderedAt().toString()+" | "+userService.getUserById(l.getOrderedby()).getNickname());
+				model.setOrdered(l.getOrderedAt().toString()+" | "+userService.getUserById(l.getOrderedBy()).getNickname());
 			}else {
 				model.setOrdered("");
 			}
 			if(l.getRejectedAt() != null) {
-				model.setRejected(l.getRejectedAt().toString()+" | "+userService.getUserById(l.getRejectedby()).getNickname() + " | "+l.getRejectComment());
+				model.setRejected(l.getRejectedAt().toString()+" | "+userService.getUserById(l.getRejectedBy()).getNickname() + " | "+l.getRejectComment());
 			}else {
 				model.setRejected("");
 			}
 			model.setRejectComment(l.getRejectComment());			
 			if(l.getAcceptedAt() != null) {
-				model.setAccepted(l.getAcceptedAt().toString()+" | "+userService.getUserById(l.getAcceptedby()).getNickname());
+				model.setAccepted(l.getAcceptedAt().toString()+" | "+userService.getUserById(l.getAcceptedBy()).getNickname());
 			}else {
 				model.setAccepted("");
 			}
 			if(l.getHeldAt() != null) {
-				model.setHeld(l.getHeldAt().toString()+" | "+userService.getUserById(l.getHeldby()).getNickname());
+				model.setHeld(l.getHeldAt().toString()+" | "+userService.getUserById(l.getHeldBy()).getNickname());
 			}else {
 				model.setHeld("");
 			}
 			if(l.getCollectedAt() != null) {
-				model.setCollected(l.getCollectedAt().toString()+" | "+userService.getUserById(l.getCollectedby()).getNickname());
+				model.setCollected(l.getCollectedAt().toString()+" | "+userService.getUserById(l.getCollectedBy()).getNickname());
 			}else {
 				model.setCollected("");
 			}
 			
 			if(l.getVerifiedAt() != null) {
-				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedby()).getNickname());
+				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedBy()).getNickname());
 			}else {
 				model.setVerified("");
 			}
@@ -2942,33 +2942,33 @@ public class PatientResource {
 				t.setStatus(test.getStatus());
 				
 				if(test.getCreatedAt() != null) {
-					t.setCreated(test.getCreatedAt().toString()+" | "+userService.getUserById(test.getCreatedby()).getNickname());
+					t.setCreated(test.getCreatedAt().toString()+" | "+userService.getUserById(test.getCreatedBy()).getNickname());
 				}else {
 					t.setCreated("");
 				}
 				if(test.getOrderedAt() != null) {
-					t.setOrdered(test.getOrderedAt().toString()+" | "+userService.getUserById(test.getOrderedby()).getNickname());
+					t.setOrdered(test.getOrderedAt().toString()+" | "+userService.getUserById(test.getOrderedBy()).getNickname());
 				}else {
 					t.setOrdered("");
 				}
 				if(test.getRejectedAt() != null) {
-					t.setRejected(test.getRejectedAt().toString()+" | "+userService.getUserById(test.getRejectedby()).getNickname() + " | "+test.getRejectComment());
+					t.setRejected(test.getRejectedAt().toString()+" | "+userService.getUserById(test.getRejectedBy()).getNickname() + " | "+test.getRejectComment());
 				}else {
 					t.setRejected("");
 				}
 				t.setRejectComment(test.getRejectComment());			
 				if(test.getAcceptedAt() != null) {
-					t.setAccepted(test.getAcceptedAt().toString()+" | "+userService.getUserById(test.getAcceptedby()).getNickname());
+					t.setAccepted(test.getAcceptedAt().toString()+" | "+userService.getUserById(test.getAcceptedBy()).getNickname());
 				}else {
 					t.setAccepted("");
 				}
 				if(test.getHeldAt() != null) {
-					t.setHeld(test.getHeldAt().toString()+" | "+userService.getUserById(test.getHeldby()).getNickname());
+					t.setHeld(test.getHeldAt().toString()+" | "+userService.getUserById(test.getHeldBy()).getNickname());
 				}else {
 					t.setHeld("");
 				}		
 				if(test.getVerifiedAt() != null) {
-					t.setVerified(test.getVerifiedAt().toString()+" | "+userService.getUserById(test.getVerifiedby()).getNickname());
+					t.setVerified(test.getVerifiedAt().toString()+" | "+userService.getUserById(test.getVerifiedBy()).getNickname());
 				}else {
 					t.setVerified("");
 				}				
@@ -2991,11 +2991,11 @@ public class PatientResource {
 			throw new InvalidOperationException("Could not accept, only PENDING or REJECTED tests can be accepted");
 		}
 		
-		t.get().setAcceptedby(userService.getUserId(request));
+		t.get().setAcceptedBy(userService.getUserId(request));
 		t.get().setAcceptedOn(dayService.getDayId());
 		t.get().setAcceptedAt(dayService.getTimeStamp());
 		
-		t.get().setRejectedby(null);
+		t.get().setRejectedBy(null);
 		t.get().setRejectedOn(null);
 		t.get().setRejectedAt(null);
 		t.get().setRejectComment("");
@@ -3017,11 +3017,11 @@ public class PatientResource {
 			throw new InvalidOperationException("Could not accept, only PENDING or ACCEPTED tests can be rejected");
 		}
 		
-		t.get().setRejectedby(userService.getUserId(request));
+		t.get().setRejectedBy(userService.getUserId(request));
 		t.get().setRejectedOn(dayService.getDayId());
 		t.get().setRejectedAt(dayService.getTimeStamp());
 		
-		t.get().setAcceptedby(null);
+		t.get().setAcceptedBy(null);
 		t.get().setAcceptedOn(null);
 		t.get().setAcceptedAt(null);
 		
@@ -3042,7 +3042,7 @@ public class PatientResource {
 			throw new InvalidOperationException("Could not accept, only ACCEPTED tests can be collected");
 		}
 		
-		t.get().setCollectedby(userService.getUserId(request));
+		t.get().setCollectedBy(userService.getUserId(request));
 		t.get().setCollectedOn(dayService.getDayId());
 		t.get().setCollectedAt(dayService.getTimeStamp());
 		
@@ -3067,7 +3067,7 @@ public class PatientResource {
 		t.get().setRange(test.getRange());
 		t.get().setUnit(test.getUnit());
 		
-		t.get().setVerifiedby(userService.getUserId(request));
+		t.get().setVerifiedBy(userService.getUserId(request));
 		t.get().setVerifiedOn(dayService.getDayId());
 		t.get().setVerifiedAt(dayService.getTimeStamp());
 		
@@ -3088,7 +3088,7 @@ public class PatientResource {
 			throw new InvalidOperationException("Could not hold, only ACCEPTED tests can be held");
 		}
 		
-		t.get().setHeldby(userService.getUserId(request));
+		t.get().setHeldBy(userService.getUserId(request));
 		t.get().setHeldOn(dayService.getDayId());
 		t.get().setHeldAt(dayService.getTimeStamp());
 		
@@ -3750,39 +3750,39 @@ public class PatientResource {
 			model.setStatus(l.getStatus());
 
 			if(l.getCreatedAt() != null) {
-				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedby()).getNickname());
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedBy()).getNickname());
 			}else {
 				model.setCreated("");
 			}
 			if(l.getOrderedAt() != null) {
-				model.setOrdered(l.getOrderedAt().toString()+" | "+userService.getUserById(l.getOrderedby()).getNickname());
+				model.setOrdered(l.getOrderedAt().toString()+" | "+userService.getUserById(l.getOrderedBy()).getNickname());
 			}else {
 				model.setOrdered("");
 			}
 			if(l.getRejectedAt() != null) {
-				model.setRejected(l.getRejectedAt().toString()+" | "+userService.getUserById(l.getRejectedby()).getNickname() + " | "+l.getRejectComment());
+				model.setRejected(l.getRejectedAt().toString()+" | "+userService.getUserById(l.getRejectedBy()).getNickname() + " | "+l.getRejectComment());
 			}else {
 				model.setRejected("");
 			}
 			model.setRejectComment(l.getRejectComment());			
 			if(l.getAcceptedAt() != null) {
-				model.setAccepted(l.getAcceptedAt().toString()+" | "+userService.getUserById(l.getAcceptedby()).getNickname());
+				model.setAccepted(l.getAcceptedAt().toString()+" | "+userService.getUserById(l.getAcceptedBy()).getNickname());
 			}else {
 				model.setAccepted("");
 			}
 			if(l.getHeldAt() != null) {
-				model.setHeld(l.getHeldAt().toString()+" | "+userService.getUserById(l.getHeldby()).getNickname());
+				model.setHeld(l.getHeldAt().toString()+" | "+userService.getUserById(l.getHeldBy()).getNickname());
 			}else {
 				model.setHeld("");
 			}
 			if(l.getCollectedAt() != null) {
-				model.setCollected(l.getCollectedAt().toString()+" | "+userService.getUserById(l.getCollectedby()).getNickname());
+				model.setCollected(l.getCollectedAt().toString()+" | "+userService.getUserById(l.getCollectedBy()).getNickname());
 			}else {
 				model.setCollected("");
 			}
 			
 			if(l.getVerifiedAt() != null) {
-				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedby()).getNickname());
+				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedBy()).getNickname());
 			}else {
 				model.setVerified("");
 			}

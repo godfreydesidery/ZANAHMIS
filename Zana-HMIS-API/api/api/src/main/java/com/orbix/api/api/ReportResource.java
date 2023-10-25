@@ -37,6 +37,7 @@ import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.models.LabTestModel;
 import com.orbix.api.reports.models.LabTestTypeReport;
 import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.ConsultationRepository;
@@ -124,12 +125,95 @@ public class ReportResource {
 	
 	@PostMapping("/reports/lab_test_report")
 	public ResponseEntity<List<LabTest>>getLabTestReport(
-			@RequestBody LabTestTypeReportArgs args,
+			@RequestBody LabTestReportArgs args,
+			HttpServletRequest request){
+		
+		Optional<LabTestType> tt = labTestTypeRepository.findById(args.getLabTestType().getId());
+		if(tt.isEmpty()) {
+			throw new NotFoundException("Lab Test Type not found");
+		}
+		
+		List<LabTest> labTests = labTestRepository.findAllByLabTestTypeAndCreatedAtBetween(tt.get(), args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		
+		
+		
+		return ResponseEntity.ok().body(labTests);
+	}
+	
+	@PostMapping("/reports/lab_test_statistics_report")
+	public ResponseEntity<List<LabTest>>getLabTestStatisticsReport(
+			@RequestBody LabTestReportArgs args,
 			HttpServletRequest request){
 		
 		List<LabTest> labTests = labTestRepository.findAllByCreatedAtBetween(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
 		
 		return ResponseEntity.ok().body(labTests);
+	}
+	
+	@PostMapping("/reports/lab_sample_collection_report")
+	public ResponseEntity<List<LabTestModel>>getLabSampleCollectionReport(
+			@RequestBody LabTestTypeReportArgs args,
+			HttpServletRequest request){
+		
+		List<LabTest> labTests = labTestRepository.findAllByCreatedAtBetween(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		
+		List<LabTestModel> models = new ArrayList<>();
+		for(LabTest l : labTests) {
+			LabTestModel model = new LabTestModel();
+			model.setId(l.getId());
+			model.setResult(l.getResult());
+			model.setReport(l.getReport());
+			model.setDescription(l.getDescription());
+			model.setLabTestType(l.getLabTestType());
+			model.setPatientBill(l.getPatientBill());
+			model.setRange(l.getRange());
+			model.setLevel(l.getLevel());
+			model.setUnit(l.getUnit());
+			model.setStatus(l.getStatus());
+			model.setPatient(l.getPatient());
+
+			if(l.getCreatedAt() != null) {
+				model.setCreated(l.getCreatedAt().toString()+" | "+userService.getUserById(l.getCreatedBy()).getNickname());
+			}else {
+				model.setCreated("");
+			}
+			if(l.getOrderedAt() != null) {
+				model.setOrdered(l.getOrderedAt().toString()+" | "+userService.getUserById(l.getOrderedBy()).getNickname());
+			}else {
+				model.setOrdered("");
+			}
+			if(l.getRejectedAt() != null) {
+				model.setRejected(l.getRejectedAt().toString()+" | "+userService.getUserById(l.getRejectedBy()).getNickname() + " | "+l.getRejectComment());
+			}else {
+				model.setRejected("");
+			}
+			model.setRejectComment(l.getRejectComment());			
+			if(l.getAcceptedAt() != null) {
+				model.setAccepted(l.getAcceptedAt().toString()+" | "+userService.getUserById(l.getAcceptedBy()).getNickname());
+			}else {
+				model.setAccepted("");
+			}
+			if(l.getHeldAt() != null) {
+				model.setHeld(l.getHeldAt().toString()+" | "+userService.getUserById(l.getHeldBy()).getNickname());
+			}else {
+				model.setHeld("");
+			}
+			if(l.getCollectedAt() != null) {
+				model.setCollected(l.getCollectedAt().toString()+" | "+userService.getUserById(l.getCollectedBy()).getNickname());
+			}else {
+				model.setCollected("");
+			}
+			
+			if(l.getVerifiedAt() != null) {
+				model.setVerified(l.getVerifiedAt().toString()+" | "+userService.getUserById(l.getVerifiedBy()).getNickname());
+			}else {
+				model.setVerified("");
+			}
+			
+			models.add(model);
+		}
+		
+		return ResponseEntity.ok().body(models);
 	}
 	
 	@PostMapping("/reports/doctor_to_radiology_report")
@@ -176,7 +260,7 @@ public class ReportResource {
 		List<LabTest> doctorLabTests = new ArrayList<>();
 		
 		for(LabTest labTest : labTests) {
-			User user = userRepository.findById(labTest.getCreatedby()).get();
+			User user = userRepository.findById(labTest.getCreatedBy()).get();
 			Optional<Clinician> c = clinicianRepository.findByUser(user);
 			
 			PatientBill patientBill = labTest.getPatientBill();
@@ -243,6 +327,7 @@ class RadiologyReportArgs {
 class LabTestReportArgs {
 	LocalDate from;
 	LocalDate to;
+	LabTestType labTestType;
 }
 
 @Data

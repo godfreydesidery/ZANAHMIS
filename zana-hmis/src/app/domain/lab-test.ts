@@ -43,5 +43,11 @@ export interface ILabTest {
     collected : string
     verified : string
 
+    createdBy : IUser
     createdAt : Date
+
+    collectedBy : IUser
+    collectedAt : Date
+    verifiedBy : IUser
+    verifieddAt : Date
 }

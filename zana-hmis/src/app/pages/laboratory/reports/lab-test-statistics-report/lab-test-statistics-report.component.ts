@@ -88,7 +88,7 @@ export class LabTestStatisticsReportComponent {
     }
 
     this.spinner.show()
-    await this.http.post<ILabTest[]>(API_URL+'/reports/lab_test_report', args, options)
+    await this.http.post<ILabTest[]>(API_URL+'/reports/lab_test_statistics_report', args, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -138,13 +138,14 @@ this.labTestTypes.sort()
 
   clear(){
     this.labTests = []
+    this.labTestTypes = []
   }
 
 
   print = async () => {
 
     if(this.labTests.length === 0){
-      this.msgBox.showErrorMessage('No data to export')
+      this.msgBox.showErrorMessage('No data to print')
       return
     }
 
