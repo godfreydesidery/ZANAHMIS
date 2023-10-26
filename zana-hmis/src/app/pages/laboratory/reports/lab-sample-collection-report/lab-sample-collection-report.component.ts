@@ -92,12 +92,12 @@ export class LabSampleCollectionReportComponent {
     }
 
     if(from === undefined || to === undefined){
-      this.msgBox.showErrorMessage('Could not run. Please select date range')
+      this.msgBox.showErrorMessage3('Could not run. Please select date range')
       return
     }
 
     if(from > to){
-      this.msgBox.showErrorMessage('Could not run. Start date must be earlier or equal to end date')
+      this.msgBox.showErrorMessage3('Could not run. Start date must be earlier or equal to end date')
       return
     }
 
@@ -132,7 +132,7 @@ export class LabSampleCollectionReportComponent {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -147,7 +147,7 @@ export class LabSampleCollectionReportComponent {
   print = async () => {
 
     if(this.labTests.length === 0){
-      this.msgBox.showErrorMessage('No data to print')
+      this.msgBox.showErrorMessage3('No data to print')
       return
     }
 

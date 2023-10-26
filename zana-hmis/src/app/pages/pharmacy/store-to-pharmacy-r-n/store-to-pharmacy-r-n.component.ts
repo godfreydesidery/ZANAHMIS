@@ -107,7 +107,7 @@ export class StoreToPharmacyRNComponent {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
 
@@ -129,7 +129,7 @@ export class StoreToPharmacyRNComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -151,7 +151,7 @@ export class StoreToPharmacyRNComponent {
         },
         error => {
           console.log(error)
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
     }else{
@@ -167,7 +167,7 @@ export class StoreToPharmacyRNComponent {
         },
         error => {
           console.log(error)
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
     }
@@ -196,7 +196,7 @@ export class StoreToPharmacyRNComponent {
     this.storeToPharmacyRN.storeToPharmacyRNDetails.forEach(detail => {
       detail.storeToPharmacyBatches.forEach(batch => {
         if(batch.checked === undefined || batch.checked === false){
-          this.msgBox.showErrorMessage('Can not approve receipt. You can not receive less than the supplied goods')
+          this.msgBox.showErrorMessage3('Can not approve receipt. You can not receive less than the supplied goods')
           valid = 0
           return
           //provide logic to send to server for validation later, too cumbersome
@@ -229,7 +229,7 @@ export class StoreToPharmacyRNComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }

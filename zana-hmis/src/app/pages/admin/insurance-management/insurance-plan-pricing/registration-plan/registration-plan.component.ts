@@ -80,7 +80,7 @@ export class RegistrationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Providers')
+        this.msgBox.showErrorMessage(error, 'Could not load Providers')
       }
     )
   }
@@ -101,7 +101,7 @@ export class RegistrationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -124,7 +124,7 @@ export class RegistrationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load Plans')
       }
     )
   }
@@ -147,7 +147,7 @@ export class RegistrationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load registration plans')
+        this.msgBox.showErrorMessage(error, 'Could not load registration plans')
       }
     )
   }
@@ -180,7 +180,7 @@ export class RegistrationPlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create registration plan')
+          this.msgBox.showErrorMessage(error, 'Could not create registration plan')
         }
       )
 
@@ -200,7 +200,7 @@ export class RegistrationPlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update registration plan')
+          this.msgBox.showErrorMessage(error, 'Could not update registration plan')
         }
       )
     }
@@ -237,7 +237,7 @@ export class RegistrationPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find registration plan')
+        this.msgBox.showErrorMessage(error, 'Could not find registration plan')
       }
     )
   }
@@ -265,7 +265,7 @@ export class RegistrationPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not delete registration plan')
+        this.msgBox.showErrorMessage(error, 'Could not delete registration plan')
       }
     )
   }

@@ -92,16 +92,16 @@ export class LabTestReportComponent {
     }
 
     if(from === undefined || to === undefined){
-      this.msgBox.showErrorMessage('Could not run. Please select date range')
+      this.msgBox.showErrorMessage3('Could not run. Please select date range')
       return
     }
     if(this.labTestTypeId === null){
-      this.msgBox.showErrorMessage('Could not run. Please select lab test')
+      this.msgBox.showErrorMessage3('Could not run. Please select lab test')
       return
     }
 
     if(from > to){
-      this.msgBox.showErrorMessage('Could not run. Start date must be earlier or equal to end date')
+      this.msgBox.showErrorMessage3('Could not run. Start date must be earlier or equal to end date')
       return
     }
 
@@ -129,7 +129,7 @@ export class LabTestReportComponent {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -161,7 +161,7 @@ export class LabTestReportComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -183,7 +183,7 @@ export class LabTestReportComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -194,7 +194,7 @@ export class LabTestReportComponent {
   print = async () => {
 
     if(this.labTests.length === 0){
-      this.msgBox.showErrorMessage('No data to print')
+      this.msgBox.showErrorMessage3('No data to print')
       return
     }
 

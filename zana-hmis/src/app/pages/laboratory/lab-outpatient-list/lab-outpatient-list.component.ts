@@ -68,7 +68,7 @@ export class LabOutpatientListComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load patients')
+        this.msgBox.showErrorMessage(error, 'Could not load patients')
       }
     )
   }

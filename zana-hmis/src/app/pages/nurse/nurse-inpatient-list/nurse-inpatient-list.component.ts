@@ -49,7 +49,7 @@ export class NurseInpatientListComponent {
       if(this.nurseId != null){
         this.loadInpatientList()
       }else{
-        this.msgBox.showErrorMessage('User not found in nurse register')
+        this.msgBox.showErrorMessage3('User not found in nurse register')
       }
     }
   
@@ -71,7 +71,7 @@ export class NurseInpatientListComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not load patients')
+          this.msgBox.showErrorMessage(error, 'Could not load patients')
         }
       )
     }
@@ -92,7 +92,7 @@ export class NurseInpatientListComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not load nurse')
+          this.msgBox.showErrorMessage(error, 'Could not load nurse')
         }
       )
     }

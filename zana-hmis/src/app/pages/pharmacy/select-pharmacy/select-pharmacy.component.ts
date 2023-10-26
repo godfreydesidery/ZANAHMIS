@@ -76,7 +76,7 @@ export class SelectPharmacyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load pharmacies')
+        this.msgBox.showErrorMessage(error, 'Could not load pharmacies')
       }
     )
   }
@@ -112,7 +112,7 @@ export class SelectPharmacyComponent {
         localStorage.setItem('selected-pharmacy-code', this.selectedPharmacyCode)
         localStorage.setItem('selected-pharmacy-name', this.selectedPharmacyName)
 
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )

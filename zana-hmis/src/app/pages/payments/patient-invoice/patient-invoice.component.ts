@@ -83,7 +83,7 @@ export class PatientInvoiceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -150,7 +150,7 @@ export class PatientInvoiceComponent {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not confirm payment')
+        this.msgBox.showErrorMessage(error, 'Could not confirm payment')
       }
     )
   }
@@ -195,7 +195,7 @@ export class PatientInvoiceComponent {
   print = async () => {
 
     if(this.invoice.patientInvoiceDetails.length === 0){
-      this.msgBox.showErrorMessage('No data to export')
+      this.msgBox.showErrorMessage3('No data to export')
       return
     }
 

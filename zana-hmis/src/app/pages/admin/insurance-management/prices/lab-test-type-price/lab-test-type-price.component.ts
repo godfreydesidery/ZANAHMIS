@@ -74,7 +74,7 @@ export class LabTestTypePriceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not load Lab test types')
       }
     )
   }
@@ -109,7 +109,7 @@ export class LabTestTypePriceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not chenge coverage')
       }
     )
   }
@@ -147,7 +147,7 @@ export class LabTestTypePriceComponent {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not update price')
       }
     )
   }

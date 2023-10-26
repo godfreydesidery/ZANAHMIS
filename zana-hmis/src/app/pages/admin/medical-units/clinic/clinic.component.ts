@@ -86,7 +86,7 @@ export class ClinicComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create clinic')
+          this.msgBox.showErrorMessage(error, 'Could not create clinic')
         }
       )
 
@@ -110,7 +110,7 @@ export class ClinicComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update clinic')
+          this.msgBox.showErrorMessage(error, 'Could not update clinic')
         }
       )
     }
@@ -134,7 +134,7 @@ export class ClinicComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load clinics')
+        this.msgBox.showErrorMessage(error, 'Could not load clinics')
       }
     )
   }
@@ -171,7 +171,7 @@ export class ClinicComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find clinic')
+        this.msgBox.showErrorMessage(error, 'Could not find clinic')
       }
     )
   }

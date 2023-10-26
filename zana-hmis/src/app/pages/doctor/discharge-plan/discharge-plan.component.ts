@@ -91,7 +91,7 @@ export class DischargePlanComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load admission')
+        this.msgBox.showErrorMessage(error, 'Could not load admission')
         console.log(error)
       }
     )
@@ -131,7 +131,7 @@ export class DischargePlanComponent {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     if(this.history === '' || this.investigation === '' || this.management === ''){
-      this.msgBox.showErrorMessage('The fields marked with * are required fields')
+      this.msgBox.showErrorMessage3('The fields marked with * are required fields')
       return
     }
 
@@ -177,7 +177,7 @@ export class DischargePlanComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not save')
+        this.msgBox.showErrorMessage(error, 'Could not save')
         console.log(error)
       }
     )

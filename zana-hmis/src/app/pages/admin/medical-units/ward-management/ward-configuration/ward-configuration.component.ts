@@ -73,7 +73,7 @@ export class WardConfigurationComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -104,7 +104,7 @@ export class WardConfigurationComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         this.clear()
       }
     )
@@ -136,7 +136,7 @@ export class WardConfigurationComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -167,7 +167,7 @@ export class WardConfigurationComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -191,7 +191,7 @@ export class WardConfigurationComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -217,7 +217,7 @@ export class WardConfigurationComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find ward bed/room')
+        this.msgBox.showErrorMessage(error, 'Could not find ward bed/room')
       }
     )
   }
@@ -245,7 +245,7 @@ export class WardConfigurationComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
 

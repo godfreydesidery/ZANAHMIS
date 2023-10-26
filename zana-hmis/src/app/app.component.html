@@ -366,218 +366,26 @@
                             </li>
                         </ul>
                     </li>
-                    <!--<li class="treeview" *ngIf="grant(['ADMIN-ACCESS'])">
-                        <a href="#" (click)="loadAdminModule()">
-                            <i class="fa fa-user-o"></i><span>Admin</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
+                    
+                    <li class="treeview" *ngIf="grant(['REPORT_SERVICE-ACCESS'])">
+                        <a href="#" (click)="loadReportModule()">
+                          <i class="fa fa-file-text"></i><span>Report</span>
+                          <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                         </a>
                         <ul class="treeview-menu">
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-medkit"></i><span>Medical Operations</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a routerLink="/diagnosis-type">Diagnosis Type</a></li>
-                                    <li><a routerLink="/lab-test-type">Lab Test Type</a></li>
-                                    <li><a routerLink="/lab-test-type-range">Lab Test Type Ranges</a></li>
-                                    <li><a routerLink="/procedure-type">Procedure Type</a></li>
-                                    <li><a routerLink="/radiology-type">Radiology Type</a></li>
-                                    <li><a routerLink="/medicine">Medicine</a></li>
-                                    <li><a routerLink="/dressing">Dressing</a></li>
-                                    <li><a routerLink="/consumable">Consumable</a></li>
-                                </ul>
-
-                            </li>
+                            <li><a href="patient-wise-report.html">Patient wise Report</a></li>
+                            <li><a href="doctor-wise-report.html">Doctor wise Report</a></li>
+                            <li><a href="total-report.html">Total Report</a></li>
+                            <li><a routerLink="/report-template">Report Template</a></li>
                         </ul>
-                        <ul class="treeview-menu">
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-institution"></i><span>Insurance Management</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a routerLink="/insurance-provider">Insurance Provider</a></li>
-                                    <li><a routerLink="/insurance-plan">Insurance Plan</a></li>
-                                </ul>
-
-                            </li>
-                        </ul>
-                        
-                        <ul class="treeview-menu">
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-money"></i><span>Insurance Plan Pricing</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a routerLink="/registration-plan">Registration Plan</a></li>
-                                    <li><a routerLink="/consultation-plan">Consultation Plan</a></li>
-                                    <li><a routerLink="/lab-test-plan">Lab Test Plan</a></li>
-                                    <li><a routerLink="/procedure-plan">Medical Procedure Plan</a></li>
-                                    <li><a routerLink="/radiology-plan">Radiology Plan</a></li>
-                                    <li><a routerLink="/medicine-plan">Medicine Plan</a></li>
-                                    <li><a routerLink="/ward-plan">Ward Plan</a></li>
-                                </ul>
-
-                            </li>
-                        </ul>
-                        <ul class="treeview-menu">
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-id-card"></i><span>Personel Management</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a routerLink="/clinician">Doctor</a></li>
-                                    <li><a routerLink="/pharmacist">Pharmacist</a></li>
-                                    <li><a routerLink="/nurse">Nurse</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <ul class="treeview-menu">
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-hospital-o"></i><span>Medical Units</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a routerLink="external-medical-provider">External Provider</a></li>
-                                    <li><a routerLink="clinic">Clinic</a></li>
-                                    <li><a routerLink="/pharmacy">Pharmacy</a></li>
-                                    <li><a routerLink="/theatre">Theatre</a></li>
-                                    <li class="treeview">
-                                        <a href="#">
-                                            <i class="fa fa-bed"></i><span>Ward Manager</span>
-                                            <span class="pull-right-container">
-                                                <i class="fa fa-angle-left pull-right"></i>
-                                            </span>
-                                        </a>
-                                        <ul class="treeview-menu">
-                                            <li><a routerLink="/ward">Ward</a></li>
-                                            <li><a routerLink="/ward-category">Ward Category</a></li>
-                                            <li><a routerLink="/ward-type">Ward Type</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <ul class="treeview-menu">
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-university"></i><span>Stakeholders</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a routerLink="/supplier-register">Supplier Register</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <ul class="treeview-menu">
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-archive"></i><span>Inventory</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a routerLink="/item-register">Item Register</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <ul class="treeview-menu">
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-key"></i><span>User and Access</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a routerLink="/user-profile">User Profile</a></li>
-                                    <li><a routerLink="/role">Roles</a></li>
-                                    <li><a routerLink="/access-management">Access Management</a></li>
-                                </ul>
-
-                            </li>
-                        </ul>
-                        <ul class="treeview-menu">
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-institution"></i><span>Company</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a routerLink="/company-profile">Company Profile</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <ul class="treeview-menu">
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-file-text"></i><span>Reports</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a routerLink="/consultation-report">Consultation Report</a></li>
-                                    <li><a routerLink="/procedure-report">Procedure Report</a></li>
-                                    <li><a routerLink="/doctor-to-radiology-report">Doctor to Radiology Report</a></li>
-                                    <li><a routerLink="/doctor-to-laboratory-report">Doctor to Laboratory Report</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>-->
-                  
-                  <li class="treeview" *ngIf="grant(['REPORT_SERVICE-ACCESS'])">
-                      <a href="#" (click)="loadReportModule()">
-                          <i class="fa fa-file-text"></i><span>Report</span>
-                          <span class="pull-right-container">
-                      <i class="fa fa-angle-left pull-right"></i>
-                      </span>
-                  </a>
-                  <ul class="treeview-menu">
-                      <li><a href="patient-wise-report.html">Patient wise Report</a></li>
-                      <li><a href="doctor-wise-report.html">Doctor wise Report</a></li>
-                      <li><a href="total-report.html">Total Report</a></li>
-                      <li><a routerLink="/report-template">Report Template</a></li>
-                  </ul>
-              </li>
-             
-      </ul>
-  </div> <!-- /.sidebar -->
-</aside>
+                    </li>
+                </ul>
+            </div> <!-- /.sidebar -->
+        </aside>
       <!-- =============================================== -->
       <!-- Content Wrapper. Contains page content -->
       <div class="content-wrapper">
           <router-outlet></router-outlet>
-<div id="iframeContainer"></div>
-
-
-          <!--<button (click)="print()">Print</button>-->
-
-
-
-
-          <!--<app-dashboard></app-dashboard>-->
       </div><!-- /.content-wrapper -->
        
       <footer class="main-footer">

@@ -74,7 +74,7 @@ export class PrescriptionHistoryComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load prescriptions')
+        this.msgBox.showErrorMessage(error, 'Could not load prescriptions')
         console.log(error)
       }
     )

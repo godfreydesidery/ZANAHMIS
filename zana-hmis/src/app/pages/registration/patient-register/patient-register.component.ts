@@ -278,7 +278,7 @@ export class PatientRegisterComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
   }
@@ -366,7 +366,7 @@ export class PatientRegisterComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
 
@@ -444,7 +444,7 @@ export class PatientRegisterComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         updated = false
       }
       
@@ -463,7 +463,7 @@ export class PatientRegisterComponent implements OnInit {
 
     var valid = true
     if(patient.dateOfBirth == null){
-      this.msgBox.showErrorMessage('Date of birth is a required value')
+      this.msgBox.showErrorMessage3('Date of birth is a required value')
       return false
     }
 
@@ -488,7 +488,7 @@ export class PatientRegisterComponent implements OnInit {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load patients')
+        this.msgBox.showErrorMessage(error, 'Could not load patients')
       }
     )
   }
@@ -565,7 +565,7 @@ export class PatientRegisterComponent implements OnInit {
       error => {
         console.log(error)
         this.clear()
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     if(this.type === 'OUTPATIENT'){
@@ -595,7 +595,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         this.loadLabTest(0, this.nonConsultationId, 0)
       }
     )    
@@ -618,7 +618,7 @@ export class PatientRegisterComponent implements OnInit {
     .catch(
       error => {
         this.loadRadiologies(0, this.nonConsultationId, 0)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     
@@ -641,7 +641,7 @@ export class PatientRegisterComponent implements OnInit {
     .catch(
       error => {
         this.loadProcedures(0, this.nonConsultationId, 0)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     
@@ -669,8 +669,8 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       (error) => {
-        console.log(error['error'])
-        this.msgBox.showErrorMessage('Could not load radiologies')
+        console.log(error, '')
+        this.msgBox.showErrorMessage(error, 'Could not load radiologies')
       }
     )
     
@@ -698,8 +698,8 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       (error) => {
-        console.log(error['error'])
-        this.msgBox.showErrorMessage('Could not load procedures')
+        console.log(error, '')
+        this.msgBox.showErrorMessage(error, 'Could not load procedures')
       }
     )
     
@@ -723,7 +723,7 @@ export class PatientRegisterComponent implements OnInit {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load clinics')
+        this.msgBox.showErrorMessage(error, 'Could not load clinics')
       }
     )
   }
@@ -750,7 +750,7 @@ export class PatientRegisterComponent implements OnInit {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not get consultation fee')
+        this.msgBox.showErrorMessage(error, 'Could not get consultation fee')
       }
     )
   }
@@ -772,7 +772,7 @@ export class PatientRegisterComponent implements OnInit {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load active consultations')
+        this.msgBox.showErrorMessage(error, 'Could not load active consultations')
       }
     )
   }
@@ -804,7 +804,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load doctors')
+        this.msgBox.showErrorMessage(error, 'Could not load doctors')
       }
     )
   }
@@ -827,7 +827,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load insurance Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load insurance Plans')
       }
     )
   }
@@ -859,7 +859,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
 
@@ -888,7 +888,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
 
@@ -928,7 +928,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.regNoToFree = ''
@@ -960,7 +960,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.regNoToFree = ''
@@ -986,7 +986,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        alert(error['error'])
+        this.msgBox.showErrorMessage(error, '')
        console.log(error)
       }
     )
@@ -1023,7 +1023,7 @@ export class PatientRegisterComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1046,8 +1046,8 @@ export class PatientRegisterComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load procedure types names')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load procedure types names')
       }
     )
   }
@@ -1055,7 +1055,7 @@ export class PatientRegisterComponent implements OnInit {
 
   async saveLabTest(){
     if(this.type != 'OUTSIDER'){
-      this.msgBox.showErrorMessage('Only allowed for outsiders')
+      this.msgBox.showErrorMessage3('Only allowed for outsiders')
       return
     }
     let options = {
@@ -1086,7 +1086,7 @@ export class PatientRegisterComponent implements OnInit {
     .catch(
       error => {
         this.loadLabTest(0, this.nonConsultationId, 0)
-        this.msgBox.showErrorMessage('Could not save Lab Test')
+        this.msgBox.showErrorMessage(error, 'Could not save Lab Test')
         console.log(error)
       }
     )
@@ -1095,7 +1095,7 @@ export class PatientRegisterComponent implements OnInit {
 
   async saveProcedure(){
     if(this.type != 'OUTSIDER'){
-      this.msgBox.showErrorMessage('Only allowed for outsiders')
+      this.msgBox.showErrorMessage3('Only allowed for outsiders')
       return
     }
     let options = {
@@ -1128,7 +1128,7 @@ export class PatientRegisterComponent implements OnInit {
     .catch(
       error => {
         this.loadProcedures(0, this.nonConsultationId, 0)
-        this.msgBox.showErrorMessage('Could not save Procedure')
+        this.msgBox.showErrorMessage(error, 'Could not save Procedure')
         console.log(error)
       }
     )
@@ -1156,15 +1156,15 @@ export class PatientRegisterComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load lab tests')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load lab tests')
       }
     )   
   }
 
   async saveRadiology(){
     if(this.type != 'OUTSIDER'){
-      this.msgBox.showErrorMessage('Only allowed for outsiders')
+      this.msgBox.showErrorMessage3('Only allowed for outsiders')
       return
     }
     let options = {
@@ -1194,7 +1194,7 @@ export class PatientRegisterComponent implements OnInit {
     .catch(
       error => {
         this.loadRadiology(0, this.nonConsultationId, 0)
-        this.msgBox.showErrorMessage('Could not save Radiology')
+        this.msgBox.showErrorMessage(error, 'Could not save Radiology')
         console.log(error)
       }
     )
@@ -1222,8 +1222,8 @@ export class PatientRegisterComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load radiologies')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load radiologies')
       }
     )   
   }
@@ -1246,8 +1246,8 @@ export class PatientRegisterComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load radiology types names')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load radiology types names')
       }
     )
   }
@@ -1273,7 +1273,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     ) 
 
@@ -1297,8 +1297,8 @@ export class PatientRegisterComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load lab test types names')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load lab test types names')
       }
     )
   }
@@ -1321,8 +1321,8 @@ export class PatientRegisterComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load diagnosis types names')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load diagnosis types names')
       }
     )
   }
@@ -1352,8 +1352,8 @@ export class PatientRegisterComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load theatre names')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load theatre names')
       }
     )
   }
@@ -1429,7 +1429,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1481,7 +1481,7 @@ export class PatientRegisterComponent implements OnInit {
     .catch(
       error => {
         this.clear()
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -1773,7 +1773,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1795,7 +1795,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -1824,7 +1824,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1846,7 +1846,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -1874,7 +1874,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1896,7 +1896,7 @@ export class PatientRegisterComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -1919,7 +1919,7 @@ export class PatientRegisterComponent implements OnInit {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }

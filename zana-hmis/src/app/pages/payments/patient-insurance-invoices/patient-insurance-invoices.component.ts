@@ -68,7 +68,7 @@ export class PatientInsuranceInvoicesComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -97,14 +97,14 @@ export class PatientInsuranceInvoicesComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
     if(opened){
       this.router.navigate(['doctor-cracking'])
     }else{
-      this.msgBox.showErrorMessage('Could not open')
+      this.msgBox.showErrorMessage3('Could not open')
     }
   }
 

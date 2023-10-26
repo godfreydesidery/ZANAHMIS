@@ -105,7 +105,7 @@ export class ItemInquiryComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load item names')
+        this.msgBox.showErrorMessage(error, 'Could not load item names')
       }
     )
   }
@@ -150,7 +150,7 @@ export class ItemInquiryComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }

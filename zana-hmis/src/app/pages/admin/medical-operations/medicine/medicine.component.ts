@@ -93,7 +93,7 @@ export class MedicineComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create Medicine')
+          this.msgBox.showErrorMessage(error, 'Could not create Medicine')
         }
       )
 
@@ -120,7 +120,7 @@ export class MedicineComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update Medicine')
+          this.msgBox.showErrorMessage(error, 'Could not update Medicine')
         }
       )
     }
@@ -145,7 +145,7 @@ export class MedicineComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Medicines')
+        this.msgBox.showErrorMessage(error, 'Could not load Medicines')
       }
     )
   }
@@ -189,7 +189,7 @@ export class MedicineComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find Medicine')
+        this.msgBox.showErrorMessage(error, 'Could not find Medicine')
       }
     )
   }

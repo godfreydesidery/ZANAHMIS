@@ -84,7 +84,7 @@ export class TheatreComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create theatre')
+          this.msgBox.showErrorMessage(error, 'Could not create theatre')
         }
       )
 
@@ -107,7 +107,7 @@ export class TheatreComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update theatre')
+          this.msgBox.showErrorMessage(error, 'Could not update theatre')
         }
       )
     }
@@ -131,7 +131,7 @@ export class TheatreComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load theatres')
+        this.msgBox.showErrorMessage(error, 'Could not load theatres')
       }
     )
   }
@@ -166,7 +166,7 @@ export class TheatreComponent {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find theatre')
+        this.msgBox.showErrorMessage(error, 'Could not find theatre')
       }
     )
   }

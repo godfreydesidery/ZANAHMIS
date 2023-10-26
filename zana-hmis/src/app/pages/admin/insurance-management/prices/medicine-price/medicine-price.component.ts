@@ -74,7 +74,7 @@ export class MedicinePriceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not load medicines')
       }
     )
   }
@@ -109,7 +109,7 @@ export class MedicinePriceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not change coverage')
       }
     )
   }
@@ -146,7 +146,7 @@ export class MedicinePriceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not update price')
       }
     )
   }

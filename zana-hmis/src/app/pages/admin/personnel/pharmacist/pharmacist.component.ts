@@ -107,7 +107,7 @@ export class PharmacistComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
 
@@ -132,7 +132,7 @@ export class PharmacistComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
     }
@@ -156,7 +156,7 @@ export class PharmacistComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load pharmacists')
+        this.msgBox.showErrorMessage(error, 'Could not load pharmacists')
       }
     )
   }
@@ -199,7 +199,7 @@ export class PharmacistComponent {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find Doctor')
+        this.msgBox.showErrorMessage(error, 'Could not find Doctor')
       }
     )
   }
@@ -303,7 +303,7 @@ export class PharmacistComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
 

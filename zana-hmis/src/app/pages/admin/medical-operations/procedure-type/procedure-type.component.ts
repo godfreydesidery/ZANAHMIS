@@ -91,7 +91,7 @@ export class ProcedureTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create Procedure Type')
+          this.msgBox.showErrorMessage(error, 'Could not create Procedure Type')
         }
       )
 
@@ -116,7 +116,7 @@ export class ProcedureTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update Procedure Type')
+          this.msgBox.showErrorMessage(error, 'Could not update Procedure Type')
         }
       )
     }
@@ -141,7 +141,7 @@ export class ProcedureTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Procedure Types')
+        this.msgBox.showErrorMessage(error, 'Could not load Procedure Types')
       }
     )
   }
@@ -181,7 +181,7 @@ export class ProcedureTypeComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find Procedure Type')
+        this.msgBox.showErrorMessage(error, 'Could not find Procedure Type')
       }
     )
   }

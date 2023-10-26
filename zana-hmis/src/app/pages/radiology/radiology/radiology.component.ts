@@ -76,7 +76,7 @@ export class RadiologyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load patient')
+        this.msgBox.showErrorMessage(error, 'Could not load patient')
         console.log(error)
       }
     )
@@ -100,7 +100,7 @@ export class RadiologyComponent {
     .catch(
       error => {
         this.radiologies = []
-        this.msgBox.showErrorMessage('Could not load radiologies')
+        this.msgBox.showErrorMessage(error, 'Could not load radiologies')
       }
     )
   }
@@ -123,7 +123,7 @@ export class RadiologyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadRadiologiesByPatient(this.id)
@@ -147,7 +147,7 @@ export class RadiologyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadRadiologiesByPatient(this.id)
@@ -172,7 +172,7 @@ export class RadiologyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -195,7 +195,7 @@ export class RadiologyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadRadiologiesByPatient(this.id)
@@ -219,7 +219,7 @@ export class RadiologyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadRadiologiesByPatient(this.id)
@@ -244,7 +244,7 @@ export class RadiologyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadRadiologiesByPatient(this.id)

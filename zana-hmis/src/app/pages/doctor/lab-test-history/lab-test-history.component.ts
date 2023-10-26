@@ -74,7 +74,7 @@ export class LabTestHistoryComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load lab tests')
+        this.msgBox.showErrorMessage(error, 'Could not load lab tests')
         console.log(error)
       }
     )

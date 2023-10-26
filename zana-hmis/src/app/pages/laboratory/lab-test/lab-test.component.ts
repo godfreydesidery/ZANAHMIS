@@ -74,7 +74,7 @@ export class LabTestComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load patient')
+        this.msgBox.showErrorMessage(error, 'Could not load patient')
         console.log(error)
       }
     )
@@ -98,7 +98,7 @@ export class LabTestComponent implements OnInit {
     .catch(
       error => {
         this.labTests = []
-        this.msgBox.showErrorMessage('Could not load lab tests')
+        this.msgBox.showErrorMessage(error, 'Could not load lab tests')
       }
     )
   }
@@ -125,7 +125,7 @@ export class LabTestComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadLabTestsByPatient(this.id)
@@ -153,7 +153,7 @@ export class LabTestComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadLabTestsByPatient(this.id)
@@ -181,7 +181,7 @@ export class LabTestComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadLabTestsByPatient(this.id)
@@ -209,7 +209,7 @@ export class LabTestComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadLabTestsByPatient(this.id)
@@ -237,7 +237,7 @@ export class LabTestComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadLabTestsByPatient(this.id)
@@ -262,7 +262,7 @@ export class LabTestComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }

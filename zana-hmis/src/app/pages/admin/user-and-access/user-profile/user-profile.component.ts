@@ -142,7 +142,7 @@ export class UserProfileComponent implements OnInit {
       .catch(
         error => {
           console.log(error)
-          this.msgBox.showErrorMessage('Could not create user. '+error['error'])
+          this.msgBox.showErrorMessage(error, 'Could not create user')
         }
       )   
     }else{
@@ -161,7 +161,7 @@ export class UserProfileComponent implements OnInit {
       .catch(
         error => {
           console.log(error);
-          this.msgBox.showErrorMessage('Could not update user. '+error['error'])
+          this.msgBox.showErrorMessage(error, 'Could not update user')
         }
       )  
     }
@@ -209,7 +209,7 @@ export class UserProfileComponent implements OnInit {
       }
     )
     .catch(error => {
-      this.msgBox.showErrorMessage('Could not load users')
+      this.msgBox.showErrorMessage(error, 'Could not load users')
     })
     return 
   }
@@ -235,7 +235,7 @@ export class UserProfileComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)   
-        this.msgBox.showErrorMessage('User not found')     
+        this.msgBox.showErrorMessage(error, 'User not found')     
       }
     )
   }
@@ -265,7 +265,7 @@ export class UserProfileComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not delete user')
+        this.msgBox.showErrorMessage(error, 'Could not delete user')
         return false
       }
     )

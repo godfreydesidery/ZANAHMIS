@@ -79,7 +79,7 @@ export class LabTestTypeRangeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
     this.clear()
@@ -101,7 +101,7 @@ export class LabTestTypeRangeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not Lab Test Types')
+        this.msgBox.showErrorMessage(error, 'Could not Lab Test Types')
       }
     )
   }
@@ -124,7 +124,7 @@ export class LabTestTypeRangeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -152,7 +152,7 @@ export class LabTestTypeRangeComponent implements OnInit {
     .catch(
       error => {
         this.labTestTypeId = null
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -173,7 +173,7 @@ export class LabTestTypeRangeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }

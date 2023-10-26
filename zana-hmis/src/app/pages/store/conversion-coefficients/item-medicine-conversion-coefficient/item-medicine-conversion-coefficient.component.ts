@@ -87,7 +87,7 @@ export class ItemMedicineConversionCoefficientComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load item names')
+        this.msgBox.showErrorMessage(error, 'Could not load item names')
       }
     )
   }
@@ -110,8 +110,8 @@ export class ItemMedicineConversionCoefficientComponent {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load medicine names')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load medicine names')
       }
     )
   }
@@ -145,7 +145,7 @@ export class ItemMedicineConversionCoefficientComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -169,7 +169,7 @@ export class ItemMedicineConversionCoefficientComponent {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find Medicine')
+        this.msgBox.showErrorMessage(error, 'Could not find Medicine')
       }
     )
   }
@@ -211,7 +211,7 @@ export class ItemMedicineConversionCoefficientComponent {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -246,7 +246,7 @@ export class ItemMedicineConversionCoefficientComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -276,7 +276,7 @@ export class ItemMedicineConversionCoefficientComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }

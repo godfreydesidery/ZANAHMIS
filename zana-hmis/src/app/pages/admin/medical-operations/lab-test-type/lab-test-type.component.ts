@@ -89,7 +89,7 @@ export class LabTestTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create Lab Test Type')
+          this.msgBox.showErrorMessage(error, 'Could not create Lab Test Type')
         }
       )
 
@@ -113,7 +113,7 @@ export class LabTestTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update Lab Test Type')
+          this.msgBox.showErrorMessage(error, 'Could not update Lab Test Type')
         }
       )
     }
@@ -138,7 +138,7 @@ export class LabTestTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Lab Test Types')
+        this.msgBox.showErrorMessage(error, 'Could not load Lab Test Types')
       }
     )
   }
@@ -178,7 +178,7 @@ export class LabTestTypeComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find Lab Test Type')
+        this.msgBox.showErrorMessage(error, 'Could not find Lab Test Type')
       }
     )
   }

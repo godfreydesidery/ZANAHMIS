@@ -89,7 +89,7 @@ export class InsurancePlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create insurance plan')
+          this.msgBox.showErrorMessage(error, 'Could not create insurance plan')
         }
       )
 
@@ -112,7 +112,7 @@ export class InsurancePlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update insurance plan')
+          this.msgBox.showErrorMessage(error, 'Could not update insurance plan')
         }
       )
     }
@@ -137,7 +137,7 @@ export class InsurancePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load insurance plans')
+        this.msgBox.showErrorMessage(error, 'Could not load insurance plans')
       }
     )
   }
@@ -175,7 +175,7 @@ export class InsurancePlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find insurance plan')
+        this.msgBox.showErrorMessage(error, 'Could not find insurance plan')
       }
     )
   }
@@ -198,7 +198,7 @@ export class InsurancePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Providers')
+        this.msgBox.showErrorMessage(error, 'Could not load Providers')
       }
     )
   }

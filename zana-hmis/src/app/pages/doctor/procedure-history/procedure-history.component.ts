@@ -74,7 +74,7 @@ export class ProcedureHistoryComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load procedures')
+        this.msgBox.showErrorMessage(error, 'Could not load procedures')
         console.log(error)
       }
     )

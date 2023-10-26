@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
     localStorage.removeItem('system-date')
 
     if(this.username == '' || this.password == ''){ 
-      this.msgBox.showErrorMessage('Please fill in your username and password')
+      this.msgBox.showErrorMessage3('Please fill in your username and password')
       return
     }
     this.status = 'Loading... Please wait.'
@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit {
       .catch(error => {
         this.status = ''
         localStorage.removeItem('current-user')
-        this.msgBox.showErrorMessage('Invalid username and password')
+        this.msgBox.showErrorMessage(error, 'Invalid username and password')
         console.log(error)
         return
       })    

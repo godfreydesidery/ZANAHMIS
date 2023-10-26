@@ -89,7 +89,7 @@ export class PharmacyComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create pharmacy')
+          this.msgBox.showErrorMessage(error, 'Could not create pharmacy')
         }
       )
 
@@ -114,7 +114,7 @@ export class PharmacyComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update pharmacy')
+          this.msgBox.showErrorMessage(error, 'Could not update pharmacy')
         }
       )
     }
@@ -138,7 +138,7 @@ export class PharmacyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load pharmacies')
+        this.msgBox.showErrorMessage(error, 'Could not load pharmacies')
       }
     )
   }
@@ -177,7 +177,7 @@ export class PharmacyComponent {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find pharmacy')
+        this.msgBox.showErrorMessage(error, 'Could not find pharmacy')
       }
     )
   }

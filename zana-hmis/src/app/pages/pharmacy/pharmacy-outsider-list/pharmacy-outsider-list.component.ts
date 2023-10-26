@@ -67,7 +67,7 @@ export class PharmacyOutsiderListComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load pharmacist')
+        this.msgBox.showErrorMessage(error, 'Could not load pharmacist')
       }
     )
   }
@@ -91,7 +91,7 @@ export class PharmacyOutsiderListComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )

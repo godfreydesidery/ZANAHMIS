@@ -72,7 +72,7 @@ export class RegistrationPriceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not load registration plans')
       }
     )
   }
@@ -102,7 +102,7 @@ export class RegistrationPriceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not change coverage')
       }
     )
   }
@@ -134,7 +134,7 @@ export class RegistrationPriceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not update price')
       }
     )
   }

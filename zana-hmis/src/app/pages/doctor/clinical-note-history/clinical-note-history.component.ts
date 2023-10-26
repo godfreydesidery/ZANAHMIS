@@ -77,7 +77,7 @@ export class ClinicalNoteHistoryComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load clinical notes')
+        this.msgBox.showErrorMessage(error, 'Could not load clinical notes')
         console.log(error)
       }
     )

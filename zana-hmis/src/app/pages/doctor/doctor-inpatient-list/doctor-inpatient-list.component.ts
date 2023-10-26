@@ -51,7 +51,7 @@ export class DoctorInpatientListComponent {
       if(this.clinicianId != null){
         this.loadInpatientList()
       }else{
-        this.msgBox.showErrorMessage('User not found in doctors register')
+        this.msgBox.showErrorMessage3('User not found in doctors register')
       }
     }
   
@@ -73,7 +73,7 @@ export class DoctorInpatientListComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not load patients')
+          this.msgBox.showErrorMessage(error, 'Could not load patients')
         }
       )
     } 
@@ -94,7 +94,7 @@ export class DoctorInpatientListComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not load doctor')
+          this.msgBox.showErrorMessage(error, 'Could not load doctor')
         }
       )
     }

@@ -74,7 +74,7 @@ export class FinalDiagnosisHistoryComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load final diagnosises')
+        this.msgBox.showErrorMessage(error, 'Could not load final diagnosises')
         console.log(error)
       }
     )

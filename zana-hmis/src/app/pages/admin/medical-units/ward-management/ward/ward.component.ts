@@ -116,7 +116,7 @@ export class WardComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create ward')
+          this.msgBox.showErrorMessage(error, 'Could not create ward')
         }
       )
 
@@ -138,7 +138,7 @@ export class WardComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update ward')
+          this.msgBox.showErrorMessage(error, 'Could not update ward')
         }
       )
     }
@@ -162,7 +162,7 @@ export class WardComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load ward types')
+        this.msgBox.showErrorMessage(error, 'Could not load ward types')
       }
     )
   }
@@ -185,7 +185,7 @@ export class WardComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load ward categories')
+        this.msgBox.showErrorMessage(error, 'Could not load ward categories')
       }
     )
   }
@@ -208,7 +208,7 @@ export class WardComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load wards')
+        this.msgBox.showErrorMessage(error, 'Could not load wards')
       }
     )
   }
@@ -247,7 +247,7 @@ export class WardComponent {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }

@@ -97,7 +97,7 @@ export class InsuranceProviderComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create insurance provider')
+          this.msgBox.showErrorMessage(error, 'Could not create insurance provider')
         }
       )
 
@@ -123,7 +123,7 @@ export class InsuranceProviderComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update insurance provider')
+          this.msgBox.showErrorMessage(error, 'Could not update insurance provider')
         }
       )
     }
@@ -148,7 +148,7 @@ export class InsuranceProviderComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load insurance providers')
+        this.msgBox.showErrorMessage(error, 'Could not load insurance providers')
       }
     )
   }
@@ -192,7 +192,7 @@ export class InsuranceProviderComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find insurance provider')
+        this.msgBox.showErrorMessage(error, 'Could not find insurance provider')
       }
     )
   }

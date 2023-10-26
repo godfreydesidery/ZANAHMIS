@@ -58,9 +58,6 @@ export class ConsultationPlanComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //this.loadConsultationPlans()
-    //this.loadInsuranceProviderNames()
-    //this.loadClinicNames()
     this.loadInsurancePlans()
   }
 
@@ -82,7 +79,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Insurance Providers')
+        this.msgBox.showErrorMessage(error, 'Could not load Insurance Providers')
       }
     )
   }
@@ -103,7 +100,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not load plans')
       }
     )
   }
@@ -126,7 +123,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Insurance Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load Insurance Plans')
       }
     )
   }
@@ -149,7 +146,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Consultation Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load Consultation Plans')
       }
     )
   }
@@ -185,12 +182,12 @@ export class ConsultationPlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create Consultation Plan')
+          this.msgBox.showErrorMessage(error, 'Could not create Consultation Plan')
         }
       )
 
     }else{
-      //update an existing clinic
+      //update an existing plan
       this.spinner.show()
       await this.http.post<IConsultationInsurancePlan>(API_URL+'/consultation_insurance_plans/save', consultationPlan, options)
       .pipe(finalize(() => this.spinner.hide()))
@@ -205,7 +202,7 @@ export class ConsultationPlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update Consultation Plan')
+          this.msgBox.showErrorMessage(error, 'Could not update Consultation Plan')
         }
       )
     }
@@ -244,7 +241,7 @@ export class ConsultationPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find Consultation Plan')
+        this.msgBox.showErrorMessage(error, 'Could not find Consultation Plan')
       }
     )
   }
@@ -272,7 +269,7 @@ export class ConsultationPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not delete Consultation Plan')
+        this.msgBox.showErrorMessage(error, 'Could not delete Consultation Plan')
       }
     )
   }
@@ -295,7 +292,7 @@ export class ConsultationPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load clinics')
+        this.msgBox.showErrorMessage(error, 'Could not load clinics')
       }
     )
   }

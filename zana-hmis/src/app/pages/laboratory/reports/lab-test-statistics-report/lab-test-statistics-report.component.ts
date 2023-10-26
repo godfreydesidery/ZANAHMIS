@@ -73,12 +73,12 @@ export class LabTestStatisticsReportComponent {
     }
 
     if(from === undefined || to === undefined){
-      this.msgBox.showErrorMessage('Could not run. Please select date range')
+      this.msgBox.showErrorMessage3('Could not run. Please select date range')
       return
     }
 
     if(from > to){
-      this.msgBox.showErrorMessage('Could not run. Start date must be earlier or equal to end date')
+      this.msgBox.showErrorMessage3('Could not run. Start date must be earlier or equal to end date')
       return
     }
 
@@ -131,7 +131,7 @@ this.labTestTypes.sort()
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -145,7 +145,7 @@ this.labTestTypes.sort()
   print = async () => {
 
     if(this.labTests.length === 0){
-      this.msgBox.showErrorMessage('No data to print')
+      this.msgBox.showErrorMessage3('No data to print')
       return
     }
 

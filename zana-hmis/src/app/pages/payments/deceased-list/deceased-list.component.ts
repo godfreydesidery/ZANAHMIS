@@ -78,7 +78,7 @@ export class DeceasedListComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -106,7 +106,7 @@ export class DeceasedListComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -117,7 +117,7 @@ export class DeceasedListComponent {
   print = async (note : IDeceasedNote) => {
 
     if(note === null){
-      this.msgBox.showErrorMessage('No data to publish')
+      this.msgBox.showErrorMessage3('No data to publish')
       return
     }
 
@@ -127,7 +127,7 @@ export class DeceasedListComponent {
     }else if(note.consultation != null){
       patient = note.consultation.patient
     }else{
-      this.msgBox.showErrorMessage('Patient information missing')
+      this.msgBox.showErrorMessage3('Patient information missing')
       return
     }
 

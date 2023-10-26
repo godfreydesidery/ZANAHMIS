@@ -51,7 +51,7 @@ export class ListFromReceptionComponent implements OnInit {
     if(this.clinicianId != null){
       await this.loadListFromReception(this.clinicianId)
     }else{
-      this.msgBox.showErrorMessage('User not found in doctors register')
+      this.msgBox.showErrorMessage3('User not found in doctors register')
     }
   }
 
@@ -71,7 +71,7 @@ export class ListFromReceptionComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load doctor')
+        this.msgBox.showErrorMessage(error, 'Could not load doctor')
         console.log(error)
       }
     )
@@ -93,7 +93,7 @@ export class ListFromReceptionComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -122,14 +122,14 @@ export class ListFromReceptionComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
     if(opened){
       this.router.navigate(['doctor-cracking'])
     }else{
-      this.msgBox.showErrorMessage('Could not open')
+      this.msgBox.showErrorMessage3('Could not open')
     }
   }
 

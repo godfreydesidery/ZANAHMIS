@@ -74,7 +74,7 @@ export class RadiologyHistoryComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load radiologies')
+        this.msgBox.showErrorMessage(error, 'Could not load radiologies')
         console.log(error)
       }
     )

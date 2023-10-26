@@ -59,9 +59,6 @@ export class LabTestPlanComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //this.loadLabTestTypeInsurancePlans()
-    //this.loadInsuranceProviderNames()
-    //this.loadLabTestTypeNames()
     this.loadInsurancePlans()
   }
 
@@ -83,7 +80,7 @@ export class LabTestPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Providers')
+        this.msgBox.showErrorMessage(error, 'Could not load Providers')
       }
     )
   }
@@ -104,7 +101,7 @@ export class LabTestPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -127,7 +124,7 @@ export class LabTestPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load Plans')
       }
     )
   }
@@ -150,7 +147,7 @@ export class LabTestPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load labTestType plans')
+        this.msgBox.showErrorMessage(error, 'Could not load labTestType plans')
       }
     )
   }
@@ -186,7 +183,7 @@ export class LabTestPlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create labTestType plan')
+          this.msgBox.showErrorMessage(error, 'Could not create labTestType plan')
         }
       )
 
@@ -206,7 +203,7 @@ export class LabTestPlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update labTestType plan')
+          this.msgBox.showErrorMessage(error, 'Could not update labTestType plan')
         }
       )
     }
@@ -245,7 +242,7 @@ export class LabTestPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find labTestType plan')
+        this.msgBox.showErrorMessage(error, 'Could not find labTestType plan')
       }
     )
   }
@@ -273,7 +270,7 @@ export class LabTestPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not delete labTestType plan')
+        this.msgBox.showErrorMessage(error, 'Could not delete labTestType plan')
       }
     )
   }
@@ -296,7 +293,7 @@ export class LabTestPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load lab_test_types')
+        this.msgBox.showErrorMessage(error, 'Could not load lab_test_types')
       }
     )
   }

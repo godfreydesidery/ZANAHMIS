@@ -38,4 +38,10 @@ public interface ReferralPlanRepository extends JpaRepository<ReferralPlan, Long
 	 */
 	Optional<ReferralPlan> findByConsultationAndStatus(Consultation consultation, String string);
 
+	/**
+	 * @param string
+	 * @return
+	 */
+	List<ReferralPlan> findAllByStatus(String string);
+
 }

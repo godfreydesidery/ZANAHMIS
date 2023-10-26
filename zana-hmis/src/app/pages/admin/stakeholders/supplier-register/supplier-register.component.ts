@@ -134,7 +134,7 @@ export class SupplierRegisterComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
 
@@ -172,7 +172,7 @@ export class SupplierRegisterComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
     }
@@ -243,7 +243,7 @@ export class SupplierRegisterComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -267,7 +267,7 @@ export class SupplierRegisterComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load supplier names')
+        this.msgBox.showErrorMessage3('Could not load supplier names')
       }
     )
   }

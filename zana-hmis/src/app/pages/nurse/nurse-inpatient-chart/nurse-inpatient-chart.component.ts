@@ -181,7 +181,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load admission')
+        this.msgBox.showErrorMessage(error, 'Could not load admission')
         console.log(error)
       }
     )
@@ -202,8 +202,8 @@ export class NurseInpatientChartComponent {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load prescriptions')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load prescriptions')
       }
     )
     
@@ -224,8 +224,8 @@ export class NurseInpatientChartComponent {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load lab tests')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load lab tests')
       }
     )
     
@@ -247,8 +247,8 @@ export class NurseInpatientChartComponent {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load radiologies')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load radiologies')
       }
     )
     
@@ -269,8 +269,8 @@ export class NurseInpatientChartComponent {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load procedures')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load procedures')
       }
     )
     
@@ -308,7 +308,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientObservationCharts(0, 0, this.id) 
@@ -329,8 +329,8 @@ export class NurseInpatientChartComponent {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load observation charts')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load observation charts')
       }
     )
     
@@ -350,7 +350,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientObservationCharts(0, 0, this.id) 
@@ -409,7 +409,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientNursingCharts(0, 0, this.id) 
@@ -430,8 +430,8 @@ export class NurseInpatientChartComponent {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load nursing charts')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load nursing charts')
       }
     )
     
@@ -451,7 +451,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientNursingCharts(0, 0, this.id) 
@@ -478,7 +478,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientNursingProgressNotes(0, 0, this.id) 
@@ -499,8 +499,8 @@ export class NurseInpatientChartComponent {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load nursing progress notes')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load nursing progress notes')
       }
     )
     
@@ -520,7 +520,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientNursingProgressNotes(0, 0, this.id) 
@@ -550,7 +550,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientNursingCarePlans(0, 0, this.id) 
@@ -572,7 +572,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     
@@ -592,7 +592,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientNursingCarePlans(0, 0, this.id) 
@@ -628,7 +628,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -649,7 +649,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -681,7 +681,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientDressingChart(0, 0, this.id) 
@@ -703,7 +703,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     
@@ -723,7 +723,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientDressingChart(0, 0, this.id) 
@@ -751,7 +751,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -772,7 +772,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -807,7 +807,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientConsumableChart(0, 0, this.id)
@@ -829,7 +829,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     
@@ -849,7 +849,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPatientConsumableChart(0, 0, this.id) 
@@ -875,7 +875,7 @@ export class NurseInpatientChartComponent {
       (error) => {
         this.prescription!
         this.prescriptionId = null
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
 
       }
     )
@@ -898,7 +898,7 @@ export class NurseInpatientChartComponent {
     .catch(
       (error) => {
         this.prescription!
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
 
       }
     )
@@ -938,7 +938,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         this.clearPrescriptionChart()
       }
     )
@@ -959,7 +959,7 @@ export class NurseInpatientChartComponent {
     )
     .catch(
       (error) => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPrescriptionChart(this.prescriptionId)

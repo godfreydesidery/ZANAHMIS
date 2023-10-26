@@ -82,7 +82,7 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Insurance Providers')
+        this.msgBox.showErrorMessage(error, 'Could not load Insurance Providers')
       }
     )
   }
@@ -103,7 +103,7 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -126,7 +126,7 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Insurance Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load Insurance Plans')
       }
     )
   }
@@ -149,7 +149,7 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Procedure Type Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load Procedure Type Plans')
       }
     )
   }
@@ -185,7 +185,7 @@ export class ProcedurePlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create Procedure Type Plan')
+          this.msgBox.showErrorMessage(error, 'Could not create Procedure Type Plan')
         }
       )
 
@@ -205,7 +205,7 @@ export class ProcedurePlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update Procedure Type Plan')
+          this.msgBox.showErrorMessage(error, 'Could not update Procedure Type Plan')
         }
       )
     }
@@ -244,7 +244,7 @@ export class ProcedurePlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find Procedure Type Plan')
+        this.msgBox.showErrorMessage(error, 'Could not find Procedure Type Plan')
       }
     )
   }
@@ -272,7 +272,7 @@ export class ProcedurePlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not delete Procedure Type Plan')
+        this.msgBox.showErrorMessage(error, 'Could not delete Procedure Type Plan')
       }
     )
   }
@@ -295,7 +295,7 @@ export class ProcedurePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Procedure Types')
+        this.msgBox.showErrorMessage(error, 'Could not load Procedure Types')
       }
     )
   }

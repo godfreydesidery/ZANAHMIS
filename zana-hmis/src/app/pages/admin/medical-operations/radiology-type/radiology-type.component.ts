@@ -89,7 +89,7 @@ export class RadiologyTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create Radiology Type')
+          this.msgBox.showErrorMessage(error, 'Could not create Radiology Type')
         }
       )
 
@@ -114,7 +114,7 @@ export class RadiologyTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update Radiology Type')
+          this.msgBox.showErrorMessage(error, 'Could not update Radiology Type')
         }
       )
     }
@@ -139,7 +139,7 @@ export class RadiologyTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Radiology Types')
+        this.msgBox.showErrorMessage(error, 'Could not load Radiology Types')
       }
     )
   }
@@ -179,7 +179,7 @@ export class RadiologyTypeComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find Radiology Type')
+        this.msgBox.showErrorMessage(error, 'Could not find Radiology Type')
       }
     )
   }

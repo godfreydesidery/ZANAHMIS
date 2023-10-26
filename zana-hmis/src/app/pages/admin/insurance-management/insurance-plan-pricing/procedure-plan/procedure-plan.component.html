@@ -11,34 +11,10 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <!--<div class="btn"> 
-                        <button type="button" class="btn btn-success m-r-2 m-b-5" (click)="clear()" data-toggle="modal" data-target="#add-edit-modal">New</button>
-                    </div>-->
+                    <h4 class="text-primary">Select Package</h4>
                 </div>
                 <div class="panel-body">
                     <div class="col-sm-12">
-                        <!--<table class="table table-bordered table-small">
-                            <thead>
-                                <tr>
-                                    <td>Provider</td>
-                                    <td>Plan</td>
-                                    <td>Procedure Type</td>
-                                    <td>Price</td>
-                                    <td>Action</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let procedureTypeInsurancePlan of procedureTypeInsurancePlans">
-                                    <td>{{procedureTypeInsurancePlan.insurancePlan.insuranceProvider.name}}</td>
-                                    <td>{{procedureTypeInsurancePlan.insurancePlan.name}}</td>
-                                    <td>{{procedureTypeInsurancePlan.procedureType.name}}</td>
-                                    <td style="text-align: right;">{{procedureTypeInsurancePlan.price | currency:'':''}}</td>
-                                    <td><a class="" (click)="getProcedureTypeInsurancePlan(procedureTypeInsurancePlan.id)" data-toggle="modal" data-target="#add-edit-modal"><i class="glyphicon glyphicon-pencil"></i>Edit</a>
-                                        <a class="" (click)="deleteProcedureTypeInsurancePlan(procedureTypeInsurancePlan.id)"><i class="glyphicon glyphicon-trash"></i>Delete</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>-->
                         <div class="row">
                             <div class="col-sm-2">
                                 <button class="btn btn-transparent btn-primary btn-outline form-control" routerLink="/procedure-type-price" (click)="setInsurancePlanId(0, 'CASH')" style="border-radius: 0px;">CASH</button>
@@ -53,58 +29,3 @@
          </div>
      </div>     
  </section> <!-- /.content -->
-
- <!-- Modal success -->
-<div class="modal fade modal-success" id="add-edit-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h1 class="modal-title" *ngIf="id === null">Add Plan</h1>
-                <h1 class="modal-title" *ngIf="id != null">Edit Plan</h1>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <label>Select Insurance Provider*</label>
-                        <select class="form-control" [(ngModel)]="insuranceProviderName" (ngModelChange)="loadInsurancePlanNamesByProviders(insuranceProviderName)">
-                            <option>{{insuranceProviderName}}</option>
-                            <option></option>
-                            <option *ngFor="let insuranceProviderName of insuranceProviderNames">{{insuranceProviderName}}</option>
-                        </select>
-                    </div>
-                </div> 
-                <div class="row">
-                    <div class="col-sm-12">
-                        <label>Select Insurance Plan*</label>
-                        <select class="form-control" [(ngModel)]="insurancePlanName">
-                            <option>{{insurancePlanName}}</option>
-                            <option></option>
-                            <option *ngFor="let insurancePlanName of insurancePlanNames">{{insurancePlanName}}</option>
-                        </select>
-                    </div>
-                </div> 
-                <div class="row">
-                    <div class="col-sm-12">
-                        <label>Select Lab Test Type*</label>
-                        <select class="form-control" [(ngModel)]="procedureTypeName">
-                            <option>{{procedureTypeName}}</option>
-                            <option></option>
-                            <option *ngFor="let procedureTypeName of procedureTypeNames">{{procedureTypeName}}</option>
-                        </select>
-                    </div>
-                </div> 
-                <div class="row">
-                    <div class="col-sm-12">
-                        <label>Lab Test Type Price*</label>
-                        <input type="number" class="form-control" [(ngModel)]="price" style="text-align: center;">
-                    </div>
-                </div> 
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" (click)="saveProcedureTypeInsurancePlan()" data-dismiss="modal">Save</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->

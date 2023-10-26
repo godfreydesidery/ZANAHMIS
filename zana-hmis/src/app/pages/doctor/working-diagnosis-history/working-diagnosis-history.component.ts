@@ -74,7 +74,7 @@ export class WorkingDiagnosisHistoryComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load working diagnosises')
+        this.msgBox.showErrorMessage(error, 'Could not load working diagnosises')
         console.log(error)
       }
     )

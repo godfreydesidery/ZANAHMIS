@@ -79,7 +79,7 @@ export class ReferralListComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -107,7 +107,7 @@ export class ReferralListComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -118,7 +118,7 @@ export class ReferralListComponent {
   print = async (plan : IReferralPlan) => {
 
     if(plan === null){
-      this.msgBox.showErrorMessage('No data to publish')
+      this.msgBox.showErrorMessage3('No data to publish')
       return
     }
 
@@ -128,7 +128,7 @@ export class ReferralListComponent {
     }else if(plan.consultation != null){
       patient = plan.consultation.patient
     }else{
-      this.msgBox.showErrorMessage('Patient information missing')
+      this.msgBox.showErrorMessage3('Patient information missing')
       return
     }
 

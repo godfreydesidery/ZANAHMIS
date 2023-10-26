@@ -130,7 +130,7 @@ export class PatientReportComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load patients')
+        this.msgBox.showErrorMessage(error, 'Could not load patients')
       }
     )
   }
@@ -201,7 +201,7 @@ export class PatientReportComponent {
       error => {
         console.log(error)
         this.clear()
-        this.msgBox.showErrorMessage('Could not find patient')
+        this.msgBox.showErrorMessage(error, 'Could not find patient')
         return
       }
     )
@@ -287,7 +287,7 @@ export class PatientReportComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -342,7 +342,7 @@ export class PatientReportComponent {
     .catch(
       error => {
         this.clear()
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -358,12 +358,12 @@ export class PatientReportComponent {
     }
 
     if(from === undefined || to === undefined){
-      this.msgBox.showErrorMessage('Could not run. Please select date range')
+      this.msgBox.showErrorMessage3('Could not run. Please select date range')
       return
     }
 
     if(from > to){
-      this.msgBox.showErrorMessage('Could not run. Start date must be earlier or equal to end date')
+      this.msgBox.showErrorMessage3('Could not run. Start date must be earlier or equal to end date')
       return
     }
 
@@ -386,7 +386,7 @@ export class PatientReportComponent {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -415,7 +415,7 @@ export class PatientReportComponent {
   print = async () => {
 
     if(this.patientBills.length === 0){
-      this.msgBox.showErrorMessage('No data to export')
+      this.msgBox.showErrorMessage3('No data to export')
       return
     }
 

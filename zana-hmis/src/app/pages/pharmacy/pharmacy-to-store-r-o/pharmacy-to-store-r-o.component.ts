@@ -97,7 +97,7 @@ export class PharmacyToStoreROComponent {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.pharmacyToStoreRO.pharmacyToStoreRODetails = []
@@ -137,7 +137,7 @@ export class PharmacyToStoreROComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -166,7 +166,7 @@ export class PharmacyToStoreROComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -192,7 +192,7 @@ export class PharmacyToStoreROComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -233,7 +233,7 @@ export class PharmacyToStoreROComponent {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['status'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -273,7 +273,7 @@ export class PharmacyToStoreROComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -313,7 +313,7 @@ export class PharmacyToStoreROComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -336,8 +336,8 @@ export class PharmacyToStoreROComponent {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load medicine names')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load medicine names')
       }
     )
   }
@@ -411,7 +411,7 @@ export class PharmacyToStoreROComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -444,7 +444,7 @@ export class PharmacyToStoreROComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -464,7 +464,7 @@ export class PharmacyToStoreROComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -486,7 +486,7 @@ export class PharmacyToStoreROComponent {
         },
         error => {
           console.log(error)
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
     }else{
@@ -502,7 +502,7 @@ export class PharmacyToStoreROComponent {
         },
         error => {
           console.log(error)
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
     }

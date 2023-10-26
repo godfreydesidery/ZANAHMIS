@@ -50,7 +50,7 @@ export class MyConsultationComponent implements OnInit {
     if(this.clinicianId != null){
       await this.loadOpenedList(this.clinicianId)
     }else{
-      this.msgBox.showErrorMessage('User not found in doctors register')
+      this.msgBox.showErrorMessage3('User not found in doctors register')
     }
   }
 
@@ -70,7 +70,7 @@ export class MyConsultationComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load doctor')
+        this.msgBox.showErrorMessage(error, 'Could not load doctor')
       }
     )
   }
@@ -90,7 +90,7 @@ export class MyConsultationComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -124,7 +124,7 @@ export class MyConsultationComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )

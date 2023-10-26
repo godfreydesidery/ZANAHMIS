@@ -72,7 +72,7 @@ export class GeneralExaminationHistoryComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load general examinations')
+        this.msgBox.showErrorMessage(error, 'Could not load general examinations')
         console.log(error)
       }
     )

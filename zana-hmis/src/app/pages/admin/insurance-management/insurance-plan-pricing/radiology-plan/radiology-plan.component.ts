@@ -59,9 +59,6 @@ export class RadiologyPlanComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //this.loadRadiologyTypeInsurancePlans()
-    //this.loadInsuranceProviderNames()
-    //this.loadRadiologyTypeNames()
     this.loadInsurancePlans()
   }
 
@@ -83,7 +80,7 @@ export class RadiologyPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Providers')
+        this.msgBox.showErrorMessage(error, 'Could not load Providers')
       }
     )
   }
@@ -104,7 +101,7 @@ export class RadiologyPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -127,7 +124,7 @@ export class RadiologyPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load Plans')
       }
     )
   }
@@ -150,7 +147,7 @@ export class RadiologyPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Radiology Type Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load Radiology Type Plans')
       }
     )
   }
@@ -186,7 +183,7 @@ export class RadiologyPlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create Radiology Type Plan')
+          this.msgBox.showErrorMessage(error, 'Could not create Radiology Type Plan')
         }
       )
 
@@ -206,7 +203,7 @@ export class RadiologyPlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not updateradiologyType plan')
+          this.msgBox.showErrorMessage(error, 'Could not updateradiologyType plan')
         }
       )
     }
@@ -245,7 +242,7 @@ export class RadiologyPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not findradiologyType plan')
+        this.msgBox.showErrorMessage(error, 'Could not find radiology Type plan')
       }
     )
   }
@@ -273,7 +270,7 @@ export class RadiologyPlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not deleteradiologyType plan')
+        this.msgBox.showErrorMessage(error, 'Could not deleteradiologyType plan')
       }
     )
   }
@@ -296,7 +293,7 @@ export class RadiologyPlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load radiology_types')
+        this.msgBox.showErrorMessage(error, 'Could not load radiology_types')
       }
     )
   }

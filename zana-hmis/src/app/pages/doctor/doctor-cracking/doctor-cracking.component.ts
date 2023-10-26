@@ -243,7 +243,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load consultation')
+        this.msgBox.showErrorMessage(error, 'Could not load consultation')
         console.log(error)
       }
     )
@@ -274,7 +274,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load clinical note')
+        this.msgBox.showErrorMessage(error, 'Could not load clinical note')
         console.log(error)
       }
     )
@@ -309,7 +309,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load general examination')
+        this.msgBox.showErrorMessage(error, 'Could not load general examination')
         console.log(error)
       }
     )
@@ -387,7 +387,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not save')
+        this.msgBox.showErrorMessage(error, 'Could not save')
         console.log(error)
       }
     )
@@ -420,7 +420,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not save Working Diagnosis')
+        this.msgBox.showErrorMessage(error, 'Could not save Working Diagnosis')
         console.log(error)
       }
     )
@@ -454,7 +454,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not save')
+        this.msgBox.showErrorMessage(error, 'Could not save')
         console.log(error)
       }
     )
@@ -477,8 +477,8 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load working diagnosises')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load working diagnosises')
       }
     )
     
@@ -500,8 +500,8 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load final diagnosises')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load final diagnosises')
       }
     )
     
@@ -522,8 +522,8 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not delete')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not delete')
       }
     )
     this.loadFinalDiagnosis(this.id)
@@ -544,8 +544,8 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not delete')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not delete')
       }
     )
     this.loadWorkingDiagnosis(this.id)
@@ -635,8 +635,8 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not get units')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not get units')
         return 0
       }
     )
@@ -660,8 +660,8 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load theatre names')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load theatre names')
       }
     )
   }
@@ -698,7 +698,7 @@ export class DoctorCrackingComponent implements OnInit {
       error => {
         this.loadLabTest(this.id, 0, 0)
         this.clearLabTest()
-        this.msgBox.showErrorMessage('Could not save Lab Test')
+        this.msgBox.showErrorMessage(error, 'Could not save Lab Test')
         console.log(error)
       }
     )
@@ -735,7 +735,7 @@ export class DoctorCrackingComponent implements OnInit {
       error => {
         this.loadRadiologies(this.id, 0, 0)
         this.clearRadiology()
-        this.msgBox.showErrorMessage('Could not save Radiology')
+        this.msgBox.showErrorMessage(error, 'Could not save Radiology')
         console.log(error)
       }
     )
@@ -761,7 +761,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -793,7 +793,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -843,7 +843,7 @@ export class DoctorCrackingComponent implements OnInit {
       error => {
         this.loadProcedures(this.id, 0, 0)
         this.clearProcedure()
-        this.msgBox.showErrorMessage('Could not save Procedure')
+        this.msgBox.showErrorMessage(error, 'Could not save Procedure')
         console.log(error)
       }
     )
@@ -874,7 +874,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -907,7 +907,7 @@ export class DoctorCrackingComponent implements OnInit {
         prescription.frequency === '' || 
         prescription.route === '' || 
         prescription.days === ''){
-      this.msgBox.showErrorMessage('Can not save, please fill in all the required fields')
+      this.msgBox.showErrorMessage3('Can not save, please fill in all the required fields')
       return
     }
     this.spinner.show()
@@ -925,7 +925,7 @@ export class DoctorCrackingComponent implements OnInit {
       error => {
         this.loadPrescriptions(this.id, 0, 0)
         this.clearPrescription()
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -951,8 +951,8 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load lab tests')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load lab tests')
       }
     )   
   }
@@ -978,7 +978,7 @@ export class DoctorCrackingComponent implements OnInit {
     .catch(
       (error) => {
         console.log(error['error'])
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     
@@ -1000,8 +1000,8 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load procedures')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load procedures')
       }
     )
     
@@ -1023,8 +1023,8 @@ export class DoctorCrackingComponent implements OnInit {
       }
     )
     .catch(
-      () => {
-        this.msgBox.showErrorMessage('Could not load prescriptions')
+      (error) => {
+        this.msgBox.showErrorMessage(error, 'Could not load prescriptions')
       }
     )
     
@@ -1046,7 +1046,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         this.loadLabTest(this.id, 0, 0)
 
       }
@@ -1070,7 +1070,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadRadiologies(this.id, 0, 0)
@@ -1092,7 +1092,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadProcedures(this.id, 0, 0)
@@ -1114,7 +1114,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPrescriptions(this.id, 0, 0)
@@ -1156,7 +1156,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1179,7 +1179,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -1208,7 +1208,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1230,7 +1230,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -1260,7 +1260,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1282,7 +1282,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -1310,7 +1310,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1332,7 +1332,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -1360,7 +1360,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1385,7 +1385,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -1416,7 +1416,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load ward categories')
+        this.msgBox.showErrorMessage(error, 'Could not load ward categories')
       }
     )
   }
@@ -1445,7 +1445,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load ward types')
+        this.msgBox.showErrorMessage(error, 'Could not load ward types')
       }
     )
   }
@@ -1488,7 +1488,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load wards')
+        this.msgBox.showErrorMessage(error, 'Could not load wards')
       }
     )
   }
@@ -1525,7 +1525,7 @@ export class DoctorCrackingComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load Beds/Rooms')
+        this.msgBox.showErrorMessage(error, 'Could not load Beds/Rooms')
       }
     )
   }
@@ -1578,7 +1578,7 @@ export class DoctorCrackingComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1618,7 +1618,7 @@ export class DoctorCrackingComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
 
@@ -1660,7 +1660,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -1684,7 +1684,7 @@ export class DoctorCrackingComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )

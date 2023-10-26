@@ -119,7 +119,8 @@ export class ItemRegisterComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create item')
+          console.log(error)
+          this.msgBox.showErrorMessage(error, 'Could not create item!')
         }
       )
 
@@ -152,7 +153,7 @@ export class ItemRegisterComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update item')
+          this.msgBox.showErrorMessage(error, 'Could not update item')
         }
       )
     }
@@ -195,7 +196,7 @@ export class ItemRegisterComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load item names')
+        this.msgBox.showErrorMessage(error, 'Could not load item names')
       }
     )
   }
@@ -240,7 +241,7 @@ export class ItemRegisterComponent {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not find item')
       }
     )
   }

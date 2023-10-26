@@ -78,7 +78,7 @@ export class PatientPharmacyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load patient')
+        this.msgBox.showErrorMessage(error, 'Could not load patient')
         console.log(error)
       }
     )
@@ -105,7 +105,7 @@ export class PatientPharmacyComponent {
     .catch(
       error => {
         this.prescriptions = []
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -126,7 +126,7 @@ export class PatientPharmacyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
@@ -148,7 +148,7 @@ export class PatientPharmacyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
@@ -170,7 +170,7 @@ export class PatientPharmacyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
@@ -192,7 +192,7 @@ export class PatientPharmacyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
@@ -214,7 +214,7 @@ export class PatientPharmacyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)
@@ -229,7 +229,7 @@ export class PatientPharmacyComponent {
     this.prescriptions.forEach(prescription => {
       if(prescription.checked === true){
         if(prescription.issued <= 0){
-          this.msgBox.showErrorMessage('Invalid value at '+prescription.medicine.name)
+          this.msgBox.showErrorMessage3('Invalid value at '+prescription.medicine.name)
           return
         }
         prescriptions.push(prescription)
@@ -246,7 +246,7 @@ export class PatientPharmacyComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadPrescriptionsByPatientAndPharmacy(this.id, this.pharmacyId)

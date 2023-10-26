@@ -78,7 +78,7 @@ export class DischargeListComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -106,7 +106,7 @@ export class DischargeListComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )
@@ -117,7 +117,7 @@ export class DischargeListComponent {
   print = async (plan : IDischargePlan) => {
 
     if(plan === null){
-      this.msgBox.showErrorMessage('No data to publish')
+      this.msgBox.showErrorMessage3('No data to publish')
       return
     }
 

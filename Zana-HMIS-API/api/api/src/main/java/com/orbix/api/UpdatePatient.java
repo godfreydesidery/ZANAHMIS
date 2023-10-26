@@ -28,6 +28,7 @@ import com.orbix.api.domain.PatientInvoiceDetail;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.Radiology;
+import com.orbix.api.domain.ReferralPlan;
 import com.orbix.api.domain.WardBed;
 import com.orbix.api.domain.WardTypeInsurancePlan;
 import com.orbix.api.repositories.AdmissionBedRepository;
@@ -46,6 +47,7 @@ import com.orbix.api.repositories.PatientInvoiceRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.RadiologyRepository;
+import com.orbix.api.repositories.ReferralPlanRepository;
 import com.orbix.api.repositories.UserRepository;
 import com.orbix.api.repositories.WardTypeInsurancePlanRepository;
 import com.orbix.api.service.DayService;
@@ -89,6 +91,7 @@ public class UpdatePatient implements Runnable{
 	
 	private final DischargePlanRepository dischargePlanRepository;
 	private final DeceasedNoteRepository deceasedNoteRepository;
+	private final ReferralPlanRepository referralPlanRepository;
 	
 	
 	
@@ -560,6 +563,20 @@ public class UpdatePatient implements Runnable{
 					}else {
 						deceasedNote.setStatus("ARCHIVED");
 						deceasedNoteRepository.save(deceasedNote);
+					}
+				}
+				
+				List<ReferralPlan> referralPlans = referralPlanRepository.findAllByStatus("APPROVED");
+				for(ReferralPlan referralPlan : referralPlans) {
+					if(referralPlan.getApprovedAt() != null) {
+						long difference = ChronoUnit.HOURS.between(referralPlan.getApprovedAt(), dayService.getTimeStamp());
+						if(difference >= 48) {
+							referralPlan.setStatus("ARCHIVED");
+							referralPlanRepository.save(referralPlan);
+						}
+					}else {
+						referralPlan.setStatus("ARCHIVED");
+						referralPlanRepository.save(referralPlan);
 					}
 				}
 				

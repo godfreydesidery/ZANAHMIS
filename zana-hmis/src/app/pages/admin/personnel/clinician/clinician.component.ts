@@ -109,7 +109,7 @@ export class ClinicianComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
 
@@ -135,7 +135,7 @@ export class ClinicianComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
     }
@@ -159,7 +159,7 @@ export class ClinicianComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load clinicians')
+        this.msgBox.showErrorMessage(error, 'Could not load clinicians')
       }
     )
   }
@@ -203,7 +203,7 @@ export class ClinicianComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find Doctor')
+        this.msgBox.showErrorMessage(error, 'Could not find Doctor')
       }
     )
   }
@@ -308,7 +308,7 @@ export class ClinicianComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
 

@@ -84,12 +84,12 @@ export class ProcedureReportComponent {
     }
 
     if(from === undefined || to === undefined){
-      this.msgBox.showErrorMessage('Could not run. Please select date range')
+      this.msgBox.showErrorMessage3('Could not run. Please select date range')
       return
     }
 
     if(from > to){
-      this.msgBox.showErrorMessage('Could not run. Start date must be earlier or equal to end date')
+      this.msgBox.showErrorMessage3('Could not run. Start date must be earlier or equal to end date')
       return
     }
 
@@ -111,7 +111,7 @@ export class ProcedureReportComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -125,7 +125,7 @@ export class ProcedureReportComponent {
   exportToPdf = async () => {
 
     if(this.procedures.length === 0){
-      this.msgBox.showErrorMessage('No data to export')
+      this.msgBox.showErrorMessage3('No data to export')
       return
     }
 
@@ -208,7 +208,7 @@ export class ProcedureReportComponent {
   print = async () => {
 
     if(this.procedures.length === 0){
-      this.msgBox.showErrorMessage('No data to export')
+      this.msgBox.showErrorMessage3('No data to export')
       return
     }
 

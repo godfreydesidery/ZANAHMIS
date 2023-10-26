@@ -73,7 +73,7 @@ export class RadiologyTypePriceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not load Radiology types')
       }
     )
   }
@@ -108,7 +108,7 @@ export class RadiologyTypePriceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not change coverage')
       }
     )
   }
@@ -145,7 +145,7 @@ export class RadiologyTypePriceComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, 'Could not update price')
       }
     )
   }

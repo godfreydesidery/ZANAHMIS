@@ -73,7 +73,7 @@ export class PatientProcedureComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load patient')
+        this.msgBox.showErrorMessage(error, 'Could not load patient')
         console.log(error)
       }
     )
@@ -97,7 +97,7 @@ export class PatientProcedureComponent {
     .catch(
       error => {
         this.procedures = []
-        this.msgBox.showErrorMessage('Could not load procedures')
+        this.msgBox.showErrorMessage(error, 'Could not load procedures')
       }
     )
   }
@@ -118,7 +118,7 @@ export class PatientProcedureComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadProceduresByPatient(this.id)
@@ -140,7 +140,7 @@ export class PatientProcedureComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadProceduresByPatient(this.id)
@@ -163,7 +163,7 @@ export class PatientProcedureComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadProceduresByPatient(this.id)
@@ -185,7 +185,7 @@ export class PatientProcedureComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadProceduresByPatient(this.id)
@@ -207,7 +207,7 @@ export class PatientProcedureComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadProceduresByPatient(this.id)
@@ -229,7 +229,7 @@ export class PatientProcedureComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
     this.loadProceduresByPatient(this.id)

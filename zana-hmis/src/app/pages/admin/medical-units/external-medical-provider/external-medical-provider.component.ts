@@ -98,7 +98,7 @@ export class ExternalMedicalProviderComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create insurance provider')
+          this.msgBox.showErrorMessage(error, 'Could not create insurance provider')
         }
       )
 
@@ -124,7 +124,7 @@ export class ExternalMedicalProviderComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update external medical provider')
+          this.msgBox.showErrorMessage(error, 'Could not update external medical provider')
         }
       )
     }
@@ -149,7 +149,7 @@ export class ExternalMedicalProviderComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load external medical providers')
+        this.msgBox.showErrorMessage(error, 'Could not load external medical providers')
       }
     )
   }
@@ -193,7 +193,7 @@ export class ExternalMedicalProviderComponent {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find external medical provider')
+        this.msgBox.showErrorMessage(error, 'Could not find external medical provider')
       }
     )
   }

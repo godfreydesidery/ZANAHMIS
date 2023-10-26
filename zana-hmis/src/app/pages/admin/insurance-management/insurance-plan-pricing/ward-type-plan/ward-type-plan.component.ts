@@ -83,7 +83,7 @@ export class WardTypePlanComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Providers')
+        this.msgBox.showErrorMessage(error, 'Could not load Providers')
       }
     )
   }
@@ -104,7 +104,7 @@ export class WardTypePlanComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -127,7 +127,7 @@ export class WardTypePlanComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load Plans')
       }
     )
   }
@@ -150,7 +150,7 @@ export class WardTypePlanComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Ward Type Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load Ward Type Plans')
       }
     )
   }
@@ -186,7 +186,7 @@ export class WardTypePlanComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create Ward Type Plan')
+          this.msgBox.showErrorMessage(error, 'Could not create Ward Type Plan')
         }
       )
 
@@ -206,7 +206,7 @@ export class WardTypePlanComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not updatewardType plan')
+          this.msgBox.showErrorMessage(error, 'Could not update ward Type plan')
         }
       )
     }
@@ -245,7 +245,7 @@ export class WardTypePlanComponent {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not findwardType plan')
+        this.msgBox.showErrorMessage(error, 'Could not find ward Type plan')
       }
     )
   }
@@ -273,7 +273,7 @@ export class WardTypePlanComponent {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not deletewardType plan')
+        this.msgBox.showErrorMessage(error, 'Could not delete ward Type plan')
       }
     )
   }
@@ -296,7 +296,7 @@ export class WardTypePlanComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load ward_types')
+        this.msgBox.showErrorMessage(error, 'Could not load ward_types')
       }
     )
   }

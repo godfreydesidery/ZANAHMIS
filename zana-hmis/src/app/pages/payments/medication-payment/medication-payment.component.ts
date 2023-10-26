@@ -111,7 +111,7 @@ export class MedicationPaymentComponent implements OnInit {
       },
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load patients')
+        this.msgBox.showErrorMessage(error, 'Could not load patients')
       }
     )
   }
@@ -182,7 +182,7 @@ export class MedicationPaymentComponent implements OnInit {
       error => {
         console.log(error)
         this.clear()
-        this.msgBox.showErrorMessage('Could not find patient')
+        this.msgBox.showErrorMessage(error, 'Could not find patient')
         return
       }
     )
@@ -242,7 +242,7 @@ export class MedicationPaymentComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load registration bill')
+        this.msgBox.showErrorMessage(error, 'Could not load registration bill')
       }
     )
   }
@@ -272,7 +272,7 @@ export class MedicationPaymentComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not load prescription bill')
+        this.msgBox.showErrorMessage(error, 'Could not load prescription bill')
       }
     )
   }
@@ -319,7 +319,7 @@ export class MedicationPaymentComponent implements OnInit {
     .catch(
       error => {
         console.log(error)
-        this.msgBox.showErrorMessage('Could not confirm payment')
+        this.msgBox.showErrorMessage(error, 'Could not confirm payment')
       }
     )
   }
@@ -382,7 +382,7 @@ export class MedicationPaymentComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -441,7 +441,7 @@ export class MedicationPaymentComponent implements OnInit {
     .catch(
       error => {
         this.clear()
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
         console.log(error)
       }
     )

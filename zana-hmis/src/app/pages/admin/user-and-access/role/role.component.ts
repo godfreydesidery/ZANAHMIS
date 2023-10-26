@@ -93,7 +93,7 @@ export class RoleComponent implements OnInit {
       .catch(
         error => {
           console.log(error)
-          this.msgBox.showErrorMessage('Could not create role')
+          this.msgBox.showErrorMessage(error, 'Could not create role')
         }
       )   
     }else{
@@ -113,7 +113,7 @@ export class RoleComponent implements OnInit {
       .catch(
         error => {
           console.log(error)
-          this.msgBox.showErrorMessage('Could not update role')
+          this.msgBox.showErrorMessage(error, 'Could not update role')
         }
       )   
     }
@@ -167,7 +167,7 @@ export class RoleComponent implements OnInit {
       error=>{
         console.log(error) 
         this.name = ''   
-        this.msgBox.showErrorMessage('No matching role')    
+        this.msgBox.showErrorMessage(error, 'No matching role')    
       }
     )
   }
@@ -193,7 +193,7 @@ export class RoleComponent implements OnInit {
       .catch(
         error => {
           console.log(error)
-          this.msgBox.showErrorMessage('Could not delete role')
+          this.msgBox.showErrorMessage(error, 'Could not delete role')
           return false
         }
       )

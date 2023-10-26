@@ -87,7 +87,7 @@ export class WardTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create ward type')
+          this.msgBox.showErrorMessage(error, 'Could not create ward type')
         }
       )
 
@@ -110,7 +110,7 @@ export class WardTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update ward type')
+          this.msgBox.showErrorMessage(error, 'Could not update ward type')
         }
       )
     }
@@ -134,7 +134,7 @@ export class WardTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load ward types')
+        this.msgBox.showErrorMessage(error, 'Could not load ward types')
       }
     )
   }
@@ -170,7 +170,7 @@ export class WardTypeComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find ward type')
+        this.msgBox.showErrorMessage(error, 'Could not find ward type')
       }
     )
   }

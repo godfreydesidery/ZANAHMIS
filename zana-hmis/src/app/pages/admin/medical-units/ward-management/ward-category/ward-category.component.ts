@@ -83,7 +83,7 @@ export class WardCategoryComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
 
@@ -105,7 +105,7 @@ export class WardCategoryComponent {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage(error['error'])
+          this.msgBox.showErrorMessage(error, '')
         }
       )
     }
@@ -129,7 +129,7 @@ export class WardCategoryComponent {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load ward categories')
+        this.msgBox.showErrorMessage(error, 'Could not load ward categories')
       }
     )
   }
@@ -163,7 +163,7 @@ export class WardCategoryComponent {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find ward category')
+        this.msgBox.showErrorMessage(error, 'Could not find ward category')
       }
     )
   }

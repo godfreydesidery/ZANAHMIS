@@ -57,9 +57,6 @@ export class MedicinePlanComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //this.loadMedicineInsurancePlans()
-    //this.loadInsuranceProviderNames()
-    //this.loadMedicineNames()
     this.loadInsurancePlans()
   }
 
@@ -81,7 +78,7 @@ export class MedicinePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Insurance Providers')
+        this.msgBox.showErrorMessage(error, 'Could not load Insurance Providers')
       }
     )
   }
@@ -102,7 +99,7 @@ export class MedicinePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage(error['error'])
+        this.msgBox.showErrorMessage(error, '')
       }
     )
   }
@@ -125,7 +122,7 @@ export class MedicinePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Insurance Plans')
+        this.msgBox.showErrorMessage(error, 'Could not load Insurance Plans')
       }
     )
   }
@@ -148,7 +145,7 @@ export class MedicinePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Medicines')
+        this.msgBox.showErrorMessage(error, 'Could not load Medicines')
       }
     )
   }
@@ -183,7 +180,7 @@ export class MedicinePlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create Medicine Insurance Plan')
+          this.msgBox.showErrorMessage(error, 'Could not create Medicine Insurance Plan')
         }
       )
 
@@ -203,7 +200,7 @@ export class MedicinePlanComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update Medicine Insurance Plan')
+          this.msgBox.showErrorMessage(error, 'Could not update Medicine Insurance Plan')
         }
       )
     }
@@ -242,7 +239,7 @@ export class MedicinePlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find Medicine Insurance Plan')
+        this.msgBox.showErrorMessage(error, 'Could not find Medicine Insurance Plan')
       }
     )
   }
@@ -270,7 +267,7 @@ export class MedicinePlanComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not delete Medicine Insurance Plan')
+        this.msgBox.showErrorMessage(error, 'Could not delete Medicine Insurance Plan')
       }
     )
   }
@@ -293,7 +290,7 @@ export class MedicinePlanComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Medicines')
+        this.msgBox.showErrorMessage(error, 'Could not load Medicines')
       }
     )
   }

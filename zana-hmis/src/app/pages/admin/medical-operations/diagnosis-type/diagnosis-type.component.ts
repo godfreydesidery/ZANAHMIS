@@ -96,7 +96,7 @@ export class DiagnosisTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not create Diagnosis Type')
+          this.msgBox.showErrorMessage(error, 'Could not create Diagnosis Type')
         }
       )
 
@@ -119,7 +119,7 @@ export class DiagnosisTypeComponent implements OnInit {
       )
       .catch(
         error => {
-          this.msgBox.showErrorMessage('Could not update Diagnosis Type')
+          this.msgBox.showErrorMessage(error, 'Could not update Diagnosis Type')
         }
       )
     }
@@ -144,7 +144,7 @@ export class DiagnosisTypeComponent implements OnInit {
     )
     .catch(
       error => {
-        this.msgBox.showErrorMessage('Could not load Diagnosis Types')
+        this.msgBox.showErrorMessage(error, 'Could not load Diagnosis Types')
       }
     )
   }
@@ -180,7 +180,7 @@ export class DiagnosisTypeComponent implements OnInit {
     .catch(
       error=>{
         console.log(error)        
-        this.msgBox.showErrorMessage('Could not find diagnosis type')
+        this.msgBox.showErrorMessage(error, 'Could not find diagnosis type')
       }
     )
   }

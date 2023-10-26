@@ -178,14 +178,14 @@ async getCompanyProfile() {
 
       this.registrationFee = data!.registrationFee
       if(this.companyName == null){
-        this.msgBox.showErrorMessage('Could not find company details')
+        this.msgBox.showErrorMessage3('Could not find company details')
       }       
     }
   )
   .catch(
     (error) => {
       console.log(error)
-      this.msgBox.showErrorMessage('Could not load company information')
+      this.msgBox.showErrorMessage(error, 'Could not load company information')
     }
   )
   this.getLogo()
@@ -299,7 +299,7 @@ async saveCompanyProfile() {
   .catch(
     error => {
       console.log(error)
-      this.msgBox.showErrorMessage('Could not save company details')
+      this.msgBox.showErrorMessage(error, 'Could not save company details')
     }
   )
   this.getLogo()
@@ -335,7 +335,7 @@ onUpload() {
       this.msgBox.showSuccessMessage('Upload succesiful')
     },
     error =>{
-      this.msgBox.showErrorMessage('Upload failed')
+      this.msgBox.showErrorMessage(error, 'Upload failed')
     });
     
 }
