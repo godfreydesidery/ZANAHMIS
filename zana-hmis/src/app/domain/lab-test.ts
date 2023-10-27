@@ -50,4 +50,11 @@ export interface ILabTest {
     collectedAt : Date
     verifiedBy : IUser
     verifieddAt : Date
+
+
+    /**
+     * Auxilliary attributes
+     */
+
+    checked : boolean
 }

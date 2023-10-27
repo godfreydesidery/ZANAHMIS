@@ -288,6 +288,7 @@ export class AppComponent {
         {path : 'lab-test-report', loadComponent : () => import('./pages/laboratory/reports/lab-test-report/lab-test-report.component').then(m => m.LabTestReportComponent), canActivate: [AuthGuard]},
         {path : 'lab-test-statistics-report', loadComponent : () => import('./pages/laboratory/reports/lab-test-statistics-report/lab-test-statistics-report.component').then(m => m.LabTestStatisticsReportComponent), canActivate: [AuthGuard]},
         {path : 'lab-sample-collection-report', loadComponent : () => import('./pages/laboratory/reports/lab-sample-collection-report/lab-sample-collection-report.component').then(m => m.LabSampleCollectionReportComponent), canActivate: [AuthGuard]},
+        {path : 'patient-results', loadComponent : () => import('./pages/laboratory/patient-results/patient-results.component').then(m => m.PatientResultsComponent), canActivate: [AuthGuard]},
       )
     }
     loadRadiologyModule(){
