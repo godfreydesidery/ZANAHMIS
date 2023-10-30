@@ -85,7 +85,12 @@ public class ReportResource {
 			@RequestBody ConsultationReportArgs args,
 			HttpServletRequest request){
 		
-		List<Consultation> consultations = consultationRepository.findAllByCreatedAtBetween(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		Optional<Clinician> c = clinicianRepository.findById(args.getClinician().getId());
+		if(c.isEmpty()) {
+			throw new NotFoundException("Clinician not found");
+		}
+		
+		List<Consultation> consultations = consultationRepository.findAllByClinicianAndCreatedAtBetween(c.get(), args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
 		
 		
 		for(Consultation consultation : consultations) {
@@ -107,7 +112,12 @@ public class ReportResource {
 			@RequestBody ProcedureReportArgs args,
 			HttpServletRequest request){
 		
-		List<Procedure> procedures = procedureRepository.findAllByCreatedAtBetween(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		Optional<Clinician> c = clinicianRepository.findById(args.getClinician().getId());
+		if(c.isEmpty()) {
+			throw new NotFoundException("Clinician not found");
+		}
+		
+		List<Procedure> procedures = procedureRepository.findAllByClinicianAndCreatedAtBetween(c.get(), args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
 		
 		for(Procedure procedure : procedures) {
 			
@@ -134,8 +144,6 @@ public class ReportResource {
 		}
 		
 		List<LabTest> labTests = labTestRepository.findAllByLabTestTypeAndCreatedAtBetween(tt.get(), args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
-		
-		
 		
 		return ResponseEntity.ok().body(labTests);
 	}
@@ -294,13 +302,18 @@ public class ReportResource {
 			@RequestBody RadiologyReportArgs args,
 			HttpServletRequest request){
 		
-		List<Radiology> radiologies = radiologyRepository.findAllByCreatedAtBetween(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		Optional<Clinician> c = clinicianRepository.findById(args.getClinician().getId());
+		if(c.isEmpty()) {
+			throw new NotFoundException("Clinician not found");
+		}
+		
+		List<Radiology> radiologies = radiologyRepository.findAllByClinicianAndCreatedAtBetween(c.get(), args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
 		
 		List<Radiology> doctorRadiologies = new ArrayList<>();
 		
 		for(Radiology radiology : radiologies) {
 			User user = userRepository.findById(radiology.getCreatedby()).get();
-			Optional<Clinician> c = clinicianRepository.findByUser(user);
+			Optional<Clinician> cl = clinicianRepository.findByUser(user);
 			
 			PatientBill patientBill = radiology.getPatientBill();
 			Optional<PatientInvoiceDetail> pid = patientInvoiceDetailRepository.findByPatientBill(patientBill);
@@ -311,7 +324,7 @@ public class ReportResource {
 			}
 			
 			
-			if(c.isPresent()) {
+			if(cl.isPresent()) {
 				doctorRadiologies.add(radiology); //deactivate this snippet later, activate the below
 			}
 			
@@ -328,13 +341,18 @@ public class ReportResource {
 			@RequestBody LabTestReportArgs args,
 			HttpServletRequest request){
 		
-		List<LabTest> labTests = labTestRepository.findAllByCreatedAtBetween(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		Optional<Clinician> c = clinicianRepository.findById(args.getClinician().getId());
+		if(c.isEmpty()) {
+			throw new NotFoundException("Clinician not found");
+		}
+		
+		List<LabTest> labTests = labTestRepository.findAllByClinicianAndCreatedAtBetween(c.get(), args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
 		
 		List<LabTest> doctorLabTests = new ArrayList<>();
 		
 		for(LabTest labTest : labTests) {
 			User user = userRepository.findById(labTest.getCreatedBy()).get();
-			Optional<Clinician> c = clinicianRepository.findByUser(user);
+			Optional<Clinician> cl = clinicianRepository.findByUser(user);
 			
 			PatientBill patientBill = labTest.getPatientBill();
 			Optional<PatientInvoiceDetail> pid = patientInvoiceDetailRepository.findByPatientBill(patientBill);
@@ -344,7 +362,7 @@ public class ReportResource {
 				labTest.setInsurancePlan(null);
 			}
 			
-			if(c.isPresent()) {
+			if(cl.isPresent()) {
 				doctorLabTests.add(labTest); //deactivate this snippet later, activate the below
 			}
 			
@@ -382,18 +400,21 @@ public class ReportResource {
 class ConsultationReportArgs {
 	LocalDate from;
 	LocalDate to;
+	Clinician clinician;
 }
 
 @Data
 class ProcedureReportArgs {
 	LocalDate from;
 	LocalDate to;
+	Clinician clinician;
 }
 
 @Data
 class RadiologyReportArgs {
 	LocalDate from;
 	LocalDate to;
+	Clinician clinician;
 }
 
 @Data
@@ -402,6 +423,7 @@ class LabTestReportArgs {
 	LocalDate to;
 	LabTestType labTestType;
 	Patient patient;
+	Clinician clinician;
 }
 
 @Data

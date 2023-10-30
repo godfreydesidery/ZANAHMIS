@@ -37,5 +37,14 @@ public interface ClinicianRepository extends JpaRepository<Clinician, Long> {
 	 */
 	List<Clinician> findAllByActive(boolean b);
 
+	/**
+	 * @param value
+	 * @param value2
+	 * @param value3
+	 * @return
+	 */
+	List<Clinician> findAllByFirstNameContainingOrMiddleNameContainingOrLastNameContaining(String value, String value2,
+			String value3);
+
 	
 }

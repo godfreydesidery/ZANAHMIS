@@ -648,28 +648,25 @@
                                     <td>Test</td>
                                     <td>Result</td>
                                     <td>Report</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>Range</td>
+                                    <td>Level</td>
+                                    <td>Unit</td>
+                                    <td>Status</td>
+                                    <td>Summary</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let labTest of labTests">
                                     <td><b>{{labTest.labTestType?.name}}</b></td>
-                                    <td>{{labTest.result}}</td>
-                                    <td>{{labTest.report}}</td>
+                                    <td>{{labTest?.result}}</td>
+                                    <td>{{labTest?.report}}</td>
+                                    <td>{{labTest?.range}}</td>
+                                    <td>{{labTest?.level}}</td>
+                                    <td>{{labTest?.unit}}</td>
+                                    <td>{{labTest?.status}}</td>
                                     <td>
                                         <table>
                                             <tbody>
-                                                <tr><td><small>Range: {{labTest?.range}}</small></td></tr>
-                                                <tr><td><small>Level: {{labTest?.level}}</small> </td></tr>    
-                                                <tr><td><small>Range: {{labTest?.unit}}</small></td></tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                    <td>
-                                        <table>
-                                            <tbody>
-                                                <tr><td><small>Status: {{labTest?.status}}</small></td></tr>
                                                 <tr><td><small>Ordered: {{labTest?.ordered}}</small></td></tr>
                                                 <tr><td><small>Accepted: {{labTest?.accepted}}</small></td></tr>
                                                 <tr><td><small>Rejected: {{labTest?.rejected}}</small></td></tr>

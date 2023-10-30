@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.orbix.api.domain.Admission;
+import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
@@ -133,5 +134,14 @@ public interface RadiologyRepository extends JpaRepository<Radiology, Long> {
 	 * @return
 	 */
 	List<Radiology> findByNonConsultation(NonConsultation c);
+
+	/**
+	 * @param clinician
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @return
+	 */
+	List<Radiology> findAllByClinicianAndCreatedAtBetween(Clinician clinician, LocalDateTime atStartOfDay,
+			LocalDateTime plusDays);
 
 }

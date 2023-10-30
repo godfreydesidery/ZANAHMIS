@@ -21,6 +21,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { RouterLink } from '@angular/router';
+import { IClinician } from 'src/app/domain/clinician';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -88,14 +89,20 @@ export class DoctorToLaboratoryReportComponent {
       return
     }
 
+
     if(from > to){
       this.msgBox.showErrorMessage3('Could not run. Start date must be earlier or equal to end date')
       return
     }
 
+    if(this.clinicianId === null){
+      this.msgBox.showErrorMessage3('Could not run. Please select Doctor')
+    }
+
     var args = {
       from : from,
-      to   : to
+      to   : to,
+      clinician : {id : this.clinicianId}
     }
 
     this.spinner.show()
@@ -118,91 +125,64 @@ export class DoctorToLaboratoryReportComponent {
 
   clear(){
     this.labTests = []
+    this.clinicianId = null
+    this.clinicianName = ''
+    this.clinicianCode = ''
+    this.clinicians = []
+    this.clinicianLocked = false
   }
 
 
-
-  exportToPdf = async () => {
-
-    if(this.labTests.length === 0){
-      this.msgBox.showErrorMessage3('No data to export')
+  clinicianLocked : boolean = false
+  clinicianId : any =  null
+  clinicianCode : string = ''
+  clinicianName : string = ''
+  clinicians : IClinician[] = []
+  async loadCliniciansLike(value : string){
+    this.clinicians = []
+    if(value.length < 2){
       return
     }
-
-    this.documentHeader = await this.data.getDocumentHeader()
-    var header = ''
-    var footer = ''
-    var title  = 'Lab Tests Report'
-    var logo : any = ''
-    var total : number = 0
-    var discount : number = 0
-    var tax : number = 0
-
-    var report = [
-      [
-        {text : 'Patient Name', fontSize : 9, fillColor : '#bdc6c7'},
-        {text : 'Phone', fontSize : 9, fillColor : '#bdc6c7'},
-        {text : 'Reg#', fontSize : 9, fillColor : '#bdc6c7'},
-        {text : 'Lab Test', fontSize : 9, fillColor : '#bdc6c7'},
-        {text : 'Mode', fontSize : 9, fillColor : '#bdc6c7'},
-        {text : 'Date', fontSize : 9, fillColor : '#bdc6c7'},
-        {text : 'Status', fontSize : 9, fillColor : '#bdc6c7'},
-      ]
-    ]  
-    
-    this.labTests.forEach((element) => {
-      var detail = [
-        {text : (element?.patient?.firstName +' '+ element.patient?.middleName +' '+ element.patient?.lastName).toString(), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element?.patient?.phoneNo.toString(), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element?.patient?.no.toString(), fontSize : 9, fillColor : '#ffffff'},  
-        {text : element?.labTestType?.name.toString(), fontSize : 9, fillColor : '#ffffff'},  
-        {text : element?.patient?.paymentType.toString(), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : new ShowDateOnlyPipe().transform(element?.createdAt).toString(), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element.status.toString(), fontSize : 9, fillColor : '#ffffff'}, 
-      ]
-      report.push(detail)
-    })
-   
-    const docDefinition : any = {
-      header: '',
-      footer: function (currentPage: { toString: () => string; }, pageCount: string) {
-        return currentPage.toString() + " of " + pageCount;
-      },
-      //watermark : { text : '', color: 'blue', opacity: 0.1, bold: true, italics: false },
-        content : [
-          {
-            columns : 
-            [
-              this.documentHeader
-            ]
-          },
-          '  ',
-          {text : title, fontSize : 14, bold : true, alignment : 'center'},
-          this.data.getHorizontalLine(),
-          {
-            layout : 'noBorders',
-            table : {
-              widths : [80, 80],
-              body : [
-                [
-                  {text : 'From: '+this.startDate.toString(), fontSize : 9}, 
-                  {text : 'To: '+this.endDate.toString(), fontSize : 9} 
-                ],
-              ]
-            },
-          },
-          '  ',
-          {
-            //layout : 'noBorders',
-            table : {
-                headerRows : 1,
-                widths : [110, 80, 90, 50, 50, 50, 50],
-                body : report
-            }
-        }, 
-      ]     
-    };
-    pdfMake.createPdf(docDefinition).open()
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IClinician[]>(API_URL+'/clinicians/load_clinicians_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.clinicians = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+      }
+    )
+  }
+  async getClinician(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.clinicians = []
+    this.spinner.show()
+    await this.http.get<IClinician>(API_URL+'/clinicians/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.clinicianId = data?.id
+        this.clinicianCode = data!.code
+        this.clinicianName = data!.firstName + ' ' + data!.middleName + ' ' + data!.lastName
+        this.clinicianLocked = true
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+        console.log(error)
+      }
+    )
   }
 
   print = async () => {
@@ -262,6 +242,9 @@ export class DoctorToLaboratoryReportComponent {
           '  ',
           {text : title, fontSize : 14, bold : true, alignment : 'center'},
           this.data.getHorizontalLine(),
+          ' ',
+          'Doctor: ' + this.clinicianName,
+          ' ',
           {
             layout : 'noBorders',
             table : {

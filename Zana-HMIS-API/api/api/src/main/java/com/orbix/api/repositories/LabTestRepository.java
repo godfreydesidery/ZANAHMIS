@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.orbix.api.domain.Admission;
+import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.LabTestType;
@@ -159,6 +160,15 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
 	 */
 	List<LabTest> findAllByPatientAndStatusInAndCreatedAtBetween(Patient patient, List<String> statuses,
 			LocalDateTime atStartOfDay, LocalDateTime plusDays);
+
+	/**
+	 * @param clinician
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @return
+	 */
+	List<LabTest> findAllByClinicianAndCreatedAtBetween(Clinician clinician, LocalDateTime atStartOfDay,
+			LocalDateTime plusDays);
 
 	
 }

@@ -14,6 +14,7 @@
                     <!--<button class="btn btn-primary btn-outline" routerLink="/pharmacy-outpatient-list">Outpatient List</button>
                     <button class="btn btn-primary" routerLink="/pharmacy-inpatient-list">Inpatient List</button>
                     <button class="btn btn-primary btn-outline" routerLink="/pharmacy-outsider-list">Outsider List</button>-->
+                    <button type="button" class="btn btn-success btn-outline" (click)="print()"><i class="fa fa-print"></i> Print</button>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -29,14 +30,32 @@
                             <tr style="font-style: bold;">
                                 <td>Code</td>
                                 <td>Name</td>
+                                <td>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <td>Category (Select Category)</td>
+                                                <td>
+                                                    <select class="form-control" [(ngModel)]="category" (ngModelChange)="filterByCategory($event)" style="border-style: none;">
+                                                        <option>ALL</option>
+                                                        <option>MEDICINE</option>
+                                                        <option>PRODUCT</option>
+                                                        <option>EQUIPMENT</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </td>
                                 <td>Qty</td>
                                 <td>Action</td>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let pharmacyMedicine of pharmacyMedicines | searchFilter : filterRecords">
+                            <tr *ngFor="let pharmacyMedicine of pharmacyMedicinesToShow | searchFilter : filterRecords">
                                 <td>{{pharmacyMedicine?.medicine?.code}}</td>
                                 <td>{{pharmacyMedicine?.medicine?.name}}</td>
+                                <td>{{pharmacyMedicine?.medicine?.category}}</td>
                                 <td>{{pharmacyMedicine?.stock}}</td>
                                 <td>
                                     <button type="button" class="btn btn-success btn-outline" (click)="setValues(pharmacyMedicine.id, pharmacyMedicine.medicine.code, pharmacyMedicine.medicine.name, pharmacyMedicine.stock)" data-toggle="modal" data-target="#edit-qty-modal"><i class="glyphicon glyphicon-pencil"></i> Change Stock</button>

@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.orbix.api.domain.Admission;
+import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.NonConsultation;
@@ -118,6 +119,15 @@ public interface ProcedureRepository extends JpaRepository<Procedure, Long> {
 	 * @return
 	 */
 	List<Procedure> findByNonConsultation(NonConsultation c);
+
+	/**
+	 * @param clinician
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @return
+	 */
+	List<Procedure> findAllByClinicianAndCreatedAtBetween(Clinician clinician, LocalDateTime atStartOfDay,
+			LocalDateTime plusDays);
 
 
 

@@ -10,8 +10,11 @@ import { AuthService } from 'src/app/auth.service';
 import { IPharmacyMedicine } from 'src/app/domain/pharmacy-medicine';
 import { AgePipe } from 'src/app/pipes/age.pipe';
 import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+import { DataService } from 'src/app/services/data.service';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
+var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
+import * as pdfMake from 'pdfmake/build/pdfmake';
 
 const API_URL = environment.apiUrl;
 
@@ -41,6 +44,7 @@ export class PharmacyMedicineStockStatusComponent {
   pharmacyName = localStorage.getItem('selected-pharmacy-name')
 
   pharmacyMedicines : IPharmacyMedicine[] = []
+  pharmacyMedicinesToShow : IPharmacyMedicine[] = []
 
   filterRecords : string = ''
 
@@ -49,7 +53,8 @@ export class PharmacyMedicineStockStatusComponent {
     private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private router : Router,
-    private msgBox : MsgBoxService) { }
+    private msgBox : MsgBoxService,
+    private data : DataService,) {(window as any).pdfMake.vfs = pdfFonts.pdfMake.vfs;}
 
   async ngOnInit(): Promise<void> {
     await this.loadPharmacyMedicines()
@@ -68,8 +73,10 @@ export class PharmacyMedicineStockStatusComponent {
       data => {
         console.log(data)
         this.pharmacyMedicines = []
+        this.pharmacyMedicinesToShow = []
         data?.forEach(element => {
           this.pharmacyMedicines.push(element)
+          this.pharmacyMedicinesToShow.push(element)
         })
         
       }
@@ -81,6 +88,22 @@ export class PharmacyMedicineStockStatusComponent {
       }
     )
   }
+
+  category : string = 'ALL'
+  filterByCategory(value : string){
+    this.pharmacyMedicinesToShow = []
+    if(this.category === 'ALL'){
+      this.pharmacyMedicinesToShow = this.pharmacyMedicines
+    }else{
+      this.pharmacyMedicines.forEach(element => {
+        if(element.medicine.category === value){
+          this.pharmacyMedicinesToShow.push(element)
+        }
+      })
+    }
+    
+  }
+
 
   setValues(id : any, code : string, name : string, stock : number){
     this.id = id
@@ -113,7 +136,83 @@ export class PharmacyMedicineStockStatusComponent {
         console.log(error)
       }
     )
-    this.loadPharmacyMedicines()
+    await this.loadPharmacyMedicines()
+    this.filterByCategory(this.category)
+  }
+
+
+
+  logo!    : any
+  documentHeader! : any
+  address  : any 
+  print = async () => {
+
+   
+    if(this.pharmacyMedicinesToShow.length === 0){
+      this.msgBox.showErrorMessage3('No data to print')
+      return
+    }
+
+    this.documentHeader = await this.data.getDocumentHeader()
+    var header = ''
+    var footer = ''
+    var title  = 'Pharmacy Stock Status Report'
+    var logo : any = ''
+    var total : number = 0
+    var discount : number = 0
+    var tax : number = 0
+
+    var report = [
+      [
+        {text : 'Code', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Name', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Category', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Qty', fontSize : 9, fillColor : '#bdc6c7'},
+      ]
+    ]  
+    
+    this.pharmacyMedicinesToShow.forEach((element) => {
+      var detail = [
+        {text : element?.medicine?.code, fontSize : 9, fillColor : '#ffffff'}, 
+        {text : element?.medicine?.name, fontSize : 9, fillColor : '#ffffff'}, 
+        {text : element?.medicine?.category, fontSize : 9, fillColor : '#ffffff'}, 
+        {text : element?.stock.toString(), fontSize : 9, fillColor : '#ffffff'}, 
+      ]
+      report.push(detail)
+    })
+   
+    const docDefinition : any = {
+      header: '',
+      footer: function (currentPage: { toString: () => string; }, pageCount: string) {
+        return currentPage.toString() + " of " + pageCount;
+      },
+      //watermark : { text : '', color: 'blue', opacity: 0.1, bold: true, italics: false },
+        content : [
+          {
+            columns : 
+            [
+              this.documentHeader
+            ]
+          },
+          '  ',
+          {text : title, fontSize : 14, bold : true, alignment : 'center'},
+          this.data.getHorizontalLine(),
+          ' ',
+          'Pharmacy Name: ' + this.pharmacyName,
+          ' ',
+          'Category: ' + this.category,
+          '  ',
+          {
+            //layout : 'noBorders',
+            table : {
+                headerRows : 1,
+                widths : [80, 230, 80, 80],
+                body : report
+            }
+        }, 
+      ]     
+    };
+    pdfMake.createPdf(docDefinition).print()
   }
 
 }

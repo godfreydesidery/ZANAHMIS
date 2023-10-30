@@ -206,7 +206,7 @@ public class PatientServiceImpl implements PatientService {
 		/**
 		 * Create a search key; to sanitize searchkey later
 		 */
-		patient.setSearchKey("NA");
+		patient.setSearchKey(String.valueOf(Math.random()));
 		patient = patientRepository.save(patient);//generate search key, 
 		patient.setSearchKey(createSearchKey(patient.getNo(), patient.getFirstName(), patient.getMiddleName(), patient.getLastName(), patient.getPhoneNo()));
 		patient.setSearchKey(Sanitizer.sanitizeString(patient.getSearchKey()));
@@ -290,7 +290,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
 					patientInvoice.setStatus("PENDING");
@@ -562,7 +562,7 @@ public class PatientServiceImpl implements PatientService {
 				 * If no pending patientInvoice
 				 */
 				PatientInvoice patientInvoice = new PatientInvoice();
-				patientInvoice.setNo("NA");
+				patientInvoice.setNo(String.valueOf(Math.random()));
 				patientInvoice.setPatient(p);
 				patientInvoice.setInsurancePlan(p.getInsurancePlan());
 				patientInvoice.setStatus("PENDING");
@@ -775,7 +775,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
 					patientInvoice.setStatus("PENDING");
@@ -833,7 +833,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(null);
 					patientInvoice.setStatus("PENDING");
@@ -992,7 +992,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
 					patientInvoice.setStatus("PENDING");
@@ -1050,7 +1050,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(null);
 					patientInvoice.setStatus("PENDING");
@@ -1220,7 +1220,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
 					patientInvoice.setStatus("PENDING");
@@ -1278,7 +1278,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(null);
 					patientInvoice.setStatus("PENDING");
@@ -1416,7 +1416,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
 					patientInvoice.setStatus("PENDING");
@@ -1474,7 +1474,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(null);
 					patientInvoice.setStatus("PENDING");
@@ -1646,7 +1646,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(p);
 					patientInvoice.setAdmission(admission);
 					patientInvoice.setInsurancePlan(p.getInsurancePlan());
@@ -1719,7 +1719,7 @@ public class PatientServiceImpl implements PatientService {
 						 * If no pending patientInvoice
 						 */
 						PatientInvoice patientInvoice = new PatientInvoice();
-						patientInvoice.setNo("NA");
+						patientInvoice.setNo(String.valueOf(Math.random()));
 						patientInvoice.setPatient(p);
 						patientInvoice.setAdmission(admission);
 						patientInvoice.setInsurancePlan(null);
@@ -1788,7 +1788,7 @@ public class PatientServiceImpl implements PatientService {
 				 * If no pending patientInvoice
 				 */
 				PatientInvoice patientInvoice = new PatientInvoice();
-				patientInvoice.setNo("NA");
+				patientInvoice.setNo(String.valueOf(Math.random()));
 				patientInvoice.setPatient(p);
 				patientInvoice.setAdmission(admission);
 				patientInvoice.setInsurancePlan(null);
@@ -1925,7 +1925,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
 					patientInvoice.setStatus("PENDING");
@@ -1983,7 +1983,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(null);
 					patientInvoice.setStatus("PENDING");
@@ -2131,7 +2131,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(patient.getInsurancePlan());
 					patientInvoice.setStatus("PENDING");
@@ -2189,7 +2189,7 @@ public class PatientServiceImpl implements PatientService {
 					 * If no pending patientInvoice
 					 */
 					PatientInvoice patientInvoice = new PatientInvoice();
-					patientInvoice.setNo("NA");
+					patientInvoice.setNo(String.valueOf(Math.random()));
 					patientInvoice.setPatient(patient);
 					patientInvoice.setInsurancePlan(null);
 					patientInvoice.setStatus("PENDING");

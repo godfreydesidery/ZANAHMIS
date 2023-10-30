@@ -439,7 +439,7 @@ export class PatientResultsComponent {
   print = async () => {
 
     if(this.labTestsToPrint.length === 0){
-      this.msgBox.showErrorMessage3('No data to print')
+      this.msgBox.showErrorMessage3('No data to print. Please check items to print')
       return
     }
 
@@ -531,9 +531,11 @@ export class PatientResultsComponent {
             }
         }, 
         ' ',
+        'Printed By',
+        localStorage.getItem('user-name')!,
         ' ',
         ' ',
-        'Printed By: ' + localStorage.getItem('user-name')! + '           Signed ...................................................'
+        '...................................................'
       ]     
     };
     pdfMake.createPdf(docDefinition).print()

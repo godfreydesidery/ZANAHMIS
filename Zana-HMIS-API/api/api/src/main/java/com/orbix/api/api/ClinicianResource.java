@@ -26,6 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.Clinician;
+import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.ClinicRepository;
@@ -92,6 +93,15 @@ public class ClinicianResource {
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/clinicians/save").toUriString());
 		return ResponseEntity.created(uri).body(clinicianService.save(clinician, request));
+	}
+	
+	@GetMapping("/clinicians/load_clinicians_like")
+	public ResponseEntity<List<Clinician>> getClinicianNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<Clinician> clinicians = new ArrayList<Clinician>();
+		clinicians = clinicianRepository.findAllByFirstNameContainingOrMiddleNameContainingOrLastNameContaining(value, value, value);
+		return ResponseEntity.ok().body(clinicians);
 	}
 	
 	@GetMapping("/clinicians/get_by_clinic_id")    // to do later
