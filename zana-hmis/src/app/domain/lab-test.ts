@@ -11,8 +11,6 @@ import { IInsurancePlan } from "./insurance-plan"
 
 export interface ILabTest {
 
-    sn : number
-
     id      : any
     result  : string
     report  : string 
@@ -56,5 +54,6 @@ export interface ILabTest {
      * Auxilliary attributes
      */
 
+    sn : number
     checked : boolean
 }

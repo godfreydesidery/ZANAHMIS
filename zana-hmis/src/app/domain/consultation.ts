@@ -23,4 +23,9 @@ export interface IConsultation {
     created : string
 
     createdAt       : Date
+
+    /**
+     * Auxiliary attributes
+     */
+    sn : number
 }

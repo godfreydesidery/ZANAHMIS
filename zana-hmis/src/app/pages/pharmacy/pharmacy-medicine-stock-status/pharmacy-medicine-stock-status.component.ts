@@ -78,7 +78,11 @@ export class PharmacyMedicineStockStatusComponent {
           this.pharmacyMedicines.push(element)
           this.pharmacyMedicinesToShow.push(element)
         })
-        
+        var sn = 1
+        this.pharmacyMedicinesToShow.forEach(element => {
+          element.sn = sn
+          sn = sn + 1
+        })
       }
     )
     .catch(
@@ -164,6 +168,7 @@ export class PharmacyMedicineStockStatusComponent {
 
     var report = [
       [
+        {text : 'SN', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Code', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Name', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Category', fontSize : 9, fillColor : '#bdc6c7'},
@@ -173,10 +178,11 @@ export class PharmacyMedicineStockStatusComponent {
     
     this.pharmacyMedicinesToShow.forEach((element) => {
       var detail = [
-        {text : element?.medicine?.code, fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element?.medicine?.name, fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element?.medicine?.category, fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element?.stock.toString(), fontSize : 9, fillColor : '#ffffff'}, 
+        {text : element?.sn.toString(), fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element?.medicine?.code, fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element?.medicine?.name, fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element?.medicine?.category, fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element?.stock.toString(), fontSize : 7, fillColor : '#ffffff'}, 
       ]
       report.push(detail)
     })
@@ -206,7 +212,7 @@ export class PharmacyMedicineStockStatusComponent {
             //layout : 'noBorders',
             table : {
                 headerRows : 1,
-                widths : [80, 230, 80, 80],
+                widths : [40, 80, 200, 80, 70],
                 body : report
             }
         }, 

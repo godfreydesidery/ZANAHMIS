@@ -6,4 +6,9 @@ export interface IPharmacyMedicine{
     stock       : number
     pharmacy    : IPharmacy
     medicine    : IMedicine
+
+    /**
+     * Auxiliary attributes
+     */
+    sn : number
 }

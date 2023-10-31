@@ -64,6 +64,7 @@
                             <table class="table table-responsive table-hover table-striped table-small">
                                 <thead>
                                     <tr style="font-weight: bold;">
+                                        <td>SN</td>
                                         <td>Patient Name</td>
                                         <td>Patient Phone</td>
                                         <td>Registration#</td>
@@ -75,6 +76,7 @@
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let radiology of radiologies">
+                                        <td>{{radiology?.sn}}</td>
                                         <td>{{radiology?.patient?.firstName}} {{radiology?.patient?.middleName}} {{radiology?.patient?.lastName}}</td>
                                         <td>{{radiology?.patient?.phoneNo}}</td>
                                         <td>{{radiology?.patient?.no}}</td>

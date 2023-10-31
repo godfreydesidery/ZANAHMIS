@@ -38,4 +38,9 @@ export interface IPrescription {
     rejectComment : string
     collected : string
     verified : string
+
+    /**
+     * Auxiliary attributes
+     */
+     sn : number
 }

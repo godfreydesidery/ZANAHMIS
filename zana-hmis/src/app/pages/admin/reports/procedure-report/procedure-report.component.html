@@ -64,6 +64,7 @@
                             <table class="table table-responsive table-hover table-striped table-small">
                                 <thead>
                                     <tr style="font-weight: bold;">
+                                        <td>SN</td>
                                         <td>Patient Name</td>
                                         <td>Patient Phone</td>
                                         <td>Registration#</td>
@@ -75,6 +76,7 @@
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let procedure of procedures">
+                                        <td>{{procedure?.sn}}</td>
                                         <td>{{procedure?.patient?.firstName}} {{procedure?.patient?.middleName}} {{procedure?.patient?.lastName}}</td>
                                         <td>{{procedure?.patient?.phoneNo}}</td>
                                         <td>{{procedure?.patient?.no}}</td>

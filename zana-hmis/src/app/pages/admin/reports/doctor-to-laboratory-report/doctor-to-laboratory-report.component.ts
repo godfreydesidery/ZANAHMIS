@@ -22,6 +22,7 @@ import { AppRoutingModule } from 'src/app/app-routing.module';
 import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { RouterLink } from '@angular/router';
 import { IClinician } from 'src/app/domain/clinician';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -113,6 +114,11 @@ export class DoctorToLaboratoryReportComponent {
       data => {
         
         this.labTests = data!
+        var sn = 1
+        this.labTests.forEach(element => {
+          element.sn = sn
+          sn = sn + 1
+        })
         console.log(this.labTests)
       }
     )
@@ -203,6 +209,7 @@ export class DoctorToLaboratoryReportComponent {
 
     var report = [
       [
+        {text : 'SN', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Patient Name', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Phone', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Reg#', fontSize : 9, fillColor : '#bdc6c7'},
@@ -215,13 +222,14 @@ export class DoctorToLaboratoryReportComponent {
     
     this.labTests.forEach((element) => {
       var detail = [
-        {text : (element?.patient?.firstName +' '+ element.patient?.middleName +' '+ element.patient?.lastName).toString(), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element?.patient?.phoneNo.toString(), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element?.patient?.no.toString(), fontSize : 9, fillColor : '#ffffff'},  
-        {text : element?.labTestType?.name.toString(), fontSize : 9, fillColor : '#ffffff'},  
-        {text : element?.patient?.paymentType.toString(), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : new ShowDateOnlyPipe().transform(element?.createdAt).toString(), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element.status.toString(), fontSize : 9, fillColor : '#ffffff'}, 
+        {text : element?.sn.toString(), fontSize : 7, fillColor : '#ffffff'},  
+        {text : (element?.patient?.firstName +' '+ element.patient?.middleName +' '+ element.patient?.lastName).toString(), fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element?.patient?.phoneNo.toString(), fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element?.patient?.no.toString(), fontSize : 7, fillColor : '#ffffff'},  
+        {text : this.getPaymentType(element), fontSize : 7, fillColor : '#ffffff'},  
+        {text : element?.patient?.paymentType.toString(), fontSize : 7, fillColor : '#ffffff'}, 
+        {text : new ShowDateOnlyPipe().transform(element?.createdAt).toString(), fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element.status.toString(), fontSize : 7, fillColor : '#ffffff'}, 
       ]
       report.push(detail)
     })
@@ -262,13 +270,20 @@ export class DoctorToLaboratoryReportComponent {
             //layout : 'noBorders',
             table : {
                 headerRows : 1,
-                widths : [110, 80, 90, 50, 50, 50, 50],
+                widths : [30, 120, 50, 70, 50, 50, 40, 40],
                 body : report
             }
         }, 
       ]     
     };
     pdfMake.createPdf(docDefinition).print()
+  }
+
+  getPaymentType(labTest : ILabTest) : string{
+    if(labTest.patientBill.status === 'COVERED'){
+      return labTest.insurancePlan.name
+    }
+    return 'Cash'
   }
 
   async exportToSpreadsheet() {

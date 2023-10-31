@@ -55,4 +55,9 @@ export interface IRadiology {
     //verifiedAt       : Date
 
     createdAt : Date
+
+    /**
+     * Auxiliary attributes
+     */
+     sn : number
 }

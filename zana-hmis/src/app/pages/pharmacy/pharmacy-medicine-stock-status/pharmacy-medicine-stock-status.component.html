@@ -18,7 +18,23 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <td>Select Category</td>
+                                        <td>
+                                            <select class="form-control" [(ngModel)]="category" (ngModelChange)="filterByCategory($event)">
+                                                <option>ALL</option>
+                                                <option>MEDICINE</option>
+                                                <option>PRODUCT</option>
+                                                <option>EQUIPMENT</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
                         <div class="col-sm-4"></div>
                         <div class="col-sm-4">
                             <input type="text" class="form-control pull-right" [(ngModel)]="filterRecords" placeholder="Search..." style="max-width: 8cm;">
@@ -28,31 +44,17 @@
                     <table class="table table-responsive table-striped table-bordered">
                         <thead>
                             <tr style="font-style: bold;">
+                                <td>SN</td>
                                 <td>Code</td>
                                 <td>Name</td>
-                                <td>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <td>Category (Select Category)</td>
-                                                <td>
-                                                    <select class="form-control" [(ngModel)]="category" (ngModelChange)="filterByCategory($event)" style="border-style: none;">
-                                                        <option>ALL</option>
-                                                        <option>MEDICINE</option>
-                                                        <option>PRODUCT</option>
-                                                        <option>EQUIPMENT</option>
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </td>
+                                <td>Category</td>
                                 <td>Qty</td>
                                 <td>Action</td>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let pharmacyMedicine of pharmacyMedicinesToShow | searchFilter : filterRecords">
+                                <td>{{pharmacyMedicine?.sn}}</td>
                                 <td>{{pharmacyMedicine?.medicine?.code}}</td>
                                 <td>{{pharmacyMedicine?.medicine?.name}}</td>
                                 <td>{{pharmacyMedicine?.medicine?.category}}</td>

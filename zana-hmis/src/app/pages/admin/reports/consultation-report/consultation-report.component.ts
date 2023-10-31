@@ -23,6 +23,7 @@ import { AppRoutingModule } from 'src/app/app-routing.module';
 import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { RouterLink } from '@angular/router';
 import { IClinician } from 'src/app/domain/clinician';
+import { IInsurancePlan } from 'src/app/domain/insurance-plan';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -113,6 +114,11 @@ export class ConsultationReportComponent implements OnInit {
       data => {
         
         this.consultations = data!
+        var sn = 1
+        this.consultations.forEach(element => {
+          element.sn = sn
+          sn = sn + 1
+        })
         console.log(this.consultations)
       }
     )
@@ -203,6 +209,7 @@ export class ConsultationReportComponent implements OnInit {
 
     var report = [
       [
+        {text : 'SN', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Patient Name', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Phone', fontSize : 9, fillColor : '#bdc6c7'},
         {text : 'Reg#', fontSize : 9, fillColor : '#bdc6c7'},
@@ -214,12 +221,13 @@ export class ConsultationReportComponent implements OnInit {
     
     this.consultations.forEach((element) => {
       var detail = [
-        {text : (element?.patient?.firstName +' '+ element.patient?.middleName +' '+ element.patient?.lastName).toString(), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element?.patient?.phoneNo.toString(), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element?.patient?.no.toString(), fontSize : 9, fillColor : '#ffffff'},  
-        {text : element?.insurancePlan?.name.toString(), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : new ShowDateOnlyPipe().transform(element?.createdAt), fontSize : 9, fillColor : '#ffffff'}, 
-        {text : element?.status.toString(), fontSize : 9, fillColor : '#ffffff'}, 
+        {text : element?.sn.toString(), fontSize : 7, fillColor : '#ffffff'},  
+        {text : (element?.patient?.firstName +' '+ element.patient?.middleName +' '+ element.patient?.lastName).toString(), fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element?.patient?.phoneNo.toString(), fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element?.patient?.no.toString(), fontSize : 7, fillColor : '#ffffff'},  
+        {text : this.getPaymentType(element), fontSize : 7, fillColor : '#ffffff'}, 
+        {text : new ShowDateOnlyPipe().transform(element?.createdAt), fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element?.status.toString(), fontSize : 7, fillColor : '#ffffff'}, 
       ]
       report.push(detail)
     })
@@ -260,13 +268,20 @@ export class ConsultationReportComponent implements OnInit {
             //layout : 'noBorders',
             table : {
                 headerRows : 1,
-                widths : [120, 80, 100, 50, 50, 80],
+                widths : [30, 135, 60, 80, 50, 40, 60],
                 body : report
             }
         }, 
       ]     
     };
     pdfMake.createPdf(docDefinition).print()
+  }
+
+  getPaymentType(consultation : IConsultation) : string{
+    if(consultation.patientBill.status === 'COVERED'){
+      return consultation.insurancePlan.name
+    }
+    return 'Cash'
   }
 
   async exportToSpreadsheet() {

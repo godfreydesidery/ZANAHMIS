@@ -41,4 +41,9 @@ export interface IProcedure {
     held           : string
 
     createdAt      : Date
+
+    /**
+     * Auxiliary attributes
+     */
+     sn : number
 }
