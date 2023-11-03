@@ -24,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.PharmacyMedicine;
+import com.orbix.api.domain.WardBed;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.repositories.InsurancePlanRepository;
 import com.orbix.api.repositories.MedicineRepository;
@@ -94,7 +95,7 @@ public class MedicineResource {
 			@RequestParam(name = "name_like") String value,
 			HttpServletRequest request){
 		List<Medicine> medicines = new ArrayList<Medicine>();
-		medicines = medicineRepository.findAllByNameContaining(value);
+		medicines = medicineRepository.findAllByNameContainingAndActive(value, true);
 		return ResponseEntity.ok().body(medicines);
 	}
 	
@@ -122,6 +123,27 @@ public class MedicineResource {
 			unit = unit + pm.getStock();
 		}
 		return unit;
+	}
+	
+	@PostMapping("/medicines/activate_medicine")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
+	public ResponseEntity<Medicine>activateBed(
+			@RequestBody Medicine medicine,
+			HttpServletRequest request){
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/medicines/activate_medicine").toUriString());
+		
+		return ResponseEntity.created(uri).body(medicineService.activateMedicine(medicine, request));
+	}
+	
+	@PostMapping("/medicines/deactivate_medicine")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
+	public ResponseEntity<Medicine>deactivateBed(
+			@RequestBody Medicine medicine,
+			HttpServletRequest request){
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/medicines/deactivate_medicine").toUriString());
+		return ResponseEntity.created(uri).body(medicineService.deactivateMedicine(medicine, request));
 	}
 	
 }

@@ -41,6 +41,8 @@ export interface ICompanyProfile {
   salesInvoiceNotes : string
 
   registrationFee : number
+
+  publicPath : string
 }
 
 export interface ILogo{

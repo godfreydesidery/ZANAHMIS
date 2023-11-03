@@ -10,6 +10,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +24,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.PatientBill;
@@ -4814,6 +4817,29 @@ public class PatientResource {
 		
 		return ResponseEntity.created(uri).body(note);
 	}
+	
+	
+	
+	
+	@PostMapping("/patients/upload_lab_test_attachment")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public ResponseEntity<ResponseEntity<Map<String, String>>> saveLabTestAttachment(
+			@RequestPart("file") MultipartFile file,
+			@RequestParam(name = "lab_test_id") Long labTestId,
+			HttpServletRequest request){
+		Optional<LabTest> t = labTestRepository.findById(labTestId);
+		
+		if(t.isEmpty()) {
+			throw new NotFoundException("Lab test not found");
+		}
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_lab_test").toUriString());
+		return ResponseEntity.created(uri).body(patientService.saveLabTestAttachment(t.get(), file, request));
+	}
+	
+	
+	
+	
 }
 
 @Data

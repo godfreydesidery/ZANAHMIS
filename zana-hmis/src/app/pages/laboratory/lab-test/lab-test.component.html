@@ -68,17 +68,50 @@
                                         <span>Unit</span>
                                         <input type="text" class="form-control" [(ngModel)]="labTest.unit" placeholder="Unit">
                                     </div>
-                                    <div class="col-sm-6">
-                                        <span>Attachment</span>
-                                        <input type="file" class="form-control">
+                                    <div class="col-sm-12">
+                                        <div>Attachments</div>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <td>Name</td>
+                                                    <td>Select File</td>
+                                                    <td>Action</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let attachment of attachments">
+                                                    <td>{{attachment.name}}</td>
+                                                    <td></td>
+                                                    <td>
+                                                        <button class="btn btn-danger">Delete</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="text" class="form-control">
+                                                    </td>
+                                                    <td>
+                                                        <input type="file" class="form-control" (change)="selectFile($event)"/>
+                                                        <ul class="list-group list-group-flush" *ngFor="let file of fileInfos | async">
+                                                            <li class="list-group-item">
+                                                                <a href="{{ file.url }}">{{ file.name }}</a>
+                                                            </li>
+                                                        </ul>
+                                                        <div class="alert alert-light" role="alert">{{ message }}</div>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-success" [disabled]="!selectedFiles" (click)="upload(labTest)">Upload</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <br>
+                                    <div class="col-sm-12">
                                         <button class="btn btn-primary" (click)="verifyLabTest(labTest)">Verify Results</button>
                                     </div>
                                     <div class="col-sm-12">
                                         <br>
-                                        <span class="label label-info m-r-15">Verified At | By: {{labTest.verified}}</span>
+                                        <span class="label label-info m-r-15 pull-right">Verified At | By: {{labTest.verified}}</span>
                                     </div>
                                 </div>
                             </div>

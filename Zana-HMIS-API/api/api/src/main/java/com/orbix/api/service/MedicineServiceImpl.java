@@ -5,6 +5,7 @@ package com.orbix.api.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -12,11 +13,15 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.api.accessories.Sanitizer;
+import com.orbix.api.domain.Consumable;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyMedicine;
 import com.orbix.api.domain.PharmacyStockCard;
+import com.orbix.api.domain.WardBed;
 import com.orbix.api.exceptions.InvalidOperationException;
+import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.repositories.ConsumableRepository;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PharmacyMedicineRepository;
@@ -45,6 +50,8 @@ public class MedicineServiceImpl implements MedicineService{
 	private final PharmacyMedicineRepository pharmacyMedicineRepository;
 	
 	private final PharmacyStockCardRepository pharmacyStockCardRepository;
+	
+	private final ConsumableRepository consumableRepository;
 	
 	@Override
 	public Medicine save(Medicine medicine, HttpServletRequest request) {
@@ -129,5 +136,43 @@ public class MedicineServiceImpl implements MedicineService{
 		 * Returns false if not
 		 */
 		return false;
+	}
+	
+	@Override
+	public Medicine activateMedicine(Medicine med, HttpServletRequest request) {
+		
+		Optional<Medicine> medicine = medicineRepository.findById(med.getId());
+		if(medicine.isEmpty()) {
+			throw new NotFoundException("Medicine not found");
+		}
+		
+		medicine.get().setActive(true);
+		
+		return medicineRepository.save(medicine.get());
+	}
+	
+	@Override
+	public Medicine deactivateMedicine(Medicine med, HttpServletRequest request) {
+		
+		Optional<Medicine> medicine = medicineRepository.findById(med.getId());
+		if(medicine.isEmpty()) {
+			throw new NotFoundException("Medicine not found");
+		}
+		
+		List<PharmacyMedicine> pharmacyMedicines = pharmacyMedicineRepository.findByMedicine(medicine.get());
+		for(PharmacyMedicine pharmacyMedicine : pharmacyMedicines) {
+			if(pharmacyMedicine.getStock() != 0) {
+				throw new InvalidOperationException("Can not deactivate. Medicine is stocked in pharmacy: " + pharmacyMedicine.getPharmacy().getName());
+			}
+		}
+		
+		Optional<Consumable> consumable = consumableRepository.findByMedicine(medicine.get());
+		if(consumable.isPresent()) {
+			consumableRepository.delete(consumable.get());
+		}
+		
+		medicine.get().setActive(false);
+		
+		return medicineRepository.save(medicine.get());
 	}
 }

@@ -86,6 +86,7 @@ public class CompanyProfileServiceImpl implements CompanyProfileService {
 				profile.setSalesInvoiceNotes(companyProfile.getSalesInvoiceNotes());
 				
 				profile.setRegistrationFee(companyProfile.getRegistrationFee());
+				profile.setPublicPath(companyProfile.getPublicPath());
 			}else {
 				profile = companyProfile;
 			}

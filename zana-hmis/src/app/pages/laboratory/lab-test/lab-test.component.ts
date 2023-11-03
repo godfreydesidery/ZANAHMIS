@@ -14,6 +14,11 @@ import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
+import { UploadFileService } from 'src/app/services/upload-file.service';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { ILabTestAttachment } from 'src/app/domain/lab-test-attachment';
+
 const API_URL = environment.apiUrl;
 
 
@@ -43,18 +48,33 @@ export class LabTestComponent implements OnInit {
 
   filterRecords : string = ''
 
+
+
+  selectedFiles!: FileList;
+  currentFile!: File;
+  progress = 0;
+  message = '';
+
+  fileInfos!: Observable<any>;
+
+
+  attachments : ILabTestAttachment[] = []
+
   constructor(private auth : AuthService,
     private http :HttpClient,
     private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private router : Router,
-    private msgBox : MsgBoxService) { }
+    private msgBox : MsgBoxService,
+    private uploadService: UploadFileService) { }
 
   async ngOnInit(): Promise<void> {
     this.id = localStorage.getItem('lab-test-patient-id')
     localStorage.removeItem('lab-test-patient-id')
     await this.loadPatient(this.id)
     await this.loadLabTestsByPatient(this.id)
+
+    this.fileInfos = this.uploadService.getFiles();
   }
 
   async loadPatient(id : any){
@@ -266,6 +286,43 @@ export class LabTestComponent implements OnInit {
       }
     )
   }
+
+
+  selectFile(event : any) {
+    this.selectedFiles = event.target.files;
+  }
+
+  upload(labTest : ILabTest) {
+    this.progress = 0;
+
+    this.currentFile = this.selectedFiles.item(0)!
+    this.uploadService.uploadLabTestAttachment(this.currentFile, labTest).subscribe(
+      event => {
+        if (event.type === HttpEventType.UploadProgress) {
+          this.progress = Math.round(100 * event.loaded / event.total!);
+        } else if (event instanceof HttpResponse) {
+          this.message = event.body.message;
+          //this.fileInfos = this.uploadService.getFiles();
+        }
+      },
+      err => {
+        console.log(err)
+        this.progress = 0;
+        this.message = 'Could not upload the file!';
+        this.currentFile = undefined!;
+        this.msgBox.showErrorMessage(err, '')
+      });
+  
+    this.selectedFiles = undefined!;
+  }
+
+
+  
+
+
+
+
+
 
   public grant(privilege : string[]) : boolean{
     /**Allow user to perform an action if the user has that priviledge */

@@ -4,9 +4,13 @@
 package com.orbix.api.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Clinic;
@@ -66,4 +70,5 @@ public interface PatientService {
 	
 	PatientNursingCarePlan savePatientNursingCarePlan(PatientNursingCarePlan plan, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request);
 	
+	ResponseEntity<Map<String, String>> saveLabTestAttachment(LabTest labTest, MultipartFile file, HttpServletRequest request);
 }

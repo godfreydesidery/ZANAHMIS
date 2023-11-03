@@ -194,6 +194,74 @@ export class MedicineComponent implements OnInit {
     )
   }
 
+  async activateMedicine(id : any) {
+    if(!window.confirm('Activate this medicine. Confirm?')){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var medicine = {
+      id : id
+    }
+
+    this.spinner.show()
+    await this.http.post<IMedicine>(API_URL+'/medicines/activate_medicine', medicine, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data=>{
+        this.medicines.forEach(element => {
+          if(element.id === data!.id){
+            element.active = data!.active
+          }
+        })
+        //this.msgBox.showSuccessMessage('Bed/ Room activated successifully')
+      }
+    )
+    .catch(
+      error=>{
+        console.log(error)        
+        this.msgBox.showErrorMessage(error, '')
+      }
+    )
+  }
+
+  async deactivateMedicine(id : any) {
+    if(!window.confirm('Deactivate this medicine. Confirm?')){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var medicine = {
+      id : id
+    }
+
+    this.spinner.show()
+    await this.http.post<IMedicine>(API_URL+'/medicines/deactivate_medicine', medicine, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data=>{
+        this.medicines.forEach(element => {
+          if(element.id === data!.id){
+            element.active = data!.active
+          }
+        })
+        //this.msgBox.showSuccessMessage('Bed/ Room deactivated successifully')
+      }
+    )
+    .catch(
+      error=>{
+        console.log(error)        
+        this.msgBox.showErrorMessage(error, '')
+      }
+    )
+  }
+
   public grant(privilege : string[]) : boolean{
     /**Allow user to perform an action if the user has that priviledge */
     var granted : boolean = false

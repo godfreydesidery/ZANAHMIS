@@ -38,6 +38,12 @@ public interface PharmacyMedicineRepository extends JpaRepository <PharmacyMedic
 	List<PharmacyMedicine> findAllByMedicine(Medicine medicine);
 
 	/**
+	 * @param medicine
+	 * @return
+	 */
+	List<PharmacyMedicine> findByMedicine(Medicine medicine);
+
+	/**
 	 * @param pharmacy
 	 * @return
 	 */

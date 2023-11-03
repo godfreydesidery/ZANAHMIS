@@ -190,7 +190,8 @@ export class AppComponent {
     .toPromise()
     .then(
       data => {
-        localStorage.setItem('company-name', data?.companyName!+'')        
+        localStorage.setItem('company-name', data?.companyName!+'')  
+        localStorage.setItem('public-path', data?.publicPath!+'')      
       }
     )
     .catch(() => {})
@@ -427,6 +428,7 @@ interface IDayData{
 
 interface ICompanyData{
   companyName : String
+  publicPath : string
 }
 
 

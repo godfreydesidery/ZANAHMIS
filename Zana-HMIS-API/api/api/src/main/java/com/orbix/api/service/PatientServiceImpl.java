@@ -3,16 +3,29 @@
  */
 package com.orbix.api.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.PatientBill;
@@ -106,6 +119,7 @@ import com.orbix.api.repositories.WardBedRepository;
 import com.orbix.api.repositories.WardTypeInsurancePlanRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.var;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -2589,4 +2603,76 @@ public class PatientServiceImpl implements PatientService {
 		
 		return consultationTransferRepository.save(transfer);
 	}
+
+	@Override
+	public ResponseEntity<Map<String, String>> saveLabTestAttachment(LabTest labTest, MultipartFile file, HttpServletRequest request) {
+		
+		log.info("handling request parts: {}", file);
+
+	    try {
+	      
+	      //File f = new ClassPathResource("").getFile();
+	      
+	      List<CompanyProfile> comps = companyProfileRepository.findAll();
+	      CompanyProfile companyProfile = null;
+	      for(CompanyProfile comp : comps) {
+	    	  companyProfile = comp;
+	      }
+	      
+	      if(companyProfile == null) {
+	    	  throw new NotFoundException("Company Profile not found");
+	      }
+	      if(companyProfile.getPublicPath() == null) {
+	    	  throw new NotFoundException("Driver not found. Contact Administrator");
+	      }
+	      if(companyProfile.getPublicPath().equals("")) {
+	    	  throw new NotFoundException("Driver not found. Contact System Administrator");
+	      }
+	      
+	      //final Path path = Paths.get(f.getAbsolutePath() + File.separator + "static" + File.separator + "image");
+	      final Path path = Paths.get(companyProfile.getPublicPath());
+
+	      if (!Files.exists(path)) {
+	        Files.createDirectories(path);
+	      }
+	      
+	      //Path filePath = path.resolve(file.getOriginalFilename());
+	      
+	      
+	      
+	      String fileRawName = ("LT" + labTest.getId().toString() + labTest.getPatient().getNo() + String.valueOf(Math.random()) + LocalDateTime.now().toString())
+	    		  .trim().replace("/", "").replace(".", "").replace(":", "").replace("-", "");
+	      String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
+	      
+	      String fileName = fileRawName + "." + fileExtension; 
+	    		  	      
+	      Path filePath = path.resolve(fileName);
+	      
+	      Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+	      
+	      String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+	          .path("/image/")
+	          .path(file.getOriginalFilename())
+	          .toUriString();
+
+	      var result = Map.of(
+	          "filename", file.getOriginalFilename(),
+	          "fileUri", fileUri
+	      );
+	      
+	      
+	      //now put here lab attachments logic
+	      
+	      
+	      
+	      
+	      //return ok().body(result);
+	      return null;
+
+	    } catch (IOException e) {
+	      log.error(e.getMessage());
+	      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	  }
+		
 }

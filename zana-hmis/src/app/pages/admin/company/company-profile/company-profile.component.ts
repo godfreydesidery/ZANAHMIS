@@ -75,6 +75,8 @@ export class CompanyProfileComponent {
 
   registrationFee : number
 
+  publicPath : string
+
   constructor(private http : HttpClient, 
     private auth : AuthService, 
     private sanitizer: DomSanitizer, 
@@ -121,6 +123,8 @@ this.salesInvoiceNotes = ''
 this.logoUrl = ''
 
 this.registrationFee = 0
+
+this.publicPath = ''
 }
 
 ngOnInit(): void {
@@ -177,6 +181,7 @@ async getCompanyProfile() {
       this.salesInvoiceNotes = data!.salesInvoiceNotes
 
       this.registrationFee = data!.registrationFee
+      this.publicPath = data!.publicPath
       if(this.companyName == null){
         this.msgBox.showErrorMessage3('Could not find company details')
       }       
@@ -243,7 +248,8 @@ async saveCompanyProfile() {
     bankAccountNo3    : this.bankAccountNo3,
     quotationNotes    : this.quotationNotes,
     salesInvoiceNotes : this.salesInvoiceNotes,
-    registrationFee   : this.registrationFee
+    registrationFee   : this.registrationFee,
+    publicPath        : this.publicPath
   }
   this.spinner.show()
   await this.http.post<ICompanyProfile>(API_URL+'/company_profile/save', profile, options)
@@ -290,6 +296,8 @@ async saveCompanyProfile() {
       this.salesInvoiceNotes = data!.salesInvoiceNotes
 
       this.registrationFee   = data!.registrationFee
+
+      this.publicPath = data!.publicPath
       try{
         this.onUpload()
       }catch(e : any){}

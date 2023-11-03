@@ -8,6 +8,7 @@ import { IPatient } from "./patient"
 import { IUser } from "./user"
 import { IDiagnosisType } from "./diagnosis-type"
 import { IInsurancePlan } from "./insurance-plan"
+import { ILabTestAttachment } from "./lab-test-attachment"
 
 export interface ILabTest {
 
@@ -30,6 +31,8 @@ export interface ILabTest {
     patientBill     : IPatientBill
     labTestType     : ILabTestType
     diagnosisType   : IDiagnosisType
+
+    attachments : ILabTestAttachment[]
 
     insurancePlan   : IInsurancePlan
 

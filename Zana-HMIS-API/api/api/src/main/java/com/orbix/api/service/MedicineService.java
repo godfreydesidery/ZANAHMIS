@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.orbix.api.domain.Medicine;
+import com.orbix.api.domain.WardBed;
 
 /**
  * @author Godfrey
@@ -20,4 +21,7 @@ public interface MedicineService {
 	Medicine getMedicineByName(String name, HttpServletRequest request);
 	Medicine getMedicineById(Long id, HttpServletRequest request);
 	boolean deleteMedicine(Medicine medicine, HttpServletRequest request);
+	
+	Medicine activateMedicine(Medicine medicine, HttpServletRequest request);
+	Medicine deactivateMedicine(Medicine medicine, HttpServletRequest request);
 }

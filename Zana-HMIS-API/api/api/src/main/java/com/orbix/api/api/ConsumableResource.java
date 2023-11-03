@@ -80,7 +80,7 @@ public class ConsumableResource {
 			throw new NotFoundException("Procedure type not found");
 		}
 		
-		return ResponseEntity.ok().body(consumableRepository.findByMedicine(pt.get()));
+		return ResponseEntity.ok().body(consumableRepository.findByMedicine(pt.get()).get());
 	}
 	
 	@GetMapping("/consumables/load_consumables_like")

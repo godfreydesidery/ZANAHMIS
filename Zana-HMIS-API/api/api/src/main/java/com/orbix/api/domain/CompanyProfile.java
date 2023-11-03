@@ -75,5 +75,6 @@ public class CompanyProfile {
 	private String salesInvoiceNotes;
 	
 	private double registrationFee = 0;
+	private String publicPath;
 
 }

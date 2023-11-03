@@ -109,8 +109,15 @@ public class PharmacyResource {
 		}
 		
 		List<PharmacyMedicine> pharmacyMedicines = pharmacyMedicineRepository.findAllByPharmacy(p.get());
+		List<PharmacyMedicine> pharmacyMedicinesToShow = new ArrayList<>();
+		for(PharmacyMedicine pm : pharmacyMedicines) {
+			if(pm.getMedicine().isActive() == true) {
+				pharmacyMedicinesToShow.add(pm);
+			}
+		}
 		
-		return ResponseEntity.ok().body(pharmacyMedicines);
+		
+		return ResponseEntity.ok().body(pharmacyMedicinesToShow);
 	}
 	
 	@PostMapping("/pharmacies/update_stock")
@@ -121,6 +128,9 @@ public class PharmacyResource {
 		PharmacyMedicine pharmacyMedicine = pharmacyMedicineRepository.findById(pm.getId()).get();
 		Pharmacy pharmacy = pharmacyMedicine.getPharmacy();
 		Medicine medicine = pharmacyMedicine.getMedicine();
+		if(medicine.isActive() == false) {
+			throw new InvalidOperationException("Can not update stock. Medicine not active");
+		}
 		if(pm.getStock() < 0) {
 			throw new InvalidOperationException("Negative value is not allowed");
 		}
