@@ -2661,6 +2661,7 @@ public class PatientServiceImpl implements PatientService {
 	      );
 	      
 	      
+	      
 	      //now put here lab attachments logic
 	      
 	      
