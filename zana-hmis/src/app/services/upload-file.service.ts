@@ -3,6 +3,7 @@ import { HttpClient, HttpRequest, HttpHeaders, HttpEvent } from '@angular/common
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ILabTest } from '../domain/lab-test';
+import { AuthService } from '../auth.service';
 
 const API_URL = environment.apiUrl;
 
@@ -11,14 +12,20 @@ const API_URL = environment.apiUrl;
 })
 export class UploadFileService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private auth : AuthService) { }
 
-  uploadLabTestAttachment(file: File, labTest : ILabTest): Observable<HttpEvent<any>> {
+  uploadLabTestAttachment(file: File, labTest : ILabTest, name : string): Observable<HttpEvent<any>> {
+
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
     const formData: FormData = new FormData();
 
     formData.append('file', file);
 
-    const req = new HttpRequest('POST', API_URL + `/patients/upload_lab_test_attachment?lab_test_id=`+labTest.id, formData, {
+    const req = new HttpRequest('POST', API_URL + `/patients/upload_lab_test_attachment?lab_test_id=`+labTest.id+`&name=`+name, formData, {
       reportProgress: true,
       responseType: 'json'
     });

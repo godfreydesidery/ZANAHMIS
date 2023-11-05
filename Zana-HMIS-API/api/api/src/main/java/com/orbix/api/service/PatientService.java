@@ -70,5 +70,5 @@ public interface PatientService {
 	
 	PatientNursingCarePlan savePatientNursingCarePlan(PatientNursingCarePlan plan, Optional<Consultation> c, Optional<NonConsultation> nc, Optional<Admission> a, Optional<Nurse> n, HttpServletRequest request);
 	
-	ResponseEntity<Map<String, String>> saveLabTestAttachment(LabTest labTest, MultipartFile file, HttpServletRequest request);
+	ResponseEntity<Map<String, String>> saveLabTestAttachment(LabTest labTest, MultipartFile file, String name, HttpServletRequest request);
 }

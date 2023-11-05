@@ -9,12 +9,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -51,6 +54,7 @@ import com.orbix.api.domain.PatientNursingProgressNote;
 import com.orbix.api.domain.PatientObservationChart;
 import com.orbix.api.domain.PatientPrescriptionChart;
 import com.orbix.api.domain.LabTest;
+import com.orbix.api.domain.LabTestAttachment;
 import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.LabTestTypeInsurancePlan;
 import com.orbix.api.domain.Medicine;
@@ -86,6 +90,7 @@ import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
 import com.orbix.api.repositories.DressingRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
+import com.orbix.api.repositories.LabTestAttachmentRepository;
 import com.orbix.api.repositories.PatientInvoiceDetailRepository;
 import com.orbix.api.repositories.PatientInvoiceRepository;
 import com.orbix.api.repositories.PatientNursingCarePlanRepository;
@@ -177,6 +182,7 @@ public class PatientServiceImpl implements PatientService {
 	private final PatientNursingProgressNoteRepository patientNursingProgressNoteRepository;
 	private final PatientNursingCarePlanRepository patientNursingCarePlanRepository;
 	private final ConsultationTransferRepository consultationTransferRepository;
+	private final LabTestAttachmentRepository labTestAttachmentRepository;
 	
 	@Override
 	public List<Patient> getAll() {
@@ -2605,7 +2611,7 @@ public class PatientServiceImpl implements PatientService {
 	}
 
 	@Override
-	public ResponseEntity<Map<String, String>> saveLabTestAttachment(LabTest labTest, MultipartFile file, HttpServletRequest request) {
+	public ResponseEntity<Map<String, String>> saveLabTestAttachment(LabTest labTest, MultipartFile file, String name, HttpServletRequest request) {
 		
 		log.info("handling request parts: {}", file);
 
@@ -2648,6 +2654,7 @@ public class PatientServiceImpl implements PatientService {
 	    		  	      
 	      Path filePath = path.resolve(fileName);
 	      
+	      
 	      Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 	      
 	      String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -2664,6 +2671,18 @@ public class PatientServiceImpl implements PatientService {
 	      
 	      //now put here lab attachments logic
 	      
+	      LabTestAttachment labTestAttachment = new LabTestAttachment();
+	      labTestAttachment.setName(name);
+	      labTestAttachment.setFileName(fileName);
+	      labTestAttachment.setLabTest(labTest);
+	      
+	      
+	      //labTestAttachment.setCreatedBy(userService.getUser(request).getId());
+	      labTestAttachment.setCreatedBy(labTest.getCollectedBy());
+	      labTestAttachment.setCreatedOn(dayService.getDay().getId());
+	      labTestAttachment.setCreatedAt(dayService.getTimeStamp());
+	      
+	      labTestAttachmentRepository.save(labTestAttachment);
 	      
 	      
 	      

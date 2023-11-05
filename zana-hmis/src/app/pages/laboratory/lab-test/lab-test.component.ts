@@ -18,6 +18,9 @@ import { UploadFileService } from 'src/app/services/upload-file.service';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ILabTestAttachment } from 'src/app/domain/lab-test-attachment';
+import { DownloadFileService } from 'src/app/services/download-file.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 const API_URL = environment.apiUrl;
 
@@ -32,7 +35,8 @@ const API_URL = environment.apiUrl;
     FormsModule,
     ReactiveFormsModule,
     SearchFilterPipe,
-    AgePipe
+    AgePipe,
+    PdfViewerModule
   ],
 })
 export class LabTestComponent implements OnInit {
@@ -54,11 +58,12 @@ export class LabTestComponent implements OnInit {
   currentFile!: File;
   progress = 0;
   message = '';
+  name = ''
 
   fileInfos!: Observable<any>;
 
 
-  attachments : ILabTestAttachment[] = []
+  //attachments : ILabTestAttachment[] = []
 
   constructor(private auth : AuthService,
     private http :HttpClient,
@@ -66,7 +71,9 @@ export class LabTestComponent implements OnInit {
     private spinner : NgxSpinnerService,
     private router : Router,
     private msgBox : MsgBoxService,
-    private uploadService: UploadFileService) { }
+    private uploadService: UploadFileService,
+    private downloadService : DownloadFileService,
+    private sanitizer: DomSanitizer,) { }
 
   async ngOnInit(): Promise<void> {
     this.id = localStorage.getItem('lab-test-patient-id')
@@ -293,17 +300,26 @@ export class LabTestComponent implements OnInit {
   }
 
   upload(labTest : ILabTest) {
+
+    if(this.name === ''){
+      this.msgBox.showErrorMessage3('Please provide tittle name')
+      return
+    }
+
     this.progress = 0;
 
     this.currentFile = this.selectedFiles.item(0)!
-    this.uploadService.uploadLabTestAttachment(this.currentFile, labTest).subscribe(
-      event => {
+    this.uploadService.uploadLabTestAttachment(this.currentFile, labTest, this.name).subscribe(
+      async event => {
         if (event.type === HttpEventType.UploadProgress) {
           this.progress = Math.round(100 * event.loaded / event.total!);
         } else if (event instanceof HttpResponse) {
           this.message = event.body.message;
           //this.fileInfos = this.uploadService.getFiles();
         }
+        this.labTests = []
+        await this.loadLabTestsByPatient(this.id)
+        //this.msgBox.showSuccessMessage('Upload Successiful')
       },
       err => {
         console.log(err)
@@ -315,6 +331,44 @@ export class LabTestComponent implements OnInit {
   
     this.selectedFiles = undefined!;
   }
+
+
+  showAttachment(fileName : string){
+    alert(fileName)
+  }
+
+
+ attachmentUrl : any
+
+ fileExtension : string = ''
+
+  downloadFile(fileName : string) {
+
+    this.attachmentUrl = ''
+
+    //calling service
+    this.downloadService.downloadLabTestAttachment(fileName)
+    .subscribe((response) => {
+
+        console.log(response);
+        var binaryData = [];
+        binaryData.push(response.data);
+        var url = window.URL.createObjectURL(new Blob(binaryData, {type: "application/*"}));
+        
+        this.attachmentUrl = url
+        
+        var ext = response.filename.substr(response.filename.lastIndexOf('.') + 1);
+        if(ext === 'pdf'){
+          this.fileExtension = 'pdf'
+        }
+
+
+
+    }, (error: any) => {
+
+        console.log(error);
+    });
+}
 
 
   

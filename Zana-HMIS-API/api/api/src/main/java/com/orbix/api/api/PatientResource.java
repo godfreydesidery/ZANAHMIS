@@ -3,7 +3,14 @@
  */
 package com.orbix.api.api;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -14,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
@@ -35,6 +43,7 @@ import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Clinic;
 import com.orbix.api.domain.ClinicalNote;
 import com.orbix.api.domain.Clinician;
+import com.orbix.api.domain.CompanyProfile;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.ConsultationTransfer;
 import com.orbix.api.domain.DeceasedNote;
@@ -56,6 +65,7 @@ import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyMedicine;
 import com.orbix.api.domain.PharmacyStockCard;
 import com.orbix.api.domain.LabTest;
+import com.orbix.api.domain.LabTestAttachment;
 import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.NonConsultation;
@@ -77,10 +87,12 @@ import com.orbix.api.exceptions.InvalidEntryException;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.MissingInformationException;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.exceptions.ResourceNotFoundException;
 import com.orbix.api.models.ClinicalNoteModel;
 import com.orbix.api.models.ConsultationModel;
 import com.orbix.api.models.FinalDiagnosisModel;
 import com.orbix.api.models.GeneralExaminationModel;
+import com.orbix.api.models.LabTestAttachmentModel;
 import com.orbix.api.models.LabTestModel;
 import com.orbix.api.models.PatientConsumableChartModel;
 import com.orbix.api.models.PatientDressingChartModel;
@@ -2930,7 +2942,22 @@ public class PatientResource {
 		
 		List<LabTestModel> labTestsToReturn = new ArrayList<>();
 		for(LabTest test : labTests) {
+			
 			if(test.getPatientBill().getStatus().equals("PAID") || test.getPatientBill().getStatus().equals("COVERED") || test.getPatientBill().getStatus().equals("VERIFIED")) {
+				
+				List<LabTestAttachmentModel> labTestAttachmentModels = new ArrayList<>();
+				for(LabTestAttachment labTestAttachment : test.getLabTestAttachments()) {
+					LabTestAttachmentModel attachmentModel = new LabTestAttachmentModel();
+					attachmentModel.setId(labTestAttachment.getId());
+					attachmentModel.setFileName(labTestAttachment.getFileName());
+					attachmentModel.setName(labTestAttachment.getName());
+					attachmentModel.setLabTest(test);
+					
+					labTestAttachmentModels.add(attachmentModel);
+				}
+				
+				
+				
 				LabTestModel t = new LabTestModel();
 				t.setId(test.getId());
 				t.setResult(test.getResult());
@@ -2943,6 +2970,8 @@ public class PatientResource {
 				t.setNonConsultation(test.getNonConsultation());
 				t.setPatientBill(test.getPatientBill());
 				t.setStatus(test.getStatus());
+				
+				t.setLabTestAttachments(labTestAttachmentModels);
 				
 				if(test.getCreatedAt() != null) {
 					t.setCreated(test.getCreatedAt().toString()+" | "+userService.getUserById(test.getCreatedBy()).getNickname());
@@ -4826,6 +4855,7 @@ public class PatientResource {
 	public ResponseEntity<ResponseEntity<Map<String, String>>> saveLabTestAttachment(
 			@RequestPart("file") MultipartFile file,
 			@RequestParam(name = "lab_test_id") Long labTestId,
+			@RequestParam(name = "name") String name,
 			HttpServletRequest request){
 		Optional<LabTest> t = labTestRepository.findById(labTestId);
 		
@@ -4834,7 +4864,106 @@ public class PatientResource {
 		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_lab_test").toUriString());
-		return ResponseEntity.created(uri).body(patientService.saveLabTestAttachment(t.get(), file, request));
+		return ResponseEntity.created(uri).body(patientService.saveLabTestAttachment(t.get(), file, name, request));
+	}
+	
+	@GetMapping("/patients/download_lab_test_attachment")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public void getLabTestAttachment(
+			@RequestParam(name = "file_name") String fileName,
+			HttpServletResponse response,
+			HttpServletRequest request) throws ResourceNotFoundException, IOException {
+		
+		List<CompanyProfile> comps = companyProfileRepository.findAll();
+	    CompanyProfile companyProfile = null;
+	    for(CompanyProfile comp : comps) {
+	    	companyProfile = comp;
+	    }
+	    
+	  if(companyProfile == null) {
+    	  throw new NotFoundException("Company Profile not found");
+      }
+      if(companyProfile.getPublicPath() == null) {
+    	  throw new NotFoundException("Driver not found. Contact Administrator");
+      }
+      if(companyProfile.getPublicPath().equals("")) {
+    	  throw new NotFoundException("Driver not found. Contact System Administrator");
+      }
+      
+      final Path path = Paths.get(companyProfile.getPublicPath());
+      
+      String fileLocation = companyProfile.getPublicPath();
+      
+      File downloadFile= new File(fileLocation + fileName);
+
+      byte[] isr = Files.readAllBytes(downloadFile.toPath());
+      ByteArrayOutputStream out = new ByteArrayOutputStream(isr.length);
+      out.write(isr, 0, isr.length);
+
+      response.setContentType("application/*");
+      // Use 'inline' for preview and 'attachement' for download in browser.
+      response.addHeader("Content-Disposition", "inline; filename=" + fileName);
+
+      OutputStream os = null;
+      try {
+          os = response.getOutputStream();
+          out.writeTo(os);
+          os.flush();
+          os.close();
+      } catch (IOException e) {
+          e.printStackTrace();
+      }
+      
+	}
+	
+	
+	@GetMapping("/patients/delete_lab_test_attachment")
+	//@PreAuthorize("hasAnyAuthority('PRODUCT-CREATE')")
+	public void deleteLabTestAttachment(
+			@RequestParam(name = "file_name") String fileName,
+			HttpServletResponse response,
+			HttpServletRequest request) throws ResourceNotFoundException, IOException {
+		
+		List<CompanyProfile> comps = companyProfileRepository.findAll();
+	    CompanyProfile companyProfile = null;
+	    for(CompanyProfile comp : comps) {
+	    	companyProfile = comp;
+	    }
+	    
+	  if(companyProfile == null) {
+    	  throw new NotFoundException("Company Profile not found");
+      }
+      if(companyProfile.getPublicPath() == null) {
+    	  throw new NotFoundException("Driver not found. Contact Administrator");
+      }
+      if(companyProfile.getPublicPath().equals("")) {
+    	  throw new NotFoundException("Driver not found. Contact System Administrator");
+      }
+      
+      final Path path = Paths.get(companyProfile.getPublicPath());
+      
+      String fileLocation = companyProfile.getPublicPath();
+      
+      File downloadFile= new File(fileLocation + fileName);
+
+      byte[] isr = Files.readAllBytes(downloadFile.toPath());
+      ByteArrayOutputStream out = new ByteArrayOutputStream(isr.length);
+      out.write(isr, 0, isr.length);
+
+      response.setContentType("application/*");
+      // Use 'inline' for preview and 'attachement' for download in browser.
+      response.addHeader("Content-Disposition", "inline; filename=" + fileName);
+
+      OutputStream os = null;
+      try {
+          os = response.getOutputStream();
+          out.writeTo(os);
+          os.flush();
+          os.close();
+      } catch (IOException e) {
+          e.printStackTrace();
+      }
+      
 	}
 	
 	

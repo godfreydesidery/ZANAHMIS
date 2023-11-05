@@ -32,7 +32,7 @@ export interface ILabTest {
     labTestType     : ILabTestType
     diagnosisType   : IDiagnosisType
 
-    attachments : ILabTestAttachment[]
+    labTestAttachments : ILabTestAttachment[]
 
     insurancePlan   : IInsurancePlan
 

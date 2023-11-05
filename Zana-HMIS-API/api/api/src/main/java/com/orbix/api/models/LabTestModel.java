@@ -4,6 +4,8 @@
 package com.orbix.api.models;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -60,4 +62,6 @@ public class LabTestModel {
 	String rejectComment = "";
 	String collected = "";
 	String verified = "";	
+	
+	List<LabTestAttachmentModel> labTestAttachments = new ArrayList<>();
 }

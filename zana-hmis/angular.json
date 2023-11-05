@@ -18,7 +18,8 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "sweetalert2"
+              "sweetalert2",
+              "ng2-pdf-viewer"
             ],
             "outputPath": "dist/zana-hmis",
             "index": "src/index.html",
