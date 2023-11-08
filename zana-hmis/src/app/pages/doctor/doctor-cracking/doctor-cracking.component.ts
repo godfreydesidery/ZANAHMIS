@@ -331,7 +331,8 @@ export class DoctorCrackingComponent implements OnInit {
         reviewOfOtherSystems : this.cNReviewOfOtherSystems,
         physicalExamination : this.cNPhysicalExamination,
         managementPlan : this.cNManagementPlan,
-        consultation : { id : this.id}
+        consultation : { id : this.id},
+        admission : { id : 0}
       },
       generalExamination : {
         id : this.gEId,
@@ -346,7 +347,8 @@ export class DoctorCrackingComponent implements OnInit {
         saturationOxygen : this.gESaturationOxygen,
         respiratoryRate : this.gERespiratoryRate,
         description : this.gEDescription,
-        consultation : { id : this.id}
+        consultation : { id : this.id},
+        admission : { id : 0}
       }
     } 
    

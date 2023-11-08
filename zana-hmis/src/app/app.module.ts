@@ -136,6 +136,9 @@ import { DischargeListComponent } from './pages/payments/discharge-list/discharg
 import { DeceasedListComponent } from './pages/payments/deceased-list/deceased-list.component';
 import { ExternalMedicalProviderComponent } from './pages/admin/medical-units/external-medical-provider/external-medical-provider.component';
 import { ReferralListComponent } from './pages/payments/referral-list/referral-list.component';
+import { StoreComponent } from './pages/admin/medical-units/store/store.component';
+import { SelectStoreComponent } from './pages/store/select-store/select-store.component';
+import { LocalPurchaseOrderComponent } from './pages/procurement/local-purchase-order/local-purchase-order.component';
 
 @NgModule({
   declarations: [

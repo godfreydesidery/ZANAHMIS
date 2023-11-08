@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.ClinicalNote;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.GeneralExamination;
@@ -30,5 +31,24 @@ public interface GeneralExaminationRepository extends JpaRepository<GeneralExami
 	 * @return
 	 */
 	List<GeneralExamination> findAllByConsultationIn(List<Consultation> cons);
+
+	/**
+	 * @param admission
+	 * @return
+	 */
+	List<GeneralExamination> findAllByAdmission(Admission admission);
+
+	/**
+	 * @param consultation
+	 * @return
+	 */
+	List<GeneralExamination> findAllByConsultation(Consultation consultation);
+
+	/**
+	 * @param cons
+	 * @param adms
+	 * @return
+	 */
+	List<GeneralExamination> findAllByConsultationInOrAdmissionIn(List<Consultation> cons, List<Admission> adms);
 
 }

@@ -342,6 +342,7 @@ export class AppComponent {
     }
     loadStoreModule(){
       this.router.config.push(
+        {path : 'select-store', loadComponent : () => import('./pages/store/select-store/select-store.component').then(m => m.SelectStoreComponent), canActivate: [AuthGuard]},
         {path : 'store-to-pharmacy-t-o', loadComponent : () => import('./pages/store/store-to-pharmacy-t-o/store-to-pharmacy-t-o.component').then(m => m.StoreToPharmacyTOComponent), canActivate: [AuthGuard]},
         {path : 'item-medicine-conversion-coefficient', loadComponent : () => import('./pages/store/conversion-coefficients/item-medicine-conversion-coefficient/item-medicine-conversion-coefficient.component').then(m => m.ItemMedicineConversionCoefficientComponent), canActivate: [AuthGuard]},
         {path : 'item-inquiry', loadComponent : () => import('./pages/store/item-inquiry/item-inquiry.component').then(m => m.ItemInquiryComponent), canActivate: [AuthGuard]},
@@ -349,10 +350,17 @@ export class AppComponent {
 
       )
     }
+
+    loadProcurementModule(){
+      this.router.config.push(
+        {path : 'local-purchase-order', loadComponent : () => import('./pages/procurement/local-purchase-order/local-purchase-order.component').then(m => m.LocalPurchaseOrderComponent), canActivate: [AuthGuard]},
+      )
+    }
     loadAdminModule(){
       this.router.config.push(
         {path : 'clinic', loadComponent : () => import('./pages/admin/medical-units/clinic/clinic.component').then(m => m.ClinicComponent), canActivate: [AuthGuard]},
         {path : 'pharmacy', loadComponent : () => import('./pages/admin/medical-units/pharmacy/pharmacy.component').then(m => m.PharmacyComponent), canActivate: [AuthGuard]},
+        {path : 'store', loadComponent : () => import('./pages/admin/medical-units/store/store.component').then(m => m.StoreComponent), canActivate: [AuthGuard]},
         {path : 'theatre', loadComponent : () => import('./pages/admin/medical-units/theatre/theatre.component').then(m => m.TheatreComponent), canActivate: [AuthGuard]},
         {path : 'clinician', loadComponent : () => import('./pages/admin/personnel/clinician/clinician.component').then(m => m.ClinicianComponent), canActivate: [AuthGuard]},
         {path : 'pharmacist', loadComponent : () => import('./pages/admin/personnel/pharmacist/pharmacist.component').then(m => m.PharmacistComponent), canActivate: [AuthGuard]},

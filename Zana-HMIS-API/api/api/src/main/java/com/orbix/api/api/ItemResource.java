@@ -93,6 +93,42 @@ public class ItemResource {
 		return ResponseEntity.ok().body(i.get());
 	}
 	
+	@GetMapping("/items/get_by_code")
+	public ResponseEntity<Item> searchItemByCode(
+			@RequestParam(name = "code") String code,
+			HttpServletRequest request){
+		Optional<Item> i;
+		i = itemRepository.findByCode(code);
+		if(i.isEmpty()) {
+			throw new NotFoundException("Item not found");
+		}
+		return ResponseEntity.ok().body(i.get());
+	}
+	
+	@GetMapping("/items/get_by_barcode")
+	public ResponseEntity<Item> searchItemByBarcode(
+			@RequestParam(name = "code") String code,
+			HttpServletRequest request){
+		Optional<Item> i;
+		i = itemRepository.findByBarcode(code);
+		if(i.isEmpty()) {
+			throw new NotFoundException("Item not found");
+		}
+		return ResponseEntity.ok().body(i.get());
+	}
+	
+	@GetMapping("/items/get_by_name")
+	public ResponseEntity<Item> searchItemByName(
+			@RequestParam(name = "name") String name,
+			HttpServletRequest request){
+		Optional<Item> i;
+		i = itemRepository.findByName(name);
+		if(i.isEmpty()) {
+			throw new NotFoundException("Item not found");
+		}
+		return ResponseEntity.ok().body(i.get());
+	}
+	
 	@GetMapping("/items/get_names")
 	public ResponseEntity<List<String>> getItemNames(HttpServletRequest request){
 		List<String> names = new ArrayList<String>();

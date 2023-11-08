@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.api.accessories.Sanitizer;
+import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.Supplier;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
@@ -54,6 +55,15 @@ public class SupplierResource {
 	@GetMapping("/suppliers")
 	public ResponseEntity<List<Supplier>>getSuppliers(HttpServletRequest request){
 		return ResponseEntity.ok().body(supplierService.getSuppliers(request));
+	}
+	
+	@GetMapping("/suppliers/load_suppliers_like")
+	public ResponseEntity<List<Supplier>> getSupplierNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<Supplier> suppliers = new ArrayList<Supplier>();
+		suppliers = supplierRepository.findAllByNameContainingOrCodeContaining(value, value);
+		return ResponseEntity.ok().body(suppliers);
 	}
 	
 	@GetMapping("/suppliers/get")

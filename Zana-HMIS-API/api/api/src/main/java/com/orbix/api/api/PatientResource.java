@@ -899,29 +899,125 @@ public class PatientResource {
 			
 	}
 	
+	@GetMapping("/patients/load_clinical_note_by_admission_id")
+	public ResponseEntity<ClinicalNote> loadClinicalNoteByAdmissionId(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		Optional<Admission> a = admissionRepository.findById(id);		
+		if(a.isPresent()) {
+			
+			
+			List<ClinicalNote> ns = clinicalNoteRepository.findAllByAdmission(a.get());
+			ClinicalNote note = null;
+			for(ClinicalNote n : ns) {
+				note = n;
+			}
+			
+			if(note != null) {
+				URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_clinical_note_by_admission_id").toUriString());
+				return ResponseEntity.created(uri).body(note);
+			}else {
+				/**
+				 * Create one, and return it
+				 */
+				note = new ClinicalNote();
+				note.setAdmission(a.get());
+				
+				note.setCreatedby(userService.getUser(request).getId());
+				note.setCreatedOn(dayService.getDay().getId());
+				note.setCreatedAt(dayService.getTimeStamp());
+				
+				URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_clinical_note_by_admission_id").toUriString());
+				return ResponseEntity.created(uri).body(clinicalNoteRepository.save(note));
+			}
+		}else {
+			throw new NotFoundException("Admission not found");
+		}
+			
+	}
+	
+	@GetMapping("/patients/load_general_examination_by_admission_id")
+	public ResponseEntity<GeneralExamination> loadGeneralExaminationByAdmissionId(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		Optional<Admission> a = admissionRepository.findById(id);		
+		if(a.isPresent()) {
+			
+			List<GeneralExamination> es = generalExaminationRepository.findAllByAdmission(a.get());
+			GeneralExamination exam = null;
+			for(GeneralExamination e : es) {
+				exam = e;
+			}
+			
+			//Optional<GeneralExamination> n = generalExaminationRepository.findByConsultation(c.get());
+			if(exam != null) {
+				URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_general_examination_by_admission_id").toUriString());
+				return ResponseEntity.created(uri).body(exam);
+			}else {
+				/**
+				 * Create one, and return it
+				 */
+				exam = new GeneralExamination();
+				exam.setAdmission(a.get());
+				
+				exam.setCreatedby(userService.getUser(request).getId());
+				exam.setCreatedOn(dayService.getDay().getId());
+				exam.setCreatedAt(dayService.getTimeStamp());
+				
+				URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/load_general_examination_by_admission_id").toUriString());
+				return ResponseEntity.created(uri).body(generalExaminationRepository.save(exam));
+			}
+		}else {
+			throw new NotFoundException("Consultation not found");
+		}
+			
+	}
+	
 	@PostMapping("/patients/save_clinical_note_and_general_examination") 
 	public ResponseEntity<CG> saveCG(
 			@RequestBody CG cg,
 			HttpServletRequest request){
+		
 		Optional<Consultation> c = consultationRepository.findById(cg.getClinicalNote().getConsultation().getId());
-		if(!c.isPresent()) {
-			throw new NotFoundException("Consultation not found");
+		Optional<Admission> a = admissionRepository.findById(cg.getClinicalNote().getAdmission().getId());
+		
+		Consultation consultation = null;
+		Admission admission = null;
+		
+		if(c.isPresent() && a.isPresent()) {
+			throw new InvalidOperationException("Patient can not have admission and consultation simultaneously");
 		}
-		Optional<ClinicalNote> cn = clinicalNoteRepository.findByConsultation(c.get());
-		ClinicalNote note = new ClinicalNote();
-		if(cn.isPresent()) {
-			cn.get().setMainComplain(cg.getClinicalNote().getMainComplain());
-			cn.get().setDrugsAndAllergyHistory(cg.getClinicalNote().getDrugsAndAllergyHistory());
-			cn.get().setFamilyAndSocialHistory(cg.getClinicalNote().getFamilyAndSocialHistory());
-			cn.get().setPastMedicalHistory(cg.getClinicalNote().getPastMedicalHistory());
-			cn.get().setPhysicalExamination(cg.getClinicalNote().getPhysicalExamination());
-			cn.get().setPresentIllnessHistory(cg.getClinicalNote().getPresentIllnessHistory());
-			cn.get().setReviewOfOtherSystems(cg.getClinicalNote().getReviewOfOtherSystems());
-			cn.get().setManagementPlan(cg.getClinicalNote().getManagementPlan());
-			
-			note = clinicalNoteRepository.save(cn.get());
-		}else {
-			
+		ClinicalNote note = null;
+		GeneralExamination exam = null;
+		if(c.isPresent() && a.isEmpty()) {
+			List<ClinicalNote> notes = clinicalNoteRepository.findAllByConsultation(c.get());
+			for(ClinicalNote n : notes) {
+				note = n;
+			}
+			List<GeneralExamination> exams = generalExaminationRepository.findAllByConsultation(c.get());
+			for(GeneralExamination e : exams) {
+				exam = e;
+			}
+			consultation = c.get();
+		}
+		if(c.isEmpty() && a.isPresent()) {
+			List<ClinicalNote> notes = clinicalNoteRepository.findAllByAdmission(a.get());
+			for(ClinicalNote n : notes) {
+				note = n;
+			}
+			List<GeneralExamination> exams = generalExaminationRepository.findAllByAdmission(a.get());
+			for(GeneralExamination e : exams) {
+				exam = e;
+			}
+			admission = a.get();
+		}
+		
+		if(c.isEmpty() && a.isEmpty()) {
+			throw new NotFoundException("No Admission or Consultation found");
+		}
+		//Optional<ClinicalNote> cn = clinicalNoteRepository.findByConsultation(c.get());
+		//ClinicalNote note = new ClinicalNote();
+		if(note != null) {
 			note.setMainComplain(cg.getClinicalNote().getMainComplain());
 			note.setDrugsAndAllergyHistory(cg.getClinicalNote().getDrugsAndAllergyHistory());
 			note.setFamilyAndSocialHistory(cg.getClinicalNote().getFamilyAndSocialHistory());
@@ -930,7 +1026,20 @@ public class PatientResource {
 			note.setPresentIllnessHistory(cg.getClinicalNote().getPresentIllnessHistory());
 			note.setReviewOfOtherSystems(cg.getClinicalNote().getReviewOfOtherSystems());
 			note.setManagementPlan(cg.getClinicalNote().getManagementPlan());
-			note.setConsultation(c.get());
+			
+			note = clinicalNoteRepository.save(note);
+		}else {
+			note = new ClinicalNote();
+			note.setMainComplain(cg.getClinicalNote().getMainComplain());
+			note.setDrugsAndAllergyHistory(cg.getClinicalNote().getDrugsAndAllergyHistory());
+			note.setFamilyAndSocialHistory(cg.getClinicalNote().getFamilyAndSocialHistory());
+			note.setPastMedicalHistory(cg.getClinicalNote().getPastMedicalHistory());
+			note.setPhysicalExamination(cg.getClinicalNote().getPhysicalExamination());
+			note.setPresentIllnessHistory(cg.getClinicalNote().getPresentIllnessHistory());
+			note.setReviewOfOtherSystems(cg.getClinicalNote().getReviewOfOtherSystems());
+			note.setManagementPlan(cg.getClinicalNote().getManagementPlan());
+			note.setConsultation(consultation);
+			note.setAdmission(admission);
 			
 			note.setCreatedby(userService.getUser(request).getId());
 			note.setCreatedOn(dayService.getDay().getId());
@@ -939,27 +1048,13 @@ public class PatientResource {
 			note = clinicalNoteRepository.save(note);
 		}
 		
-		c = consultationRepository.findById(cg.getGeneralExamination().getConsultation().getId());
-		if(!c.isPresent()) {
-			throw new NotFoundException("Consultation not found");
-		}
-		Optional<GeneralExamination> ge = generalExaminationRepository.findByConsultation(c.get());
-		GeneralExamination exam = new GeneralExamination();
-		if(ge.isPresent()) {
-			ge.get().setBodyMassIndex(cg.getGeneralExamination().getBodyMassIndex());
-			ge.get().setBodyMassIndexComment(cg.getGeneralExamination().getBodyMassIndexComment());
-			ge.get().setBodySurfaceArea(cg.getGeneralExamination().getBodySurfaceArea());
-			ge.get().setHeight(cg.getGeneralExamination().getHeight());
-			ge.get().setPressure(cg.getGeneralExamination().getPressure());
-			ge.get().setPulseRate(cg.getGeneralExamination().getPulseRate());
-			ge.get().setRespiratoryRate(cg.getGeneralExamination().getRespiratoryRate());
-			ge.get().setSaturationOxygen(cg.getGeneralExamination().getSaturationOxygen());
-			ge.get().setTemperature(cg.getGeneralExamination().getTemperature());
-			ge.get().setWeight(cg.getGeneralExamination().getWeight());
-			ge.get().setDescription(cg.getGeneralExamination().getDescription());
-			
-			exam = generalExaminationRepository.save(ge.get());
-		}else {
+		//c = consultationRepository.findById(cg.getGeneralExamination().getConsultation().getId());
+		//if(!c.isPresent()) {
+			//throw new NotFoundException("Consultation not found");
+		//}
+		//Optional<GeneralExamination> ge = generalExaminationRepository.findByConsultation(c.get());
+		//GeneralExamination exam = new GeneralExamination();
+		if(exam != null) {
 			exam.setBodyMassIndex(cg.getGeneralExamination().getBodyMassIndex());
 			exam.setBodyMassIndexComment(cg.getGeneralExamination().getBodyMassIndexComment());
 			exam.setBodySurfaceArea(cg.getGeneralExamination().getBodySurfaceArea());
@@ -971,7 +1066,23 @@ public class PatientResource {
 			exam.setTemperature(cg.getGeneralExamination().getTemperature());
 			exam.setWeight(cg.getGeneralExamination().getWeight());
 			exam.setDescription(cg.getGeneralExamination().getDescription());
-			exam.setConsultation(c.get());
+			
+			exam = generalExaminationRepository.save(exam);
+		}else {
+			exam = new GeneralExamination();
+			exam.setBodyMassIndex(cg.getGeneralExamination().getBodyMassIndex());
+			exam.setBodyMassIndexComment(cg.getGeneralExamination().getBodyMassIndexComment());
+			exam.setBodySurfaceArea(cg.getGeneralExamination().getBodySurfaceArea());
+			exam.setHeight(cg.getGeneralExamination().getHeight());
+			exam.setPressure(cg.getGeneralExamination().getPressure());
+			exam.setPulseRate(cg.getGeneralExamination().getPulseRate());
+			exam.setRespiratoryRate(cg.getGeneralExamination().getRespiratoryRate());
+			exam.setSaturationOxygen(cg.getGeneralExamination().getSaturationOxygen());
+			exam.setTemperature(cg.getGeneralExamination().getTemperature());
+			exam.setWeight(cg.getGeneralExamination().getWeight());
+			exam.setDescription(cg.getGeneralExamination().getDescription());
+			exam.setConsultation(consultation);
+			exam.setAdmission(admission);
 			
 			exam.setCreatedby(userService.getUser(request).getId());
 			exam.setCreatedOn(dayService.getDay().getId());
@@ -985,6 +1096,48 @@ public class PatientResource {
 		cgToReturn.setGeneralExamination(exam);
 				
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_clinical_note_and_general_examination").toUriString());
+		return ResponseEntity.created(uri).body(cgToReturn);
+	}
+	
+	@PostMapping("/patients/send_clinical_note_and_general_examination_to_history") 
+	public ResponseEntity<CG> sendCGToHistory(
+			@RequestBody CG cg,
+			HttpServletRequest request){
+		
+		Optional<Consultation> c = consultationRepository.findById(cg.getClinicalNote().getConsultation().getId());
+		Optional<Admission> a = admissionRepository.findById(cg.getClinicalNote().getAdmission().getId());
+		
+		if(c.isPresent()) {
+			throw new InvalidOperationException("Not Allowed for consultations");
+		}
+				
+		if(a.isEmpty()) {
+			throw new NotFoundException("No Admission found");
+		}
+		
+		ClinicalNote note = new ClinicalNote();	
+		note.setAdmission(a.get());
+		
+		note.setCreatedby(userService.getUser(request).getId());
+		note.setCreatedOn(dayService.getDay().getId());
+		note.setCreatedAt(dayService.getTimeStamp());
+		note = clinicalNoteRepository.saveAndFlush(note);
+		
+		GeneralExamination exam = new GeneralExamination();
+		exam.setAdmission(a.get());
+		
+		exam.setCreatedby(userService.getUser(request).getId());
+		exam.setCreatedOn(dayService.getDay().getId());
+		exam.setCreatedAt(dayService.getTimeStamp());
+		exam = generalExaminationRepository.saveAndFlush(exam);
+		
+		
+		
+		CG cgToReturn = new CG();
+		cgToReturn.setClinicalNote(note);
+		cgToReturn.setGeneralExamination(exam);
+				
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/send_clinical_note_and_general_examination_to_history").toUriString());
 		return ResponseEntity.created(uri).body(cgToReturn);
 	}
 	
@@ -3620,8 +3773,9 @@ public class PatientResource {
 			throw new NotFoundException("Patient not found in database");
 		}
 		List<Consultation> cons = consultationRepository.findAllByPatient(p.get());
+		List<Admission> adms = admissionRepository.findAllByPatient(p.get());
 		
-		List<ClinicalNote> clinicalNotes = clinicalNoteRepository.findAllByConsultationIn(cons);
+		List<ClinicalNote> clinicalNotes = clinicalNoteRepository.findAllByConsultationInOrAdmissionIn(cons, adms);
 		
 		HashSet<ClinicalNote> h = new HashSet<ClinicalNote>(clinicalNotes);
 		
@@ -3664,8 +3818,9 @@ public class PatientResource {
 			throw new NotFoundException("Patient not found in database");
 		}
 		List<Consultation> cons = consultationRepository.findAllByPatient(p.get());
+		List<Admission> adms = admissionRepository.findAllByPatient(p.get());
 		
-		List<GeneralExamination> generalExaminations = generalExaminationRepository.findAllByConsultationIn(cons);
+		List<GeneralExamination> generalExaminations = generalExaminationRepository.findAllByConsultationInOrAdmissionIn(cons, adms);
 		
 		HashSet<GeneralExamination> h = new HashSet<GeneralExamination>(generalExaminations);
 		

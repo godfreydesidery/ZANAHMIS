@@ -189,8 +189,8 @@ export class DoctorInpatientComponent implements OnInit {
 
   async refresh(){
     await this.loadAdmission(this.id)
-    //await this.loadClinicalNoteByAdmissionId(this.id)
-    //await this.loadGeneralExaminationByAdmissionId(this.id)  
+    await this.loadClinicalNoteByAdmissionId(this.id)
+    await this.loadGeneralExaminationByAdmissionId(this.id)  
     await this.loadTheatreNames()
     await this.loadWorkingDiagnosis(this.id)
     await this.loadFinalDiagnosis(this.id)
@@ -306,7 +306,7 @@ export class DoctorInpatientComponent implements OnInit {
 
   async saveCG(){
 
-    return // remove this later
+    //return // remove this later
 
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
@@ -323,7 +323,8 @@ export class DoctorInpatientComponent implements OnInit {
         reviewOfOtherSystems : this.cNReviewOfOtherSystems,
         physicalExamination : this.cNPhysicalExamination,
         managementPlan : this.cNManagementPlan,
-        admission : { id : this.id}
+        admission : { id : this.id},
+        consultation : { id : 0}
       },
       generalExamination : {
         id : this.gEId,
@@ -338,7 +339,8 @@ export class DoctorInpatientComponent implements OnInit {
         saturationOxygen : this.gESaturationOxygen,
         respiratoryRate : this.gERespiratoryRate,
         description : this.gEDescription,
-        admission : { id : this.id}
+        admission : { id : this.id},
+        consultation : { id : 0}
       }
     } 
    
@@ -380,6 +382,89 @@ export class DoctorInpatientComponent implements OnInit {
     .catch(
       error => {
         this.msgBox.showErrorMessage(error, 'Could not save')
+        console.log(error)
+      }
+    )
+  }
+
+  async sendCGToHistory(){
+
+    if( 
+        (this.cNMainComplain === '' || this.cNMainComplain === null) &&
+        (this.gEPressure === '' || this.gEPressure === null) &&
+        (this.gETemperature === '' || this.gETemperature === null) &&
+        (this.gEWeight === '' || this.gEWeight === null) &&
+        (this.gEPulseRate === '' ||this.gEPulseRate === null)  &&
+        (this.gEHeight === '' || this.gEHeight === null) &&
+        (this.gEBodyMassIndex === '' || this.gEBodyMassIndex === null) &&
+        (this.gEBodyMassIndexComment === '' || this.gEBodyMassIndexComment === null) &&
+        (this.gEBodySurfaceArea === '' || this.gEBodySurfaceArea === null) &&
+        (this.gESaturationOxygen === '' || this.gESaturationOxygen === null) &&
+        (this.gERespiratoryRate === '' || this.gERespiratoryRate === null) &&
+        (this.gEDescription === '' || this.gEDescription === null)
+      ){
+        this.msgBox.showErrorMessage3('Could not send an empty record')
+        return
+      }
+
+
+    if(!window.confirm('Send Clinical notes and GeneralExamination to Hisotor. Confirm?')){
+      return
+    }
+
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    
+    var cg = {
+      clinicalNote : {
+        admission : { id : this.id},
+        consultation : { id : 0}
+      },
+      generalExamination : {
+        admission : { id : this.id},
+        consultation : { id : 0}
+      }
+    } 
+   
+    this.spinner.show()
+    await this.http.post<ICG>(API_URL+'/patients/send_clinical_note_and_general_examination_to_history', cg, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+
+        this.cNid = data?.clinicalNote.id
+        this.cNMainComplain = data!.clinicalNote.mainComplain
+        this.cNPresentIllnessHistory = data!.clinicalNote.presentIllnessHistory
+        this.cNPastMedicalHistory = data!.clinicalNote.pastMedicalHistory
+        this.cNFamilyAndSocialHistory = data!.clinicalNote.familyAndSocialHistory
+        this.cNDrugsAndAllergyHistory = data!.clinicalNote.drugsAndAllergyHistory
+        this.cNReviewOfOtherSystems = data!.clinicalNote.reviewOfOtherSystems
+        this.cNPhysicalExamination = data!.clinicalNote.physicalExamination
+        this.cNManagementPlan = data!.clinicalNote.managementPlan
+
+        this.gEId = data?.generalExamination.id
+        this.gEPressure = data!.generalExamination.pressure
+        this.gETemperature = data!.generalExamination.temperature
+        this.gEWeight = data!.generalExamination.weight
+        this.gEPulseRate = data!.generalExamination.pulseRate
+        this.gEHeight = data!.generalExamination.height
+        this.gEBodyMassIndex = data!.generalExamination.bodyMassIndex
+        this.gEBodyMassIndexComment = data!.generalExamination.bodyMassIndexComment
+        this.gEBodySurfaceArea = data!.generalExamination.bodySurfaceArea
+        this.gESaturationOxygen = data!.generalExamination.saturationOxygen
+        this.gERespiratoryRate = data!.generalExamination.respiratoryRate
+        this.gEDescription = data!.generalExamination.description
+        
+        this.msgBox.showSuccessMessage('Sent successifully')
+      
+        console.log(data)
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, 'Could not send')
         console.log(error)
       }
     )

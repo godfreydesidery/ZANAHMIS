@@ -195,6 +195,9 @@
                             </span>
                         </a>
                         <ul class="treeview-menu">
+                            <li><a routerLink="/select-store">Select Store</a></li>
+                        </ul>
+                        <ul class="treeview-menu">
                             <li><a routerLink="/item-inquiry">Item Inquiry</a></li>
                             <li><a routerLink="/pharmacy-to-store-r-o-list">Pharmacy Order List</a></li>
                             <li class="treeview">
@@ -208,6 +211,17 @@
                                     <li><a routerLink="/item-medicine-conversion-coefficient">Item Medicine Coefficient</a></li>
                                 </ul>
                             </li>
+                        </ul>
+                    </li>
+                    <li class="treeview" *ngIf="grant(['PROCUREMENT_SERVICE-ACCESS'])">
+                        <a href="#" (click)="loadProcurementModule()">
+                            <i class="fa fa-university"></i><span>Procurement</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a routerLink="/local-purchase-order">Local Purchase Order</a></li>
                         </ul>
                     </li>
                     <li class="treeview" *ngIf="grant(['ADMIN-ACCESS'])">
@@ -289,6 +303,7 @@
                                     <li><a routerLink="external-medical-provider">External Provider</a></li>
                                     <li><a routerLink="clinic">Clinic</a></li>
                                     <li><a routerLink="/pharmacy">Pharmacy</a></li>
+                                    <li><a routerLink="/store">Store</a></li>
                                     <li><a routerLink="/theatre">Theatre</a></li>
                                     <li class="treeview">
                                         <a href="#">

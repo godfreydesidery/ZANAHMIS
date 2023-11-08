@@ -60,6 +60,11 @@ export class AuthService {
     localStorage.removeItem('selected-pharmacy-code')
     localStorage.removeItem('selected-pharmacy-name')
 
+    //remove store data
+    localStorage.removeItem('selected-store-id')
+    localStorage.removeItem('selected-store-code')
+    localStorage.removeItem('selected-store-name')
+
     let options = {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     }

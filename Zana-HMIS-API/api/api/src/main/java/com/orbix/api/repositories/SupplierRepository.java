@@ -32,4 +32,11 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
 	 */
 	Optional<Supplier> findByCode(String code);
 
+	/**
+	 * @param value
+	 * @param value2
+	 * @return
+	 */
+	List<Supplier> findAllByNameContainingOrCodeContaining(String value, String value2);
+
 }
