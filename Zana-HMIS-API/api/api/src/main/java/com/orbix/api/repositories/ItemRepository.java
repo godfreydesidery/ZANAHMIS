@@ -40,4 +40,13 @@ public interface ItemRepository extends JpaRepository <Item, Long> {
 	 * @return
 	 */
 	Optional<Item> findByBarcode(String barcode);
+
+
+	/**
+	 * @param value
+	 * @param value2
+	 * @param value3
+	 * @return
+	 */
+	List<Item> findAllByBarcodeContainingOrCodeContainingOrNameContaining(String value, String value2, String value3);
 }

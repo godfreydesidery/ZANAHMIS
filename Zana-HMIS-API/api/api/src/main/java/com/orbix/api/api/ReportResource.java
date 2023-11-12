@@ -226,7 +226,10 @@ public class ReportResource {
 			@RequestBody LabTestReportArgs args,
 			HttpServletRequest request){
 		
-		List<LabTest> labTests = labTestRepository.findAllByCreatedAtBetween(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		List<String> statuses = new ArrayList<>();
+		statuses.add("VERIFIED");
+		
+		List<LabTest> labTests = labTestRepository.findAllByStatusInAndCreatedAtBetween(statuses, args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
 		
 		return ResponseEntity.ok().body(labTests);
 	}

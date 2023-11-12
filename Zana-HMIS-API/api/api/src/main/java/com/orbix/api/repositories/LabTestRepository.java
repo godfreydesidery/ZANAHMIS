@@ -170,5 +170,14 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
 	List<LabTest> findAllByClinicianAndCreatedAtBetween(Clinician clinician, LocalDateTime atStartOfDay,
 			LocalDateTime plusDays);
 
+	/**
+	 * @param statuses
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @return
+	 */
+	List<LabTest> findAllByStatusInAndCreatedAtBetween(List<String> statuses, LocalDateTime atStartOfDay,
+			LocalDateTime plusDays);
+
 	
 }

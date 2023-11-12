@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.api.accessories.Sanitizer;
+import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.Item;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
@@ -145,5 +146,14 @@ public class ItemResource {
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/items/save").toUriString());
 		return ResponseEntity.created(uri).body(itemService.save(item, request));
+	}
+	
+	@GetMapping("/items/load_items_like")
+	public ResponseEntity<List<Item>> getItemNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<Item> items = new ArrayList<Item>();
+		items = itemRepository.findAllByBarcodeContainingOrCodeContainingOrNameContaining(value, value, value);
+		return ResponseEntity.ok().body(items);
 	}
 }

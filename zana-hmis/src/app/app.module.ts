@@ -139,6 +139,7 @@ import { ReferralListComponent } from './pages/payments/referral-list/referral-l
 import { StoreComponent } from './pages/admin/medical-units/store/store.component';
 import { SelectStoreComponent } from './pages/store/select-store/select-store.component';
 import { LocalPurchaseOrderComponent } from './pages/procurement/local-purchase-order/local-purchase-order.component';
+import { SupplierItemPriceListComponent } from './pages/procurement/supplier-item-price-list/supplier-item-price-list.component';
 
 @NgModule({
   declarations: [
