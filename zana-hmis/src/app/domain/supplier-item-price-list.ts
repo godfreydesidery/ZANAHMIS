@@ -4,5 +4,5 @@ import { ISupplierItemPrice } from "./supplier-item-price";
 
 export interface ISupllierItemPriceList {
     supplier : ISupplier
-    supplierItemPrices : ISupplierItemPrice
+    supplierItemPrices : ISupplierItemPrice[]
 }

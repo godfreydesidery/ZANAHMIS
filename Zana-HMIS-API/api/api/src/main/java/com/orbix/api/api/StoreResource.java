@@ -60,7 +60,7 @@ public class StoreResource {
 	
 	@GetMapping("/stores")
 	public ResponseEntity<List<Store>>getPharmacies(HttpServletRequest request){
-		return ResponseEntity.ok().body(storeService.getPharmacies(request));
+		return ResponseEntity.ok().body(storeService.getStores(request));
 	}
 	
 	@GetMapping("/stores/get")

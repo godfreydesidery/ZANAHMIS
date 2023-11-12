@@ -16,6 +16,7 @@ public class LocalPurchaseOrderDetailModel {
 	public Long id = null;
 	public Item item = null;
 	public double qty = 0;
+	public double price = 0;
 	
 	public LocalPurchaseOrder localPurchaseOrder = null;
 	

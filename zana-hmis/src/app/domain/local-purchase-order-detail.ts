@@ -9,6 +9,8 @@ export interface ILocalPurchaseOrderDetail {
     item    : IItem
     qty  : number
 
+    price : number
+
     created     : string
     verified    : string
     approved    : string

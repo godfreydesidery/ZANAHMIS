@@ -16,6 +16,9 @@ import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { ILocalPurchaseOrder } from 'src/app/domain/local-purchase-order';
 import { ISupplier } from 'src/app/domain/supplier';
 import { IItem } from 'src/app/domain/item';
+import { DataService } from 'src/app/services/data.service';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 
 const API_URL = environment.apiUrl;
 
@@ -74,7 +77,9 @@ export class LocalPurchaseOrderComponent {
     private modalService: NgbModal,
     private spinner : NgxSpinnerService,
     private router : Router,
-    private msgBox : MsgBoxService) { }
+    private msgBox : MsgBoxService,
+    private data : DataService) 
+    {(window as any).pdfMake.vfs = pdfFonts.pdfMake.vfs;}
 
   async ngOnInit(): Promise<void> {
     this.loadItemNames()
@@ -342,6 +347,7 @@ export class LocalPurchaseOrderComponent {
         this.localPurchaseOrder = data!
 
         this.msgBox.showSuccessMessage('Order submitted successifuly')
+        this.printOrder()
       }
     )
     .catch(
@@ -600,6 +606,152 @@ export class LocalPurchaseOrderComponent {
       }
     )
   }
+
+
+  logo!    : any
+  documentHeader! : any
+  async printOrder(){
+    
+    if(this.localPurchaseOrder.localPurchaseOrderDetails.length === 0){
+      this.msgBox.showErrorMessage3('Can not print an empty LPO')
+      return
+    }
+
+    this.documentHeader = await this.data.getDocumentHeader()
+    var header = ''
+    var footer = ''
+    var title  = 'Local Purchase Order(LPO)'
+    var logo : any = ''
+    var total : number = 0
+    var discount : number = 0
+    var tax : number = 0
+
+    var report = [
+      [
+        {text : 'SN', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Code', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Name', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Qty', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Price', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Amount', fontSize : 9, fillColor : '#bdc6c7'},
+
+      ]
+    ]  
+
+    var sn : number = 1
+
+    var total = 0
+
+    
+    
+    this.localPurchaseOrder.localPurchaseOrderDetails.forEach((element) => {
+      var detail = [
+        {text : sn.toString(), fontSize : 9, fillColor : '#ffffff'}, 
+        {text : element?.item?.code, fontSize : 9, fillColor : '#ffffff'},
+        {text : element?.item?.name, fontSize : 9, fillColor : '#ffffff'},
+        {text : element?.qty.toString(), fontSize : 9, fillColor : '#ffffff'},
+        {text : element.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), fontSize : 9, alignment : 'right', fillColor : '#ffffff'},
+        {text : (element?.qty * element?.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), fontSize : 9, alignment : 'right', fillColor : '#ffffff'},
+      ]
+      sn = sn + 1
+      total = total + element?.qty * element?.price
+      report.push(detail)
+    })
+
+    var detailSummary = [
+      {text : '', fontSize : 9, fillColor : '#ffffff'}, 
+      {text : '', fontSize : 9, fillColor : '#ffffff'},
+      {text : '', fontSize : 9, fillColor : '#ffffff'},
+      {text : '', fontSize : 9, fillColor : '#ffffff'},
+      {text : 'Total', fontSize : 9, fillColor : '#ffffff'},
+      {text : total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), fontSize : 9, alignment : 'right', bold : true, fillColor : '#ffffff'},
+      
+    ]
+    report.push(detailSummary)
+   
+    const docDefinition : any = {
+      header: '',
+      footer: function (currentPage: { toString: () => string; }, pageCount: string) {
+        return currentPage.toString() + " of " + pageCount;
+      },
+      //watermark : { text : '', color: 'blue', opacity: 0.1, bold: true, italics: false },
+        content : [
+          {
+            columns : 
+            [
+              this.documentHeader
+            ]
+          },
+          '  ',
+          {text : title, fontSize : 14, bold : true, alignment : 'center'},
+          this.data.getHorizontalLine(),
+          {
+            columns : 
+            [
+              {
+                width : 200,
+                layout : 'noBorders',
+                table : {
+                  widths : [200],
+                  body : [
+                    [
+                      {text : 'Ship To: ', fontSize : 9},
+                    ]
+                  ]
+                }
+              },
+              {
+                width : 100,
+                layout : 'noBorders',
+                table : {
+                  widths : [100],
+                  body : [
+                    [' ']
+                  ]
+                }
+              },
+              {
+                width : 200,
+                layout : 'noBorders',
+                table : {
+                  widths : [220],
+                  body : [
+                    [
+                      {text : 'LPO#: '+this.localPurchaseOrder?.no.toString(), fontSize : 12, bold : true},
+                    ],
+                    [
+                      {text : 'Supplier: '+this.localPurchaseOrder?.supplier?.name.toString(), fontSize : 9},
+                    ],
+                    //[
+                      //{text : 'Created: '+(new ShowDateTimePipe).transform(this.invoice.createdAt), fontSize : 9}, 
+                    //],
+                  ]
+                }
+              },
+              
+            ]
+          },
+
+          '  ',
+          {
+            //layout : 'noBorders',
+            table : {
+                headerRows : 1,
+                widths : [20, 50, 180, 30, 60, 80],
+                body : report
+            }
+        },
+        ' ',
+        'Approved',
+        ' ',
+        '...........................'
+         
+      ]     
+    };
+    pdfMake.createPdf(docDefinition).print()
+  }
+
+  
 
   public grant(privilege : string[]) : boolean{
     /**Allow user to perform an action if the user has that priviledge */

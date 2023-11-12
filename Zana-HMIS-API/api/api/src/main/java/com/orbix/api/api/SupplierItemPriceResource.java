@@ -27,6 +27,7 @@ import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.LabTestTypeRange;
 import com.orbix.api.domain.Supplier;
 import com.orbix.api.domain.SupplierItemPrice;
+import com.orbix.api.domain.SupplierItemPriceList;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.ItemRepository;
@@ -96,7 +97,7 @@ public class SupplierItemPriceResource {
 	}
 	
 	@PostMapping("/supplier_item_prices/delete")
-	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
+	@PreAuthorize("hasAnyAuthority('SUPPLIER_PRICE_LIST-ALL')")
 	public boolean delete(
 			@RequestBody SupplierItemPrice supplierItemPrice,
 			HttpServletRequest request){
@@ -113,8 +114,8 @@ public class SupplierItemPriceResource {
 	}
 	
 	@PostMapping("/supplier_item_prices/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
-	public ResponseEntity<SupplierItemPrice>save(
+	@PreAuthorize("hasAnyAuthority('SUPPLIER_PRICE_LIST-ALL')")
+	public ResponseEntity<SupplierItemPriceList>save(
 			@RequestBody SupplierItemPrice supplierItemPrice,
 			HttpServletRequest request){
 		Optional<Supplier> supplier_ = supplierRepository.findById(supplierItemPrice.getSupplier().getId());
@@ -126,16 +127,16 @@ public class SupplierItemPriceResource {
 			throw new NotFoundException("Item not found");
 		}
 		
+		if(supplierItemPrice.getId() == null) {
+			if(supplierItemPriceRepository.existsBySupplierAndItem(supplier_.get(), item_.get())) {
+				throw new InvalidOperationException("Duplicate values are not allowed");
+			}
+		}
+		
 		supplierItemPrice.setSupplier(supplier_.get());
 		supplierItemPrice.setItem(item_.get());
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/supplier_item_prices/save").toUriString());
 		return ResponseEntity.created(uri).body(supplierItemPriceService.save(supplierItemPrice, request));
 	}
-}
-
-@Data
-class SupplierItemPriceList {
-	Supplier supplier = null;
-	List<SupplierItemPrice> supplierItemPrices = new ArrayList<>();
 }

@@ -54,14 +54,17 @@ export class SupplierItemPriceListComponent {
   //supplierName : string = ''
 
   filterRecords : string = ''
+  filterItems : string = ''
 
 
-  detailId          : any
-  detailItemCode        : string = ''
-  detailItemName        : string = ''
+  detailId     : any = null
   detailItemId : any = null
+  detailItemCode : string = ''
+  detailItemName : string = ''
+  
   detailItemCodeAndName : string = ''
-  detailQty  : number = 0
+  detailPrice : number = 0
+  detailTerms : string =''
 
   constructor(
     private auth : AuthService,
@@ -108,7 +111,7 @@ export class SupplierItemPriceListComponent {
       .then(
         data => {
           this.supplierItemPriceList = data!
-          this.supplier= this.supplierItemPriceList.supplier
+          this.supplier = this.supplierItemPriceList.supplier
           console.log(this.supplierItemPriceList)
         }
       )
@@ -119,8 +122,33 @@ export class SupplierItemPriceListComponent {
       )
   }
 
-  saveDetail(){
-    
+  async saveDetail(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var supplierItemPrice = {
+      id: this.detailId,
+      price: this.detailPrice,
+      terms: this.detailTerms,
+      supplier: {id : this.supplier.id},
+      item: {id : this.detailItemId, code : this.detailItemCode}
+    }
+    this.spinner.show()
+    await this.http.post<ISupllierItemPriceList>(API_URL+'/supplier_item_prices/save', supplierItemPrice, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.supplierItemPriceList = data!
+        this.supplier= this.supplierItemPriceList.supplier
+        console.log(this.supplierItemPriceList)
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+      }
+    )
   }
 
   locked : boolean = false
@@ -132,10 +160,13 @@ export class SupplierItemPriceListComponent {
   
 
   clear(){
+    this.detailId = null
     this.detailItemId = null
     this.detailItemCode = ''
     this.detailItemName = ''
     this.detailItemCodeAndName = ''
+    this.detailPrice = 0
+    this.detailTerms = ''
   }
 
 
@@ -189,6 +220,66 @@ export class SupplierItemPriceListComponent {
         console.log(error)
       }
     )
+  }
+
+  async getDetail(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.spinner.show()
+    this.clear()
+    await this.http.get<ISupplierItemPrice>(API_URL+'/supplier_item_prices/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.detailId = data!.id
+        this.detailItemId = data?.item.id
+        this.detailItemCode = data!.item.code
+        this.detailItemName = data!.item.name
+        this.detailPrice = data!.price
+        this.detailTerms = data!.terms
+        this.detailItemCodeAndName = this.detailItemCode +' | '+ this.detailItemName
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+        console.log(error)
+      }
+    )
+
+  }
+
+  async deleteDetail(id : any, itemId : any){
+    if(!window.confirm('Deleting item. Confirm?')){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var supplierItemPrice = {
+      id: id,
+      item: {id : itemId}
+    }
+    this.spinner.show()
+    this.clear()
+    await this.http.post(API_URL+'/supplier_item_prices/delete', supplierItemPrice, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.msgBox.showSuccessMessage('Deleted')
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+        console.log(error)
+      }
+    )
+    this.getSupplierItems(this.supplier.id)
   }
 
   

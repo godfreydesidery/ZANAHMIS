@@ -56,7 +56,7 @@ public class StoreServiceImpl implements StoreService {
 			store.setActive(true);
 		}
 		
-		if(!(store.getCategory().equals("INPATIENT") || store.getCategory().equals("OUTPATIENT") || store.getCategory().equals("ALL"))) {
+		if(!(store.getCategory().equals("ALL"))) {
 			throw new InvalidOperationException("Invalid category name");
 		}
 		
@@ -90,8 +90,8 @@ public class StoreServiceImpl implements StoreService {
 	}
 
 	@Override
-	public List<Store> getPharmacies(HttpServletRequest request) {
-		log.info("Fetching all pharmacies");
+	public List<Store> getStores(HttpServletRequest request) {
+		log.info("Fetching all stores");
 		return storeRepository.findAll();
 	}
 

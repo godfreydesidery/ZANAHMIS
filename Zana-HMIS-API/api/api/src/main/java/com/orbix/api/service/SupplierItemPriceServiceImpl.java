@@ -14,6 +14,7 @@ import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.LabTestTypeRange;
 import com.orbix.api.domain.Supplier;
 import com.orbix.api.domain.SupplierItemPrice;
+import com.orbix.api.domain.SupplierItemPriceList;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.LabTestTypeRangeRepository;
@@ -39,13 +40,19 @@ public class SupplierItemPriceServiceImpl implements SupplierItemPriceService {
 	private final SupplierItemPriceRepository supplierItemPriceRepository;
 	
 	@Override
-	public SupplierItemPrice save(SupplierItemPrice supplierItemPrice, HttpServletRequest request) {
+	public SupplierItemPriceList save(SupplierItemPrice supplierItemPrice, HttpServletRequest request) {
 		
 		supplierItemPrice.setCreatedBy(userService.getUser(request).getId());
 		supplierItemPrice.setCreatedOn(dayService.getDay().getId());
 		supplierItemPrice.setCreatedAt(dayService.getTimeStamp());
 		
-		return supplierItemPriceRepository.save(supplierItemPrice);
+		supplierItemPrice = supplierItemPriceRepository.save(supplierItemPrice);
+		
+		SupplierItemPriceList supplierItemPriceList = new SupplierItemPriceList();
+		supplierItemPriceList.setSupplier(supplierItemPrice.getSupplier());
+		supplierItemPriceList.setSupplierItemPrices(supplierItemPriceRepository.findAllBySupplier(supplierItemPrice.getSupplier()));
+		
+		return supplierItemPriceList;
 	}
 
 	@Override

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.orbix.api.accessories.Formater;
 import com.orbix.api.domain.Item;
 import com.orbix.api.domain.Supplier;
+import com.orbix.api.domain.SupplierItemPrice;
 import com.orbix.api.domain.Item;
 import com.orbix.api.domain.LocalPurchaseOrder;
 import com.orbix.api.domain.LocalPurchaseOrderDetail;
@@ -28,6 +29,7 @@ import com.orbix.api.repositories.ItemRepository;
 import com.orbix.api.repositories.SupplierRepository;
 import com.orbix.api.repositories.LocalPurchaseOrderDetailRepository;
 import com.orbix.api.repositories.LocalPurchaseOrderRepository;
+import com.orbix.api.repositories.SupplierItemPriceRepository;
 import com.orbix.api.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -50,6 +52,7 @@ public class LocalPurchaseOrderServiceImpl implements LocalPurchaseOrderService 
 	private final LocalPurchaseOrderRepository localPurchaseOrderRepository;
 	private final LocalPurchaseOrderDetailRepository localPurchaseOrderDetailRepository;
 	private final ItemRepository itemRepository;
+	private final SupplierItemPriceRepository supplierItemPriceRepository;
 	
 	@Override
 	public LocalPurchaseOrderModel save(LocalPurchaseOrder localPurchaseOrder, HttpServletRequest request) {
@@ -221,9 +224,20 @@ public class LocalPurchaseOrderServiceImpl implements LocalPurchaseOrderService 
 		if(lpo_.isEmpty()) {
 			throw new NotFoundException("Order not found");
 		}
+		
+		if(!lpo_.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not edit. only PENDING LPO can be edited");
+		}
+		
 		Optional<Item> item_ = itemRepository.findById(lpoDetail.getItem().getId());
 		if(item_.isEmpty()) {
 			throw new NotFoundException("Item not found");
+		}
+		
+		//check if supplier supplier the given item
+		Optional<SupplierItemPrice> supplierItemPrice_ = supplierItemPriceRepository.findBySupplierAndItem(lpo_.get().getSupplier(), item_.get());
+		if(supplierItemPrice_.isEmpty()) {
+			throw new InvalidOperationException("Item not valid for this supplier");
 		}
 		
 		if(lpoDetail.getId() == null) {
@@ -239,6 +253,8 @@ public class LocalPurchaseOrderServiceImpl implements LocalPurchaseOrderService 
 		detail.setLocalPurchaseOrder(lpo_.get());
 		detail.setItem(item_.get());
 		detail.setQty(lpoDetail.getQty());
+		detail.setPrice(supplierItemPrice_.get().getPrice());
+		
 		
 		detail.setCreatedBy(userService.getUser(request).getId());
 		detail.setCreatedOn(dayService.getDay().getId());
@@ -266,6 +282,7 @@ public class LocalPurchaseOrderServiceImpl implements LocalPurchaseOrderService 
 				modelDetail.setId(d.getId());
 				modelDetail.setItem(d.getItem());
 				modelDetail.setQty(d.getQty());
+				modelDetail.setPrice(d.getPrice());
 				if(d.getCreatedAt() != null) {
 					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());
 				}else {

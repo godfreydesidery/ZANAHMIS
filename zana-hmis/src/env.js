@@ -2,7 +2,7 @@
 var apiUrl = (function () {
   return {
     getApiUrl: function () {
-      return "http://44.203.154.93:8082/zana-hmis-api"
+      return "http://16.16.65.124:8082/zana-hmis-api"
     },
     getDevApiUrl: function () {
       return "http://127.0.0.1:8081/zana-hmis-api"

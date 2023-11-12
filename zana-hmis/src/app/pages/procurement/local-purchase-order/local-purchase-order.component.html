@@ -18,6 +18,7 @@
                     <button class="btn btn-primary btn-outline" *ngIf="status === 'PENDING'" (click)="verifyOrder()"><span class="glyphicon glyphicon-arrow-right"></span>Verify Order</button>
                     <button class="btn btn-primary btn-outline" *ngIf="status === 'VERIFIED'" (click)="approveOrder()"><span class="glyphicon glyphicon-ok"></span>Approve Order</button>
                     <button class="btn btn-primary btn-outline" *ngIf="status === 'APPROVED'" (click)="submitOrder()"><span class="glyphicon glyphicon-arrow-right"></span>Submit Order</button>
+                    <button class="btn btn-primary btn-outline" *ngIf="status === 'SUBMITTED'" (click)="printOrder()"><span class="glyphicon glyphicon-print"></span>Print Order</button>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -108,8 +109,8 @@
                                                 <td>{{d.item.code}}</td>
                                                 <td>{{d.item.name}}</td>
                                                 <td>{{d.qty}}</td>
-                                                <td></td>
-                                                <td></td>
+                                                <td style="text-align: right;">{{d.price | currency:'':''}}</td>
+                                                <td style="text-align: right;">{{d.qty * d.price | currency:'':''}}</td>
                                                 <td><span class="glyphicon glyphicon-trash" *ngIf="status === 'PENDING'" (click)="deleteDetail(d.id)"></span></td>
                                             </tr>
                                         </tbody>

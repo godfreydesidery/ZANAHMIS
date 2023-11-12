@@ -200,6 +200,7 @@ public class LocalPurchaseOrderResource {
 				modelDetail.setId(d.getId());
 				modelDetail.setItem(d.getItem());
 				modelDetail.setQty(d.getQty());
+				modelDetail.setPrice(d.getPrice());
 				if(d.getCreatedAt() != null) {
 					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());
 				}else {
@@ -257,6 +258,7 @@ public class LocalPurchaseOrderResource {
 				modelDetail.setId(d.getId());
 				modelDetail.setItem(d.getItem());
 				modelDetail.setQty(d.getQty());
+				modelDetail.setPrice(d.getPrice());
 				if(d.getCreatedAt() != null) {
 					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());
 				}else {
@@ -314,6 +316,7 @@ public class LocalPurchaseOrderResource {
 				modelDetail.setId(d.getId());
 				modelDetail.setItem(d.getItem());
 				modelDetail.setQty(d.getQty());
+				modelDetail.setPrice(d.getPrice());
 				if(d.getCreatedAt() != null) {
 					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());
 				}else {

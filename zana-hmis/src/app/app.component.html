@@ -215,7 +215,7 @@
                     </li>
                     <li class="treeview" *ngIf="grant(['PROCUREMENT_SERVICE-ACCESS'])">
                         <a href="#" (click)="loadProcurementModule()">
-                            <i class="fa fa-university"></i><span>Procurement</span>
+                            <i class="fa fa-shopping-cart"></i><span>Procurement</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
@@ -223,7 +223,6 @@
                         <ul class="treeview-menu">
                             <li><a routerLink="/local-purchase-order">Local Purchase Order</a></li>
                             <li><a routerLink="/supplier-item-price-list">Supplier Price List</a></li>
-                            
                         </ul>
                     </li>
                     <li class="treeview" *ngIf="grant(['ADMIN-ACCESS'])">
