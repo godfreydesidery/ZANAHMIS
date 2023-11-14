@@ -248,6 +248,9 @@ export class ProcedureReportComponent {
           '  ',
           {text : title, fontSize : 14, bold : true, alignment : 'center'},
           this.data.getHorizontalLine(),
+          ' ',
+          'Doctor: ' + this.clinicianName,
+          ' ',
           {
             layout : 'noBorders',
             table : {

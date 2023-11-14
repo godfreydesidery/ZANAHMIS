@@ -153,7 +153,6 @@ public class MainApplication {
 	
 	
 	
-	
 	@Bean
 	void updateRecords() {
 		//thread to update patient records periodically

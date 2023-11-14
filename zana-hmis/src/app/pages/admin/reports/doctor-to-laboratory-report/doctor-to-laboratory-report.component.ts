@@ -225,9 +225,9 @@ export class DoctorToLaboratoryReportComponent {
         {text : element?.sn.toString(), fontSize : 7, fillColor : '#ffffff'},  
         {text : (element?.patient?.firstName +' '+ element.patient?.middleName +' '+ element.patient?.lastName).toString(), fontSize : 7, fillColor : '#ffffff'}, 
         {text : element?.patient?.phoneNo.toString(), fontSize : 7, fillColor : '#ffffff'}, 
-        {text : element?.patient?.no.toString(), fontSize : 7, fillColor : '#ffffff'},  
+        {text : element?.patient?.no.toString(), fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element?.labTestType?.name, fontSize : 7, fillColor : '#ffffff'},  
         {text : this.getPaymentType(element), fontSize : 7, fillColor : '#ffffff'},  
-        {text : element?.patient?.paymentType.toString(), fontSize : 7, fillColor : '#ffffff'}, 
         {text : new ShowDateOnlyPipe().transform(element?.createdAt).toString(), fontSize : 7, fillColor : '#ffffff'}, 
         {text : element.status.toString(), fontSize : 7, fillColor : '#ffffff'}, 
       ]

@@ -29,9 +29,10 @@ public class WebConfig implements WebMvcConfigurer {
 			"file:/opt/myfiles/"
 	    };
 	
+	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-	    registry.addResourceHandler("/app/**").addResourceLocations("classpath:/public/app/index.html");
+	    registry.addResourceHandler("/*").addResourceLocations("classpath:/public/");
 	    
 	}
 }

@@ -277,7 +277,8 @@ export class AppComponent {
         {path : 'nurse-inpatient-list', loadComponent : () => import('./pages/nurse/nurse-inpatient-list/nurse-inpatient-list.component').then(m => m.NurseInpatientListComponent)},
         {path : 'nurse-outpatient-list', loadComponent : () => import('./pages/nurse/nurse-outpatient-list/nurse-outpatient-list.component').then(m => m.NurseOutpatientListComponent)},
         {path : 'nurse-outsider-list', loadComponent : () => import('./pages/nurse/nurse-outsider-list/nurse-outsider-list.component').then(m => m.NurseOutsiderListComponent)},
-        {path : 'nurse-inpatient-chart', loadComponent : () => import('./pages/nurse/nurse-inpatient-chart/nurse-inpatient-chart.component').then(m => m.NurseInpatientChartComponent)}
+        {path : 'nurse-inpatient-chart', loadComponent : () => import('./pages/nurse/nurse-inpatient-chart/nurse-inpatient-chart.component').then(m => m.NurseInpatientChartComponent)},
+        {path : 'nursing-history-menu', loadComponent : () => import('./pages/nurse/nursing-history-menu/nursing-history-menu.component').then(m => m.NursingHistoryMenuComponent)}
       )
     }
     loadLaboratoryModule(){
@@ -414,6 +415,7 @@ export class AppComponent {
     loadReportModule(){
       this.router.config.push(
         {path : 'report-template', loadComponent: () => import('./pages/reports/report-template/report-template.component').then(m => m.ReportTemplateComponent), canActivate: [AuthGuard]},
+        {path : 'doctors-reports', loadComponent: () => import('./pages/reports/doctors-reports/doctors-reports.component').then(m => m.DoctorsReportsComponent), canActivate: [AuthGuard]},
       )
     }
 
