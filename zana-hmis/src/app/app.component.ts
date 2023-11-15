@@ -356,6 +356,8 @@ export class AppComponent {
       this.router.config.push(
         {path : 'local-purchase-order', loadComponent : () => import('./pages/procurement/local-purchase-order/local-purchase-order.component').then(m => m.LocalPurchaseOrderComponent), canActivate: [AuthGuard]},
         {path : 'supplier-item-price-list', loadComponent : () => import('./pages/procurement/supplier-item-price-list/supplier-item-price-list.component').then(m => m.SupplierItemPriceListComponent), canActivate: [AuthGuard]},
+        {path : 'supplier-register', loadComponent : () => import('./pages/admin/stakeholders/supplier-register/supplier-register.component').then(m => m.SupplierRegisterComponent), canActivate: [AuthGuard]},
+        {path : 'item-register', loadComponent : () => import('./pages/admin/inventory/item-register/item-register.component').then(m => m.ItemRegisterComponent), canActivate: [AuthGuard]},
       )
     }
     loadAdminModule(){

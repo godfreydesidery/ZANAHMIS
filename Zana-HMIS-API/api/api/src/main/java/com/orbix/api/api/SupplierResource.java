@@ -103,7 +103,7 @@ public class SupplierResource {
 	}
 	
 	@PostMapping("/suppliers/save")
-	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
+	//@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
 	public ResponseEntity<Supplier>save(
 			@RequestBody Supplier supplier,
 			HttpServletRequest request){
