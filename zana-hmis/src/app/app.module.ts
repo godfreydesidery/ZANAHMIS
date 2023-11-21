@@ -140,6 +140,7 @@ import { StoreComponent } from './pages/admin/medical-units/store/store.componen
 import { SelectStoreComponent } from './pages/store/select-store/select-store.component';
 import { LocalPurchaseOrderComponent } from './pages/procurement/local-purchase-order/local-purchase-order.component';
 import { SupplierItemPriceListComponent } from './pages/procurement/supplier-item-price-list/supplier-item-price-list.component';
+import { GoodsReceivedNoteComponent } from './pages/store/goods-received-note/goods-received-note.component';
 
 @NgModule({
   declarations: [

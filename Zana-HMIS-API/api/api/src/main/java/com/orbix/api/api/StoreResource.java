@@ -26,6 +26,7 @@ import com.orbix.api.domain.Item;
 import com.orbix.api.domain.Store;
 import com.orbix.api.domain.StoreItem;
 import com.orbix.api.domain.StoreStockCard;
+import com.orbix.api.domain.Supplier;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.StoreItemRepository;
@@ -61,6 +62,15 @@ public class StoreResource {
 	@GetMapping("/stores")
 	public ResponseEntity<List<Store>>getPharmacies(HttpServletRequest request){
 		return ResponseEntity.ok().body(storeService.getStores(request));
+	}
+	
+	@GetMapping("/stores/load_stores_like")
+	public ResponseEntity<List<Store>> getStoreNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<Store> stores = new ArrayList<Store>();
+		stores = storeRepository.findAllByNameContainingOrCodeContaining(value, value);
+		return ResponseEntity.ok().body(stores);
 	}
 	
 	@GetMapping("/stores/get")

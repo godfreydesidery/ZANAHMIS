@@ -56,6 +56,24 @@
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-sm-3"><h4 class="text-primary">Designated Store</h4></div>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" [(ngModel)]="storeName" *ngIf="id != null" readonly>
+                                <input type="text" class="form-control" [(ngModel)]="storeName" *ngIf="id === null" (ngModelChange)="loadStoresLike($event)">
+                            </div>
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-9">
+                                <div class="row"  *ngIf="stores.length > 0">
+                                    <div class="col-sm-12">
+                                        <select class="form-control" multiple="multiple">
+                                            <option *ngFor="let store of stores" (click)="getStore(store.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{store.code}} | {{store.name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
 
                             <div class="row">
                                 <div class="col-sm-3"><h4 class="text-primary">Order Date</h4></div>

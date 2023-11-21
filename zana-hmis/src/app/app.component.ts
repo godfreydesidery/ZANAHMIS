@@ -348,6 +348,7 @@ export class AppComponent {
         {path : 'item-medicine-conversion-coefficient', loadComponent : () => import('./pages/store/conversion-coefficients/item-medicine-conversion-coefficient/item-medicine-conversion-coefficient.component').then(m => m.ItemMedicineConversionCoefficientComponent), canActivate: [AuthGuard]},
         {path : 'item-inquiry', loadComponent : () => import('./pages/store/item-inquiry/item-inquiry.component').then(m => m.ItemInquiryComponent), canActivate: [AuthGuard]},
         {path : 'pharmacy-to-store-r-o-list', loadComponent : () => import('./pages/store/pharmacy-to-store-r-o-list/pharmacy-to-store-r-o-list.component').then(m => m.PharmacyToStoreROListComponent), canActivate: [AuthGuard]},
+        {path : 'goods-received-note', loadComponent : () => import('./pages/store/goods-received-note/goods-received-note.component').then(m => m.GoodsReceivedNoteComponent), canActivate: [AuthGuard]},
 
       )
     }

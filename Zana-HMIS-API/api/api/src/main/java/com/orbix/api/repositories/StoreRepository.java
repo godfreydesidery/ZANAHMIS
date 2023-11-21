@@ -25,4 +25,11 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 	
 	@Query("SELECT s.name FROM Store s")
 	List<String> getNames();
+
+	/**
+	 * @param value
+	 * @param value2
+	 * @return
+	 */
+	List<Store> findAllByNameContainingOrCodeContaining(String value, String value2);
 }

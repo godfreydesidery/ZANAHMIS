@@ -19,6 +19,7 @@ import com.orbix.api.domain.SupplierItemPrice;
 import com.orbix.api.domain.Item;
 import com.orbix.api.domain.LocalPurchaseOrder;
 import com.orbix.api.domain.LocalPurchaseOrderDetail;
+import com.orbix.api.domain.Store;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.LocalPurchaseOrderDetailModel;
@@ -29,6 +30,7 @@ import com.orbix.api.repositories.ItemRepository;
 import com.orbix.api.repositories.SupplierRepository;
 import com.orbix.api.repositories.LocalPurchaseOrderDetailRepository;
 import com.orbix.api.repositories.LocalPurchaseOrderRepository;
+import com.orbix.api.repositories.StoreRepository;
 import com.orbix.api.repositories.SupplierItemPriceRepository;
 import com.orbix.api.repositories.UserRepository;
 
@@ -53,6 +55,7 @@ public class LocalPurchaseOrderServiceImpl implements LocalPurchaseOrderService 
 	private final LocalPurchaseOrderDetailRepository localPurchaseOrderDetailRepository;
 	private final ItemRepository itemRepository;
 	private final SupplierItemPriceRepository supplierItemPriceRepository;
+	private final StoreRepository storeRepository;
 	
 	@Override
 	public LocalPurchaseOrderModel save(LocalPurchaseOrder localPurchaseOrder, HttpServletRequest request) {
@@ -65,7 +68,14 @@ public class LocalPurchaseOrderServiceImpl implements LocalPurchaseOrderService 
 				throw new NotFoundException("Supplier not found");
 			}
 			
+			Optional<Store> store_ = storeRepository.findById(localPurchaseOrder.getStore().getId());
+			if(store_.isEmpty()) {
+				throw new NotFoundException("Store not found");
+			}
+			
+			
 			localPurchaseOrder.setSupplier(supplier_.get());
+			localPurchaseOrder.setStore(store_.get());
 			
 			localPurchaseOrder.setCreatedBy(userService.getUser(request).getId());
 			localPurchaseOrder.setCreatedOn(dayService.getDay().getId());

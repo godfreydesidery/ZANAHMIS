@@ -18,6 +18,7 @@ import { ISupplier } from 'src/app/domain/supplier';
 import { IItem } from 'src/app/domain/item';
 import { DataService } from 'src/app/services/data.service';
 import * as pdfMake from 'pdfmake/build/pdfmake';
+import { IStore } from 'src/app/domain/store';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 
 const API_URL = environment.apiUrl;
@@ -39,7 +40,7 @@ const API_URL = environment.apiUrl;
 })
 export class LocalPurchaseOrderComponent {
 
-  id : any
+  id : any = null
   no : string = ''
   orderDate! : Date
   validUntil! : Date | string
@@ -137,6 +138,7 @@ export class LocalPurchaseOrderComponent {
       id  : this.id,
       no : this.no,
       supplier : {id : this.supplierId },
+      store : {id : this.storeId },
       validUntil : this.validUntil
     }
     this.spinner.show()
@@ -582,6 +584,8 @@ export class LocalPurchaseOrderComponent {
     )
   }
 
+
+
   async getSupplier(id : any){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
@@ -597,6 +601,60 @@ export class LocalPurchaseOrderComponent {
         this.supplierCode = data!.code
         this.supplierName = data!.name
         this.supplierCodeAndName = data!.code +' | '+ data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+        console.log(error)
+      }
+    )
+  }
+
+
+  storeId : any =  null
+  storeCode : string = ''
+  storeName : string = ''
+  storeCodeAndName : string = ''
+  stores : IStore[] = []
+  async loadStoresLike(value : string){
+    this.stores = []
+    if(value.length < 2){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IStore[]>(API_URL+'/stores/load_stores_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.stores = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+      }
+    )
+  }
+
+  async getStore(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.stores = []
+    this.spinner.show()
+    await this.http.get<IStore>(API_URL+'/stores/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.storeId = data?.id
+        this.storeCode = data!.code
+        this.storeName = data!.name
+        this.storeCodeAndName = data!.code +' | '+ data!.name
       }
     )
     .catch(

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.orbix.api.domain.Store;
 import com.orbix.api.domain.Supplier;
 
 import lombok.Data;
@@ -27,6 +28,8 @@ public class LocalPurchaseOrderModel {
     public String created = "";
     public String verified = "";
     public String approved = "";
+    
+    public Store store = null;
     
     public List<LocalPurchaseOrderDetailModel> localPurchaseOrderDetails = new ArrayList<>();
 }
