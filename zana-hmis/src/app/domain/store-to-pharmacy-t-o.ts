@@ -1,6 +1,7 @@
 import { IPharmacy } from "./pharmacy"
 import { IPharmacyToStoreRO } from "./pharmacy-to-store-r-o"
 import { IPharmacyToStoreRODetail } from "./pharmacy-to-store-r-o-detail"
+import { IStore } from "./store"
 import { IStoreToPharmacyTODetail } from "./store-to-pharmacy-t-o-detail"
 
 export interface IStoreToPharmacyTO {
@@ -12,6 +13,8 @@ export interface IStoreToPharmacyTO {
 
     pharmacy      : IPharmacy
     pharmacyToStoreRO : IPharmacyToStoreRO
+
+    store : IStore
 
     storeToPharmacyTODetails : IStoreToPharmacyTODetail[]
 

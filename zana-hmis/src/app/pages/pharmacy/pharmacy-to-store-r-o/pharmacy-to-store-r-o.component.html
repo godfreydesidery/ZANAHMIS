@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <div class="header-title">
-        <h1>Store Requisition Order(<span class="text-primary">{{pharmacyName}}</span>)</h1>
+        <h1>Requisition Order | Pharmacy - <span class="text-primary">{{pharmacyName}}</span></h1>
     </div>
 </section>
 <!-- Main content -->
@@ -11,7 +11,7 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <button class="btn btn-primary btn-outline" data-toggle="modal" data-target="#order-list-modal"><span class="glyphicon glyphicon-list"></span>Order List</button>
+                    <button class="btn btn-primary btn-outline" data-toggle="modal" data-target="#order-list-modal"><span class="glyphicon glyphicon-list"></span> Order List</button>
                     <button class="btn btn-primary btn-outline" (click)="requestNo()"><span class="glyphicon glyphicon-file"></span>New Order</button>
                     <button class="btn btn-primary btn-outline" (click)="openToEdit()"><span class="glyphicon glyphicon-pencil"></span>Edit Order</button>
                     <button class="btn btn-primary btn-outline" (click)="saveOrder()"><span class="glyphicon glyphicon-floppy-disk"></span>Save Order</button>
@@ -39,6 +39,23 @@
                             <div class="row">
                                 <div class="col-sm-3"><h4 class="text-primary">Order Date</h4></div>
                                 <div class="col-sm-9"><span class="form-control">{{orderDate | date}}</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3"><h4 class="text-primary">Designated Store</h4></div>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" [(ngModel)]="storeName" *ngIf="id != null" readonly>
+                                    <input type="text" class="form-control" [(ngModel)]="storeName" *ngIf="id === null" (ngModelChange)="loadStoresLike($event)">
+                                </div>
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-9">
+                                    <div class="row"  *ngIf="stores.length > 0">
+                                        <div class="col-sm-12">
+                                            <select class="form-control" multiple="multiple">
+                                                <option *ngFor="let store of stores" (click)="getStore(store.id)" style="height: 1cm; cursor: pointer; font-size: large;">{{store.code}} | {{store.name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-3"><h4 class="text-primary">Valid Until</h4></div>

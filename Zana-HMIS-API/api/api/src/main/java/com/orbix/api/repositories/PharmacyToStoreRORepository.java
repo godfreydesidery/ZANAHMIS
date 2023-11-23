@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyToStoreRO;
+import com.orbix.api.domain.Store;
 
 /**
  * @author Godfrey
@@ -39,4 +40,11 @@ public interface PharmacyToStoreRORepository extends JpaRepository<PharmacyToSto
 	 * @return
 	 */
 	List<PharmacyToStoreRO> findByStatusIn(List<String> statuses);
+
+	/**
+	 * @param store
+	 * @param statuses
+	 * @return
+	 */
+	List<PharmacyToStoreRO> findByStoreAndStatusIn(Store store, List<String> statuses);
 }

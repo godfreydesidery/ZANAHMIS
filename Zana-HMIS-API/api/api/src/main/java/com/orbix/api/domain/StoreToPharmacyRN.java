@@ -52,10 +52,15 @@ public class StoreToPharmacyRN {
 	private String status;
 	private String statusDescription;
 	
-	@ManyToOne(targetEntity = Pharmacy.class, fetch = FetchType.EAGER,  optional = true)
-    @JoinColumn(name = "pharmacy_id", nullable = true , updatable = false)
+	@ManyToOne(targetEntity = Pharmacy.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "pharmacy_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Pharmacy pharmacy;
+	
+	@ManyToOne(targetEntity = Store.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "store_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private Store store;
 	
 	@ManyToOne(targetEntity = StoreToPharmacyTO.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "store_to_pharmacy_t_o_id", nullable = true , updatable = false)

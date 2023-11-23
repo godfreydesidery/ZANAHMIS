@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/auth.service';
 import { IClinic } from 'src/app/domain/clinic';
 import { IClinician } from 'src/app/domain/clinician';
 import { IItem } from 'src/app/domain/item';
+import { IStoreItem } from 'src/app/domain/store-item';
 import { AgePipe } from 'src/app/pipes/age.pipe';
 import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
@@ -56,6 +57,10 @@ export class ItemInquiryComponent {
 
   filterRecords : string = ''
 
+  selectedStoreId : any
+  selectedStoreCode : string = ''
+  selectedStoreName : string = ''
+
 
   constructor(
     private auth : AuthService,
@@ -66,6 +71,15 @@ export class ItemInquiryComponent {
 
   ngOnInit(): void {
     this.loadItemNames()
+    if(localStorage.getItem('selected-store-id') != null){
+      this.selectedStoreId = localStorage.getItem('selected-store-id')
+    }
+    if(localStorage.getItem('selected-store-code') != null){
+      this.selectedStoreCode = localStorage.getItem('selected-store-code')!.toString()
+    }
+    if(localStorage.getItem('selected-store-name') != null){
+      this.selectedStoreName = localStorage.getItem('selected-store-name')!.toString()
+    }  
   }
 
   clear(){
@@ -147,6 +161,53 @@ export class ItemInquiryComponent {
         this.defaultReorderLevel  = data!.defaultReorderLevel
         this.active               = data!.active
         this.ingredients          = data!.ingredients
+      },
+      error => {
+        console.log(error)
+        this.msgBox.showErrorMessage(error, '')
+      }
+    )
+  }
+
+  async loadItemByStore(){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    var code = this.code
+    var barcode = this.barcode
+    var name = this.name
+    if(code != ''){
+      barcode = ''
+      name = ''
+    }
+    if(barcode != ''){
+      name = ''
+    }
+
+    var store = {id : this.selectedStoreId, code : this.selectedStoreCode}
+
+    this.spinner.show()
+    await this.http.post<IStoreItem>(API_URL+'/items/load_item_by_store?code='+code+'&barcode='+barcode+'&name='+name, store, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.id                   = data?.item?.id
+        this.code                 = data!.item?.code
+        this.barcode              = data!.item?.barcode
+        this.name                 = data!.item?.name
+        this.shortName            = data!.item?.shortName
+        this.commonName           = data!.item?.commonName
+        this.vat                  = data!.item?.vat
+        this.uom                  = data!.item?.uom
+        this.packSize             = data!.item?.packSize
+        this.stock                = data!.stock
+        this.minimumInventory     = data!.minimumInventory
+        this.maximumInventory     = data!.maximumInventory
+        this.defaultReorderQty    = data!.defaultReorderQty
+        this.defaultReorderLevel  = data!.defaultReorderLevel
+        this.active               = data!.active
+        this.ingredients          = data!.item?.ingredients
       },
       error => {
         console.log(error)

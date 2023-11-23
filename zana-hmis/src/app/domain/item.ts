@@ -6,6 +6,8 @@ export interface IItem {
 	shortName    : string
 	commonName          : string
 	vat                 : number
+	costPriceVatIncl : number
+	sellingPriceVatIncl : number
 	uom                 : string
 	packSize            : number
 	stock               : number
@@ -15,6 +17,8 @@ export interface IItem {
 	defaultReorderLevel : number
 	active              : boolean
 	ingredients         : string
+
+	category : string
 
     created          : string
 

@@ -28,6 +28,7 @@ import com.orbix.api.domain.Pharmacist;
 import com.orbix.api.domain.Privilege;
 import com.orbix.api.domain.Role;
 import com.orbix.api.domain.Shortcut;
+import com.orbix.api.domain.StorePerson;
 import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.DuplicateEntryException;
 import com.orbix.api.exceptions.InvalidEntryException;
@@ -41,6 +42,7 @@ import com.orbix.api.repositories.PharmacistRepository;
 import com.orbix.api.repositories.PrivilegeRepository;
 import com.orbix.api.repositories.RoleRepository;
 import com.orbix.api.repositories.ShortcutRepository;
+import com.orbix.api.repositories.StorePersonRepository;
 import com.orbix.api.repositories.UserRepository;
 import com.orbix.api.security.Object_;
 import com.orbix.api.security.Operation;
@@ -70,6 +72,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	private final ClinicianRepository clinicianRepository;
 	private final PharmacistRepository pharmacistRepository;
 	private final NurseRepository nurseRepository;
+	private final StorePersonRepository storePersonRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {		
@@ -203,6 +206,32 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 					nurseRepository.save(nurse);
 				}
 			}
+			
+			if(role.getName().equals("STORE-PERSON")) {
+				Optional<StorePerson> storePerson_ = storePersonRepository.findByUser(user);
+				StorePerson storePerson;
+				if(storePerson_.isEmpty()) {
+					storePerson = new StorePerson();
+					storePerson.setUser(user);
+					storePerson.setCode(user.getCode());
+					storePerson.setFirstName(user.getFirstName());
+					storePerson.setMiddleName(user.getMiddleName());
+					storePerson.setLastName(user.getLastName());
+					storePerson.setNickname(user.getNickname());
+					
+					storePerson.setActive(true);
+					
+					storePerson.setCreatedBy(getUser(request).getId());
+					storePerson.setCreatedOn(dayService.getDay().getId());
+					storePerson.setCreatedAt(dayService.getTimeStamp());
+					
+					storePersonRepository.save(storePerson);
+				}else {
+					storePerson = storePerson_.get();
+					storePerson.setActive(true);
+					storePersonRepository.save(storePerson);
+				}
+			}
 		}
 		
 		//check for presence of a particular personnel
@@ -250,6 +279,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			if(cl.isPresent()) {
 				cl.get().setActive(false);
 				nurseRepository.save(cl.get());
+			}
+		}
+		
+		boolean isStorePersonRolePresent = false;
+		for(Role role : roles) {
+			if(role.getName().equals("STORE-PERSON")) {
+				isStorePersonRolePresent = true;
+				break;
+			}
+		}
+		if(isStorePersonRolePresent == false) {
+			Optional<StorePerson> storePerson_ = storePersonRepository.findByUser(user);
+			if(storePerson_.isPresent()) {
+				storePerson_.get().setActive(false);
+				storePersonRepository.save(storePerson_.get());
 			}
 		}
 		

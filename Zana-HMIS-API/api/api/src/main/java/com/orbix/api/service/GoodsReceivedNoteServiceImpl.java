@@ -17,12 +17,16 @@ import com.orbix.api.domain.GoodsReceivedNote;
 import com.orbix.api.domain.GoodsReceivedNoteDetail;
 import com.orbix.api.domain.LocalPurchaseOrder;
 import com.orbix.api.domain.LocalPurchaseOrderDetail;
+import com.orbix.api.domain.StoreItem;
+import com.orbix.api.domain.StoreStockCard;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.models.RecordModel;
 import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.GoodsReceivedNoteDetailRepository;
 import com.orbix.api.repositories.GoodsReceivedNoteRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
+import com.orbix.api.repositories.StoreItemRepository;
+import com.orbix.api.repositories.StoreStockCardRepository;
 import com.orbix.api.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -44,6 +48,9 @@ public class GoodsReceivedNoteServiceImpl implements GoodsReceivedNoteService {
 	private final UserService userService;
 	private final DayRepository dayRepository;
 	private final DayService dayService;
+	
+	private final StoreItemRepository storeItemRepository;
+	private final StoreStockCardRepository storeStockCardRepository;
 	
 	@Override
 	public GoodsReceivedNote create(LocalPurchaseOrder localPurchaseOrder, HttpServletRequest request) {
@@ -78,6 +85,8 @@ public class GoodsReceivedNoteServiceImpl implements GoodsReceivedNoteService {
 			grnDetail.setItem(lpoDetail.getItem());
 			grnDetail.setOrderedQty(lpoDetail.getQty());
 			grnDetail.setReceivedQty(0);
+			grnDetail.setPrice(lpoDetail.getPrice());
+			grnDetail.setStatus("NOT VERIFIED");
 			grnDetail.setGoodsReceivedNote(goodsReceivedNote);
 	
 			grnDetail = goodsReceivedNoteDetailRepository.save(grnDetail);
@@ -89,8 +98,54 @@ public class GoodsReceivedNoteServiceImpl implements GoodsReceivedNoteService {
 		return goodsReceivedNoteRepository.save(goodsReceivedNote);
 	}
 	
-	
-	
+	@Override
+	public GoodsReceivedNote approve(GoodsReceivedNote goodsReceivedNote, HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		
+		/**
+		 * validate grn, update stocks, update stock card, record purchases
+		 */
+		if(!goodsReceivedNote.getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Can not approve. Not a pending GRN");
+		}
+		for(GoodsReceivedNoteDetail detail : goodsReceivedNote.getGoodsReceivedNoteDetails()) {
+			if(!detail.getStatus().equals("VERIFIED")) {
+				throw new InvalidOperationException("All the items in the GRN must be verified before approving.");
+			}
+		}
+		
+		for(GoodsReceivedNoteDetail detail : goodsReceivedNote.getGoodsReceivedNoteDetails()) {
+			Optional<StoreItem> storeItem_ = storeItemRepository.findByStoreAndItem(goodsReceivedNote.getStore(), detail.getItem());
+			double originalStock = storeItem_.get().getStock();
+			double newStock = originalStock + detail.getReceivedQty();
+			storeItem_.get().setStock(newStock);
+			storeItemRepository.save(storeItem_.get());
+			
+			StoreStockCard storeStockCard = new StoreStockCard();
+			storeStockCard.setItem(detail.getItem());
+			storeStockCard.setStore(goodsReceivedNote.getStore());
+			storeStockCard.setQtyIn(detail.getReceivedQty());
+			storeStockCard.setQtyOut(0);
+			storeStockCard.setBalance(newStock);
+			storeStockCard.setReference("Goods received GRN# " + goodsReceivedNote.getNo());
+			
+			storeStockCard.setCreatedBy(userService.getUserId(request));
+			storeStockCard.setCreatedOn(dayService.getDayId());
+			storeStockCard.setCreatedAt(dayService.getTimeStamp());
+			
+			storeStockCardRepository.save(storeStockCard);
+		}
+		
+		goodsReceivedNote.setStatus("APPROVED");
+		
+		goodsReceivedNote.setApprovedBy(userService.getUserId(request));
+		goodsReceivedNote.setApprovedOn(dayService.getDayId());
+		goodsReceivedNote.setApprovedAt(dayService.getTimeStamp());
+		
+		goodsReceivedNoteRepository.save(goodsReceivedNote);
+		
+		return null;
+	}
 	
 	//@Override
 	public RecordModel requestRequestGrnNo() {

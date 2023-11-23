@@ -55,16 +55,16 @@ export class SelectStoreComponent {
     if(localStorage.getItem('selected-store-name') != null){
       this.selectedStoreName = localStorage.getItem('selected-store-name')!.toString()
     }  
-    this.loadStores()
+    this.loadStoresByStorePerson()
   }
 
-  async loadStores(){
+  async loadStoresByStorePerson(){
     this.stores = []
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     this.spinner.show()
-    await this.http.get<IStore[]>(API_URL+'/stores', options)
+    await this.http.get<IStore[]>(API_URL+'/stores/load_stores_by_store_person', options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(

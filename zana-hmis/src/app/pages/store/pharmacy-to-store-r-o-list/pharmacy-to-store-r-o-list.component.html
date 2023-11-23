@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <div class="header-title">
-        <h1>Pharmacy To Store Requisition Order List</h1>
+        <h1>Pharmacy To Store Requisition Order List | Store - {{selectedStoreName}}</h1>
     </div>
 </section>
 <!-- Main content -->
@@ -11,8 +11,9 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                        <button class="btn btn-primary btn-outline" *ngIf="id != null" (click)="returnOrder()"><span class="glyphicon glyphicon-arrow-left"></span>Return Order</button>
-                        <button class="btn btn-primary btn-outline" *ngIf="id != null" (click)="rejectOrder()"><span class="glyphicon glyphicon-remove-sign"></span>Reject Order</button>
+                    <button class="btn btn-primary btn-outline" routerLink="/select-store"><i class="glyphicon glyphicon-chevron-left"></i> Back</button>
+                    <button class="btn btn-primary btn-outline" *ngIf="id != null" (click)="returnOrder()"><span class="glyphicon glyphicon-arrow-left"></span>Return Order</button>
+                    <button class="btn btn-primary btn-outline" *ngIf="id != null" (click)="rejectOrder()"><span class="glyphicon glyphicon-remove-sign"></span>Reject Order</button>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -42,7 +43,8 @@
                         <div class="col-sm-8">
                             <div *ngIf="pharmacyToStoreRO != null">
                                 <h4 class="text-primary">Order</h4>
-                                <h5>Pharmacy: {{pharmacyToStoreRO?.pharmacy?.name}}</h5>
+                                <h5>Origin Pharmacy: {{pharmacyToStoreRO?.pharmacy?.name}}</h5>
+                                <h5>Designated Store: {{pharmacyToStoreRO?.store?.name}}</h5>
                                 <h5>Order#: {{pharmacyToStoreRO?.no}}</h5>
                                 <h5>Order Date: {{pharmacyToStoreRO?.orderDate | date}}</h5>
                                 <h5>Valid Until: {{pharmacyToStoreRO?.validUntil | date}}</h5>

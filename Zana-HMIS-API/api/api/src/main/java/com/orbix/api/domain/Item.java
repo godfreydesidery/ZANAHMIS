@@ -49,11 +49,10 @@ public class Item {
 	private double vat = 0;
 	private String uom;
 	private double packSize = 1;
-	//private double stock = 0;
-	private double minimumInventory = 0;
-	private double maximumInventory = 0;
-	private double defaultReorderQty = 0;
-	private double defaultReorderLevel = 0;
+	private String category;
+	
+	private double costPriceVatIncl = 0;	
+	private double sellingPriceVatIncl = 0;	
 	private boolean active = true;
 	private String ingredients = "";
 	

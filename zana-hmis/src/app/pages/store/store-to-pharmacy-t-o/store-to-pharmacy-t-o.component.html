@@ -19,7 +19,8 @@
                     <div class="row">
                         <div class="col-sm-12" *ngIf="storeToPharmacyTO != null">
                             <h4 class="text-primary">Order</h4>
-                            <h5>Pharmacy: {{storeToPharmacyTO?.pharmacy?.name}}</h5>
+                            <h5>Designated Pharmacy: {{storeToPharmacyTO?.pharmacy?.name}}</h5>
+                            <h5>Origin Store: {{storeToPharmacyTO?.store?.name}}</h5>
                             <h5>Order#: {{storeToPharmacyTO?.no}}</h5>
                             <h5>Order Date: {{storeToPharmacyTO?.orderDate | date}}</h5>
                             <h5>Status: {{storeToPharmacyTO?.status}}</h5>

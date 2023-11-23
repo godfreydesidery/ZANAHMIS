@@ -14,6 +14,5 @@ import com.orbix.api.domain.LocalPurchaseOrder;
  */
 public interface GoodsReceivedNoteService {
 	GoodsReceivedNote create(LocalPurchaseOrder localPurchaseOrder, HttpServletRequest request);
-	
-	
+	GoodsReceivedNote approve(GoodsReceivedNote goodsReceivedNote, HttpServletRequest request);
 }

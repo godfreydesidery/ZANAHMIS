@@ -17,6 +17,7 @@ import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyToStoreRO;
 import com.orbix.api.domain.PharmacyToStoreRODetail;
+import com.orbix.api.domain.Store;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.PharmacyToStoreRODetailModel;
@@ -28,6 +29,7 @@ import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.PharmacyToStoreRODetailRepository;
 import com.orbix.api.repositories.PharmacyToStoreRORepository;
+import com.orbix.api.repositories.StoreRepository;
 import com.orbix.api.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -51,16 +53,25 @@ public class PharmacyToStoreROServiceImpl implements PharmacyToStoreROService {
 	private final PharmacyToStoreRORepository pharmacyToStoreRORepository;
 	private final PharmacyToStoreRODetailRepository pharmacyToStoreRODetailRepository;
 	private final MedicineRepository medicineRepository;
+	private final StoreRepository storeRepository;
 	
 	@Override
 	public PharmacyToStoreROModel save(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request) {
 		
-		PharmacyToStoreRO ro;
+		PharmacyToStoreRO ro = new PharmacyToStoreRO();
 		
 		if(pharmacyToStoreRO.getId() == null) {
 			Optional<Pharmacy> pharm = pharmacyRepository.findById(pharmacyToStoreRO.getPharmacy().getId());
 			if(pharm.isEmpty()) {
 				throw new NotFoundException("Pharmacy not found");
+			}
+			
+			Optional<Store> store_ = storeRepository.findById(pharmacyToStoreRO.getStore().getId());
+			if(store_.isEmpty()) {
+				throw new NotFoundException("Store not found");
+			}
+			if(!pharmacyToStoreRO.getStore().getCode().equals(store_.get().getCode())) {
+				throw new InvalidOperationException("Invalid Store");
 			}
 			
 			pharmacyToStoreRO.setCreatedBy(userService.getUser(request).getId());
@@ -69,7 +80,9 @@ public class PharmacyToStoreROServiceImpl implements PharmacyToStoreROService {
 			
 			pharmacyToStoreRO.setStatus("PENDING");
 			pharmacyToStoreRO.setStatusDescription("Order pending for verification");
+			
 			ro = pharmacyToStoreRO;
+			ro.setStore(store_.get());
 		}else {
 			Optional<PharmacyToStoreRO> pts = pharmacyToStoreRORepository.findById(pharmacyToStoreRO.getId());
 			if(pts.isEmpty()) {
@@ -310,6 +323,7 @@ public class PharmacyToStoreROServiceImpl implements PharmacyToStoreROService {
 		model.setId(ro.getId());
 		model.setNo(ro.getNo());
 		model.setPharmacy(ro.getPharmacy());
+		model.setStore(ro.getStore());
 		model.setOrderDate(ro.getOrderDate());
 		model.setValidUntil(ro.getValidUntil());
 		model.setStatus(ro.getStatus());

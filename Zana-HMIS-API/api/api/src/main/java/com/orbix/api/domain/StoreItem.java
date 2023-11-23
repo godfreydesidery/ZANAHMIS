@@ -35,6 +35,12 @@ public class StoreItem {
 	
 	private double stock = 0;
 	
+	private double minimumInventory = 0;
+	private double maximumInventory = 0;
+	private double defaultReorderQty = 0;
+	private double defaultReorderLevel = 0;
+	private boolean active = true;
+	
 	@ManyToOne(targetEntity = Store.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "store_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	

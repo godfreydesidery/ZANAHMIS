@@ -29,6 +29,7 @@ import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyToStoreRO;
 import com.orbix.api.domain.PharmacyToStoreRODetail;
+import com.orbix.api.domain.Store;
 import com.orbix.api.domain.StoreToPharmacyBatch;
 import com.orbix.api.domain.StoreToPharmacyRN;
 import com.orbix.api.domain.StoreToPharmacyTO;
@@ -49,6 +50,7 @@ import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.PharmacyToStoreRODetailRepository;
 import com.orbix.api.repositories.PharmacyToStoreRORepository;
+import com.orbix.api.repositories.StoreRepository;
 import com.orbix.api.repositories.StoreToPharmacyBatchRepository;
 import com.orbix.api.repositories.StoreToPharmacyRNRepository;
 import com.orbix.api.repositories.StoreToPharmacyTODetailRepository;
@@ -87,6 +89,7 @@ public class InternalOrderResource {
 	private final StoreToPharmacyBatchRepository storeToPharmacyBatchRepository;
 	private final MedicineRepository medicineRepository;
 	private final StoreToPharmacyRNRepository storeToPharmacyRNRepository;
+	private final StoreRepository storeRepository;
 
 	
 	@PostMapping("/pharmacy_to_store_r_os/save")
@@ -169,15 +172,22 @@ public class InternalOrderResource {
 		return pharmacyToStoreRORepository.findByPharmacyAndStatusIn(pharm.get(), statuses);
 	}
 	
-	@GetMapping("/pharmacy_to_store_r_os/load_pharmacy_orders")
-	public List<PharmacyToStoreRO> loadPharmacyOrders(){
+	@GetMapping("/pharmacy_to_store_r_os/load_pharmacy_orders_by_store")
+	public List<PharmacyToStoreRO> loadPharmacyOrdersByStore(
+			@RequestParam(name = "store_id") Long storeId,
+			HttpServletRequest request){
+		
+		Optional<Store> store_ = storeRepository.findById(storeId);
+		if(store_.isEmpty()) {
+			throw new NotFoundException("Store not found");
+		}
 
 		List<String> statuses = new ArrayList<>();
 		statuses.add("SUBMITTED");
 		statuses.add("IN-PROCESS");
 		statuses.add("GOODS-ISSUED");
 		
-		return pharmacyToStoreRORepository.findByStatusIn(statuses);
+		return pharmacyToStoreRORepository.findByStoreAndStatusIn(store_.get(), statuses);
 	}
 	
 	@GetMapping("/pharmacy_to_store_r_os/request_no")
@@ -201,6 +211,7 @@ public class InternalOrderResource {
 		model.setId(ro.get().getId());
 		model.setNo(ro.get().getNo());
 		model.setPharmacy(ro.get().getPharmacy());
+		model.setStore(ro.get().getStore());
 		model.setOrderDate(ro.get().getOrderDate());
 		model.setValidUntil(ro.get().getValidUntil());
 		model.setStatus(ro.get().getStatus());
@@ -263,6 +274,7 @@ public class InternalOrderResource {
 		model.setId(ro.get().getId());
 		model.setNo(ro.get().getNo());
 		model.setPharmacy(ro.get().getPharmacy());
+		model.setStore(ro.get().getStore());
 		model.setOrderDate(ro.get().getOrderDate());
 		model.setValidUntil(ro.get().getValidUntil());
 		model.setStatus(ro.get().getStatus());
@@ -325,6 +337,7 @@ public class InternalOrderResource {
 		model.setId(ro.get().getId());
 		model.setNo(ro.get().getNo());
 		model.setPharmacy(ro.get().getPharmacy());
+		model.setStore(ro.get().getStore());
 		model.setOrderDate(ro.get().getOrderDate());
 		model.setValidUntil(ro.get().getValidUntil());
 		model.setStatus(ro.get().getStatus());
@@ -409,7 +422,19 @@ public class InternalOrderResource {
 		if(reqOrder.isEmpty()) {
 			throw new NotFoundException("Request Order not found");
 		}
-
+		
+		Optional<Store> store_ = storeRepository.findById(ro.getStore().getId());
+		if(store_.isEmpty()) {
+			throw new NotFoundException("Store not found");
+		}
+		if(!store_.get().getCode().equals(ro.getStore().getCode())) {
+			throw new InvalidOperationException("Invalid store");
+		}
+		
+		if(store_.get().getId() != reqOrder.get().getStore().getId()) {
+			throw new InvalidOperationException("Could not create. Order not designated to this store");
+		}
+		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/store_to_pharmacy_t_os/create").toUriString());
 		return ResponseEntity.created(uri).body(storeToPharmacyTOService.createOrder(reqOrder.get(), request));
 	}
@@ -461,6 +486,7 @@ public class InternalOrderResource {
 		model.setPharmacy(to.get().getPharmacy());
 		model.setOrderDate(to.get().getOrderDate());
 		model.setPharmacyToStoreRO(to.get().getPharmacyToStoreRO());
+		model.setStore(to.get().getStore());
 		model.setStatus(to.get().getStatus());
 		model.setStatusDescription(to.get().getStatusDescription());
 		if(!to.get().getStoreToPharmacyTODetails().isEmpty()) {

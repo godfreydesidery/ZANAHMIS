@@ -22,6 +22,7 @@ import { IGoodsReceivedNote } from 'src/app/domain/goods-received-note';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DataService } from 'src/app/services/data.service';
+import { IGoodsReceivedNoteDetail } from 'src/app/domain/goods-received-note-detail';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 
 const API_URL = environment.apiUrl;
@@ -97,13 +98,13 @@ export class GoodsReceivedNoteComponent {
     }  
   }
 
-  async loadGRNs(){
+  async loadGRNsByStore(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     
     this.spinner.show()
-    await this.http.get<IGoodsReceivedNote[]>(API_URL+'/goods_received_notes', options)
+    await this.http.get<IGoodsReceivedNote[]>(API_URL+'/goods_received_notes?store_id='+this.selectedStoreId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
@@ -120,7 +121,7 @@ export class GoodsReceivedNoteComponent {
 
   async create(){
     if(this.lpoNo === ''){
-      this.msgBox.showErrorMessage3('Please enter LPO No')
+      this.msgBox.showSimpleErrorMessage('Please enter LPO No')
       return
     }
     let options = {
@@ -198,6 +199,133 @@ export class GoodsReceivedNoteComponent {
 
   lock(){
     this.noLocked = true
+
+  }
+
+  async saveGRNDetailReceivedQty(id : any, orderedQty : number, receivedQty : number){
+    if(receivedQty < 0){
+      this.msgBox.showSimpleErrorMessage('Can not save. Qty must not be negative')
+      this.search(this.id)
+      return
+    }
+    if(receivedQty > orderedQty){
+      this.msgBox.showSimpleErrorMessage('Can not save. Received Qty can not exceed ordered qty')
+      this.search(this.id)
+      return
+    }
+
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var detail = {
+      id : id,
+      orderedQty : orderedQty,
+      receivedQty : receivedQty,
+      goodsReceivedNote : {id : this.id}
+    }
+
+    this.spinner.show()
+    await this.http.post<IGoodsReceivedNoteDetail>(API_URL+'/goods_received_notes/save_detail_qty', detail, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.goodsReceivedNote.goodsReceivedNoteDetails.forEach(element => {
+          if(element.id === data?.id){
+            element.receivedQty = data!.receivedQty
+            element.status = data!.status
+          }
+        })
+        this.msgBox.showSuccessMessage('Recorded')
+      },
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+        this.search(this.id)
+      }
+    )
+  }
+
+  async verifyGRNDetailReceivedQty(id : any, orderedQty : number, receivedQty : number){
+    if(receivedQty < 0){
+      this.msgBox.showSimpleErrorMessage('Can not verify. Qty must not be negative')
+      this.search(this.id)
+      return
+    }
+    if(receivedQty > orderedQty){
+      this.msgBox.showSimpleErrorMessage('Can not verify. Received Qty can not exceed ordered qty')
+      this.search(this.id)
+      return
+    }
+    if(!window.confirm('Verify received qty. Confirm?')){
+      return
+    }
+
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var detail = {
+      id : id,
+      orderedQty : orderedQty,
+      receivedQty : receivedQty,
+      goodsReceivedNote : {id : this.id}
+    }
+
+    this.spinner.show()
+    await this.http.post<IGoodsReceivedNoteDetail>(API_URL+'/goods_received_notes/verify_detail_qty', detail, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.goodsReceivedNote.goodsReceivedNoteDetails.forEach(element => {
+          if(element.id === data?.id){
+            element.receivedQty = data!.receivedQty
+            element.status = data!.status
+          }
+        })
+        this.msgBox.showSuccessMessage('Verified')
+      },
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+        this.search(this.id)
+      }
+    )
+  }
+
+  async approveGRN(){
+
+    if(!window.confirm('Approve GRN. Confirm?')){
+      return
+    }
+
+    this.goodsReceivedNote.goodsReceivedNoteDetails.forEach(element => {
+      if(element.status != 'VERIFIED'){
+        this.msgBox.showSimpleErrorMessage('Please verify all items before approving')
+        return
+      }
+    })
+
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    this.spinner.show()
+    await this.http.post<IGoodsReceivedNote>(API_URL+'/goods_received_notes/approve', this.goodsReceivedNote, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        this.search(this.id)
+        this.msgBox.showSuccessMessage('Approved successifully')
+      },
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+        this.search(this.id)
+      }
+    )
+
+    
 
   }
 }

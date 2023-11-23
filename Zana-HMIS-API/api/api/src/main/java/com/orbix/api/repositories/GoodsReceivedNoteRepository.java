@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.orbix.api.domain.GoodsReceivedNote;
 import com.orbix.api.domain.LocalPurchaseOrder;
+import com.orbix.api.domain.Store;
 
 /**
  * @author Godfrey
@@ -38,6 +39,13 @@ public interface GoodsReceivedNoteRepository extends JpaRepository<GoodsReceived
 	 * @return
 	 */
 	Optional<GoodsReceivedNote> findByLocalPurchaseOrder(LocalPurchaseOrder localPurchaseOrder);
+
+	/**
+	 * @param store
+	 * @param statuses
+	 * @return
+	 */
+	List<GoodsReceivedNote> findAllByStoreAndStatusIn(Store store, List<String> statuses);
 
 	
 }

@@ -46,6 +46,10 @@ export class PharmacyToStoreROListComponent {
 
   filterRecords : string = ''
 
+  selectedStoreId : any = null
+  selectedStoreCode : string = ''
+  selectedStoreName : string = ''
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,
@@ -55,22 +59,32 @@ export class PharmacyToStoreROListComponent {
     private msgBox : MsgBoxService) { }
 
   async ngOnInit(): Promise<void> {
-    this.loadOrders()
+    if(localStorage.getItem('selected-store-id') != null){
+      this.selectedStoreId = localStorage.getItem('selected-store-id')
+    }
+    if(localStorage.getItem('selected-store-code') != null){
+      this.selectedStoreCode = localStorage.getItem('selected-store-code')!.toString()
+    }
+    if(localStorage.getItem('selected-store-name') != null){
+      this.selectedStoreName = localStorage.getItem('selected-store-name')!.toString()
+    } 
+    this.loadOrdersByStore() 
   }
 
 
-  async loadOrders(){
+  async loadOrdersByStore(){
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     
     this.spinner.show()
-    await this.http.get<IPharmacyToStoreRO[]>(API_URL+'/pharmacy_to_store_r_os/load_pharmacy_orders', options)
+    await this.http.get<IPharmacyToStoreRO[]>(API_URL+'/pharmacy_to_store_r_os/load_pharmacy_orders_by_store?store_id='+this.selectedStoreId, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
         this.pharmacyToStoreROs = data!
+        console.log(data)
       },
       error => {
         console.log(error)
@@ -122,7 +136,8 @@ export class PharmacyToStoreROListComponent {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     var pharmacyToStoreRO = {
-      id : id
+      id : id,
+      store : {id : this.selectedStoreId, code : this.selectedStoreCode}
     }
 
     this.spinner.show()

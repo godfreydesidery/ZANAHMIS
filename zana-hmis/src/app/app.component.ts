@@ -349,7 +349,7 @@ export class AppComponent {
         {path : 'item-inquiry', loadComponent : () => import('./pages/store/item-inquiry/item-inquiry.component').then(m => m.ItemInquiryComponent), canActivate: [AuthGuard]},
         {path : 'pharmacy-to-store-r-o-list', loadComponent : () => import('./pages/store/pharmacy-to-store-r-o-list/pharmacy-to-store-r-o-list.component').then(m => m.PharmacyToStoreROListComponent), canActivate: [AuthGuard]},
         {path : 'goods-received-note', loadComponent : () => import('./pages/store/goods-received-note/goods-received-note.component').then(m => m.GoodsReceivedNoteComponent), canActivate: [AuthGuard]},
-
+        {path : 'store-item-stock-status', loadComponent : () => import('./pages/store/store-item-stock-status/store-item-stock-status.component').then(m => m.StoreItemStockStatusComponent), canActivate: [AuthGuard]},
       )
     }
 
@@ -368,6 +368,7 @@ export class AppComponent {
         {path : 'store', loadComponent : () => import('./pages/admin/medical-units/store/store.component').then(m => m.StoreComponent), canActivate: [AuthGuard]},
         {path : 'theatre', loadComponent : () => import('./pages/admin/medical-units/theatre/theatre.component').then(m => m.TheatreComponent), canActivate: [AuthGuard]},
         {path : 'clinician', loadComponent : () => import('./pages/admin/personnel/clinician/clinician.component').then(m => m.ClinicianComponent), canActivate: [AuthGuard]},
+        {path : 'store-person', loadComponent : () => import('./pages/admin/personnel/store-person/store-person.component').then(m => m.StorePersonComponent), canActivate: [AuthGuard]},
         {path : 'pharmacist', loadComponent : () => import('./pages/admin/personnel/pharmacist/pharmacist.component').then(m => m.PharmacistComponent), canActivate: [AuthGuard]},
         {path : 'diagnosis-type', loadComponent : () => import('./pages/admin/medical-operations/diagnosis-type/diagnosis-type.component').then(m => m.DiagnosisTypeComponent), canActivate: [AuthGuard]},
         {path : 'lab-test-type', loadComponent : () => import('./pages/admin/medical-operations/lab-test-type/lab-test-type.component').then(m => m.LabTestTypeComponent), canActivate: [AuthGuard]},

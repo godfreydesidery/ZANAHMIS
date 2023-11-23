@@ -25,9 +25,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.DiagnosisType;
 import com.orbix.api.domain.Item;
+import com.orbix.api.domain.Store;
+import com.orbix.api.domain.StoreItem;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.ItemRepository;
+import com.orbix.api.repositories.StoreItemRepository;
+import com.orbix.api.repositories.StoreRepository;
 import com.orbix.api.repositories.DiagnosisTypeRepository;
 import com.orbix.api.service.ItemService;
 import com.orbix.api.service.DayService;
@@ -49,6 +53,8 @@ public class ItemResource {
 
 	private final ItemRepository itemRepository;
 	private final ItemService itemService;
+	private final StoreRepository storeRepository;
+	private final StoreItemRepository storeItemRepository;
 	
 
 	private final UserService userService;
@@ -92,6 +98,46 @@ public class ItemResource {
 			throw new InvalidOperationException("No search key specified");
 		}
 		return ResponseEntity.ok().body(i.get());
+	}
+	
+	@PostMapping("/items/load_item_by_store")
+	public ResponseEntity<StoreItem> searchStoreItem(
+			@RequestParam(name = "code") String code,
+			@RequestParam(name = "barcode") String barcode,
+			@RequestParam(name = "name") String name,
+			@RequestBody Store store,
+			HttpServletRequest request){
+		Optional<Item> item_;
+		Optional<Store> store_ = storeRepository.findById(store.getId());
+		if(store_.isEmpty()) {
+			throw new NotFoundException("Store not found");
+		}
+		if(!store.getCode().equals(store_.get().getCode())) {
+			throw new InvalidOperationException("Invalid store");
+		}
+		if(!code.equals("")) {
+			item_ = itemRepository.findByCode(code);
+			if(item_.isEmpty()) {
+				throw new NotFoundException("Item not found");
+			}
+		}else if(!barcode.equals("")) {
+			item_ = itemRepository.findByBarcode(barcode);
+			if(item_.isEmpty()) {
+				throw new NotFoundException("Item not found");
+			}
+		}else if(!name.equals("")) {
+			item_ = itemRepository.findByName(name);
+			if(item_.isEmpty()) {
+				throw new NotFoundException("Item not found");
+			}
+		}else {
+			throw new InvalidOperationException("No search key specified");
+		}
+		Optional<StoreItem> storeItem_ = storeItemRepository.findByStoreAndItem(store_.get(), item_.get());
+		if(storeItem_.isEmpty()) {
+			throw new NotFoundException("Item not found in this store");
+		}
+		return ResponseEntity.ok().body(storeItem_.get());
 	}
 	
 	@GetMapping("/items/get_by_code")
@@ -143,6 +189,8 @@ public class ItemResource {
 			@RequestBody Item item,
 			HttpServletRequest request){
 		item.setName(item.getName());
+		item.setShortName(item.getName());
+		item.setCommonName(item.getName());
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/items/save").toUriString());
 		return ResponseEntity.created(uri).body(itemService.save(item, request));

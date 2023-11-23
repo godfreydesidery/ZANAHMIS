@@ -11,9 +11,11 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading" *ngIf="selectedStoreName != ''">
-                    <button class="btn btn-primary btn-outline" (click)="loadGRNs()" data-toggle="modal" data-target="#grn-list-modal"><span class="glyphicon glyphicon-list"></span> GRN List</button>
+                    <button class="btn btn-primary btn-outline" routerLink="/select-store"><i class="glyphicon glyphicon-chevron-left"></i> Back</button>
+                    <button class="btn btn-primary btn-outline" (click)="loadGRNsByStore()" data-toggle="modal" data-target="#grn-list-modal"><span class="glyphicon glyphicon-list"></span> GRN List</button>
                     <button class="btn btn-primary btn-outline" (click)="clear()"><span class="glyphicon glyphicon-file"></span> New GRN</button>
                     <button class="btn btn-primary btn-outline" *ngIf="id != null"><span class="glyphicon glyphicon-floppy-disk"></span> Save</button>
+                    <button class="btn btn-primary btn-outline" *ngIf="id != null && status === 'PENDING'" (click)="approveGRN()"><span class="glyphicon glyphicon-ok"></span> Approve&Update Stock</button>
                 </div>
                 <div class="panel-body">
                     <div class="panel-body">
@@ -61,13 +63,14 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <table class="table table-responsive table striped table-bordered">
+                                        <table class="table table-responsive table striped table-small">
                                             <thead>
                                                 <tr>
                                                     <td>Code</td>
                                                     <td>Name</td>
                                                     <td>Ordered Qty</td>
                                                     <td>Received Qty</td>
+                                                    <td></td>
                                                     <td>Price@</td>
                                                     <td>Amount</td>
                                                     <td>Status</td>
@@ -79,11 +82,17 @@
                                                     <td>{{d?.item?.code}}</td>
                                                     <td>{{d?.item?.name}}</td>
                                                     <td>{{d?.orderedQty}}</td>
-                                                    <td><input type="number" class="form-control input-small" [(ngModel)]="d.receivedQty" style="text-align: center; font-weight: bold;"></td>
-                                                    <td style="text-align: right;"></td>
-                                                    <td style="text-align: right;"></td>
-                                                    <td></td>
-                                                    <td><span class="text-success"><i class="glyphicon glyphicon-ok"></i> Confirm</span></td>
+                                                    <td>
+                                                        <input type="number" class="form-control input-small" *ngIf="d.status === 'VERIFIED'" [(ngModel)]="d.receivedQty" style="text-align: center; font-weight: bold;" readonly>
+                                                        <input type="number" class="form-control input-small" *ngIf="d.status != 'VERIFIED'" [(ngModel)]="d.receivedQty" style="text-align: center; font-weight: bold;">
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-success" *ngIf="d.status != 'VERIFIED'" (click)="saveGRNDetailReceivedQty(d.id, d.orderedQty, d.receivedQty)"><i class="glyphicon glyphicon-floppy-disk"></i>Save Qty</span>
+                                                    </td>
+                                                    <td style="text-align: right;">{{d.price | currency:'':''}}</td>
+                                                    <td style="text-align: right;">{{d.receivedQty * d.price | currency:'':''}}</td>
+                                                    <td>{{d?.status}}</td>
+                                                    <td><span class="text-success" *ngIf="d.status != 'VERIFIED'" (click)="verifyGRNDetailReceivedQty(d.id, d.orderedQty, d.receivedQty)"><i class="glyphicon glyphicon-ok"></i> Verify</span></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -105,7 +114,6 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" (click)="loadGRNs()" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h3 class="modal-title">GRN List</h3>
             </div>
             <div class="modal-body">
@@ -122,6 +130,7 @@
                         <tr class="table-dark">
                             <td>GRN#</td>
                             <td>LPO No</td>
+                            <td>Store</td>
                             <td>Status</td>
                             <td>Select</td>
                         </tr>
@@ -130,6 +139,7 @@
                         <tr *ngFor="let order of goodsReceivedNotes | searchFilter : filterOrders">
                             <td>{{order.no}}</td>
                             <td>{{order?.localPurchaseOrder?.no}}</td>
+                            <td>{{order?.store?.name}}</td>
                             <td>{{order.status}}</td>
                             <td><span (click)="search(order.id)" data-dismiss="modal" style="cursor: pointer;">[Select]</span></td>
                         </tr>

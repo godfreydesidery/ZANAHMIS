@@ -26,15 +26,18 @@ import com.orbix.api.domain.GoodsReceivedNote;
 import com.orbix.api.domain.GoodsReceivedNoteDetail;
 import com.orbix.api.domain.LocalPurchaseOrder;
 import com.orbix.api.domain.LocalPurchaseOrderDetail;
+import com.orbix.api.domain.Store;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.GoodsReceivedNoteDetailModel;
 import com.orbix.api.models.GoodsReceivedNoteModel;
 import com.orbix.api.models.LocalPurchaseOrderDetailModel;
 import com.orbix.api.models.LocalPurchaseOrderModel;
+import com.orbix.api.repositories.GoodsReceivedNoteDetailRepository;
 import com.orbix.api.repositories.GoodsReceivedNoteRepository;
 import com.orbix.api.repositories.LocalPurchaseOrderDetailRepository;
 import com.orbix.api.repositories.LocalPurchaseOrderRepository;
+import com.orbix.api.repositories.StoreRepository;
 import com.orbix.api.service.GoodsReceivedNoteService;
 import com.orbix.api.service.LocalPurchaseOrderService;
 import com.orbix.api.service.UserService;
@@ -58,11 +61,19 @@ public class GoodsReceivedNoteResource {
 	private final LocalPurchaseOrderDetailRepository localPurchaseOrderDetailRepository;
 	private final UserService userService;
 	private final GoodsReceivedNoteRepository goodsReceivedNoteRepository;
+	private final GoodsReceivedNoteDetailRepository goodsReceivedNoteDetailRepository;
+	private final StoreRepository storeRepository;
 	
 	@GetMapping("/goods_received_notes")
 	//@PreAuthorize("hasAnyAuthority('GOO-ALL')")
 	public ResponseEntity<List<GoodsReceivedNote>> getVisibleGoodsReceivedNotes(
+			@RequestParam(name = "store_id") Long storeId,
 			HttpServletRequest request){
+		
+		Optional<Store> store_ = storeRepository.findById(storeId);
+		if(store_.isEmpty()) {
+			throw new NotFoundException("Store not found");
+		}
 		
 		List<String> statuses = new ArrayList<>();
 		statuses.add("PENDING");
@@ -72,7 +83,7 @@ public class GoodsReceivedNoteResource {
 		statuses.add("SUBMITTED");
 		statuses.add("RETURNED");
 		
-		List<GoodsReceivedNote> grns = goodsReceivedNoteRepository.findAllByStatusIn(statuses);
+		List<GoodsReceivedNote> grns = goodsReceivedNoteRepository.findAllByStoreAndStatusIn(store_.get(), statuses);
 		
 		
 
@@ -128,7 +139,8 @@ public class GoodsReceivedNoteResource {
 				modelDetail.setItem(d.getItem());
 				modelDetail.setOrderedQty(d.getOrderedQty());
 				modelDetail.setReceivedQty(d.getReceivedQty());
-				//modelDetail.setPrice(d.getPrice());
+				modelDetail.setPrice(d.getPrice());
+				modelDetail.setStatus(d.getStatus());
 				
 				modelDetails.add(modelDetail);
 			}
@@ -154,5 +166,104 @@ public class GoodsReceivedNoteResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/goods_received_notes/search").toUriString());
 		return ResponseEntity.created(uri).body(model);
 		
+	}
+	
+	@PostMapping("/goods_received_notes/save_detail_qty")
+	@PreAuthorize("hasAnyAuthority('GOODS_RECEIVED_NOTE-ALL','GOODS_RECEIVED_NOTE-UPDATE')")
+	public ResponseEntity<GoodsReceivedNoteDetail>saveGoodsReceivedNoteDetailQty(
+			@RequestBody GoodsReceivedNoteDetailModel goodsReceivedNoteDetail,
+			HttpServletRequest request){
+		
+		Optional<GoodsReceivedNote> goodsReceivedNote_ = goodsReceivedNoteRepository.findById(goodsReceivedNoteDetail.getGoodsReceivedNote().getId());
+		if(goodsReceivedNote_.isEmpty()) {
+			throw new NotFoundException("Goods Received Note not found");
+		}		
+		if(!goodsReceivedNote_.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not update GRN. Only Pending GRN can be updated");
+		}
+		Optional<GoodsReceivedNoteDetail> goodsReceivedNoteDetail_ = goodsReceivedNoteDetailRepository.findById(goodsReceivedNoteDetail.getId());
+		if(goodsReceivedNoteDetail_.isEmpty()) {
+			throw new NotFoundException("Detail not found");
+		}
+		if(goodsReceivedNoteDetail_.get().getStatus() != null) {
+			if(goodsReceivedNoteDetail_.get().getStatus().equals("VERIFIED")) {
+				throw new InvalidOperationException("Can not change. Already verified");
+			}
+		}
+		
+		if(goodsReceivedNoteDetail_.get().getGoodsReceivedNote().getId() != goodsReceivedNote_.get().getId()) {
+			throw new InvalidOperationException("Invalid detail selected");
+		}
+		if(goodsReceivedNoteDetail.getOrderedQty() != goodsReceivedNoteDetail_.get().getOrderedQty()) {
+			throw new InvalidOperationException("Ordered qty does not match with the available qty");
+		}
+		if(goodsReceivedNoteDetail.getReceivedQty() < 0) {
+			throw new InvalidOperationException("Received Qty must not be less than zero");
+		}
+		if(goodsReceivedNoteDetail.getReceivedQty() > goodsReceivedNoteDetail.getOrderedQty()) {
+			throw new InvalidOperationException("Received Qty must not exceed ordered qty");
+		}
+		
+		goodsReceivedNoteDetail_.get().setReceivedQty(goodsReceivedNoteDetail.getReceivedQty());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/goods_received_notes/save_detail_qty").toUriString());
+		return ResponseEntity.created(uri).body(goodsReceivedNoteDetailRepository.save(goodsReceivedNoteDetail_.get()));
+	}
+	
+	@PostMapping("/goods_received_notes/verify_detail_qty")
+	@PreAuthorize("hasAnyAuthority('GOODS_RECEIVED_NOTE-ALL','GOODS_RECEIVED_NOTE-UPDATE')")
+	public ResponseEntity<GoodsReceivedNoteDetail>verifyGoodsReceivedNoteDetailQty(
+			@RequestBody GoodsReceivedNoteDetailModel goodsReceivedNoteDetail,
+			HttpServletRequest request){
+		
+		Optional<GoodsReceivedNote> goodsReceivedNote_ = goodsReceivedNoteRepository.findById(goodsReceivedNoteDetail.getGoodsReceivedNote().getId());
+		if(goodsReceivedNote_.isEmpty()) {
+			throw new NotFoundException("Goods Received Note not found");
+		}		
+		if(!goodsReceivedNote_.get().getStatus().equals("PENDING")) {
+			throw new InvalidOperationException("Could not update GRN. Only Pending GRN can be updated");
+		}
+		Optional<GoodsReceivedNoteDetail> goodsReceivedNoteDetail_ = goodsReceivedNoteDetailRepository.findById(goodsReceivedNoteDetail.getId());
+		if(goodsReceivedNoteDetail_.isEmpty()) {
+			throw new NotFoundException("Detail not found");
+		}
+		if(goodsReceivedNoteDetail_.get().getStatus() != null) {
+			if(goodsReceivedNoteDetail_.get().getStatus().equals("VERIFIED")) {
+				throw new InvalidOperationException("Can not verify. Already verified");
+			}
+		}
+		
+		if(goodsReceivedNoteDetail_.get().getGoodsReceivedNote().getId() != goodsReceivedNote_.get().getId()) {
+			throw new InvalidOperationException("Invalid detail selected");
+		}
+		if(goodsReceivedNoteDetail.getOrderedQty() != goodsReceivedNoteDetail_.get().getOrderedQty()) {
+			throw new InvalidOperationException("Ordered qty does not match with the available qty");
+		}
+		if(goodsReceivedNoteDetail.getReceivedQty() < 0) {
+			throw new InvalidOperationException("Received Qty must not be less than zero");
+		}
+		if(goodsReceivedNoteDetail.getReceivedQty() > goodsReceivedNoteDetail.getOrderedQty()) {
+			throw new InvalidOperationException("Received Qty must not exceed ordered qty");
+		}
+		if(goodsReceivedNoteDetail.getReceivedQty() != goodsReceivedNoteDetail_.get().getReceivedQty()) {
+			throw new InvalidOperationException("Qty Mismatch in received qty! Please save Qty before verifying");
+		}
+		
+		goodsReceivedNoteDetail_.get().setStatus("VERIFIED");
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/goods_received_notes/save_detail_qty").toUriString());
+		return ResponseEntity.created(uri).body(goodsReceivedNoteDetailRepository.save(goodsReceivedNoteDetail_.get()));
+	}
+	
+	@PostMapping("/goods_received_notes/approve")
+	@PreAuthorize("hasAnyAuthority('GOODS_RECEIVED_NOTE-ALL','GOODS_RECEIVED_NOTE-APPROVE')")
+	public ResponseEntity<GoodsReceivedNote>approveGoodsReceivedNote(
+			@RequestBody GoodsReceivedNoteModel goodsReceivedNote,
+			HttpServletRequest request){
+		
+		Optional<GoodsReceivedNote> goodsReceivedNote_ = goodsReceivedNoteRepository.findById(goodsReceivedNote.getId());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/goods_received_notes/approve").toUriString());
+		return ResponseEntity.created(uri).body(goodsReceivedNoteService.approve(goodsReceivedNote_.get(), request));
 	}
 }

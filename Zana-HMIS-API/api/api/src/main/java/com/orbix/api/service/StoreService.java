@@ -14,8 +14,10 @@ import com.orbix.api.domain.Store;
  *
  */
 public interface StoreService {
-	Store save(Store store, HttpServletRequest request);	
+	Store save(Store store, HttpServletRequest request);
+	Store updateStoreItemRegister(Store store, HttpServletRequest request);
 	List<Store>getStores(HttpServletRequest request); // return all the stores
+	List<Store>getStoresByStorePerson(HttpServletRequest request); // return all the stores available for a particular store person
 	Store getStoreByName(String name, HttpServletRequest request);
 	Store getStoreById(Long id, HttpServletRequest request);
 	boolean deleteStore(Store store, HttpServletRequest request);

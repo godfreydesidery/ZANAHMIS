@@ -26,6 +26,14 @@ export class MsgBoxService {
     })
   }
 
+  public showSimpleErrorMessage(message : string){
+    swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: message
+    })
+  }
+
   public showErrorMessage(error : HttpErrorResponse, msg : string){
     var message : string = msg
     let code : number = error['status']
@@ -43,7 +51,7 @@ export class MsgBoxService {
         message = 'Payment required';
       break;
       case 403:
-        message = 'Forbidden';
+        message = 'Forbidden. Access restricted or service unavailable. Please contact administrator';
       break;
       case 404:
         message = 'Not Found. Resource not found';

@@ -41,7 +41,7 @@ public interface StoreItemRepository extends JpaRepository<StoreItem, Long> {
 	 * @param item
 	 * @return
 	 */
-	List<StoreItem> findByItem(Item item);
+	Optional<StoreItem> findByItem(Item item);
 
 	/**
 	 * @param store

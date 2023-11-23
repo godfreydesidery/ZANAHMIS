@@ -42,6 +42,8 @@ public class GoodsReceivedNoteDetail {
 	@NotNull
 	private double orderedQty;
 	private double receivedQty = 0;
+	private double price = 0;
+	private String status = "NOT VERIFIED";
 	
 	@ManyToOne(targetEntity = GoodsReceivedNote.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "goods_received_note_id", nullable = false , updatable = false)

@@ -64,6 +64,11 @@ public class StoreResource {
 		return ResponseEntity.ok().body(storeService.getStores(request));
 	}
 	
+	@GetMapping("/stores/load_stores_by_store_person")
+	public ResponseEntity<List<Store>>getStoresByStorePerson(HttpServletRequest request){
+		return ResponseEntity.ok().body(storeService.getStoresByStorePerson(request));
+	}
+	
 	@GetMapping("/stores/load_stores_like")
 	public ResponseEntity<List<Store>> getStoreNameContains(
 			@RequestParam(name = "name_like") String value,
@@ -105,6 +110,18 @@ public class StoreResource {
 		return ResponseEntity.created(uri).body(storeService.save(store, request));
 	}
 	
+	@PostMapping("/stores/update_store_item_register")
+	@PreAuthorize("hasAnyAuthority('ADMIN-ACCESS')")
+	public ResponseEntity<Store>updateStoreItemRegister(
+			@RequestBody Store store,
+			HttpServletRequest request){
+		
+		store.setName(store.getName());
+		
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/stores/update_store_item_register").toUriString());
+		return ResponseEntity.created(uri).body(storeService.updateStoreItemRegister(store, request));
+	}
+	
 	@GetMapping("/stores/get_store_item_list")
 	public ResponseEntity<List<StoreItem>> getStoreItemList(
 			@RequestParam(name = "store_name") String storeName,
@@ -128,6 +145,7 @@ public class StoreResource {
 	}
 	
 	@PostMapping("/stores/update_stock")
+	@PreAuthorize("hasAnyAuthority('ITEM_STOCK-UPDATE')")
 	public void updateStock(
 			@RequestBody LStoreItem pm,
 			HttpServletRequest request){

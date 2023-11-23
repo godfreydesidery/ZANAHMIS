@@ -7,7 +7,10 @@ export interface IGoodsReceivedNoteDetail {
     goodsReceivedNote : IGoodsReceivedNote
     
     item    : IItem
-    qty  : number
+    orderedQty  : number
+    receivedQty : number
+    price : number
+    status : string
 
     created     : string
     verified    : string

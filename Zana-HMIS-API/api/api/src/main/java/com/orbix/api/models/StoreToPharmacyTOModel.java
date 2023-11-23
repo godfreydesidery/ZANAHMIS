@@ -8,6 +8,8 @@ import java.util.List;
 
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyToStoreRO;
+import com.orbix.api.domain.Store;
+
 import lombok.Data;
 
 /**
@@ -25,6 +27,7 @@ public class StoreToPharmacyTOModel {
 	
 	public Pharmacy pharmacy = null;	
 	public PharmacyToStoreRO pharmacyToStoreRO = null;
+	public Store store = null;
     
     public String created;
     public String verified;

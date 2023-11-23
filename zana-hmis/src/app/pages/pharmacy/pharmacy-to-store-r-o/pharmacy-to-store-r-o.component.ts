@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AgePipe } from 'src/app/pipes/age.pipe';
 import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
+import { IStore } from 'src/app/domain/store';
 
 const API_URL = environment.apiUrl;
 
@@ -111,6 +112,7 @@ export class PharmacyToStoreROComponent {
       id  : this.id,
       no : this.no,
       pharmacy : {id : this.pharmacyId },
+      store : {id : this.storeId, code : this.storeCode},
       validUntil : this.validUntil
     }
     this.spinner.show()
@@ -130,6 +132,7 @@ export class PharmacyToStoreROComponent {
         this.approved   = data!.approved
 
         this.pharmacyToStoreRO = data!
+        this.storeName = data!.store?.name
 
         
         this.msgBox.showSuccessMessage('Success')
@@ -226,6 +229,7 @@ export class PharmacyToStoreROComponent {
         this.approved   = data!.approved
 
         this.pharmacyToStoreRO = data!
+        this.storeName = data!.store?.name
 
         this.msgBox.showSuccessMessage('Order verified successifuly')
       }
@@ -267,6 +271,7 @@ export class PharmacyToStoreROComponent {
         this.approved   = data!.approved
 
         this.pharmacyToStoreRO = data!
+        this.storeName = data!.store?.name
 
         this.msgBox.showSuccessMessage('Order approved successifuly')
       }
@@ -307,6 +312,7 @@ export class PharmacyToStoreROComponent {
         this.approved   = data!.approved
 
         this.pharmacyToStoreRO = data!
+        this.storeName = data!.store?.name
 
         this.msgBox.showSuccessMessage('Order submitted successifuly')
       }
@@ -380,6 +386,9 @@ export class PharmacyToStoreROComponent {
     this.verified   = ''
     this.approved   = ''
     this.pharmacyToStoreRO!
+    this.storeName = ''
+    this.storeId = null
+    this.storeCode = ''
   }
 
 
@@ -405,6 +414,7 @@ export class PharmacyToStoreROComponent {
         this.approved   = data!.approved
 
         this.pharmacyToStoreRO = data!
+        this.storeName = data!.store?.name
 
         this.lock()
         console.log(data)
@@ -438,6 +448,7 @@ export class PharmacyToStoreROComponent {
         this.approved   = data!.approved
 
         this.pharmacyToStoreRO = data!
+        this.storeName = data!.store?.name
 
         this.lock()
         console.log(data)
@@ -515,6 +526,60 @@ export class PharmacyToStoreROComponent {
     this.detailName = ''
     this.detailOrderedQty = 0
     this.detailReceivedQty = 0
+  }
+
+
+  storeId : any =  null
+  storeCode : string = ''
+  storeName : string = ''
+  storeCodeAndName : string = ''
+  stores : IStore[] = []
+  async loadStoresLike(value : string){
+    this.stores = []
+    if(value.length < 2){
+      return
+    }
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    await this.http.get<IStore[]>(API_URL+'/stores/load_stores_like?name_like='+value, options)
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        this.stores = data!
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+      }
+    )
+  }
+
+  async getStore(id : any){
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    this.stores = []
+    this.spinner.show()
+    await this.http.get<IStore>(API_URL+'/stores/get?id='+id, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      (data) => {
+        this.storeId = data?.id
+        this.storeCode = data!.code
+        this.storeName = data!.name
+        this.storeCodeAndName = data!.code +' | '+ data!.name
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+        console.log(error)
+      }
+    )
   }
 
   public grant(privilege : string[]) : boolean{

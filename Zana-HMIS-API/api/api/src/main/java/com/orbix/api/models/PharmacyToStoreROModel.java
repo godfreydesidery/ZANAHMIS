@@ -20,6 +20,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import com.orbix.api.domain.Pharmacy;
+import com.orbix.api.domain.Store;
 
 import lombok.Data;
 
@@ -40,6 +41,8 @@ public class PharmacyToStoreROModel {
     public String created = "";
     public String verified = "";
     public String approved = "";
+    
+    public Store store = null;
     
     public List<PharmacyToStoreRODetailModel> pharmacyToStoreRODetails = new ArrayList<>();
 }

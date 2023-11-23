@@ -11,7 +11,10 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading" *ngIf="selectedStoreName != ''">
-                    <button class="btn btn-primary btn-outline" routerLink="/goods-received-note">Goods Received Note</button>
+                    <button class="btn btn-primary btn-outline" routerLink="/item-inquiry"><i class="glyphicon glyphicon-zoom-out"></i> Item Inquiry</button>
+                    <button class="btn btn-primary btn-outline" routerLink="/pharmacy-to-store-r-o-list"><i class="glyphicon glyphicon-list"></i> Pharmacy Order List</button>
+                    <button class="btn btn-primary btn-outline" routerLink="/goods-received-note"><i class="glyphicon glyphicon-book"></i> Goods Received Note</button>
+                    <button class="btn btn-primary btn-outline" routerLink="/store-item-stock-status"><i class="glyphicon glyphicon-cart"></i> Stock Status</button>
                 </div>
                 <div class="panel-body">
                     
@@ -28,7 +31,7 @@
                                         </div>
                                     </div>
                                     <div *ngIf="selectedStoreName === ''">
-                                        <div class="col-sm-12">
+                                        <div class="col-sm-12" *ngIf="stores.length > 0">
                                             <h2 class="text-primary">Please Select Store</h2>
                                             <select class="form-control" [(ngModel)]="storeName" style="font-size: x-large; height: 2cm;">
                                                 <option></option>
@@ -36,7 +39,7 @@
                                             </select>
                                             <hr>
                                         </div>
-                                        
+                                        <div class="alert alert-success" *ngIf="stores.length === 0" style="text-align: center;">Store access restricted. Please contact administrator for store allocation!</div>
                                         <div class="col-xs-6">
                                             <button class="btn btn-primary form-control" *ngIf="storeName != ''" (click)="selectStore(storeName)">Select</button>
                                         </div>

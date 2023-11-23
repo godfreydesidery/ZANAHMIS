@@ -8,4 +8,6 @@ export interface IStore{
     active          : boolean
     
     created         : string
+
+    assigned : boolean
 }

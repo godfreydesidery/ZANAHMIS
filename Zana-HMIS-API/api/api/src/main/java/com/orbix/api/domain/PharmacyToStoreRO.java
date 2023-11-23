@@ -60,6 +60,11 @@ public class PharmacyToStoreRO {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Pharmacy pharmacy;
 	
+	@ManyToOne(targetEntity = Store.class, fetch = FetchType.EAGER,  optional = false)
+    @JoinColumn(name = "store_id", nullable = false , updatable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private Store store;
+	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
     private Long createdBy;
 	@Column(name = "created_on_day_id", nullable = false , updatable = false)

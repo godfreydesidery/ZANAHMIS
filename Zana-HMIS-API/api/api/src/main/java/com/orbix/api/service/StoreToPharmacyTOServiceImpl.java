@@ -18,6 +18,7 @@ import com.orbix.api.domain.Item;
 import com.orbix.api.domain.ItemMedicineCoefficient;
 import com.orbix.api.domain.PharmacyToStoreRO;
 import com.orbix.api.domain.PharmacyToStoreRODetail;
+import com.orbix.api.domain.Store;
 import com.orbix.api.domain.StoreToPharmacyTO;
 import com.orbix.api.domain.StoreToPharmacyTODetail;
 import com.orbix.api.exceptions.InvalidOperationException;
@@ -32,6 +33,7 @@ import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.PharmacyToStoreRODetailRepository;
 import com.orbix.api.repositories.PharmacyToStoreRORepository;
+import com.orbix.api.repositories.StoreRepository;
 import com.orbix.api.repositories.StoreToPharmacyTODetailRepository;
 import com.orbix.api.repositories.StoreToPharmacyTORepository;
 import com.orbix.api.repositories.UserRepository;
@@ -61,6 +63,7 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 	private final StoreToPharmacyTODetailRepository storeToPharmacyTODetailRepository;
 	private final ItemRepository itemRepository;
 	private final ItemMedicineCoefficientRepository itemMedicineCoefficientRepository;
+	private final StoreRepository storeRepository;
 	
 	@Override
 	public StoreToPharmacyTOModel createOrder(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request) {
@@ -68,6 +71,7 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 		Optional<PharmacyToStoreRO> ro = pharmacyToStoreRORepository.findById(pharmacyToStoreRO.getId());
 		
 		Optional<StoreToPharmacyTO> to = storeToPharmacyTORepository.findByPharmacyToStoreRO(pharmacyToStoreRO);
+		
 		StoreToPharmacyTO order = new StoreToPharmacyTO();
 		if(to.isEmpty()) {
 			if(ro.get().getStatus().equals("SUBMITTED")) {
@@ -80,7 +84,8 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 			order.setNo(this.requestTransferOrderNo().getNo());
 			order.setOrderDate(LocalDate.now());
 			order.setPharmacyToStoreRO(pharmacyToStoreRO);
-			order.setPharmacy(pharmacyToStoreRO.getPharmacy());
+			order.setPharmacy(ro.get().getPharmacy());
+			order.setStore(ro.get().getStore());
 			order.setStatus("PENDING");
 			order.setStatusDescription("Order awaiting for verification");
 			
@@ -104,7 +109,8 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 				storeToPharmacyTODetailRepository.save(orderDetail);
 				
 			}
-			order = storeToPharmacyTORepository.findByPharmacyToStoreRO(pharmacyToStoreRO).get();
+			//order = storeToPharmacyTORepository.findByPharmacyToStoreRO(pharmacyToStoreRO).get();
+			order = storeToPharmacyTORepository.findById(order.getId()).get();
 		}else {
 			order = to.get();
 		}
@@ -243,6 +249,7 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 		model.setNo(order.getNo());
 		model.setPharmacy(order.getPharmacy());
 		model.setPharmacyToStoreRO(order.getPharmacyToStoreRO());
+		model.setStore(order.getStore());
 		model.setOrderDate(order.getOrderDate());
 		model.setStatus(order.getStatus());
 		model.setStatusDescription(order.getStatusDescription());

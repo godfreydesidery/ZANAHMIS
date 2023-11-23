@@ -18,6 +18,8 @@ public class GoodsReceivedNoteDetailModel {
 	public Item item = null;
 	public double orderedQty = 0;
 	public double receivedQty = 0;
+	public double price = 0;
+	public String status = "";
 	
 	public GoodsReceivedNote goodsReceivedNote = null;
 	

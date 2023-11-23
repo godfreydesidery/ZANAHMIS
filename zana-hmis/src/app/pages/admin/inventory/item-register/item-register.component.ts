@@ -39,11 +39,13 @@ export class ItemRegisterComponent {
 	vat                 : number = 0
 	uom                 : string = ''
 	packSize            : number = 0
-	stock               : number = 0
-	minimumInventory    : number = 0
-	maximumInventory    : number = 0
-	defaultReorderQty   : number = 0
-	defaultReorderLevel : number = 0
+  costPriceVatIncl : number = 0
+  sellingPriceVatIncl : number = 0
+	//stock               : number = 0
+	//minimumInventory    : number = 0
+	//maximumInventory    : number = 0
+	//defaultReorderQty   : number = 0
+	//defaultReorderLevel : number = 0
 	active              : boolean = false
 	ingredients         : string = ''
 
@@ -82,11 +84,8 @@ export class ItemRegisterComponent {
       vat                 : this.vat,
       uom                 : this.uom,
       packSize            : this.packSize,
-      stock               : this.stock,
-      minimumInventory    : this.minimumInventory,
-      maximumInventory    : this.maximumInventory,
-      defaultReorderQty   : this.defaultReorderQty,
-      defaultReorderLevel : this.defaultReorderLevel,
+      costPriceVatIncl : this.costPriceVatIncl,
+      sellingPriceVatIncl : this.sellingPriceVatIncl,
       active              : this.active,
       ingredients         : this.ingredients
     }
@@ -107,11 +106,8 @@ export class ItemRegisterComponent {
           this.vat                = data!.vat
           this.uom                = data!.uom
           this.packSize           = data!.packSize
-          this.stock              = data!.stock
-          this.minimumInventory   = data!.minimumInventory
-          this.maximumInventory   = data!.maximumInventory
-          this.defaultReorderQty  = data!.defaultReorderQty
-          this.defaultReorderLevel = data!.defaultReorderLevel
+          this.costPriceVatIncl   = data!.costPriceVatIncl
+          this.sellingPriceVatIncl = data!.sellingPriceVatIncl
           this.active             = data!.active
           this.ingredients        = data!.ingredients
           this.msgBox.showSuccessMessage('Item created successifully')
@@ -141,11 +137,8 @@ export class ItemRegisterComponent {
           this.vat                = data!.vat
           this.uom                = data!.uom
           this.packSize           = data!.packSize
-          this.stock              = data!.stock
-          this.minimumInventory   = data!.minimumInventory
-          this.maximumInventory   = data!.maximumInventory
-          this.defaultReorderQty  = data!.defaultReorderQty
-          this.defaultReorderLevel = data!.defaultReorderLevel
+          this.costPriceVatIncl   = data!.costPriceVatIncl
+          this.sellingPriceVatIncl = data!.sellingPriceVatIncl
           this.active             = data!.active
           this.ingredients        = data!.ingredients
           this.msgBox.showSuccessMessage('Item updated successifully')
@@ -169,11 +162,8 @@ export class ItemRegisterComponent {
     this.vat                = 0
     this.uom                = ''
     this.packSize           = 0
-    this.stock              = 0
-    this.minimumInventory   = 0
-    this.maximumInventory   = 0
-    this.defaultReorderQty  = 0
-    this.defaultReorderLevel = 0
+    this.costPriceVatIncl   = 0
+    this.sellingPriceVatIncl = 0
     this.active             = false
     this.ingredients        = ''
   }
@@ -231,11 +221,8 @@ export class ItemRegisterComponent {
         this.vat                  = data!.vat
         this.uom                  = data!.uom
         this.packSize             = data!.packSize
-        this.stock                = data!.stock
-        this.minimumInventory     = data!.minimumInventory
-        this.maximumInventory     = data!.maximumInventory
-        this.defaultReorderQty    = data!.defaultReorderQty
-        this.defaultReorderLevel  = data!.defaultReorderLevel
+        this.costPriceVatIncl     = data!.costPriceVatIncl
+        this.sellingPriceVatIncl  = data!.sellingPriceVatIncl
         this.active               = data!.active
         this.ingredients          = data!.ingredients
       },

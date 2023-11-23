@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <div class="header-title">
-        <h1>Store GRN(<span class="text-primary">{{pharmacyName}}</span>)</h1>
+        <h1>Receiving Note | <span class="text-primary">Pharmacy - {{pharmacyName}}</span></h1>
     </div>
 </section>
 <!-- Main content -->
@@ -13,7 +13,7 @@
                 <div class="panel-heading">
                     <button class="btn btn-primary btn-outline" data-toggle="modal" data-target="#requisition-order-list-modal">Requisition Order List</button>
                     <button class="btn btn-primary btn-outline" data-toggle="modal" data-target="#store-receiving-note-list-modal">Store GRN List</button>
-                    <button class="btn btn-primary btn-outline" (click)="clear()">New Store GRN</button>
+                    <button class="btn btn-primary btn-outline" (click)="clear()">New Receiving Note</button>
                 </div>
                 <div class="panel-body">
                     <div class="row" *ngIf="storeToPharmacyRN?.id === null">

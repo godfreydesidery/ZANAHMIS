@@ -196,8 +196,9 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a routerLink="/select-store">Select Store</a></li>
+                            <li><a routerLink="/item-medicine-conversion-coefficient">Item Medicine Coefficient</a></li>
                         </ul>
-                        <ul class="treeview-menu">
+                        <!--<ul class="treeview-menu">
                             <li><a routerLink="/item-inquiry">Item Inquiry</a></li>
                             <li><a routerLink="/pharmacy-to-store-r-o-list">Pharmacy Order List</a></li>
                             <li class="treeview">
@@ -211,7 +212,7 @@
                                     <li><a routerLink="/item-medicine-conversion-coefficient">Item Medicine Coefficient</a></li>
                                 </ul>
                             </li>
-                        </ul>
+                        </ul>-->
                     </li>
                     <li class="treeview" *ngIf="grant(['PROCUREMENT_SERVICE-ACCESS'])">
                         <a href="#" (click)="loadProcurementModule()">
@@ -293,6 +294,7 @@
                                     <li><a routerLink="/clinician">Doctor</a></li>
                                     <li><a routerLink="/pharmacist">Pharmacist</a></li>
                                     <li><a routerLink="/nurse">Nurse</a></li>
+                                    <li><a routerLink="/store-person">Store Person</a></li>
                                 </ul>
                             </li>
                             <li class="treeview">
