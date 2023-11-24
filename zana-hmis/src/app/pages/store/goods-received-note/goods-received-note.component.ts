@@ -23,6 +23,7 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DataService } from 'src/app/services/data.service';
 import { IGoodsReceivedNoteDetail } from 'src/app/domain/goods-received-note-detail';
+import { IGoodsReceivedNoteDetailBatch } from 'src/app/domain/goods-received-note-detail-batch';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 
 const API_URL = environment.apiUrl;
@@ -76,6 +77,12 @@ export class GoodsReceivedNoteComponent {
 
   lpoNo : string = ''
 
+  currentDetail : IGoodsReceivedNoteDetail | undefined
+  batchNo : string = ''
+  manufacturedDate : Date | undefined
+  expiryDate : Date | undefined
+  currentBatchQty : number = 0
+
   constructor(
     private auth : AuthService,
     private http :HttpClient,
@@ -116,6 +123,74 @@ export class GoodsReceivedNoteComponent {
         this.msgBox.showErrorMessage(error, '')
       }
     )
+  }
+
+  setBatchValues(detail : IGoodsReceivedNoteDetail){
+    this.currentDetail = detail
+    this.batchNo = ''
+    this.manufacturedDate = undefined
+    this.expiryDate = undefined
+    this.currentBatchQty = 0
+  }
+
+  async saveBatch(){
+
+    if(this.currentBatchQty <= 0){
+      this.msgBox.showSimpleErrorMessage('Invalid quantity value. Quantity must be more than zero')
+      return
+    }
+
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+
+    var batch = {
+      no : this.batchNo,
+      goodsReceivedNoteDetail : {id : this.currentDetail?.id},
+      manufacturedDate : this.manufacturedDate,
+      expiryDate : this.expiryDate,
+      qty : this.currentBatchQty
+    }
+
+    this.spinner.show()
+    await this.http.post<IGoodsReceivedNoteDetail>(API_URL+'/goods_received_notes/add_batch', batch, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+
+      }
+    )
+    .catch(error => {
+      this.msgBox.showErrorMessage(error, '')
+    })
+    this.search(this.id)
+  }
+
+  async deleteBatch(b : IGoodsReceivedNoteDetailBatch){
+
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+
+    var batch = {
+      id : b.id
+    }
+
+    this.spinner.show()
+    await this.http.post<IGoodsReceivedNoteDetail>(API_URL+'/goods_received_notes/delete_batch', batch, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+
+      }
+    )
+    .catch(error => {
+      this.msgBox.showErrorMessage(error, '')
+    })
+    this.search(this.id)
   }
 
 
@@ -288,9 +363,9 @@ export class GoodsReceivedNoteComponent {
       },
       error => {
         this.msgBox.showErrorMessage(error, '')
-        this.search(this.id)
       }
     )
+    this.search(this.id)
   }
 
   async approveGRN(){

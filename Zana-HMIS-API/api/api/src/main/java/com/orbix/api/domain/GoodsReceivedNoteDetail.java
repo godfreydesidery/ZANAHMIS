@@ -14,9 +14,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -54,5 +58,11 @@ public class GoodsReceivedNoteDetail {
     @JoinColumn(name = "item_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Item item;
+	
+	@OneToMany(targetEntity = GoodsReceivedNoteDetailBatch.class, mappedBy = "goodsReceivedNoteDetail", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Valid
+    @JsonIgnoreProperties("goodsReceivedNoteDetail")
+	@Fetch(FetchMode.SUBSELECT)
+    private List<GoodsReceivedNoteDetailBatch> goodsReceivedNoteDetailBatches;
 
 }

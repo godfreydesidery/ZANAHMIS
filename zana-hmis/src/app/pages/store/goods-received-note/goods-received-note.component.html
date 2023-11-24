@@ -71,8 +71,10 @@
                                                     <td>Ordered Qty</td>
                                                     <td>Received Qty</td>
                                                     <td></td>
+                                                    
                                                     <td>Price@</td>
                                                     <td>Amount</td>
+                                                    <td>Batch Details</td>
                                                     <td>Status</td>
                                                     <td>Action</td>
                                                 </tr>
@@ -89,8 +91,32 @@
                                                     <td>
                                                         <span class="text-success" *ngIf="d.status != 'VERIFIED'" (click)="saveGRNDetailReceivedQty(d.id, d.orderedQty, d.receivedQty)"><i class="glyphicon glyphicon-floppy-disk"></i>Save Qty</span>
                                                     </td>
+                                                    
                                                     <td style="text-align: right;">{{d.price | currency:'':''}}</td>
                                                     <td style="text-align: right;">{{d.receivedQty * d.price | currency:'':''}}</td>
+                                                    <td>
+                                                        <table class="table table-small" style="background-color: rgb(206, 221, 212);">
+                                                            <thead>
+                                                                <tr style="font-weight: bold;">
+                                                                    <td><small>Batch#</small></td>
+                                                                    <td><small>mfg</small></td>
+                                                                    <td><small>exp</small></td>
+                                                                    <td><small>qty</small></td>
+                                                                    <td><small>X</small></td>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr *ngFor="let batch of d.goodsReceivedNoteDetailBatches">
+                                                                    <td><small>{{batch?.no}}</small></td>
+                                                                    <td><small>{{batch?.manufacturedDate | date}}</small></td>
+                                                                    <td><small>{{batch?.expiryDate | date}}</small></td>
+                                                                    <td><small>{{batch?.qty}}</small></td>
+                                                                    <td><small><span class="text-danger" *ngIf="d.status != 'VERIFIED'" (click)="deleteBatch(batch)"><i class="glyphicon glyphicon-trash"></i></span></small></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <span class="text-success" *ngIf="d.status != 'VERIFIED'" (click)="setBatchValues(d)" data-toggle="modal" data-target="#detail-batch-modal"><i class="glyphicon glyphicon-plus"></i><small> Add Batch</small></span>
+                                                    </td>
                                                     <td>{{d?.status}}</td>
                                                     <td><span class="text-success" *ngIf="d.status != 'VERIFIED'" (click)="verifyGRNDetailReceivedQty(d.id, d.orderedQty, d.receivedQty)"><i class="glyphicon glyphicon-ok"></i> Verify</span></td>
                                                 </tr>
@@ -147,6 +173,55 @@
                 </table>
                    
                
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade modal-success" id="detail-batch-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Batch</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>Item Code</td>
+                                    <td><span class="form-control">{{currentDetail?.item?.code}}</span></td>
+                                        
+                                </tr>
+                                <tr>
+                                    <td>Item Name</td>
+                                    <td><span class="form-control">{{currentDetail?.item?.name}}</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Batch #</td>
+                                    <td><input type="text" class="form-control" [(ngModel)]="batchNo"></td>
+                                </tr>
+                                <tr>
+                                    <td>Manufactured Date</td>
+                                    <td><input type="date" class="form-control" [(ngModel)]="manufacturedDate"></td>
+                                </tr>
+                                <tr>
+                                    <td>Expiry Date</td>
+                                    <td><input type="date" class="form-control" [(ngModel)]="expiryDate"></td>
+                                </tr>
+                                <tr>
+                                    <td>Qty</td>
+                                    <td><input type="number" class="form-control" [(ngModel)]="currentBatchQty"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-12">
+                        <button class="btn btn-success pull-right" (click)="saveBatch()" data-dismiss="modal">Save</button>
+                        <button class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->

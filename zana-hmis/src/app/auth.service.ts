@@ -79,7 +79,7 @@ export class AuthService {
           access_token : string, 
           refresh_token : string
         } = JSON.parse(localStorage.getItem('current-user')!)
-        
+
         if(this.tokenExpired(currentUser.access_token)){
           //should clear user information
           return

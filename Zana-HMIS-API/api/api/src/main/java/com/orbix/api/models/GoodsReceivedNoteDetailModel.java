@@ -3,7 +3,11 @@
  */
 package com.orbix.api.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.orbix.api.domain.GoodsReceivedNote;
+import com.orbix.api.domain.GoodsReceivedNoteDetailBatch;
 import com.orbix.api.domain.Item;
 
 import lombok.Data;
@@ -22,6 +26,8 @@ public class GoodsReceivedNoteDetailModel {
 	public String status = "";
 	
 	public GoodsReceivedNote goodsReceivedNote = null;
+	
+	public List<GoodsReceivedNoteDetailBatch> goodsReceivedNoteDetailBatches = new ArrayList<>();
 	
 	public String created;
 }

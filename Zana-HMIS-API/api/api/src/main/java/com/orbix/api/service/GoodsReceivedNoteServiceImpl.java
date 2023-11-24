@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 import com.orbix.api.accessories.Formater;
 import com.orbix.api.domain.GoodsReceivedNote;
 import com.orbix.api.domain.GoodsReceivedNoteDetail;
+import com.orbix.api.domain.GoodsReceivedNoteDetailBatch;
 import com.orbix.api.domain.LocalPurchaseOrder;
 import com.orbix.api.domain.LocalPurchaseOrderDetail;
 import com.orbix.api.domain.StoreItem;
+import com.orbix.api.domain.StoreItemBatch;
 import com.orbix.api.domain.StoreStockCard;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.models.RecordModel;
@@ -25,6 +27,7 @@ import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.GoodsReceivedNoteDetailRepository;
 import com.orbix.api.repositories.GoodsReceivedNoteRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
+import com.orbix.api.repositories.StoreItemBatchRepository;
 import com.orbix.api.repositories.StoreItemRepository;
 import com.orbix.api.repositories.StoreStockCardRepository;
 import com.orbix.api.repositories.UserRepository;
@@ -51,6 +54,7 @@ public class GoodsReceivedNoteServiceImpl implements GoodsReceivedNoteService {
 	
 	private final StoreItemRepository storeItemRepository;
 	private final StoreStockCardRepository storeStockCardRepository;
+	private final StoreItemBatchRepository storeItemBatchRepository;
 	
 	@Override
 	public GoodsReceivedNote create(LocalPurchaseOrder localPurchaseOrder, HttpServletRequest request) {
@@ -118,9 +122,11 @@ public class GoodsReceivedNoteServiceImpl implements GoodsReceivedNoteService {
 			Optional<StoreItem> storeItem_ = storeItemRepository.findByStoreAndItem(goodsReceivedNote.getStore(), detail.getItem());
 			double originalStock = storeItem_.get().getStock();
 			double newStock = originalStock + detail.getReceivedQty();
+			//Update stock
 			storeItem_.get().setStock(newStock);
 			storeItemRepository.save(storeItem_.get());
 			
+			//Create item store stock card
 			StoreStockCard storeStockCard = new StoreStockCard();
 			storeStockCard.setItem(detail.getItem());
 			storeStockCard.setStore(goodsReceivedNote.getStore());
@@ -134,6 +140,19 @@ public class GoodsReceivedNoteServiceImpl implements GoodsReceivedNoteService {
 			storeStockCard.setCreatedAt(dayService.getTimeStamp());
 			
 			storeStockCardRepository.save(storeStockCard);
+			
+			//Add Store item batch
+			for(GoodsReceivedNoteDetailBatch batch : detail.getGoodsReceivedNoteDetailBatches()) {
+				StoreItemBatch storeItemBatch = new StoreItemBatch();
+				storeItemBatch.setNo(batch.getNo());
+				storeItemBatch.setItem(batch.getGoodsReceivedNoteDetail().getItem());
+				storeItemBatch.setManufacturedDate(batch.getManufacturedDate());
+				storeItemBatch.setExpiryDate(batch.getExpiryDate());
+				storeItemBatch.setQty(batch.getQty());
+				storeItemBatch.setStore(goodsReceivedNote.getStore());
+				
+				storeItemBatchRepository.save(storeItemBatch);
+			}
 		}
 		
 		goodsReceivedNote.setStatus("APPROVED");

@@ -24,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.domain.GoodsReceivedNote;
 import com.orbix.api.domain.GoodsReceivedNoteDetail;
+import com.orbix.api.domain.GoodsReceivedNoteDetailBatch;
 import com.orbix.api.domain.LocalPurchaseOrder;
 import com.orbix.api.domain.LocalPurchaseOrderDetail;
 import com.orbix.api.domain.Store;
@@ -33,6 +34,7 @@ import com.orbix.api.models.GoodsReceivedNoteDetailModel;
 import com.orbix.api.models.GoodsReceivedNoteModel;
 import com.orbix.api.models.LocalPurchaseOrderDetailModel;
 import com.orbix.api.models.LocalPurchaseOrderModel;
+import com.orbix.api.repositories.GoodsReceivedNoteDetailBatchRepository;
 import com.orbix.api.repositories.GoodsReceivedNoteDetailRepository;
 import com.orbix.api.repositories.GoodsReceivedNoteRepository;
 import com.orbix.api.repositories.LocalPurchaseOrderDetailRepository;
@@ -62,6 +64,7 @@ public class GoodsReceivedNoteResource {
 	private final UserService userService;
 	private final GoodsReceivedNoteRepository goodsReceivedNoteRepository;
 	private final GoodsReceivedNoteDetailRepository goodsReceivedNoteDetailRepository;
+	private final GoodsReceivedNoteDetailBatchRepository goodsReceivedNoteDetailBatchRepository;
 	private final StoreRepository storeRepository;
 	
 	@GetMapping("/goods_received_notes")
@@ -141,6 +144,8 @@ public class GoodsReceivedNoteResource {
 				modelDetail.setReceivedQty(d.getReceivedQty());
 				modelDetail.setPrice(d.getPrice());
 				modelDetail.setStatus(d.getStatus());
+				
+				modelDetail.setGoodsReceivedNoteDetailBatches(d.getGoodsReceivedNoteDetailBatches());
 				
 				modelDetails.add(modelDetail);
 			}
@@ -249,6 +254,16 @@ public class GoodsReceivedNoteResource {
 			throw new InvalidOperationException("Qty Mismatch in received qty! Please save Qty before verifying");
 		}
 		
+		
+		double batchQty = 0;
+		for(GoodsReceivedNoteDetailBatch batch : goodsReceivedNoteDetail_.get().getGoodsReceivedNoteDetailBatches()) {
+			batchQty = batchQty + batch.getQty();
+		}
+		if(batchQty != goodsReceivedNoteDetail_.get().getReceivedQty()) {
+			throw new InvalidOperationException("Can not verify. Batch quantities are not equal to total received quantities");
+		}
+		
+		
 		goodsReceivedNoteDetail_.get().setStatus("VERIFIED");
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/goods_received_notes/save_detail_qty").toUriString());
@@ -265,5 +280,48 @@ public class GoodsReceivedNoteResource {
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/goods_received_notes/approve").toUriString());
 		return ResponseEntity.created(uri).body(goodsReceivedNoteService.approve(goodsReceivedNote_.get(), request));
+	}
+	
+	@PostMapping("/goods_received_notes/add_batch")
+	@PreAuthorize("hasAnyAuthority('GOODS_RECEIVED_NOTE-ALL','GOODS_RECEIVED_NOTE-UPDATE')")
+	public void goodsReceivedAddBatch(
+			@RequestBody GoodsReceivedNoteDetailBatch goodsReceivedNoteDetailBatch,
+			HttpServletRequest request){
+		
+		Optional<GoodsReceivedNoteDetail> goodsReceivedNoteDetail_ = goodsReceivedNoteDetailRepository.findById(goodsReceivedNoteDetailBatch.getGoodsReceivedNoteDetail().getId());
+		if(goodsReceivedNoteDetail_.isEmpty()) {
+			throw new NotFoundException("Detail not found");
+		}
+		if(goodsReceivedNoteDetailBatch.getQty() <= 0) {
+			throw new InvalidOperationException("Invalid qty value. Qty must be more than zero");
+		}
+		GoodsReceivedNoteDetailBatch batch = new GoodsReceivedNoteDetailBatch();
+		batch.setNo(goodsReceivedNoteDetailBatch.getNo());
+		batch.setManufacturedDate(goodsReceivedNoteDetailBatch.getManufacturedDate());
+		batch.setExpiryDate(goodsReceivedNoteDetailBatch.getExpiryDate());
+		batch.setQty(goodsReceivedNoteDetailBatch.getQty());
+		batch.setGoodsReceivedNoteDetail(goodsReceivedNoteDetail_.get());
+		
+		goodsReceivedNoteDetailBatchRepository.save(batch);
+		
+		//URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/goods_received_notes/add_batch").toUriString());
+		//return ResponseEntity.created(uri).body(goodsReceivedNoteService.approve(goodsReceivedNote_.get(), request));
+	}
+	
+	@PostMapping("/goods_received_notes/delete_batch")
+	@PreAuthorize("hasAnyAuthority('GOODS_RECEIVED_NOTE-ALL','GOODS_RECEIVED_NOTE-UPDATE')")
+	public void goodsReceivedDelateBatch(
+			@RequestBody GoodsReceivedNoteDetailBatch goodsReceivedNoteDetailBatch,
+			HttpServletRequest request){
+		
+		Optional<GoodsReceivedNoteDetailBatch> batch_ = goodsReceivedNoteDetailBatchRepository.findById(goodsReceivedNoteDetailBatch.getId());
+		if(batch_.isEmpty()) {
+			throw new NotFoundException("Batch not found");
+		}
+		
+		goodsReceivedNoteDetailBatchRepository.delete(batch_.get());
+		
+		//URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/goods_received_notes/add_batch").toUriString());
+		//return ResponseEntity.created(uri).body(goodsReceivedNoteService.approve(goodsReceivedNote_.get(), request));
 	}
 }

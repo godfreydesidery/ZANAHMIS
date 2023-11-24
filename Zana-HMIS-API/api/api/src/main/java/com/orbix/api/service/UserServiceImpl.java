@@ -353,7 +353,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		User user = userRepository.findByUsername(username).get();
 		Role role = roleRepository.findByName(rolename).get();
 		try {
-			user.getRoles().add(role);	
+			if(!user.getRoles().contains(role)) {
+				user.getRoles().add(role);
+			}
 		}catch(Exception e) {
 			log.info(e.getMessage());
 		}					

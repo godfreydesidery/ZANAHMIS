@@ -194,7 +194,7 @@ public class UserResource {
 		roleNames.add("PROCUREMENT");
 		roleNames.add("MANAGER");
 		roleNames.add("ACCOUNTANT");
-		roleNames.add("STORE-KEEPER");
+		roleNames.add("STORE-PERSON");
 		roleNames.add("CLINICIAN");
 		roleNames.add("NURSE");
 		roleNames.add("PHARMACIST");
@@ -224,6 +224,9 @@ public class UserResource {
 		if(role.getName().equalsIgnoreCase("RADIOLOGIST")) {
 			throw new InvalidOperationException("Role name not available");
 		}
+		if(role.getName().equalsIgnoreCase("STORE-PERSON")) {
+			throw new InvalidOperationException("Role name not available");
+		}
 		role.setOwner("ORGANIZATION");
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/roles/save").toUriString());
 		return ResponseEntity.created(uri).body(userService.saveRole(role, request));
@@ -248,7 +251,7 @@ public class UserResource {
 		roleNames.add("PROCUREMENT");
 		roleNames.add("MANAGER");
 		roleNames.add("ACCOUNTANT");
-		roleNames.add("STORE-KEEPER");
+		roleNames.add("STORE-PERSON");
 		roleNames.add("CLINICIAN");
 		roleNames.add("NURSE");
 		roleNames.add("PHARMACIST");
@@ -313,16 +316,26 @@ public class UserResource {
 		if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 			try {
 				String refresh_token = authorizationHeader.substring("Bearer ".length());
-				Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+				Algorithm algorithm = Algorithm.HMAC256("secretkey".getBytes());
 				JWTVerifier verifier = JWT.require(algorithm).build();
 				DecodedJWT decodedJWT = verifier.verify(refresh_token);
 				String username =decodedJWT.getSubject();
 				User user = userService.getUser(username);
+				Collection<Role> roles = user.getRoles();
+				Collection<Privilege> privileges = new ArrayList<>();
+				for(Role role : roles) {
+					for(Privilege privilege : role.getPrivileges()) {
+						if(!privileges.contains(privilege)) {
+							privileges.add(privilege);
+						}
+					}
+				}
+				
 				String access_token = JWT.create()
 						.withSubject(user.getUsername())
 						.withExpiresAt(new Date(System.currentTimeMillis()+8*60*60*1000))
 						.withIssuer(request.getRequestURI().toString())
-						.withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+						.withClaim("roles", privileges.stream().map(Privilege::getName).collect(Collectors.toList()))
 						.sign(algorithm);
 						
 				Map<String, String> tokens = new HashMap<>();
@@ -408,18 +421,31 @@ public class UserResource {
 		}
 		int i = 0;		
 		for(ObjectModel model : form.getPrivileges()) {
+			boolean allowAll = false;
 			if(i > form.getPrivileges().length - 1) {
 				break;
 			}
 			i++;
 			String object = model.getObject();
+			
+			for(String operation : model.getOperations()) {
+				if(operation.equals("ALL")) {
+					allowAll = true;
+					break;
+				}
+			}
+			
 			int j = 0;
+			
+			
 			for(String operation : model.getOperations()) {
 				if(j > model.getOperations().length - 1) {
 					break;
 				}
 				j++;
-				userService.addPrivilegeToRole(form.getRole(), object+"-"+operation);
+				if(allowAll == false || operation.equals("ALL")){
+					userService.addPrivilegeToRole(form.getRole(), object+"-"+operation);
+				}
 			}
 		}
 		return true;
@@ -454,7 +480,7 @@ public class UserResource {
 	
 	private String getUsernameFromAuthorizationHeader(String authorizationHeader) {
 		String token = authorizationHeader.substring("Bearer ".length());
-		Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+		Algorithm algorithm = Algorithm.HMAC256("secretkey".getBytes());
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJWT = verifier.verify(token);
 		String username = decodedJWT.getSubject();

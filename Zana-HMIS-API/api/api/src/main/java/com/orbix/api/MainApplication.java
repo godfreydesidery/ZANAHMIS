@@ -289,7 +289,11 @@ public class MainApplication {
 			}
 			try {
 				userService.addPrivilegeToRole("ROOT", "ADMIN-ACCESS");
+			}catch(Exception e) {}	
+			try {
 				userService.addPrivilegeToRole("ROOT", "USER-ALL");				
+			}catch(Exception e) {}	
+			try {
 				userService.addPrivilegeToRole("ROOT", "ROLE-ALL");	
 			}catch(Exception e) {}	
 			
@@ -297,8 +301,9 @@ public class MainApplication {
 			List<String> operations = new ArrayList<>();
 			for(int i = 0; i < operationFields.length; i++) {
 				String operation = operationFields[i].get(operationFields[i].getName()).toString();
-				operations.add(operation);
-				
+				try {
+					operations.add(operation);
+				}catch(Exception e) {}
 			}
 			List<Privilege> destroyedPrivileges = new ArrayList<>();	
 			
