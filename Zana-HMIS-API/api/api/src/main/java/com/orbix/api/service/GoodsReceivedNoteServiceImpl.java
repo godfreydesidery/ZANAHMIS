@@ -18,6 +18,7 @@ import com.orbix.api.domain.GoodsReceivedNoteDetail;
 import com.orbix.api.domain.GoodsReceivedNoteDetailBatch;
 import com.orbix.api.domain.LocalPurchaseOrder;
 import com.orbix.api.domain.LocalPurchaseOrderDetail;
+import com.orbix.api.domain.Purchase;
 import com.orbix.api.domain.StoreItem;
 import com.orbix.api.domain.StoreItemBatch;
 import com.orbix.api.domain.StoreStockCard;
@@ -27,6 +28,8 @@ import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.GoodsReceivedNoteDetailRepository;
 import com.orbix.api.repositories.GoodsReceivedNoteRepository;
 import com.orbix.api.repositories.InsurancePlanRepository;
+import com.orbix.api.repositories.LocalPurchaseOrderRepository;
+import com.orbix.api.repositories.PurchaseRepository;
 import com.orbix.api.repositories.StoreItemBatchRepository;
 import com.orbix.api.repositories.StoreItemRepository;
 import com.orbix.api.repositories.StoreStockCardRepository;
@@ -55,6 +58,8 @@ public class GoodsReceivedNoteServiceImpl implements GoodsReceivedNoteService {
 	private final StoreItemRepository storeItemRepository;
 	private final StoreStockCardRepository storeStockCardRepository;
 	private final StoreItemBatchRepository storeItemBatchRepository;
+	private final PurchaseRepository purchaseRepository;
+	private final LocalPurchaseOrderRepository localPurchaseOrderRepository;
 	
 	@Override
 	public GoodsReceivedNote create(LocalPurchaseOrder localPurchaseOrder, HttpServletRequest request) {
@@ -153,9 +158,36 @@ public class GoodsReceivedNoteServiceImpl implements GoodsReceivedNoteService {
 				
 				storeItemBatchRepository.save(storeItemBatch);
 			}
+			
+		}
+		
+		if(goodsReceivedNote.getLocalPurchaseOrder() != null) {
+			LocalPurchaseOrder localPurchaseOrder = goodsReceivedNote.getLocalPurchaseOrder();
+			for(GoodsReceivedNoteDetail detail : goodsReceivedNote.getGoodsReceivedNoteDetails()) {
+				Purchase purchase = new Purchase();
+				purchase.setItem(detail.getItem());
+				purchase.setQty(detail.getReceivedQty());
+				purchase.setAmount(detail.getReceivedQty() * detail.getPrice());
+				purchase.setGoodsReceivedNote(detail.getGoodsReceivedNote());
+				
+				purchase.setCreatedBy(userService.getUserId(request));
+				purchase.setCreatedOn(dayService.getDayId());
+				purchase.setCreatedAt(dayService.getTimeStamp());
+				
+				purchaseRepository.save(purchase);
+			}
+			localPurchaseOrder.setStatus("RECEIVED");
+			
+			localPurchaseOrder.setReceivedBy(userService.getUserId(request));
+			localPurchaseOrder.setReceivedOn(dayService.getDayId());
+			localPurchaseOrder.setReceivedAt(dayService.getTimeStamp());
+			
+			localPurchaseOrderRepository.save(localPurchaseOrder);
+			
 		}
 		
 		goodsReceivedNote.setStatus("APPROVED");
+		goodsReceivedNote.setStatusDescription("All/Partial ordered goods received");
 		
 		goodsReceivedNote.setApprovedBy(userService.getUserId(request));
 		goodsReceivedNote.setApprovedOn(dayService.getDayId());

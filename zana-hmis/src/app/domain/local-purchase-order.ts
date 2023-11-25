@@ -1,4 +1,5 @@
 import { ILocalPurchaseOrderDetail } from "./local-purchase-order-detail"
+import { IStore } from "./store"
 import { ISupplier } from "./supplier"
 
 export interface ILocalPurchaseOrder {
@@ -10,6 +11,7 @@ export interface ILocalPurchaseOrder {
     statusDescription : string
 
     supplier      : ISupplier
+    store : IStore
 
     localPurchaseOrderDetails : ILocalPurchaseOrderDetail[]
 

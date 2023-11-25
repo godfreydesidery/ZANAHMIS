@@ -68,6 +68,7 @@ public class LocalPurchaseOrderResource {
 		statuses.add("REJECTED");
 		statuses.add("SUBMITTED");
 		statuses.add("RETURNED");
+		statuses.add("RECEIVED");
 		
 		List<LocalPurchaseOrder> orders = localPurchaseOrderRepository.findAllByStatusIn(statuses);
 		
@@ -190,6 +191,7 @@ public class LocalPurchaseOrderResource {
 		model.setId(lpo_.get().getId());
 		model.setNo(lpo_.get().getNo());
 		model.setSupplier(lpo_.get().getSupplier());
+		model.setStore(lpo_.get().getStore());
 		model.setOrderDate(lpo_.get().getOrderDate());
 		model.setValidUntil(lpo_.get().getValidUntil());
 		model.setStatus(lpo_.get().getStatus());
@@ -248,6 +250,7 @@ public class LocalPurchaseOrderResource {
 		model.setId(lpo_.get().getId());
 		model.setNo(lpo_.get().getNo());
 		model.setSupplier(lpo_.get().getSupplier());
+		model.setStore(lpo_.get().getStore());
 		model.setOrderDate(lpo_.get().getOrderDate());
 		model.setValidUntil(lpo_.get().getValidUntil());
 		model.setStatus(lpo_.get().getStatus());

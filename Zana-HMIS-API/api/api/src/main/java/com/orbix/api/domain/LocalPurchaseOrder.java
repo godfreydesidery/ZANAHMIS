@@ -83,6 +83,12 @@ public class LocalPurchaseOrder {
     private Long approvedOn;
 	private LocalDateTime approvedAt;
 	
+	@Column(name = "received_by_user_id", nullable = true , updatable = true)
+    private Long receivedBy;
+	@Column(name = "received_on_day_id", nullable = true , updatable = true)
+    private Long receivedOn;
+	private LocalDateTime receivedAt;
+	
 	@OneToMany(targetEntity = LocalPurchaseOrderDetail.class, mappedBy = "localPurchaseOrder", fetch = FetchType.EAGER, orphanRemoval = true)
     @Valid
     @JsonIgnoreProperties("localPurchaseOrder")

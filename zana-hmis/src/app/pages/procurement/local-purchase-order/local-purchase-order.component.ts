@@ -53,6 +53,7 @@ export class LocalPurchaseOrderComponent {
   localPurchaseOrder! : ILocalPurchaseOrder
 
   supplier! : ISupplier
+  store! : IStore
 
   noLocked = false
 
@@ -426,6 +427,11 @@ export class LocalPurchaseOrderComponent {
     this.supplierCode  = ''
     this.supplierName  = ''
     this.supplierCodeAndName = ''
+
+    this.store!
+    this.storeId = null
+    this.storeCode = ''
+    this.storeName = ''
   }
 
 
@@ -451,8 +457,11 @@ export class LocalPurchaseOrderComponent {
         this.approved   = data!.approved
 
         this.supplier = data!.supplier
+        this.store = data!.store
 
         this.supplierName = this.supplier.name
+
+        this.storeName = this.store?.name
 
         this.localPurchaseOrder = data!
 
@@ -488,10 +497,13 @@ export class LocalPurchaseOrderComponent {
         this.approved   = data!.approved
 
         this.supplier = data!.supplier
+        this.store = data!.store
 
         this.supplierName = this.supplier.name
 
         this.localPurchaseOrder = data!
+
+        this.storeName = this.store?.name
 
         this.lock()
         console.log(data)

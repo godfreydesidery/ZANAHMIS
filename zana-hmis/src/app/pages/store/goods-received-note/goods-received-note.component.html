@@ -16,6 +16,7 @@
                     <button class="btn btn-primary btn-outline" (click)="clear()"><span class="glyphicon glyphicon-file"></span> New GRN</button>
                     <button class="btn btn-primary btn-outline" *ngIf="id != null"><span class="glyphicon glyphicon-floppy-disk"></span> Save</button>
                     <button class="btn btn-primary btn-outline" *ngIf="id != null && status === 'PENDING'" (click)="approveGRN()"><span class="glyphicon glyphicon-ok"></span> Approve&Update Stock</button>
+                    <button class="btn btn-primary btn-outline" (click)="printGRN()"><span class="glyphicon glyphicon-print"></span>Print GRN</button>
                 </div>
                 <div class="panel-body">
                     <div class="panel-body">

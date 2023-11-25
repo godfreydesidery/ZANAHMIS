@@ -403,4 +403,150 @@ export class GoodsReceivedNoteComponent {
     
 
   }
+
+
+  logo!    : any
+  documentHeader! : any
+  async printGRN(){
+    
+    if(this.goodsReceivedNote.goodsReceivedNoteDetails.length === 0){
+      this.msgBox.showErrorMessage3('Can not print an empty GRN')
+      return
+    }
+
+    this.documentHeader = await this.data.getDocumentHeader()
+    var header = ''
+    var footer = ''
+    var title  = 'Goods Received Note(GRN)'
+    var logo : any = ''
+    var total : number = 0
+    var discount : number = 0
+    var tax : number = 0
+
+    var report = [
+      [
+        {text : 'SN', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Code', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Name', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Qty', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Price', fontSize : 9, fillColor : '#bdc6c7'},
+        {text : 'Amount', fontSize : 9, fillColor : '#bdc6c7'},
+
+      ]
+    ]  
+
+    var sn : number = 1
+
+    var total = 0
+
+    
+    
+    this.goodsReceivedNote.goodsReceivedNoteDetails.forEach((element) => {
+      var detail = [
+        {text : sn.toString(), fontSize : 9, fillColor : '#ffffff'}, 
+        {text : element?.item?.code, fontSize : 9, fillColor : '#ffffff'},
+        {text : element?.item?.name, fontSize : 9, fillColor : '#ffffff'},
+        {text : element?.receivedQty.toString(), fontSize : 9, fillColor : '#ffffff'},
+        {text : element.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), fontSize : 9, alignment : 'right', fillColor : '#ffffff'},
+        {text : (element?.receivedQty * element?.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), fontSize : 9, alignment : 'right', fillColor : '#ffffff'},
+      ]
+      sn = sn + 1
+      total = total + element?.receivedQty * element?.price
+      report.push(detail)
+    })
+
+    var detailSummary = [
+      {text : '', fontSize : 9, fillColor : '#ffffff'}, 
+      {text : '', fontSize : 9, fillColor : '#ffffff'},
+      {text : '', fontSize : 9, fillColor : '#ffffff'},
+      {text : '', fontSize : 9, fillColor : '#ffffff'},
+      {text : 'Total', fontSize : 9, fillColor : '#ffffff'},
+      {text : total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), fontSize : 9, alignment : 'right', bold : true, fillColor : '#ffffff'},
+      
+    ]
+    report.push(detailSummary)
+   
+    const docDefinition : any = {
+      header: '',
+      footer: function (currentPage: { toString: () => string; }, pageCount: string) {
+        return currentPage.toString() + " of " + pageCount;
+      },
+      //watermark : { text : '', color: 'blue', opacity: 0.1, bold: true, italics: false },
+        content : [
+          {
+            columns : 
+            [
+              this.documentHeader
+            ]
+          },
+          '  ',
+          {text : title, fontSize : 14, bold : true, alignment : 'center'},
+          this.data.getHorizontalLine(),
+          {
+            columns : 
+            [
+              {
+                width : 200,
+                layout : 'noBorders',
+                table : {
+                  widths : [200],
+                  body : [
+                    [
+                      {text : 'Shipped To: ', fontSize : 9},
+                    ]
+                  ]
+                }
+              },
+              {
+                width : 100,
+                layout : 'noBorders',
+                table : {
+                  widths : [100],
+                  body : [
+                    [' ']
+                  ]
+                }
+              },
+              {
+                width : 200,
+                layout : 'noBorders',
+                table : {
+                  widths : [220],
+                  body : [
+                    [
+                      {text : 'GRN#: '+this.goodsReceivedNote?.no.toString(), fontSize : 12, bold : true},
+                    ],
+                    [
+                      {text : 'Status: '+this.goodsReceivedNote?.status, fontSize : 10, bold : true},
+                    ],
+                    //[
+                      //{text : 'Created: '+(new ShowDateTimePipe).transform(this.invoice.createdAt), fontSize : 9}, 
+                    //],
+                  ]
+                }
+              },
+              
+            ]
+          },
+
+          '  ',
+          {
+            //layout : 'noBorders',
+            table : {
+                headerRows : 1,
+                widths : [20, 50, 180, 30, 60, 80],
+                body : report
+            }
+        },
+        ' ',
+        'Approved',
+        ' ',
+        '...........................'
+         
+      ]     
+    };
+    pdfMake.createPdf(docDefinition).print()
+  }
+
+
 }
