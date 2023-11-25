@@ -132,19 +132,22 @@ public class GoodsReceivedNoteServiceImpl implements GoodsReceivedNoteService {
 			storeItemRepository.save(storeItem_.get());
 			
 			//Create item store stock card
-			StoreStockCard storeStockCard = new StoreStockCard();
-			storeStockCard.setItem(detail.getItem());
-			storeStockCard.setStore(goodsReceivedNote.getStore());
-			storeStockCard.setQtyIn(detail.getReceivedQty());
-			storeStockCard.setQtyOut(0);
-			storeStockCard.setBalance(newStock);
-			storeStockCard.setReference("Goods received GRN# " + goodsReceivedNote.getNo());
+			if(detail.getReceivedQty() > 0) {
+				StoreStockCard storeStockCard = new StoreStockCard();
+				storeStockCard.setItem(detail.getItem());
+				storeStockCard.setStore(goodsReceivedNote.getStore());
+				storeStockCard.setQtyIn(detail.getReceivedQty());
+				storeStockCard.setQtyOut(0);
+				storeStockCard.setBalance(newStock);
+				storeStockCard.setReference("Goods received GRN# " + goodsReceivedNote.getNo());
+				
+				storeStockCard.setCreatedBy(userService.getUserId(request));
+				storeStockCard.setCreatedOn(dayService.getDayId());
+				storeStockCard.setCreatedAt(dayService.getTimeStamp());
+				
+				storeStockCardRepository.save(storeStockCard);
+			}
 			
-			storeStockCard.setCreatedBy(userService.getUserId(request));
-			storeStockCard.setCreatedOn(dayService.getDayId());
-			storeStockCard.setCreatedAt(dayService.getTimeStamp());
-			
-			storeStockCardRepository.save(storeStockCard);
 			
 			//Add Store item batch
 			for(GoodsReceivedNoteDetailBatch batch : detail.getGoodsReceivedNoteDetailBatches()) {
@@ -164,17 +167,19 @@ public class GoodsReceivedNoteServiceImpl implements GoodsReceivedNoteService {
 		if(goodsReceivedNote.getLocalPurchaseOrder() != null) {
 			LocalPurchaseOrder localPurchaseOrder = goodsReceivedNote.getLocalPurchaseOrder();
 			for(GoodsReceivedNoteDetail detail : goodsReceivedNote.getGoodsReceivedNoteDetails()) {
-				Purchase purchase = new Purchase();
-				purchase.setItem(detail.getItem());
-				purchase.setQty(detail.getReceivedQty());
-				purchase.setAmount(detail.getReceivedQty() * detail.getPrice());
-				purchase.setGoodsReceivedNote(detail.getGoodsReceivedNote());
-				
-				purchase.setCreatedBy(userService.getUserId(request));
-				purchase.setCreatedOn(dayService.getDayId());
-				purchase.setCreatedAt(dayService.getTimeStamp());
-				
-				purchaseRepository.save(purchase);
+				if(detail.getReceivedQty() > 0) {
+					Purchase purchase = new Purchase();
+					purchase.setItem(detail.getItem());
+					purchase.setQty(detail.getReceivedQty());
+					purchase.setAmount(detail.getReceivedQty() * detail.getPrice());
+					purchase.setGoodsReceivedNote(detail.getGoodsReceivedNote());
+					
+					purchase.setCreatedBy(userService.getUserId(request));
+					purchase.setCreatedOn(dayService.getDayId());
+					purchase.setCreatedAt(dayService.getTimeStamp());
+					
+					purchaseRepository.save(purchase);
+				}
 			}
 			localPurchaseOrder.setStatus("RECEIVED");
 			
