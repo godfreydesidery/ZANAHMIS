@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +47,14 @@ public interface GoodsReceivedNoteRepository extends JpaRepository<GoodsReceived
 	 * @return
 	 */
 	List<GoodsReceivedNote> findAllByStoreAndStatusIn(Store store, List<String> statuses);
+
+	/**
+	 * @param localDateTime2 
+	 * @param localDateTime 
+	 * @param statuses
+	 * @return
+	 */
+	List<GoodsReceivedNote> findAllByApprovedAtBetweenAndStatusIn(LocalDateTime localDateTime, LocalDateTime localDateTime2, List<String> statuses);
 
 	
 }

@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +32,15 @@ public interface LocalPurchaseOrderRepository extends JpaRepository<LocalPurchas
 	 * @return
 	 */
 	List<LocalPurchaseOrder> findAllByStatusIn(List<String> statuses);
+
+	/**
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @param statuses
+	 * @return
+	 */
+	List<LocalPurchaseOrder> findAllByApprovedAtBetweenAndStatusIn(LocalDateTime atStartOfDay, LocalDateTime plusDays,
+			List<String> statuses);
+	
+	
 }

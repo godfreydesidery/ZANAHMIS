@@ -219,11 +219,13 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <span class="label label-primary label-lg m-r-15">Patient Type: {{type}}</span><span class="label label-success label-lg m-r-15" (click)="changeType()">Change Patient Type</span><br><br>
-                                            <span class="label label-primary m-r-15">Payment Type: {{paymentType}}</span><span class="label label-success label-lg m-r-15" (click)="clearEditPaymentType()" (click)="clearEditMembershipNo()" (click)="clearEditInsurancePlanName()" data-toggle="modal" data-target="#change-payment-type-modal">Change Payment Type</span><br><br>
-                                            <div *ngIf="paymentType === 'INSURANCE'">
-                                                <span class="label label-primary m-r-15">Insurance: {{insurancePlanName}}</span><br><br>
-                                                <span class="label label-primary m-r-15">Membership No: {{membershipNo}}</span><br><br>
+                                            <span class="label label-primary label-lg m-r-15">Patient Type: {{type}}</span><span class="label label-success label-lg m-r-15" *ngIf="type === 'OUTPATIENT' || type === 'INPATIENT' || type === 'OUTSIDER'" (click)="changeType()">Change Patient Type</span><br><br>
+                                            <div *ngIf="type === 'OUTPATIENT' || type === 'INPATIENT' || type === 'OUTSIDER'">
+                                                <span class="label label-primary m-r-15">Payment Type: {{paymentType}}</span><span class="label label-success label-lg m-r-15" (click)="clearEditPaymentType()" (click)="clearEditMembershipNo()" (click)="clearEditInsurancePlanName()" data-toggle="modal" data-target="#change-payment-type-modal">Change Payment Type</span><br><br>
+                                                <div *ngIf="paymentType === 'INSURANCE'">
+                                                    <span class="label label-primary m-r-15">Insurance: {{insurancePlanName}}</span><br><br>
+                                                    <span class="label label-primary m-r-15">Membership No: {{membershipNo}}</span><br><br>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">

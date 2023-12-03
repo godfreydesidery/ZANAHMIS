@@ -143,6 +143,7 @@ import { SupplierItemPriceListComponent } from './pages/procurement/supplier-ite
 import { GoodsReceivedNoteComponent } from './pages/store/goods-received-note/goods-received-note.component';
 import { StorePersonComponent } from './pages/admin/personnel/store-person/store-person.component';
 import { StoreItemStockStatusComponent } from './pages/store/store-item-stock-status/store-item-stock-status.component';
+import { GoodsReceivedNoteReportComponent } from './pages/store/reports/goods-received-note-report/goods-received-note-report.component';
 
 @NgModule({
   declarations: [

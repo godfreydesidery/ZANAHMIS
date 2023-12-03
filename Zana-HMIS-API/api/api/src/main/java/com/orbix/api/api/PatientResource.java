@@ -283,6 +283,10 @@ public class PatientResource {
 		if(p.isEmpty()) {
 			throw new NotFoundException("Patient not found");
 		}
+		
+		if(!(patient.getType() == "OUTPATIENT" || patient.getType() == "INPATIENT" || patient.getType() == "OUTSIDER")) {
+			throw new InvalidOperationException("Payment type can only be changed to OUTPATIENT, INPATIENT or OUTSIDER");
+		}
 				
 		List<String> statuses = new ArrayList<>();
 		statuses.add("PENDING");
@@ -473,20 +477,23 @@ public class PatientResource {
 
 			@RequestParam Long patient_id, @RequestParam String clinic_name, @RequestParam String clinician_name, 
 			HttpServletRequest request){
-		Optional<Patient> p = patientRepository.findById(patient_id);
+		Optional<Patient> patient_ = patientRepository.findById(patient_id);
 		Optional<Clinic> c = clinicRepository.findByName(clinic_name);
 		Optional<Clinician> cn = clinicianRepository.findByNickname(clinician_name);
 		
 		List<String> statuses = new ArrayList<>();
 		statuses.add("PENDING");
 		statuses.add("IN-PROCESS");
-		List<Admission> adms = admissionRepository.findAllByPatientAndStatusIn(p.get(), statuses);
+		List<Admission> adms = admissionRepository.findAllByPatientAndStatusIn(patient_.get(), statuses);
 		if(!adms.isEmpty()) {
 			throw new InvalidOperationException("Could not process consultation, the patient has an active admission");
 		}
+		if(!patient_.get().getType().equals("OUTPATIENT")) {
+			throw new InvalidOperationException("Please change patient type to OUTPATIENT to continue with operation");
+		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/do_consultation").toUriString());
-		return ResponseEntity.created(uri).body(patientService.doConsultation(p.get(), c.get(), cn.get(), request));
+		return ResponseEntity.created(uri).body(patientService.doConsultation(patient_.get(), c.get(), cn.get(), request));
 	}
 	
 	@PostMapping("/patients/create_consultation_transfer")
@@ -1397,17 +1404,23 @@ public class PatientResource {
 			@RequestParam Long non_consultation_id, 
 			@RequestParam Long admission_id,
 			HttpServletRequest request){
-		Optional<Consultation> c = consultationRepository.findById(consultation_id);
-		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		Optional<Consultation> consultation_ = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nonConsultation_ = nonConsultationRepository.findById(non_consultation_id);
 		Optional<Admission> adm = admissionRepository.findById(admission_id);
 		
 		Optional<LabTestType> lt = labTestTypeRepository.findById(labTest.getLabTestType().getId());
-		if(c.isPresent()) {
-			if(labTestRepository.existsByConsultationAndLabTestType(c.get(), lt.get())) {
+		if(consultation_.isPresent()) {
+			if(!consultation_.get().getPatient().getType().equals("OUTPATIENT")) {
+				throw new InvalidOperationException("Patient is not an outpatient. Please reload patient to continue with this operation.");
+			}
+			if(labTestRepository.existsByConsultationAndLabTestType(consultation_.get(), lt.get())) {
 				throw new InvalidOperationException("Duplicate Lab Test Types is not allowed");
 			}
-		}else if(nc.isPresent()) {
-			if(labTestRepository.existsByNonConsultationAndLabTestType(nc.get(), lt.get())) {
+		}else if(nonConsultation_.isPresent()) {
+			if(!nonConsultation_.get().getPatient().getType().equals("OUTSIDER")) {
+				throw new InvalidOperationException("Patient is not an outsider. Please reload patient to continue with this operation.");
+			}
+			if(labTestRepository.existsByNonConsultationAndLabTestType(nonConsultation_.get(), lt.get())) {
 				throw new InvalidOperationException("Duplicate Lab Test Types is not allowed");
 			}
 		}
@@ -1423,7 +1436,7 @@ public class PatientResource {
 		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_lab_test").toUriString());
-		return ResponseEntity.created(uri).body(patientService.saveLabTest(labTest, c, nc, adm, request));
+		return ResponseEntity.created(uri).body(patientService.saveLabTest(labTest, consultation_, nonConsultation_, adm, request));
 	}
 	
 	@PostMapping("/patients/save_radiology")
@@ -1434,17 +1447,23 @@ public class PatientResource {
 			@RequestParam Long non_consultation_id, 
 			@RequestParam Long admission_id,
 			HttpServletRequest request){
-		Optional<Consultation> c = consultationRepository.findById(consultation_id);
-		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		Optional<Consultation> consultation_ = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nonConsultation_ = nonConsultationRepository.findById(non_consultation_id);
 		Optional<Admission> adm = admissionRepository.findById(admission_id);
 		
 		Optional<RadiologyType> lt = radiologyTypeRepository.findById(radiology.getRadiologyType().getId());
-		if(c.isPresent()) {
-			if(radiologyRepository.existsByConsultationAndRadiologyType(c.get(), lt.get())) {
+		if(consultation_.isPresent()) {
+			if(!consultation_.get().getPatient().getType().equals("OUTPATIENT")) {
+				throw new InvalidOperationException("Patient is not an outpatient. Please reload patient to continue with this operation.");
+			}
+			if(radiologyRepository.existsByConsultationAndRadiologyType(consultation_.get(), lt.get())) {
 				throw new InvalidOperationException("Duplicate Radiology Types is not allowed");
 			}
-		}else if(nc.isPresent()) {
-			if(radiologyRepository.existsByNonConsultationAndRadiologyType(nc.get(), lt.get())) {
+		}else if(nonConsultation_.isPresent()) {
+			if(!nonConsultation_.get().getPatient().getType().equals("OUTSIDER")) {
+				throw new InvalidOperationException("Patient is not an outsider. Please reload patient to continue with this operation.");
+			}
+			if(radiologyRepository.existsByNonConsultationAndRadiologyType(nonConsultation_.get(), lt.get())) {
 				throw new InvalidOperationException("Duplicate Radiology Types is not allowed");
 			}
 		}
@@ -1461,7 +1480,7 @@ public class PatientResource {
 		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_radiology").toUriString());
-		return ResponseEntity.created(uri).body(patientService.saveRadiology(radiology, c, nc, adm, request));
+		return ResponseEntity.created(uri).body(patientService.saveRadiology(radiology, consultation_, nonConsultation_, adm, request));
 	}
 	
 	@PostMapping("/patients/radiologies/save_reason_for_rejection")
@@ -1503,18 +1522,24 @@ public class PatientResource {
 			@RequestParam Long non_consultation_id,
 			@RequestParam Long admission_id,
 			HttpServletRequest request){
-		Optional<Consultation> c = consultationRepository.findById(consultation_id);
-		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		Optional<Consultation> consultation_ = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nonConsultation_ = nonConsultationRepository.findById(non_consultation_id);
 		Optional<Admission> adm = admissionRepository.findById(admission_id);
 		
 		Optional<ProcedureType> lt = procedureTypeRepository.findById(procedure.getProcedureType().getId());
 		
-		if(c.isPresent()) {
-			if(procedureRepository.existsByConsultationAndProcedureType(c.get(), lt.get())) {
+		if(consultation_.isPresent()) {
+			if(!consultation_.get().getPatient().getType().equals("OUTPATIENT")) {
+				throw new InvalidOperationException("Patient is not an outpatient. Please reload patient to continue with this operation.");
+			}
+			if(procedureRepository.existsByConsultationAndProcedureType(consultation_.get(), lt.get())) {
 				throw new InvalidOperationException("Duplicate Procedure Types is not allowed");
 			}
-		}else if(nc.isPresent()) {
-			if(procedureRepository.existsByNonConsultationAndProcedureType(nc.get(), lt.get())) {
+		}else if(nonConsultation_.isPresent()) {
+			if(!nonConsultation_.get().getPatient().getType().equals("OUTSIDER")) {
+				throw new InvalidOperationException("Patient is not an outsider. Please reload patient to continue with this operation.");
+			}
+			if(procedureRepository.existsByNonConsultationAndProcedureType(nonConsultation_.get(), lt.get())) {
 				throw new InvalidOperationException("Duplicate Procedure Types is not allowed");
 			}
 		}
@@ -1530,7 +1555,7 @@ public class PatientResource {
 		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_procedure").toUriString());
-		return ResponseEntity.created(uri).body(patientService.saveProcedure(procedure, c, nc, adm, request));
+		return ResponseEntity.created(uri).body(patientService.saveProcedure(procedure, consultation_, nonConsultation_, adm, request));
 	}
 	
 	@PostMapping("/patients/save_prescription")
@@ -1540,17 +1565,23 @@ public class PatientResource {
 			@RequestParam Long non_consultation_id, 
 			@RequestParam Long admission_id,
 			HttpServletRequest request){
-		Optional<Consultation> c = consultationRepository.findById(consultation_id);
-		Optional<NonConsultation> nc = nonConsultationRepository.findById(non_consultation_id);
+		Optional<Consultation> consultation_ = consultationRepository.findById(consultation_id);
+		Optional<NonConsultation> nonConsultation_ = nonConsultationRepository.findById(non_consultation_id);
 		Optional<Admission> adm = admissionRepository.findById(admission_id);
 		
 		Optional<Medicine> lt = medicineRepository.findById(prescription.getMedicine().getId());
-		if(c.isPresent()) {
-			if(prescriptionRepository.existsByConsultationAndMedicine(c.get(), lt.get())) {
+		if(consultation_.isPresent()) {
+			if(!consultation_.get().getPatient().getType().equals("OUTPATIENT")) {
+				throw new InvalidOperationException("Patient is not an outpatient. Please reload patient to continue with this operation.");
+			}
+			if(prescriptionRepository.existsByConsultationAndMedicine(consultation_.get(), lt.get())) {
 				throw new InvalidOperationException("Duplicate drug is not allowed. Consider editing qty");
 			}
-		}else if(nc.isPresent()) {
-			if(prescriptionRepository.existsByConsultationAndMedicine(c.get(), lt.get())) {
+		}else if(nonConsultation_.isPresent()) {
+			if(!nonConsultation_.get().getPatient().getType().equals("OUTSIDER")) {
+				throw new InvalidOperationException("Patient is not an outsider. Please reload patient to continue with this operation.");
+			}
+			if(prescriptionRepository.existsByConsultationAndMedicine(consultation_.get(), lt.get())) {
 				throw new InvalidOperationException("Duplicate drug is not allowed. Consider editing qty");
 			}
 		}
@@ -1566,7 +1597,7 @@ public class PatientResource {
 		}
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/patients/save_prescription").toUriString());
-		return ResponseEntity.created(uri).body(patientService.savePrescription(prescription, c, nc, adm, request));
+		return ResponseEntity.created(uri).body(patientService.savePrescription(prescription, consultation_, nonConsultation_, adm, request));
 	}
 	
 	@PostMapping("/patients/save_patient_dressing_chart")

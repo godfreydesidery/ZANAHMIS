@@ -350,6 +350,7 @@ export class AppComponent {
         {path : 'pharmacy-to-store-r-o-list', loadComponent : () => import('./pages/store/pharmacy-to-store-r-o-list/pharmacy-to-store-r-o-list.component').then(m => m.PharmacyToStoreROListComponent), canActivate: [AuthGuard]},
         {path : 'goods-received-note', loadComponent : () => import('./pages/store/goods-received-note/goods-received-note.component').then(m => m.GoodsReceivedNoteComponent), canActivate: [AuthGuard]},
         {path : 'store-item-stock-status', loadComponent : () => import('./pages/store/store-item-stock-status/store-item-stock-status.component').then(m => m.StoreItemStockStatusComponent), canActivate: [AuthGuard]},
+        {path : 'goods-received-note-report', loadComponent : () => import('./pages/store/reports/goods-received-note-report/goods-received-note-report.component').then(m => m.GoodsReceivedNoteReportComponent), canActivate: [AuthGuard]},
       )
     }
 
@@ -359,6 +360,7 @@ export class AppComponent {
         {path : 'supplier-item-price-list', loadComponent : () => import('./pages/procurement/supplier-item-price-list/supplier-item-price-list.component').then(m => m.SupplierItemPriceListComponent), canActivate: [AuthGuard]},
         {path : 'supplier-register', loadComponent : () => import('./pages/admin/stakeholders/supplier-register/supplier-register.component').then(m => m.SupplierRegisterComponent), canActivate: [AuthGuard]},
         {path : 'item-register', loadComponent : () => import('./pages/admin/inventory/item-register/item-register.component').then(m => m.ItemRegisterComponent), canActivate: [AuthGuard]},
+        {path : 'local-purchase-order-report', loadComponent : () => import('./pages/procurement/reports/local-purchase-order-report/local-purchase-order-report.component').then(m => m.LocalPurchaseOrderReportComponent), canActivate: [AuthGuard]},
       )
     }
     loadAdminModule(){

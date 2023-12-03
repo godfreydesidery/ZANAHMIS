@@ -18,4 +18,10 @@ export interface IGoodsReceivedNoteDetail {
     created     : string
     verified    : string
     approved    : string
+
+     /**
+     * Auxilliary attributes
+     */
+
+      sn : number
 }

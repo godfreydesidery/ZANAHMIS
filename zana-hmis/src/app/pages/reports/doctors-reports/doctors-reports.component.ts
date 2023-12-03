@@ -621,7 +621,7 @@ export class DoctorsReportsComponent {
         {text : element?.radiologyType?.name.toString(), fontSize : 7, fillColor : '#ffffff'},  
         {text : this.getRadiologyPaymentType(element), fontSize : 7, fillColor : '#ffffff'}, 
         {text : new ShowDateOnlyPipe().transform(element?.createdAt).toString(), fontSize : 7, fillColor : '#ffffff'}, 
-        {text : element.status.toString(), fontSize : 7, fillColor : '#ffffff'}, 
+        {text : element.patient.type.toString(), fontSize : 7, fillColor : '#ffffff'}, 
       ]
       report.push(detail)
     })

@@ -197,6 +197,17 @@
                         <ul class="treeview-menu">
                             <li><a routerLink="/select-store">Select Store</a></li>
                             <li><a routerLink="/item-medicine-conversion-coefficient">Item Medicine Coefficient</a></li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-file-text"></i><span>Reports</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a routerLink="/goods-received-note-report">Goods Received Note Report</a></li>
+                                </ul>
+                            </li>
                         </ul>
                         <!--<ul class="treeview-menu">
                             <li><a routerLink="/item-inquiry">Item Inquiry</a></li>
@@ -226,6 +237,17 @@
                             <li><a routerLink="/supplier-item-price-list">Supplier Price List</a></li>
                             <li><a routerLink="/supplier-register">Supplier Register</a></li>
                             <li><a routerLink="/item-register">Item Register</a></li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-file-text"></i><span>Reports</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a routerLink="/local-purchase-order-report">Local Purchase Order Report</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
                     <li class="treeview" *ngIf="grant(['ADMIN-ACCESS'])">

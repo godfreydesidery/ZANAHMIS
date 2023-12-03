@@ -180,6 +180,7 @@ D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\doma
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\reports\models\DailySalesReport.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\models\PharmacyToStoreRODetailModel.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\service\WardTypeService.java
+D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\reports\service\LocalPurchaseOrderReportService.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\models\PharmacyToStoreROModel.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\domain\NonConsultation.java
 D:\My Works\Zana\ZANAHMIS\Zana-HMIS-API\api\api\src\main\java\com\orbix\api\repositories\StoreItemBatchRepository.java

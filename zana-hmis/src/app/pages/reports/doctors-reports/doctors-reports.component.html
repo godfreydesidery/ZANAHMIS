@@ -104,7 +104,7 @@
                                             <span *ngIf="consultation.insurancePlan != null">{{consultation?.insurancePlan?.name}}</span>
                                         </td>
                                         <td>{{consultation.createdAt | dateOnly}}</td>
-                                        <td>{{consultation?.status}}</td>
+                                        <td>{{consultation?.patient?.type}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -136,7 +136,7 @@
                                         </td>
                                         <td>{{labTest?.labTestType?.name}}</td>
                                         <td>{{labTest.createdAt | dateOnly}}</td>
-                                        <td>{{labTest?.status}}</td>
+                                        <td>{{labTest?.patient?.type}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -168,7 +168,7 @@
                                         </td>
                                         <td>{{radiology?.radiologyType?.name}}</td>
                                         <td>{{radiology.createdAt | dateOnly}}</td>
-                                        <td>{{radiology?.status}}</td>
+                                        <td>{{radiology?.patient?.type}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -200,7 +200,7 @@
                                         </td>
                                         <td>{{procedure?.procedureType?.name}}</td>
                                         <td>{{procedure.createdAt | dateOnly}}</td>
-                                        <td>{{procedure?.status}}</td>
+                                        <td>{{procedure?.patient?.type}}</td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -25,9 +25,14 @@ import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.DiagnosisType;
+import com.orbix.api.domain.GoodsReceivedNote;
+import com.orbix.api.domain.GoodsReceivedNoteDetail;
 import com.orbix.api.domain.InsurancePlan;
+import com.orbix.api.domain.Item;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.LabTestType;
+import com.orbix.api.domain.LocalPurchaseOrder;
+import com.orbix.api.domain.LocalPurchaseOrderDetail;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientBill;
@@ -35,14 +40,20 @@ import com.orbix.api.domain.PatientInvoiceDetail;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
+import com.orbix.api.domain.Supplier;
 import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.LabTestModel;
+import com.orbix.api.reports.models.GrnReport;
 import com.orbix.api.reports.models.LabTestTypeReport;
+import com.orbix.api.reports.models.LpoReport;
+import com.orbix.api.reports.service.LocalPurchaseOrderReportService;
 import com.orbix.api.repositories.ClinicianRepository;
 import com.orbix.api.repositories.ConsultationRepository;
+import com.orbix.api.repositories.GoodsReceivedNoteRepository;
 import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
+import com.orbix.api.repositories.LocalPurchaseOrderRepository;
 import com.orbix.api.repositories.PatientBillRepository;
 import com.orbix.api.repositories.PatientInvoiceDetailRepository;
 import com.orbix.api.repositories.PatientRepository;
@@ -79,6 +90,9 @@ public class ReportResource {
 	private final PatientRepository patientRepository;
 	private final PatientBillRepository patientBillRepository;
 	private final LabTestTypeRepository labTestTypeRepository;
+	
+	private final LocalPurchaseOrderRepository localPurchaseOrderRepository;
+	private final GoodsReceivedNoteRepository goodsReceivedNoteRepository;
 	
 	@PostMapping("/reports/consultation_report")
 	public ResponseEntity<List<Consultation>>getConsultationReport(
@@ -397,6 +411,42 @@ public class ReportResource {
 		return ResponseEntity.ok().body(bills);
 	}
 	
+	@PostMapping("/reports/local_purchase_order_report")
+	public ResponseEntity<List<LocalPurchaseOrderDetail>> lpoReport(
+			@RequestBody LocalPurchaseOrderReportArgs args){
+		
+		List<String> statuses = new ArrayList<>();
+		statuses.add("SUBMITTED");
+		statuses.add("RECEIVED");
+		statuses.add("ARCHIVED");
+		List<LocalPurchaseOrder> localPurchaseOrders = localPurchaseOrderRepository.findAllByApprovedAtBetweenAndStatusIn(args.from.atStartOfDay(), args.to.atStartOfDay().plusDays(1), statuses);
+		List<LocalPurchaseOrderDetail> localPurchaseOrderDetails = new ArrayList<>();
+		for(LocalPurchaseOrder order : localPurchaseOrders) {
+			for(LocalPurchaseOrderDetail detail : order.getLocalPurchaseOrderDetails()) {
+				localPurchaseOrderDetails.add(detail);
+			}
+		}
+		return ResponseEntity.ok().body(localPurchaseOrderDetails);
+	}
+	
+	@PostMapping("/reports/goods_received_note_report")
+	public ResponseEntity<List<GoodsReceivedNoteDetail>> grnReport(
+			@RequestBody GoodsReceivedNoteReportArgs args){
+		
+		List<String> statuses = new ArrayList<>();
+		statuses.add("APPROVED");
+		statuses.add("RECEIVED");
+		statuses.add("ARCHIVED");
+		List<GoodsReceivedNote> goodsReceivedNotes = goodsReceivedNoteRepository.findAllByApprovedAtBetweenAndStatusIn(args.from.atStartOfDay(), args.to.atStartOfDay().plusDays(1), statuses);
+		List<GoodsReceivedNoteDetail> goodsReceivedNoteDetails = new ArrayList<>();
+		for(GoodsReceivedNote note : goodsReceivedNotes) {
+			for(GoodsReceivedNoteDetail detail : note.getGoodsReceivedNoteDetails()) {
+				goodsReceivedNoteDetails.add(detail);
+			}
+		}
+		return ResponseEntity.ok().body(goodsReceivedNoteDetails);
+	}
+	
 }
 
 @Data
@@ -442,8 +492,18 @@ class PatientBillReportArgs {
 	LocalDate to;
 }
 
+@Data
+class LocalPurchaseOrderReportArgs {
+	LocalDate from;
+	LocalDate to;
+	Supplier supplier;
+	List<Item> items;
+}
 
-
-
-
-
+@Data
+class GoodsReceivedNoteReportArgs {
+	LocalDate from;
+	LocalDate to;
+	Supplier supplier;
+	List<Item> items;
+}

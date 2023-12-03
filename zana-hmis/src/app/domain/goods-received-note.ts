@@ -1,9 +1,11 @@
 import { IGoodsReceivedNoteDetail } from "./goods-received-note-detail"
 import { ILocalPurchaseOrder } from "./local-purchase-order"
+import { IStore } from "./store"
 
 export interface IGoodsReceivedNote {
     id            : any
     no            : string
+    store         : IStore
     status        : string
     statusDescription : string
 
