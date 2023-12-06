@@ -12,7 +12,7 @@ export class DownloadFileService {
 
   constructor(private http: HttpClient) { }
 
-  downloadLabTestAttachment(filename: string): Observable<any> {
+  async downloadLabTestAttachment(filename: string): Promise<Observable<any>> {
     return this.http.get(API_URL + `/patients/download_lab_test_attachment?file_name=` + filename, { responseType: 'blob' })
     .pipe(map((response)=>{
         return {

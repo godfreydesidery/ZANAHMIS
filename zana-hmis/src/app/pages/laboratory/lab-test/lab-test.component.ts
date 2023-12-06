@@ -342,10 +342,11 @@ export class LabTestComponent implements OnInit {
 
  fileExtension : string = ''
 
-  downloadFile(fileName : string) {
+  async downloadFile(fileName : string) {
     
     //calling service
-    (this.downloadService.downloadLabTestAttachment(fileName))
+    
+    (await (this.downloadService.downloadLabTestAttachment(fileName)))
     .subscribe(response => {
 
         console.log(response)
