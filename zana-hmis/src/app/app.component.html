@@ -33,7 +33,7 @@
                       <li class="dropdown">
                           <a href="#" class="dropdown-toggle" data-toggle="dropdown"> 
 
-                              <i class="hvr-buzz-out fa fa-user"></i><span style="color: wheat;">{{userName}}</span>
+                              <span style="color: rgb(255, 255, 255); font-size: large; font-weight: bold;">{{userName}}</span><i class="fa fa-user"></i>
                           <div>
                           <!--<img src="assets/dist/img/avatar4.png" class="img-circle" height="40" width="40" alt="User Image">-->
                             
@@ -73,13 +73,14 @@
                     </li>
                     <li class="treeview" *ngIf="grant(['PATIENT-ALL','PATIENT-CREATE','PATIENT-UPDATE'])">
                         <a href="#" (click)="loadRegistrationModule()">
-                            <i class="fa fa-wheelchair"></i><span>Patient</span>
+                            <i class="fa fa-wheelchair"></i><span>Reception</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
                         </a>
                         <ul class="treeview-menu">
                             <li><a routerLink="/patient-register">Patient Register</a></li>
+                            <li><a>Requisition Order</a></li>
                             <!--<li><a href="#">Outsider Patient</a></li>
                             <li><a href="#">NHIF Patient List</a></li>-->
                         </ul>
@@ -109,6 +110,7 @@
                             <li><a routerLink="/nurse-outpatient-list">Outpatient List</a></li>
                             <li><a routerLink="/nurse-inpatient-list">Inpatient List</a></li>
                             <li><a routerLink="/nurse-outsider-list">Outsider List</a></li>
+                            <li><a>Requisition Order</a></li>
                         </ul>
                     </li>
 
@@ -124,6 +126,7 @@
                             <li><a routerLink="/lab-inpatient-list">Inpatient List</a></li>
                             <li><a routerLink="/lab-outsider-list">Outsider List</a></li>
                             <li><a routerLink="/patient-results">Patient Results</a></li>
+                            <li><a>Requisition Order</a></li>
                             <li class="treeview">
                                 <a href="#">
                                     <i class="fa fa-file-text"></i><span>Reports</span>
@@ -150,6 +153,7 @@
                             <li><a routerLink="/radiology-outpatient-list">Outpatient List</a></li>
                             <li><a routerLink="/radiology-inpatient-list">Inpatient List</a></li>
                             <li><a routerLink="/radiology-outsider-list">Outsider List</a></li>
+                            <li><a>Requisition Order</a></li>
                         </ul>
                     </li>
                     <li class="treeview" *ngIf="grant(['PHARMACY_SERVICE-ACCESS'])">
@@ -185,6 +189,7 @@
                             <li><a routerLink="/referral-list">Referral List</a></li>
                             <li><a routerLink="/registration-prices">Price View</a></li>
                             <li><a routerLink="/patient-report">Patient Report</a></li>
+                            <li><a>Requisition Order</a></li>
                         </ul>
                     </li>
                     <li class="treeview" *ngIf="grant(['STORE_SERVICE-ACCESS'])">
@@ -197,6 +202,7 @@
                         <ul class="treeview-menu">
                             <li><a routerLink="/select-store">Select Store</a></li>
                             <li><a routerLink="/item-medicine-conversion-coefficient">Item Medicine Coefficient</a></li>
+                            <li><a>Requisition Order</a></li>
                             <li class="treeview">
                                 <a href="#">
                                     <i class="fa fa-file-text"></i><span>Reports</span>
@@ -205,7 +211,7 @@
                                     </span>
                                 </a>
                                 <ul class="treeview-menu">
-                                    <li><a routerLink="/goods-received-note-report">Goods Received Note Report</a></li>
+                                    <li><a routerLink="/goods-received-note-report">GRN Report</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -233,10 +239,11 @@
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a routerLink="/local-purchase-order">Local Purchase Order</a></li>
+                            <li><a routerLink="/local-purchase-order">LPO</a></li>
                             <li><a routerLink="/supplier-item-price-list">Supplier Price List</a></li>
                             <li><a routerLink="/supplier-register">Supplier Register</a></li>
                             <li><a routerLink="/item-register">Item Register</a></li>
+                            <li><a>Requisition Order</a></li>
                             <li class="treeview">
                                 <a href="#">
                                     <i class="fa fa-file-text"></i><span>Reports</span>
@@ -245,7 +252,7 @@
                                     </span>
                                 </a>
                                 <ul class="treeview-menu">
-                                    <li><a routerLink="/local-purchase-order-report">Local Purchase Order Report</a></li>
+                                    <li><a routerLink="/local-purchase-order-report">LPO Report</a></li>
                                 </ul>
                             </li>
                         </ul>

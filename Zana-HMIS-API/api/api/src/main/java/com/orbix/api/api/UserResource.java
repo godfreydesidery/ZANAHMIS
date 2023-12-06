@@ -316,7 +316,7 @@ public class UserResource {
 		if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 			try {
 				String refresh_token = authorizationHeader.substring("Bearer ".length());
-				Algorithm algorithm = Algorithm.HMAC256("secretkey".getBytes());
+				Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
 				JWTVerifier verifier = JWT.require(algorithm).build();
 				DecodedJWT decodedJWT = verifier.verify(refresh_token);
 				String username =decodedJWT.getSubject();
@@ -480,7 +480,7 @@ public class UserResource {
 	
 	private String getUsernameFromAuthorizationHeader(String authorizationHeader) {
 		String token = authorizationHeader.substring("Bearer ".length());
-		Algorithm algorithm = Algorithm.HMAC256("secretkey".getBytes());
+		Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJWT = verifier.verify(token);
 		String username = decodedJWT.getSubject();

@@ -338,45 +338,36 @@ export class LabTestComponent implements OnInit {
   }
 
 
- attachmentUrl : any
+ attachmentUrl : any = ''
 
  fileExtension : string = ''
 
   downloadFile(fileName : string) {
-
-    this.attachmentUrl = ''
-
+    
     //calling service
-    this.downloadService.downloadLabTestAttachment(fileName)
-    .subscribe((response) => {
+    (this.downloadService.downloadLabTestAttachment(fileName))
+    .subscribe(response => {
 
-        console.log(response);
-        var binaryData = [];
-        binaryData.push(response.data);
-        var url = window.URL.createObjectURL(new Blob(binaryData, {type: "application/*"}));
+        console.log(response)
+        var binaryData = []
+        binaryData.push(response.data)
+        var url = window.URL.createObjectURL(new Blob(binaryData, {type: "application/*"}))
         
         this.attachmentUrl = url
         
-        var ext = response.filename.substr(response.filename.lastIndexOf('.') + 1);
+        var ext = response.filename.substr(response.filename.lastIndexOf('.') + 1)
         if(ext === 'pdf'){
           this.fileExtension = 'pdf'
+        }else{
+          this.fileExtension = ext
         }
-
-
+        console.log(ext)
 
     }, (error: any) => {
 
-        console.log(error);
-    });
-}
-
-
-  
-
-
-
-
-
+        console.log(error)
+    })
+  }
 
   public grant(privilege : string[]) : boolean{
     /**Allow user to perform an action if the user has that priviledge */

@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import swal from 'sweetalert2';
+import swal, { SweetAlertIcon } from 'sweetalert2';
 
 
 @Injectable({
@@ -32,6 +32,28 @@ export class MsgBoxService {
       title: 'Error',
       text: message
     })
+  }
+
+  public async showConfirmMessageDialog(title : string, text : string, icon : SweetAlertIcon | undefined, confirmButtonText : string, cancelButtonText : string) : Promise<boolean>{
+    var confirmed = false
+    await swal.fire({
+      title : title,
+      text : text,
+      icon : icon,
+      width : '500',
+      showCancelButton : true,
+      confirmButtonText : confirmButtonText,
+      confirmButtonColor : '#009688',
+      cancelButtonText : cancelButtonText,
+      cancelButtonColor : '#e5343d'
+    }).then(async (result) => {
+      if(result.value) {
+        confirmed = true
+      } else { 
+        confirmed = false
+      }
+    })
+    return confirmed
   }
 
   public showErrorMessage(error : HttpErrorResponse, msg : string){

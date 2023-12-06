@@ -25,6 +25,8 @@ import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 
+import swal from 'sweetalert2';
+
 const API_URL = environment.apiUrl;
 
 @Component({
@@ -833,7 +835,10 @@ export class PatientRegisterComponent implements OnInit {
   }
 
   async doConsultation(){
-    if(!window.confirm('Send the selected patient to doctor?')){
+    //if(!window.confirm('Send the selected patient to doctor?')){
+      //return
+    //}
+    if(!(await this.msgBox.showConfirmMessageDialog('Are you sure you want to send this patient to doctor?', 'A doctor consultation will be created. An uncovered patient will be required to clear consultation bill before seeing the doctor.', 'question', 'Yes, Send to Doctor', 'No, Do not send'))){
       return
     }
     let options = {
@@ -903,10 +908,19 @@ export class PatientRegisterComponent implements OnInit {
   regNoToFree : string = ''
 
   async freeInProcessConsultation(consultation : IConsultation){
-    if(!window.confirm('Free patient from this consultation?')){
+    //if(!window.confirm('Free patient from this consultation?')){
+      //return
+    //}
+
+    if(await this.msgBox.showConfirmMessageDialog('Free patient from this consultation?', 'You are about to free the patient', 'question', 'Continue to free', 'Do not free')  === false){
       return
     }
-    if(!window.confirm('Freing the patient will remove the patient from doctor list!. Continue freing the patient?')){
+
+    //if(!window.confirm('Freing the patient will remove the patient from doctor list!. Continue freing the patient?')){
+      //return
+    //}
+
+    if(await this.msgBox.showConfirmMessageDialog('Freeing the patient will remove the patient from doctor list!. Continue freeing the patient?', 'Patient will be freed from the active consultation', 'question', 'Free the Patient', 'Do not free')  === false){
       return
     }
     let options = {
@@ -994,9 +1008,73 @@ export class PatientRegisterComponent implements OnInit {
 
   async changeType(){
 
-    if(!window.confirm('Confirm changing patient type. Confirm?')){
+    var newPatientType = ''
+    if(this.type === 'OUTPATIENT'){
+      newPatientType = 'OUTSIDER'
+    }else if(this.type === 'OUTSIDER'){
+      newPatientType = 'OUTPATIENT'
+    }else{
       return
     }
+
+
+    /*var toChange = false
+
+    await swal.fire({
+      title : 'Are you sure?',
+      text : 'Patient type will be changed',
+      icon : 'question',
+      showCancelButton : true,
+      confirmButtonText : 'Yes',
+      cancelButtonText : 'No'
+    }).then(async (result) => {
+      if(result.value) {
+        toChange = true
+        await swal.fire(
+          'Changed',
+          'Changed successifuly',
+          'success'
+        )
+      } else if (result.dismiss === swal.DismissReason.cancel){
+         await swal.fire(
+          'Not changed',
+          'Operation canceled',
+          'error'
+        )
+        
+      }
+    })*/
+
+    var toChange = false
+
+    await swal.fire({
+      title : 'Are you sure you want to change patient type?',
+      text : 'Patient type will be changed to ' + newPatientType,
+      icon : 'question',
+      width : '500',
+      showCancelButton : true,
+      confirmButtonText : 'Yes, Change Patient type',
+      confirmButtonColor : '#009688',
+      cancelButtonText : 'No, Do not change',
+      cancelButtonColor : '#e5343d'
+      
+    }).then(async (result) => {
+      if(result.value) {
+        toChange = true
+      }  
+    })
+
+    if(toChange === false){
+      return
+    }
+
+    
+
+   
+
+    //if(!window.confirm('Confirm changing patient type. Confirm?')){
+      //return
+    //}
   
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
@@ -1017,7 +1095,7 @@ export class PatientRegisterComponent implements OnInit {
         this.patientId = temp
         this.getPatient(this.patientId)
         //this.searchBySearchKey(this.searchKey) 
-        this.msgBox.showSuccessMessage('Status changed')       
+        this.msgBox.showSuccessMessage('Patient Type changed to ' + newPatientType)       
       }
     )
     .catch(

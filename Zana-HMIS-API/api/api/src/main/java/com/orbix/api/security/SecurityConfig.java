@@ -47,7 +47,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 	
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-	    web.ignoring().antMatchers("/zana-hmis-api/auth/**","/v2/api-docs","/wms/**", 
+	    web.ignoring().antMatchers(
+	    		"/zana-hmis-api/auth/**",
+	    		"/v2/api-docs",
+	    		"/wms/**", 
 	            "/configuration/ui", 
 	            "/swagger-resources", 
 	            "/configuration/security",

@@ -135,7 +135,7 @@ export class UserProfileComponent implements OnInit {
       .then(
         data => {
           this.showUser(data)
-          alert('User created successifully')
+          this.msgBox.showSuccessMessage('User created successifuly')
           this.getUsers()
         }
       )
@@ -154,7 +154,7 @@ export class UserProfileComponent implements OnInit {
       .then(
         data => {
           console.log(data)
-          alert('User updated successifully')
+          this.msgBox.showSuccessMessage('User updated successifuly')
           this.getUsers()
         }
       )

@@ -5070,7 +5070,7 @@ public class PatientResource {
     	  throw new NotFoundException("Company Profile not found");
       }
       if(companyProfile.getPublicPath() == null) {
-    	  throw new NotFoundException("Driver not found. Contact Administrator");
+    	  throw new NotFoundException("Driver not found. Contact System Administrator");
       }
       if(companyProfile.getPublicPath().equals("")) {
     	  throw new NotFoundException("Driver not found. Contact System Administrator");

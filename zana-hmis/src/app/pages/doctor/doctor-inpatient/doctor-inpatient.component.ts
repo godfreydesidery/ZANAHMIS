@@ -408,7 +408,11 @@ export class DoctorInpatientComponent implements OnInit {
       }
 
 
-    if(!window.confirm('Send Clinical notes and GeneralExamination to Hisotor. Confirm?')){
+    /*if(!window.confirm('Send Clinical notes and GeneralExamination to Hisotor. Confirm?')){
+      return
+    }*/
+
+    if(await this.msgBox.showConfirmMessageDialog('Are you sure you want to send clinical notes and general examination to patient history?', 'Clinical notes and General Examination will be sent to patient history', 'question', 'Send To History', 'Do not Send')  === false){
       return
     }
 

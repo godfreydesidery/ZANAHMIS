@@ -110,7 +110,7 @@ export class LabTestStatisticsReportComponent {
             this.labTestTypes.push(type)
           }
         })
-this.labTestTypes.sort()
+this.labTestTypes.sort((a, b) => (a.qty > b.qty ? - 1 : 1) )
 
 
         //this.labTestTypes.so
