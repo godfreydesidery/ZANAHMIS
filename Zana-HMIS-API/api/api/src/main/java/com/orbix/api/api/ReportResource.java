@@ -33,10 +33,12 @@ import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.LabTestType;
 import com.orbix.api.domain.LocalPurchaseOrder;
 import com.orbix.api.domain.LocalPurchaseOrderDetail;
+import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientBill;
 import com.orbix.api.domain.PatientInvoiceDetail;
+import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
@@ -44,6 +46,7 @@ import com.orbix.api.domain.Supplier;
 import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.LabTestModel;
+import com.orbix.api.models.PrescriptionModel;
 import com.orbix.api.reports.models.GrnReport;
 import com.orbix.api.reports.models.LabTestTypeReport;
 import com.orbix.api.reports.models.LpoReport;
@@ -54,9 +57,11 @@ import com.orbix.api.repositories.GoodsReceivedNoteRepository;
 import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.LabTestTypeRepository;
 import com.orbix.api.repositories.LocalPurchaseOrderRepository;
+import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PatientBillRepository;
 import com.orbix.api.repositories.PatientInvoiceDetailRepository;
 import com.orbix.api.repositories.PatientRepository;
+import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.RadiologyRepository;
 import com.orbix.api.repositories.UserRepository;
@@ -93,6 +98,9 @@ public class ReportResource {
 	
 	private final LocalPurchaseOrderRepository localPurchaseOrderRepository;
 	private final GoodsReceivedNoteRepository goodsReceivedNoteRepository;
+	
+	private final PrescriptionRepository prescriptionRepository;
+	private final MedicineRepository medicineRepository;
 	
 	@PostMapping("/reports/consultation_report")
 	public ResponseEntity<List<Consultation>>getConsultationReport(
@@ -145,6 +153,70 @@ public class ReportResource {
 		}
 		
 		return ResponseEntity.ok().body(procedures);
+	}
+	
+	@PostMapping("/reports/prescription_report")
+	public ResponseEntity<List<PrescriptionModel>>getPrescriptionReport(
+			@RequestBody PrescriptionReportArgs args,
+			HttpServletRequest request){
+		
+		Optional<Medicine> tt = medicineRepository.findById(args.getMedicine().getId());
+		if(tt.isEmpty()) {
+			throw new NotFoundException("Medicine not found");
+		}
+		List<String> statuses = new ArrayList<>();
+		statuses.add("GIVEN");
+		
+		List<Prescription> prescriptions = prescriptionRepository.findAllByMedicineAndCreatedAtBetweenAndStatusIn(tt.get(), args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1), statuses);
+		
+		List<PrescriptionModel> prescriptionModels = new ArrayList<>();
+		for(Prescription prescription : prescriptions) {
+			PrescriptionModel prescriptionModel = new PrescriptionModel();
+			prescriptionModel.setId(prescription.getId());
+			
+			if(prescription.getAcceptedAt() != null) {
+				prescriptionModel.setAccepted(prescription.getAcceptedAt().toString()+" | "+userService.getUserById(prescription.getAcceptedby()).getNickname());
+			}else {
+				prescriptionModel.setAccepted("");
+			}
+			
+			prescriptionModel.setAdmission(prescription.getAdmission());
+			if(prescription.getApprovedAt() != null) {
+				prescriptionModel.setApproved(prescription.getApprovedAt().toString()+" | "+userService.getUserById(prescription.getApprovedBy()).getNickname());
+			}else {
+				prescriptionModel.setApproved("");
+			}
+			if(prescription.getCreatedAt() != null) {
+				prescriptionModel.setCreated(prescription.getCreatedAt().toString()+" | "+userService.getUserById(prescription.getCreatedby()).getNickname());
+			}else {
+				prescriptionModel.setCreated("");
+			}
+			prescriptionModel.setBalance(prescription.getBalance());
+			prescriptionModel.setConsultation(prescription.getConsultation());
+			prescriptionModel.setDays(prescription.getDays());
+			prescriptionModel.setDosage(prescription.getDosage());
+			prescriptionModel.setFrequency(prescription.getDosage());
+			//prescriptionModel.setHeld(held);
+			prescriptionModel.setIssued(prescription.getIssued());
+			prescriptionModel.setMedicine(prescription.getMedicine());
+			prescriptionModel.setNonConsultation(prescription.getNonConsultation());
+			prescriptionModel.setAdmission(prescription.getAdmission());
+			//prescriptionModel.setOrdered(ordered);
+			prescriptionModel.setPatient(prescription.getPatient());
+			prescriptionModel.setQty(prescription.getQty());
+			prescriptionModel.setReference(prescription.getReference());
+			prescriptionModel.setRejectComment(prescription.getRejectComment());
+			//prescriptionModel.setRejected(rejected);
+			prescriptionModel.setRoute(prescription.getRoute());
+			prescriptionModel.setStatus(prescription.getStatus());
+			//prescriptionModel.setStock(stock);
+			//prescriptionModel.setVerified(verified);
+			prescriptionModel.setIssuePharmacy(prescription.getIssuePharmacy());
+			
+			prescriptionModels.add(prescriptionModel);
+		}
+		
+		return ResponseEntity.ok().body(prescriptionModels);
 	}
 	
 	@PostMapping("/reports/lab_test_report")
@@ -475,6 +547,15 @@ class LabTestReportArgs {
 	LocalDate from;
 	LocalDate to;
 	LabTestType labTestType;
+	Patient patient;
+	Clinician clinician;
+}
+
+@Data
+class PrescriptionReportArgs {
+	LocalDate from;
+	LocalDate to;
+	Medicine medicine;
 	Patient patient;
 	Clinician clinician;
 }

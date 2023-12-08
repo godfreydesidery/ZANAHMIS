@@ -151,10 +151,8 @@ import { GoodsReceivedNoteReportComponent } from './pages/store/reports/goods-re
     DashboardComponent,
     LoginComponent,
     
-    
     MainPageComponent,
-    //InvestigationPaymentComponent,
-    //LabTestComponent,
+    
     LabPatientListComponent,
    
    

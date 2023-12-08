@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -117,5 +118,24 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
 	 * @return
 	 */
 	List<Prescription> findByNonConsultation(NonConsultation c);
+
+	/**
+	 * @param medicine
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @return
+	 */
+	List<Prescription> findAllByMedicineAndCreatedAtBetween(Medicine medicine, LocalDateTime atStartOfDay,
+			LocalDateTime plusDays);
+
+	/**
+	 * @param medicine
+	 * @param atStartOfDay
+	 * @param plusDays
+	 * @param statuses
+	 * @return
+	 */
+	List<Prescription> findAllByMedicineAndCreatedAtBetweenAndStatusIn(Medicine medicine, LocalDateTime atStartOfDay,
+			LocalDateTime plusDays, List<String> statuses);
 
 }

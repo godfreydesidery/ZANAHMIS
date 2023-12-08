@@ -2639,46 +2639,47 @@ public class PatientResource {
 		
 		boolean success = true;
 		
-		Optional<Pharmacy> ph = pharmacyRepository.findById(pharmacyId);
-		if(ph.isEmpty()) {
+		Optional<Pharmacy> pharmacy_ = pharmacyRepository.findById(pharmacyId);
+		if(pharmacy_.isEmpty()) {
 			throw new NotFoundException("Pharmacy not found");
 		}
 		
 		for(Prescription prescription : prescriptions) {
-			Optional<Prescription> pres = prescriptionRepository.findById(prescription.getId());
-			if(pres.isEmpty()) {
+			Optional<Prescription> prescription_ = prescriptionRepository.findById(prescription.getId());
+			if(prescription_.isEmpty()) {
 				throw new NotFoundException("Prescription with id "+prescription.getId().toString()+" not found in database");
 			}
-			if(!pres.get().getStatus().equals("NOT-GIVEN")) {
+			if(!prescription_.get().getStatus().equals("NOT-GIVEN")) {
 				success = false;
 				throw new InvalidOperationException("Could not issue medicine. Prescription with id "+prescription.getId().toString()+" is not a pending prescription");
 			}
-			if(pres.get().getBalance() > prescription.getIssued() || prescription.getIssued() <= 0) {
+			if(prescription_.get().getBalance() > prescription.getIssued() || prescription.getIssued() <= 0) {
 				throw new InvalidOperationException("Invalid issue value in "+prescription.getMedicine().getName());
 			}
-			if(prescription.getIssued() != pres.get().getQty()) {
+			if(prescription.getIssued() != prescription_.get().getQty()) {
 				throw new InvalidOperationException("You can only issue the prescribed qty");
 			}
-			pres.get().setIssued(prescription.getIssued());
-			pres.get().setBalance(pres.get().getBalance() - prescription.getIssued());
+			prescription_.get().setIssued(prescription.getIssued());
+			prescription_.get().setBalance(prescription_.get().getBalance() - prescription.getIssued());
 						
-			pres.get().setStatus("GIVEN");
+			prescription_.get().setStatus("GIVEN");
+			prescription_.get().setIssuePharmacy(pharmacy_.get());
 			
-			pres.get().setApprovedBy(userService.getUser(request).getId());
-			pres.get().setApprovedOn(dayService.getDay().getId());
-			pres.get().setApprovedAt(dayService.getTimeStamp());
+			prescription_.get().setApprovedBy(userService.getUser(request).getId());
+			prescription_.get().setApprovedOn(dayService.getDay().getId());
+			prescription_.get().setApprovedAt(dayService.getTimeStamp());
 			
-			prescriptionRepository.save(pres.get());
+			prescriptionRepository.save(prescription_.get());
 			
-			PharmacyMedicine pharmacyMedicine = pharmacyMedicineRepository.findByPharmacyAndMedicine(ph.get(), pres.get().getMedicine()).get();
+			PharmacyMedicine pharmacyMedicine = pharmacyMedicineRepository.findByPharmacyAndMedicine(pharmacy_.get(), prescription_.get().getMedicine()).get();
 			
 			Pharmacy pharmacy = pharmacyMedicine.getPharmacy();
 			Medicine medicine = pharmacyMedicine.getMedicine();
-			if(pharmacyMedicine.getStock() < pres.get().getQty()) {
-				throw new InvalidOperationException("Can not issue, insufficient stock in : "+pres.get().getMedicine().getName());
+			if(pharmacyMedicine.getStock() < prescription_.get().getQty()) {
+				throw new InvalidOperationException("Can not issue, insufficient stock in : "+prescription_.get().getMedicine().getName());
 			}
 			
-			double newStock = pharmacyMedicine.getStock() - pres.get().getQty();
+			double newStock = pharmacyMedicine.getStock() - prescription_.get().getQty();
 			
 			pharmacyMedicine.setStock(newStock);
 			pharmacyMedicineRepository.save(pharmacyMedicine);
@@ -2687,9 +2688,9 @@ public class PatientResource {
 			pharmacyStockCard.setMedicine(medicine);
 			pharmacyStockCard.setPharmacy(pharmacy);
 			pharmacyStockCard.setQtyIn(0);
-			pharmacyStockCard.setQtyOut(pres.get().getQty());
+			pharmacyStockCard.setQtyOut(prescription_.get().getQty());
 			pharmacyStockCard.setBalance(newStock);
-			pharmacyStockCard.setReference("Issued in prescription: id "+pres.get().getId().toString());
+			pharmacyStockCard.setReference("Issued in prescription: id " + prescription_.get().getId().toString());
 			
 			pharmacyStockCard.setCreatedBy(userService.getUserId(request));
 			pharmacyStockCard.setCreatedOn(dayService.getDayId());
@@ -4476,6 +4477,8 @@ public class PatientResource {
 				
 				Patient patient = adm.getPatient();
 				patient.setType("OUTPATIENT");
+				patient.setPaymentType("CASH");
+				patient.setInsurancePlan(null);
 				patientRepository.save(patient);
 				
 				p.get().setStatus("APPROVED");
@@ -4603,6 +4606,11 @@ public class PatientResource {
 				
 				consultation.setStatus("SIGNED-OUT");
 				consultation = consultationRepository.save(consultation);
+				
+				Patient patient = consultation.getPatient();
+				patient.setPaymentType("CASH");
+				patient.setInsurancePlan(null);
+				patientRepository.save(patient);
 				
 				referralPlan.setConsultation(consultation);
 				referralPlan.setPatient(consultation.getPatient());

@@ -7,6 +7,7 @@ import { INonConsultation } from "./non-consultation"
 import { IPatient } from "./patient"
 import { IUser } from "./user"
 import { IInsurancePlan } from "./insurance-plan"
+import { IPharmacy } from "./pharmacy"
 
 export interface IPrescription {
     id          : any
@@ -22,12 +23,17 @@ export interface IPrescription {
     checked     : boolean
     status      : string
 
+    membershipNo : string
+    paymentType : string
+
     patient         : IPatient
     consultation    : IConsultation
     nonConsultation : INonConsultation
     admission       : IAdmission
     patientBill     : IPatientBill
     medicine        : IMedicine
+
+    issuePharmacy   : IPharmacy
 
     insurancePlan   : IInsurancePlan
     
@@ -38,6 +44,7 @@ export interface IPrescription {
     rejectComment : string
     collected : string
     verified : string
+    approved : string
 
     /**
      * Auxiliary attributes

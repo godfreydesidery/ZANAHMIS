@@ -22,6 +22,7 @@ import com.orbix.api.domain.DeceasedNote;
 import com.orbix.api.domain.DischargePlan;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
+import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientBill;
 import com.orbix.api.domain.PatientInvoice;
 import com.orbix.api.domain.PatientInvoiceDetail;
@@ -44,6 +45,7 @@ import com.orbix.api.repositories.NonConsultationRepository;
 import com.orbix.api.repositories.PatientBillRepository;
 import com.orbix.api.repositories.PatientInvoiceDetailRepository;
 import com.orbix.api.repositories.PatientInvoiceRepository;
+import com.orbix.api.repositories.PatientRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.RadiologyRepository;
@@ -92,6 +94,8 @@ public class UpdatePatient implements Runnable{
 	private final DischargePlanRepository dischargePlanRepository;
 	private final DeceasedNoteRepository deceasedNoteRepository;
 	private final ReferralPlanRepository referralPlanRepository;
+	
+	private final PatientRepository patientRepository;
 	
 	
 	
@@ -174,6 +178,11 @@ public class UpdatePatient implements Runnable{
 								patientBillRepository.save(patientBill);
 							}
 						}
+						
+						Patient patient = c.getPatient();
+						patient.setPaymentType("CASH");
+						patient.setInsurancePlan(null);
+						patientRepository.save(patient);
 					}
 				}
 				
@@ -238,6 +247,10 @@ public class UpdatePatient implements Runnable{
 								patientBillRepository.save(patientBill);
 							}
 						}
+						Patient patient = c.getPatient();
+						patient.setPaymentType("CASH");
+						patient.setInsurancePlan(null);
+						patientRepository.save(patient);
 					}
 				}
 				

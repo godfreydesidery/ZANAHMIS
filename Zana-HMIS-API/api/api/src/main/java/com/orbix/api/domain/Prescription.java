@@ -93,6 +93,11 @@ public class Prescription {
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private InsurancePlan insurancePlan;
 	
+	@ManyToOne(targetEntity = Pharmacy.class, fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "issue_pharmacy_id", nullable = true , updatable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)	
+    private Pharmacy issuePharmacy;
+	
 	@Column(name = "created_by_user_id", nullable = false , updatable = false)
     private Long createdby;
 	@Column(name = "created_on_day_id", nullable = false , updatable = false)

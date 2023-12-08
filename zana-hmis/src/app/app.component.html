@@ -165,6 +165,17 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a routerLink="/select-pharmacy">Select Pharmacy</a></li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-file-text"></i><span>Reports</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a routerLink="/pharmacy-dispensing-report">Dispensing Report</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
                     <li class="treeview" *ngIf="grant(['CASHIER_SERVICE-ACCESS'])">

@@ -21,6 +21,7 @@ import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientBill;
+import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.RadiologyType;
 
 import lombok.Data;
@@ -49,6 +50,7 @@ public class PrescriptionModel {
 	private Medicine medicine = null;
 	private PatientBill patientBill = null;
 	private Patient patient = null;
+	private Pharmacy issuePharmacy = null;
 	
     private String created;			
     private String ordered;			
