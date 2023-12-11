@@ -1,5 +1,6 @@
 import { IItem } from "./item";
 import { IStore } from "./store";
+import { IStoreItemBatch } from "./store-item-batch";
 
 export interface IStoreItem{
     store : IStore
@@ -12,6 +13,8 @@ export interface IStoreItem{
     defaultReorderLevel : number
 
     active : boolean
+
+    storeItemBatches : IStoreItemBatch[]
 
     sn : number
 

@@ -19,6 +19,9 @@ import com.orbix.api.domain.ItemMedicineCoefficient;
 import com.orbix.api.domain.PharmacyToStoreRO;
 import com.orbix.api.domain.PharmacyToStoreRODetail;
 import com.orbix.api.domain.Store;
+import com.orbix.api.domain.StoreItem;
+import com.orbix.api.domain.StoreItemBatch;
+import com.orbix.api.domain.StoreStockCard;
 import com.orbix.api.domain.StoreToPharmacyTO;
 import com.orbix.api.domain.StoreToPharmacyTODetail;
 import com.orbix.api.exceptions.InvalidOperationException;
@@ -33,7 +36,10 @@ import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.PharmacyToStoreRODetailRepository;
 import com.orbix.api.repositories.PharmacyToStoreRORepository;
+import com.orbix.api.repositories.StoreItemBatchRepository;
+import com.orbix.api.repositories.StoreItemRepository;
 import com.orbix.api.repositories.StoreRepository;
+import com.orbix.api.repositories.StoreStockCardRepository;
 import com.orbix.api.repositories.StoreToPharmacyTODetailRepository;
 import com.orbix.api.repositories.StoreToPharmacyTORepository;
 import com.orbix.api.repositories.UserRepository;
@@ -64,6 +70,9 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 	private final ItemRepository itemRepository;
 	private final ItemMedicineCoefficientRepository itemMedicineCoefficientRepository;
 	private final StoreRepository storeRepository;
+	private final StoreItemRepository storeItemRepository;
+	private final StoreStockCardRepository storeStockCardRepository;
+	private final StoreItemBatchRepository storeItemBatchRepository;
 	
 	@Override
 	public StoreToPharmacyTOModel createOrder(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request) {
@@ -236,7 +245,104 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 		 * Put here goods issue bussiness logic, should update store stocks
 		 */
 		
+		for(StoreToPharmacyTODetail storeToPharmacyTODetail : order.getStoreToPharmacyTODetails()) {
+			Optional<StoreItem> storeItem_ = storeItemRepository.findByStoreAndItem(order.getStore(), storeToPharmacyTODetail.getItem());
+			double originalStock = storeItem_.get().getStock();
+			
+			//update stock
+			if(storeItem_.get().getStock() < storeToPharmacyTODetail.getTransferedStoreSKUQty()) {
+				throw new InvalidOperationException("Can not issue goods. Stock qty is less than transfer qty at " + storeItem_.get().getItem().getName());
+			}
+			double newStock = originalStock - storeToPharmacyTODetail.getTransferedStoreSKUQty();
+			storeItem_.get().setStock(storeItem_.get().getStock() - storeToPharmacyTODetail.getTransferedStoreSKUQty());
+			//bbb
+			storeItemRepository.save(storeItem_.get());
+			
+			//update stock card
+			StoreStockCard storeStockCard = new StoreStockCard();
+			storeStockCard.setItem(storeItem_.get().getItem());
+			storeStockCard.setStore(order.getStore());
+			storeStockCard.setQtyIn(0);
+			storeStockCard.setQtyOut(storeToPharmacyTODetail.getTransferedStoreSKUQty());
+			storeStockCard.setBalance(newStock);
+			storeStockCard.setReference("Goods transfered to Pharmacy STPO# " + order.getNo());
+			
+			storeStockCard.setCreatedBy(userService.getUserId(request));
+			storeStockCard.setCreatedOn(dayService.getDayId());
+			storeStockCard.setCreatedAt(dayService.getTimeStamp());
+			
+			storeStockCardRepository.save(storeStockCard);
+			
+			
+			//update batches
+			
+			double minQty = 0;
+			
+			List<StoreItemBatch> storeItemBatches = storeItemBatchRepository.findAllByStoreAndItemAndQtyGreaterThan(order.getStore(), storeItem_.get().getItem(), minQty);
+			
+			deductBatch(storeItemBatches, storeToPharmacyTODetail.getTransferedStoreSKUQty());
+			
+			
+		}
+		
 		return showOrder(order);
+	}
+	
+	void deductBatch(List<StoreItemBatch> storeItemBatches, double qty){
+		
+		StoreItemBatch batch = getEarlierBatch(storeItemBatches);
+		storeItemBatches.remove(batch);
+		
+		if(qty <= batch.getQty()) {
+			batch.setQty(batch.getQty() - qty);
+			storeItemBatchRepository.save(batch);
+		}else if(qty > batch.getQty()) {
+			double newToDeduct = batch.getQty();
+			batch.setQty(0);
+			storeItemBatchRepository.save(batch);
+			storeItemBatches.remove(batch);
+			deductBatch(storeItemBatches, newToDeduct - qty);
+		}		
+	}
+	
+	StoreItemBatch getEarlierBatch(List<StoreItemBatch> storeItemBatches) {
+		List<StoreItemBatch> newBatchList = new ArrayList<>();
+		boolean hasExpiry = false;
+		StoreItemBatch selectedItemBatch = null;
+		
+		for(StoreItemBatch storeItemBatch : storeItemBatches) {
+			if(storeItemBatch.getExpiryDate() != null) {
+				hasExpiry = true;
+				newBatchList.add(storeItemBatch);
+			}
+		}
+		if(hasExpiry == true) {
+			storeItemBatches = newBatchList;
+			LocalDate expiryDate = null;
+			for(StoreItemBatch storeItemBatch : storeItemBatches) {
+				if(expiryDate == null) {
+					expiryDate = storeItemBatch.getExpiryDate();
+					selectedItemBatch = storeItemBatch;
+				}else if(expiryDate.isAfter(storeItemBatch.getExpiryDate())) {
+					expiryDate = storeItemBatch.getExpiryDate();
+					selectedItemBatch = storeItemBatch;
+				}
+			}
+		}
+		
+		if(hasExpiry == false) {
+			Long id = null;
+			for(StoreItemBatch storeItemBatch : storeItemBatches) {
+				if(id == null) {
+					id = storeItemBatch.getId();
+					selectedItemBatch = storeItemBatch;
+				}else if(id > storeItemBatch.getId()) {
+					id = storeItemBatch.getId();
+					selectedItemBatch = storeItemBatch;
+				}
+			}
+		}
+		return selectedItemBatch;
 	}
 	
 	

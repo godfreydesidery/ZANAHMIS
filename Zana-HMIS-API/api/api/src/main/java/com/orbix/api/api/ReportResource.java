@@ -47,6 +47,7 @@ import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.LabTestModel;
 import com.orbix.api.models.PrescriptionModel;
+import com.orbix.api.reports.FastMovingDrugs;
 import com.orbix.api.reports.models.GrnReport;
 import com.orbix.api.reports.models.LabTestTypeReport;
 import com.orbix.api.reports.models.LpoReport;
@@ -217,6 +218,24 @@ public class ReportResource {
 		}
 		
 		return ResponseEntity.ok().body(prescriptionModels);
+	}
+	
+	@PostMapping("/reports/fast_moving_drugs_report")
+	public List<FastMovingDrugs> getFastMovingDrugsReport(
+			@RequestBody PrescriptionReportArgs args,
+			HttpServletRequest request){
+		
+		return prescriptionRepository.getFastMovingDrugs(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		
+	}
+	
+	@PostMapping("/reports/slow_moving_drugs_report")
+	public List<FastMovingDrugs> getSlowMovingDrugsReport(
+			@RequestBody PrescriptionReportArgs args,
+			HttpServletRequest request){
+		
+		return prescriptionRepository.getSlowMovingDrugs(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		
 	}
 	
 	@PostMapping("/reports/lab_test_report")

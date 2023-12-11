@@ -25,10 +25,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.orbix.api.domain.Item;
 import com.orbix.api.domain.Store;
 import com.orbix.api.domain.StoreItem;
+import com.orbix.api.domain.StoreItemBatch;
 import com.orbix.api.domain.StoreStockCard;
 import com.orbix.api.domain.Supplier;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.repositories.ItemRepository;
+import com.orbix.api.repositories.StoreItemBatchRepository;
 import com.orbix.api.repositories.StoreItemRepository;
 import com.orbix.api.repositories.StoreRepository;
 import com.orbix.api.repositories.StoreStockCardRepository;
@@ -51,9 +54,11 @@ import lombok.RequiredArgsConstructor;
 public class StoreResource {
 
 	private final StoreRepository storeRepository;
+	private final ItemRepository itemRepository;
 	private final StoreService storeService;
 	private final StoreItemRepository storeItemRepository;
 	private final StoreStockCardRepository storeStockCardRepository;
+	private final StoreItemBatchRepository storeItemBatchRepository;
 	
 
 	private final UserService userService;
@@ -142,6 +147,26 @@ public class StoreResource {
 		
 		
 		return ResponseEntity.ok().body(storeItemsToShow);
+	}
+	
+	@GetMapping("/stores/get_store_item_batches")
+	public ResponseEntity<List<StoreItemBatch>> getStoreItemList(
+			@RequestParam(name = "store_id") Long storeId,
+			@RequestParam(name = "item_id") Long itemId,
+			HttpServletRequest request){
+		
+		Optional<Store> store_ = storeRepository.findById(storeId);
+		if(store_.isEmpty()) {
+			throw new NotFoundException("Store not found");
+		}
+		Optional<Item> item_ = itemRepository.findById(itemId);
+		if(item_.isEmpty()) {
+			throw new NotFoundException("Item not found");
+		}
+		
+		List<StoreItemBatch> storeItemBatches = storeItemBatchRepository.findAllByStoreAndItemAndQtyGreaterThan(store_.get(), item_.get(), 0);
+		
+		return ResponseEntity.ok().body(storeItemBatches);
 	}
 	
 	@PostMapping("/stores/update_stock")

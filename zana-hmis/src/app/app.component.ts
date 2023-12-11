@@ -314,6 +314,8 @@ export class AppComponent {
         {path : 'store-to-pharmacy-r-n', loadComponent : () => import('./pages/pharmacy/store-to-pharmacy-r-n/store-to-pharmacy-r-n.component').then(m => m.StoreToPharmacyRNComponent), canActivate: [AuthGuard]},
         {path : 'pharmacy-medicine-stock-status', loadComponent : () => import('./pages/pharmacy/pharmacy-medicine-stock-status/pharmacy-medicine-stock-status.component').then(m => m.PharmacyMedicineStockStatusComponent), canActivate: [AuthGuard]},
         {path : 'pharmacy-dispensing-report', loadComponent : () => import('./pages/pharmacy/reports/pharmacy-dispensing-report/pharmacy-dispensing-report.component').then(m => m.PharmacyDispensingReportComponent), canActivate: [AuthGuard]},
+        {path : 'fast-moving-drugs-report', loadComponent : () => import('./pages/pharmacy/reports/fast-moving-drugs/fast-moving-drugs.component').then(m => m.FastMovingDrugsComponent), canActivate: [AuthGuard]},
+        {path : 'slow-moving-drugs-report', loadComponent : () => import('./pages/pharmacy/reports/slow-moving-drugs/slow-moving-drugs.component').then(m => m.SlowMovingDrugsComponent), canActivate: [AuthGuard]},
       )
     }
     loadCashierModule(){

@@ -15,6 +15,7 @@ import { environment } from 'src/environments/environment';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import { IStoreItem } from 'src/app/domain/store-item';
+import { IStoreItemBatch } from 'src/app/domain/store-item-batch';
 
 const API_URL = environment.apiUrl;
 
@@ -76,6 +77,14 @@ export class StoreItemStockStatusComponent {
         this.storeItems = []
         this.storeItemsToShow = []
         data?.forEach(element => {
+
+          //this.loadStoreItemBatches(element.store.id, element.item.id)
+
+
+         
+          //element.storeItemBatches = this.loadStoreItemBatches(element.store.id, element.item.id)
+
+
           this.storeItems.push(element)
           this.storeItemsToShow.push(element)
         })
@@ -84,6 +93,7 @@ export class StoreItemStockStatusComponent {
           element.sn = sn
           sn = sn + 1
         })
+        console.log(data)
       }
     )
     .catch(
@@ -92,6 +102,43 @@ export class StoreItemStockStatusComponent {
         console.log(error)
       }
     )
+
+    this.storeItemsToShow.forEach(async element => {
+      var batches : IStoreItemBatch[]  = await this.loadStoreItemBatches(element.store.id, element.item.id)
+
+      element.storeItemBatches = batches
+    })
+
+  }
+
+  storeItemBatches : IStoreItemBatch[] = []
+
+  async loadStoreItemBatches(storeId : any, itemId : any) : Promise<IStoreItemBatch[]>{ 
+    var batches :  IStoreItemBatch[] = [] 
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    
+    this.spinner.show()
+    await this.http.get<IStoreItemBatch[]>(API_URL+'/stores/get_store_item_batches?store_id='+storeId+'&item_id='+itemId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        batches = data!
+        //data?.forEach(element => {
+          //batches.push(element)
+        //})
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+        console.log(error)
+      }
+    )
+    return batches
   }
 
   async updateStoreItemRegister(){

@@ -45,6 +45,7 @@
                                 <td>Name</td>
                                 <td>Category</td>
                                 <td>Qty</td>
+                                <td>Batch Breakdown</td>
                                 <td>Action</td>
                             </tr>
                         </thead>
@@ -55,6 +56,26 @@
                                 <td>{{storeItem?.item?.name}}</td>
                                 <td>{{storeItem?.item?.category}}</td>
                                 <td>{{storeItem?.stock}}</td>
+                                <td>
+                                    <table class="table table-small" *ngIf="storeItem.storeItemBatches.length > 0">
+                                        <thead>
+                                            <tr style="font-weight: bold;">
+                                                <td>Batch#</td>
+                                                <td>Qty</td>
+                                                <td>MFG</td>
+                                                <td>EXP</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let batch of storeItem.storeItemBatches">
+                                                <td>{{batch.no}}</td>
+                                                <td>{{batch.qty}}</td>
+                                                <td>{{batch?.manufacturedDate | date}}</td>
+                                                <td>{{batch?.expiryDate | date}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
                                 <td>
                                     <button type="button" class="btn btn-success btn-outline" (click)="setValues(storeItem.id, storeItem.item.code, storeItem.item.name, storeItem.stock)" data-toggle="modal" data-target="#edit-qty-modal"><i class="glyphicon glyphicon-pencil"></i> Change Stock</button>
                                 </td>

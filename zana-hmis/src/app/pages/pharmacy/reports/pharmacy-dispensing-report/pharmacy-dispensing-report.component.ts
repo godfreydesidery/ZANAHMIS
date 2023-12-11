@@ -87,6 +87,7 @@ export class PharmacyDispensingReportComponent {
   documentHeader! : any
   prescriptions : IPrescription[] = []
   async loadPrescriptionReport(from : Date, to : Date){
+    this.prescriptions = []
     let options = {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
