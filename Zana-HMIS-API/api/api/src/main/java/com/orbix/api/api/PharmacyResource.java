@@ -25,12 +25,18 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.orbix.api.api.accessories.Sanitizer;
 import com.orbix.api.domain.Clinic;
+import com.orbix.api.domain.Item;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyMedicine;
+import com.orbix.api.domain.PharmacyMedicineBatch;
 import com.orbix.api.domain.PharmacyStockCard;
+import com.orbix.api.domain.Store;
+import com.orbix.api.domain.StoreItemBatch;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.exceptions.NotFoundException;
+import com.orbix.api.repositories.MedicineRepository;
+import com.orbix.api.repositories.PharmacyMedicineBatchRepository;
 import com.orbix.api.repositories.PharmacyMedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.PharmacyStockCardRepository;
@@ -56,6 +62,8 @@ public class PharmacyResource {
 	private final PharmacyService pharmacyService;
 	private final PharmacyMedicineRepository pharmacyMedicineRepository;
 	private final PharmacyStockCardRepository pharmacyStockCardRepository;
+	private final MedicineRepository medicineRepository;
+	private final PharmacyMedicineBatchRepository pharmacyMedicineBatchRepository;
 	
 
 	private final UserService userService;
@@ -118,6 +126,26 @@ public class PharmacyResource {
 		
 		
 		return ResponseEntity.ok().body(pharmacyMedicinesToShow);
+	}
+	
+	@GetMapping("/pharmacies/get_pharmacy_medicine_batches")
+	public ResponseEntity<List<PharmacyMedicineBatch>> getPharmacyMedicineBathList(
+			@RequestParam(name = "pharmacy_id") Long pharmacyId,
+			@RequestParam(name = "medicine_id") Long medicineId,
+			HttpServletRequest request){
+		
+		Optional<Pharmacy> pharmacy_ = pharmacyRepository.findById(pharmacyId);
+		if(pharmacy_.isEmpty()) {
+			throw new NotFoundException("Pharmacy not found");
+		}
+		Optional<Medicine> medicine_ = medicineRepository.findById(medicineId);
+		if(medicine_.isEmpty()) {
+			throw new NotFoundException("Medicine not found");
+		}
+		
+		List<PharmacyMedicineBatch> pharmacyMedicineBatches = pharmacyMedicineBatchRepository.findAllByPharmacyAndMedicineAndQtyGreaterThan(pharmacy_.get(), medicine_.get(), 0);
+		
+		return ResponseEntity.ok().body(pharmacyMedicineBatches);
 	}
 	
 	@PostMapping("/pharmacies/update_stock")

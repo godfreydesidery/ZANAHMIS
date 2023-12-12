@@ -684,10 +684,11 @@ public class InternalOrderResource {
 	@PostMapping("/store_to_pharmacy_r_ns/approve_receipt")
 	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public ResponseEntity<StoreToPharmacyRNModel>approveReceiptStoreToPharmacyRN(
-			@RequestBody StoreToPharmacyRN rn,
+			//@RequestBody StoreToPharmacyRN rn,
+			@RequestParam(name = "receive_note_id") Long rnId,
 			HttpServletRequest request){
 		
-		Optional<StoreToPharmacyRN> n = storeToPharmacyRNRepository.findById(rn.getId());
+		Optional<StoreToPharmacyRN> n = storeToPharmacyRNRepository.findById(rnId);
 		if(n.isEmpty()) {
 			throw new NotFoundException("GRN not found");
 		}
@@ -717,7 +718,7 @@ public class InternalOrderResource {
 		
 		storeToPharmacyRNRepository.save(n.get());
 		
-		n = storeToPharmacyRNRepository.findById(rn.getId());
+		n = storeToPharmacyRNRepository.findById(n.get().getId());
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/store_to_pharmacy_r_ns/approve_receipt").toUriString());
 		return ResponseEntity.created(uri).body(storeToPharmacyRNService.approveReceivingNote(n.get(), request));

@@ -301,7 +301,7 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 			batch.setQty(0);
 			storeItemBatchRepository.save(batch);
 			storeItemBatches.remove(batch);
-			deductBatch(storeItemBatches, newToDeduct - qty);
+			deductBatch(storeItemBatches, qty - newToDeduct);
 		}		
 	}
 	

@@ -217,9 +217,10 @@ export class StoreToPharmacyRNComponent {
 
 
     var rn = this.storeToPharmacyRN
+    console.log(rn)
 
     this.spinner.show()
-    await this.http.post<IStoreToPharmacyRN[]>(API_URL+'/store_to_pharmacy_r_ns/approve_receipt', rn, options)
+    await this.http.post<IStoreToPharmacyRN[]>(API_URL+'/store_to_pharmacy_r_ns/approve_receipt?receive_note_id=' + rn.id, null, options)
     .pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(

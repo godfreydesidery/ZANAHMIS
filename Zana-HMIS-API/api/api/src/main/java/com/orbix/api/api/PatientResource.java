@@ -63,6 +63,7 @@ import com.orbix.api.domain.PatientPaymentDetail;
 import com.orbix.api.domain.PatientPrescriptionChart;
 import com.orbix.api.domain.Pharmacy;
 import com.orbix.api.domain.PharmacyMedicine;
+import com.orbix.api.domain.PharmacyMedicineBatch;
 import com.orbix.api.domain.PharmacyStockCard;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.LabTestAttachment;
@@ -79,6 +80,7 @@ import com.orbix.api.domain.ProcedureType;
 import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.ReferralPlan;
+import com.orbix.api.domain.StoreItemBatch;
 import com.orbix.api.domain.User;
 import com.orbix.api.domain.Visit;
 import com.orbix.api.domain.WardBed;
@@ -140,6 +142,7 @@ import com.orbix.api.repositories.PatientPaymentDetailRepository;
 import com.orbix.api.repositories.PatientPaymentRepository;
 import com.orbix.api.repositories.PatientPrescriptionChartRepository;
 import com.orbix.api.repositories.PatientRepository;
+import com.orbix.api.repositories.PharmacyMedicineBatchRepository;
 import com.orbix.api.repositories.PharmacyMedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.PharmacyStockCardRepository;
@@ -217,12 +220,13 @@ public class PatientResource {
 	private final PatientNursingProgressNoteRepository patientNursingProgressNoteRepository;
 	private final PatientNursingCarePlanRepository patientNursingCarePlanRepository;
 	private final ConsultationTransferRepository consultationTransferRepository;
-	
+	private final PharmacyMedicineBatchRepository pharmacyMedicineBatchRepository;
 	private final DischargePlanRepository dischargePlanRepository;
 	private final DeceasedNoteRepository deceasedNoteRepository;
 	private final ReferralPlanRepository referralPlanRepository;
 	
 	private final ExternalMedicalProviderRepository externalMedicalProviderRepository;
+	
 	
 	@GetMapping("/patients")
 	public ResponseEntity<List<Patient>>getMaterials(
@@ -2688,7 +2692,7 @@ public class PatientResource {
 			pharmacyStockCard.setMedicine(medicine);
 			pharmacyStockCard.setPharmacy(pharmacy);
 			pharmacyStockCard.setQtyIn(0);
-			pharmacyStockCard.setQtyOut(prescription_.get().getQty());
+			pharmacyStockCard.setQtyOut(prescription.getIssued());
 			pharmacyStockCard.setBalance(newStock);
 			pharmacyStockCard.setReference("Issued in prescription: id " + prescription_.get().getId().toString());
 			
@@ -2698,10 +2702,74 @@ public class PatientResource {
 			
 			pharmacyStockCardRepository.save(pharmacyStockCard);
 			
+			List<PharmacyMedicineBatch> pharmacyMedicineBatches = pharmacyMedicineBatchRepository.findAllByPharmacyAndMedicineAndQtyGreaterThan(pharmacy, medicine, 0);
+			
+			deductBatch(pharmacyMedicineBatches, prescription.getIssued());
+			
 		}
 		
 		return success;
 	}
+	
+	
+	void deductBatch(List<PharmacyMedicineBatch> pharmacyMedicineBatches, double qty){
+		
+		PharmacyMedicineBatch batch = getEarlierBatch(pharmacyMedicineBatches);
+		pharmacyMedicineBatches.remove(batch);
+		
+		if(qty <= batch.getQty()) {
+			batch.setQty(batch.getQty() - qty);
+			pharmacyMedicineBatchRepository.save(batch);
+		}else if(qty > batch.getQty()) {
+			double newToDeduct = batch.getQty();
+			batch.setQty(0);
+			pharmacyMedicineBatchRepository.save(batch);
+			pharmacyMedicineBatches.remove(batch);
+			deductBatch(pharmacyMedicineBatches, qty - newToDeduct);
+		}		
+	}
+	
+	PharmacyMedicineBatch getEarlierBatch(List<PharmacyMedicineBatch> pharmacyMedicineBatches) {
+		List<PharmacyMedicineBatch> newBatchList = new ArrayList<>();
+		boolean hasExpiry = false;
+		PharmacyMedicineBatch selectedMedicineBatch = null;
+		
+		for(PharmacyMedicineBatch pharmacyMedicineBatch : pharmacyMedicineBatches) {
+			if(pharmacyMedicineBatch.getExpiryDate() != null) {
+				hasExpiry = true;
+				newBatchList.add(pharmacyMedicineBatch);
+			}
+		}
+		if(hasExpiry == true) {
+			pharmacyMedicineBatches = newBatchList;
+			LocalDate expiryDate = null;
+			for(PharmacyMedicineBatch pharmacyMedicineBatch : pharmacyMedicineBatches) {
+				if(expiryDate == null) {
+					expiryDate = pharmacyMedicineBatch.getExpiryDate();
+					selectedMedicineBatch = pharmacyMedicineBatch;
+				}else if(expiryDate.isAfter(pharmacyMedicineBatch.getExpiryDate())) {
+					expiryDate = pharmacyMedicineBatch.getExpiryDate();
+					selectedMedicineBatch = pharmacyMedicineBatch;
+				}
+			}
+		}
+		
+		if(hasExpiry == false) {
+			Long id = null;
+			for(PharmacyMedicineBatch pharmacyMedicineBatch : pharmacyMedicineBatches) {
+				if(id == null) {
+					id = pharmacyMedicineBatch.getId();
+					selectedMedicineBatch = pharmacyMedicineBatch;
+				}else if(id > pharmacyMedicineBatch.getId()) {
+					id = pharmacyMedicineBatch.getId();
+					selectedMedicineBatch = pharmacyMedicineBatch;
+				}
+			}
+		}
+		return selectedMedicineBatch;
+	}
+	
+	
 	
 	
 	@PostMapping("/patients/lab_tests/add_report")

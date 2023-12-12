@@ -14,10 +14,17 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.orbix.api.accessories.Formater;
+import com.orbix.api.domain.GoodsReceivedNoteDetailBatch;
 import com.orbix.api.domain.Item;
 import com.orbix.api.domain.ItemMedicineCoefficient;
+import com.orbix.api.domain.PharmacyMedicine;
+import com.orbix.api.domain.PharmacyMedicineBatch;
+import com.orbix.api.domain.PharmacyStockCard;
 import com.orbix.api.domain.PharmacyToStoreRO;
 import com.orbix.api.domain.PharmacyToStoreRODetail;
+import com.orbix.api.domain.StoreItem;
+import com.orbix.api.domain.StoreItemBatch;
+import com.orbix.api.domain.StoreStockCard;
 import com.orbix.api.domain.StoreToPharmacyBatch;
 import com.orbix.api.domain.StoreToPharmacyRN;
 import com.orbix.api.domain.StoreToPharmacyRNDetail;
@@ -34,7 +41,10 @@ import com.orbix.api.repositories.DayRepository;
 import com.orbix.api.repositories.ItemMedicineCoefficientRepository;
 import com.orbix.api.repositories.ItemRepository;
 import com.orbix.api.repositories.MedicineRepository;
+import com.orbix.api.repositories.PharmacyMedicineBatchRepository;
+import com.orbix.api.repositories.PharmacyMedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
+import com.orbix.api.repositories.PharmacyStockCardRepository;
 import com.orbix.api.repositories.PharmacyToStoreRODetailRepository;
 import com.orbix.api.repositories.PharmacyToStoreRORepository;
 import com.orbix.api.repositories.StoreToPharmacyBatchRepository;
@@ -71,6 +81,9 @@ public class StoreToPharmacyRNServiceImpl implements StoreToPharmacyRNService {
 	private final ItemRepository itemRepository;
 	private final ItemMedicineCoefficientRepository itemMedicineCoefficientRepository;
 	private final StoreToPharmacyBatchRepository storeToPharmacyBatchRepository;
+	private final PharmacyMedicineBatchRepository pharmacyMedicineBatchRepository;
+	private final PharmacyMedicineRepository pharmacyMedicineRepository;
+	private final PharmacyStockCardRepository pharmacyStockCardRepository;
 	
 	@Override
 	public StoreToPharmacyRNModel createReceivingNote(PharmacyToStoreRO pharmacyToStoreRO, HttpServletRequest request) {
@@ -93,6 +106,7 @@ public class StoreToPharmacyRNServiceImpl implements StoreToPharmacyRNService {
 			note.setReceivingDate(LocalDate.now());
 			note.setStoreToPharmacyTO(t.get());
 			note.setPharmacy(t.get().getPharmacy());
+			note.setStore(pharmacyToStoreRO.getStore());
 			note.setStatus("PENDING");
 			
 			note.setCreatedBy(userService.getUser(request).getId());
@@ -121,6 +135,7 @@ public class StoreToPharmacyRNServiceImpl implements StoreToPharmacyRNService {
 					b.setStoreToPharmacyRNDetail(receivingNoteDetail);
 					storeToPharmacyBatchRepository.save(b);
 				}
+				
 				
 			}
 			receiveNote = storeToPharmacyRNRepository.findById(note.getId()).get();			
@@ -182,11 +197,49 @@ public class StoreToPharmacyRNServiceImpl implements StoreToPharmacyRNService {
 		return model;
 	}
 	
-	
-	
-	
 	@Override
 	public StoreToPharmacyRNModel approveReceivingNote(StoreToPharmacyRN receiveNote, HttpServletRequest request) {
+		
+		//update pharmacy batch
+		for(StoreToPharmacyRNDetail detail : receiveNote.getStoreToPharmacyRNDetails()) {
+			
+			Optional<PharmacyMedicine> pharmacyMedicine_ = pharmacyMedicineRepository.findByPharmacyAndMedicine(receiveNote.getPharmacy(), detail.getMedicine());
+			//update stock
+			double originalStock = pharmacyMedicine_.get().getStock();
+			double newStock = originalStock + detail.getReceivedPharmacySKUQty();
+			pharmacyMedicine_.get().setStock(newStock);
+			pharmacyMedicineRepository.save(pharmacyMedicine_.get());
+			
+			//update pharmacy stock card
+			if(detail.getReceivedPharmacySKUQty() > 0) {
+				PharmacyStockCard pharmacyStockCard = new PharmacyStockCard();
+				pharmacyStockCard.setMedicine(detail.getMedicine());
+				pharmacyStockCard.setPharmacy(receiveNote.getPharmacy());
+				pharmacyStockCard.setQtyIn(detail.getReceivedPharmacySKUQty());
+				pharmacyStockCard.setQtyOut(0);
+				pharmacyStockCard.setBalance(newStock);
+				pharmacyStockCard.setReference("Medicine received # " + receiveNote.getNo());
+				
+				pharmacyStockCard.setCreatedBy(userService.getUserId(request));
+				pharmacyStockCard.setCreatedOn(dayService.getDayId());
+				pharmacyStockCard.setCreatedAt(dayService.getTimeStamp());
+				
+				pharmacyStockCardRepository.save(pharmacyStockCard);
+			}
+			
+			for(StoreToPharmacyBatch batch : detail.getStoreToPharmacyBatches()) {
+				
+				PharmacyMedicineBatch pharmacyMedicineBatch = new PharmacyMedicineBatch();
+				pharmacyMedicineBatch.setNo(batch.getNo());
+				pharmacyMedicineBatch.setMedicine(batch.getStoreToPharmacyRNDetail().getMedicine());
+				pharmacyMedicineBatch.setManufacturedDate(batch.getManufacturedDate());
+				pharmacyMedicineBatch.setExpiryDate(batch.getExpiryDate());
+				pharmacyMedicineBatch.setQty(batch.getPharmacySKUQty());
+				pharmacyMedicineBatch.setPharmacy(receiveNote.getPharmacy());
+				
+				pharmacyMedicineBatchRepository.save(pharmacyMedicineBatch);
+			}
+		}
 		
 		
 		

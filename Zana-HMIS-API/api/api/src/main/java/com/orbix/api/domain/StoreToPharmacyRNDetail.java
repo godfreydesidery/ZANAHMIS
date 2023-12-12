@@ -19,6 +19,8 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -67,8 +69,9 @@ public class StoreToPharmacyRNDetail {
     private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
 	
-	@OneToMany(targetEntity = StoreToPharmacyBatch.class, mappedBy = "storeToPharmacyRNDetail", fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(targetEntity = StoreToPharmacyBatch.class, mappedBy = "storeToPharmacyRNDetail", fetch = FetchType.EAGER, orphanRemoval = true)
     @Valid
-    @JsonIgnoreProperties({"storeToPharmacyRNDetail", "storeToPharmacyTODetail"})
+    @JsonIgnoreProperties({"storeToPharmacyRNDetail", "storeToPharmacyTODetail", "store", "pharmacy"})
+	@Fetch(FetchMode.SUBSELECT)
     private List<StoreToPharmacyBatch> storeToPharmacyBatches;
 }

@@ -42,6 +42,7 @@ public class StoreToPharmacyBatch {
 	private double pharmacySKUQty;
 	private double storeSKUQty;
 	
+	private LocalDate manufacturedDate;
 	private LocalDate expiryDate;
 	
 	@ManyToOne(targetEntity = StoreToPharmacyTODetail.class, fetch = FetchType.EAGER,  optional = false)

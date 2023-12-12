@@ -7,6 +7,7 @@ export interface IStoreToPharmacyBatch{
     no : string
     pharmacySKUQty : number
     storeSKUQty : number
+    manufacturedDate : Date
     expiryDate : Date
 
     storeToPharmacyTODetail : IStoreToPharmacyTODetail

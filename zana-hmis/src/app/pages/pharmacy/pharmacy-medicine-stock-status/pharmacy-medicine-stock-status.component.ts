@@ -15,6 +15,7 @@ import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 import * as pdfMake from 'pdfmake/build/pdfmake';
+import { IPharmacyMedicineBatch } from 'src/app/domain/pharmacy-item-batch';
 
 const API_URL = environment.apiUrl;
 
@@ -91,6 +92,41 @@ export class PharmacyMedicineStockStatusComponent {
         console.log(error)
       }
     )
+    this.pharmacyMedicinesToShow.forEach(async element => {
+      var batches : IPharmacyMedicineBatch[]  = await this.loadPharmacyMedicineBatches(element.pharmacy.id, element.medicine.id)
+
+      element.pharmacyMedicineBatches = batches
+    })
+  }
+
+  pharmacyMedicineBatches : IPharmacyMedicineBatch[] = []
+
+  async loadPharmacyMedicineBatches(pharmacyId : any, medicineId : any) : Promise<IPharmacyMedicineBatch[]>{ 
+    var batches :  IPharmacyMedicineBatch[] = [] 
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    
+    this.spinner.show()
+    await this.http.get<IPharmacyMedicineBatch[]>(API_URL+'/pharmacies/get_pharmacy_medicine_batches?pharmacy_id='+pharmacyId+'&medicine_id='+medicineId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        batches = data!
+        //data?.forEach(element => {
+          //batches.push(element)
+        //})
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+        console.log(error)
+      }
+    )
+    return batches
   }
 
   category : string = 'ALL'

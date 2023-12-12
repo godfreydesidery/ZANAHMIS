@@ -49,6 +49,7 @@
                                 <td>Name</td>
                                 <td>Category</td>
                                 <td>Qty</td>
+                                <td>Batch Breakdown</td>
                                 <td>Action</td>
                             </tr>
                         </thead>
@@ -59,6 +60,26 @@
                                 <td>{{pharmacyMedicine?.medicine?.name}}</td>
                                 <td>{{pharmacyMedicine?.medicine?.category}}</td>
                                 <td>{{pharmacyMedicine?.stock}}</td>
+                                <td>
+                                    <table class="table table-small" *ngIf="pharmacyMedicine.pharmacyMedicineBatches.length > 0">
+                                        <thead>
+                                            <tr style="font-weight: bold;">
+                                                <td>Batch#</td>
+                                                <td>Qty</td>
+                                                <td>MFG</td>
+                                                <td>EXP</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let batch of pharmacyMedicine.pharmacyMedicineBatches">
+                                                <td>{{batch.no}}</td>
+                                                <td>{{batch.qty}}</td>
+                                                <td>{{batch?.manufacturedDate | date}}</td>
+                                                <td>{{batch?.expiryDate | date}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
                                 <td>
                                     <button type="button" class="btn btn-success btn-outline" (click)="setValues(pharmacyMedicine.id, pharmacyMedicine.medicine.code, pharmacyMedicine.medicine.name, pharmacyMedicine.stock)" data-toggle="modal" data-target="#edit-qty-modal"><i class="glyphicon glyphicon-pencil"></i> Change Stock</button>
                                 </td>
