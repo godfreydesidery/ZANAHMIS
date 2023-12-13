@@ -316,6 +316,7 @@ export class AppComponent {
         {path : 'pharmacy-dispensing-report', loadComponent : () => import('./pages/pharmacy/reports/pharmacy-dispensing-report/pharmacy-dispensing-report.component').then(m => m.PharmacyDispensingReportComponent), canActivate: [AuthGuard]},
         {path : 'fast-moving-drugs-report', loadComponent : () => import('./pages/pharmacy/reports/fast-moving-drugs/fast-moving-drugs.component').then(m => m.FastMovingDrugsComponent), canActivate: [AuthGuard]},
         {path : 'slow-moving-drugs-report', loadComponent : () => import('./pages/pharmacy/reports/slow-moving-drugs/slow-moving-drugs.component').then(m => m.SlowMovingDrugsComponent), canActivate: [AuthGuard]},
+        {path : 'pharmacy-stock-card-report', loadComponent : () => import('./pages/pharmacy/reports/pharmacy-stock-card-report/pharmacy-stock-card-report.component').then(m => m.PharmacyStockCardReportComponent), canActivate: [AuthGuard]},
       )
     }
     loadCashierModule(){
@@ -354,6 +355,8 @@ export class AppComponent {
         {path : 'goods-received-note', loadComponent : () => import('./pages/store/goods-received-note/goods-received-note.component').then(m => m.GoodsReceivedNoteComponent), canActivate: [AuthGuard]},
         {path : 'store-item-stock-status', loadComponent : () => import('./pages/store/store-item-stock-status/store-item-stock-status.component').then(m => m.StoreItemStockStatusComponent), canActivate: [AuthGuard]},
         {path : 'goods-received-note-report', loadComponent : () => import('./pages/store/reports/goods-received-note-report/goods-received-note-report.component').then(m => m.GoodsReceivedNoteReportComponent), canActivate: [AuthGuard]},
+        {path : 'store-stock-card-report', loadComponent : () => import('./pages/store/reports/store-stock-card-report/store-stock-card-report.component').then(m => m.StoreStockCardReportComponent), canActivate: [AuthGuard]},
+        {path : 'local-purchase-order-report', loadComponent : () => import('./pages/procurement/reports/local-purchase-order-report/local-purchase-order-report.component').then(m => m.LocalPurchaseOrderReportComponent), canActivate: [AuthGuard]},
       )
     }
 

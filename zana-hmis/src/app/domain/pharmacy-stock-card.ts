@@ -13,4 +13,9 @@ export interface IPharmacyStockCard {
     pharmacy    : IPharmacy
 
     created     : string
+
+    /**
+     * Auxilliary attributes
+     */
+    sn : number
 }

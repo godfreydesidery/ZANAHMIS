@@ -38,15 +38,19 @@ import com.orbix.api.domain.NonConsultation;
 import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientBill;
 import com.orbix.api.domain.PatientInvoiceDetail;
+import com.orbix.api.domain.PharmacyStockCard;
 import com.orbix.api.domain.Prescription;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
+import com.orbix.api.domain.StoreStockCard;
 import com.orbix.api.domain.Supplier;
 import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.models.LabTestModel;
+import com.orbix.api.models.PharmacyStockCardModel;
 import com.orbix.api.models.PrescriptionModel;
+import com.orbix.api.models.StoreStockCardModel;
 import com.orbix.api.reports.FastMovingDrugs;
 import com.orbix.api.reports.models.GrnReport;
 import com.orbix.api.reports.models.LabTestTypeReport;
@@ -62,9 +66,11 @@ import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PatientBillRepository;
 import com.orbix.api.repositories.PatientInvoiceDetailRepository;
 import com.orbix.api.repositories.PatientRepository;
+import com.orbix.api.repositories.PharmacyStockCardRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.RadiologyRepository;
+import com.orbix.api.repositories.StoreStockCardRepository;
 import com.orbix.api.repositories.UserRepository;
 import com.orbix.api.service.DayService;
 import com.orbix.api.service.UserService;
@@ -102,6 +108,9 @@ public class ReportResource {
 	
 	private final PrescriptionRepository prescriptionRepository;
 	private final MedicineRepository medicineRepository;
+	
+	private final StoreStockCardRepository storeStockCardRepository;
+	private final PharmacyStockCardRepository pharmacyStockCardRepository;
 	
 	@PostMapping("/reports/consultation_report")
 	public ResponseEntity<List<Consultation>>getConsultationReport(
@@ -538,6 +547,67 @@ public class ReportResource {
 		return ResponseEntity.ok().body(goodsReceivedNoteDetails);
 	}
 	
+	@PostMapping("/reports/store_stock_card_report")
+	public ResponseEntity<List<StoreStockCardModel>>getStoreStocCardReport(
+			@RequestBody StoreStockCardReportArgs args,
+			HttpServletRequest request){
+		
+		List<StoreStockCard> storeStockCards = storeStockCardRepository.findAllByCreatedAtBetween(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		
+		List<StoreStockCardModel> storeStockCardModels = new ArrayList<>();
+		
+		for(StoreStockCard storeStockCard : storeStockCards) {
+			StoreStockCardModel storeStockCardModel = new StoreStockCardModel();
+			storeStockCardModel.setId(storeStockCard.getId());
+			storeStockCardModel.setItem(storeStockCard.getItem());
+			storeStockCardModel.setStore(storeStockCard.getStore());
+			storeStockCardModel.setQtyIn(storeStockCard.getQtyIn());
+			storeStockCardModel.setQtyOut(storeStockCard.getQtyOut());
+			storeStockCardModel.setBalance(storeStockCard.getBalance());
+			storeStockCardModel.setReference(storeStockCard.getReference());
+			
+			if(storeStockCard.getCreatedAt() != null) {
+				storeStockCardModel.setCreated(storeStockCard.getCreatedAt().toString()+" | "+userService.getUserById(storeStockCard.getCreatedBy()).getNickname());
+			}else {
+				storeStockCardModel.setCreated("");
+			}
+			
+			storeStockCardModels.add(storeStockCardModel);
+		}
+		
+		return ResponseEntity.ok().body(storeStockCardModels);
+	}
+	
+	@PostMapping("/reports/pharmacy_stock_card_report")
+	public ResponseEntity<List<PharmacyStockCardModel>>getPharmacyStocCardReport(
+			@RequestBody PharmacyStockCardReportArgs args,
+			HttpServletRequest request){
+		
+		List<PharmacyStockCard> pharmacyStockCards = pharmacyStockCardRepository.findAllByCreatedAtBetween(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1));
+		
+		List<PharmacyStockCardModel> pharmacyStockCardModels = new ArrayList<>();
+		
+		for(PharmacyStockCard pharmacyStockCard : pharmacyStockCards) {
+			PharmacyStockCardModel pharmacyStockCardModel = new PharmacyStockCardModel();
+			pharmacyStockCardModel.setId(pharmacyStockCard.getId());
+			pharmacyStockCardModel.setMedicine(pharmacyStockCard.getMedicine());
+			pharmacyStockCardModel.setPharmacy(pharmacyStockCard.getPharmacy());
+			pharmacyStockCardModel.setQtyIn(pharmacyStockCard.getQtyIn());
+			pharmacyStockCardModel.setQtyOut(pharmacyStockCard.getQtyOut());
+			pharmacyStockCardModel.setBalance(pharmacyStockCard.getBalance());
+			pharmacyStockCardModel.setReference(pharmacyStockCard.getReference());
+			
+			if(pharmacyStockCard.getCreatedAt() != null) {
+				pharmacyStockCardModel.setCreated(pharmacyStockCard.getCreatedAt().toString()+" | "+userService.getUserById(pharmacyStockCard.getCreatedBy()).getNickname());
+			}else {
+				pharmacyStockCardModel.setCreated("");
+			}
+			
+			pharmacyStockCardModels.add(pharmacyStockCardModel);
+		}
+		
+		return ResponseEntity.ok().body(pharmacyStockCardModels);
+	}	
 }
 
 @Data
@@ -606,4 +676,16 @@ class GoodsReceivedNoteReportArgs {
 	LocalDate to;
 	Supplier supplier;
 	List<Item> items;
+}
+
+@Data
+class StoreStockCardReportArgs {
+	LocalDate from;
+	LocalDate to;
+}
+
+@Data
+class PharmacyStockCardReportArgs {
+	LocalDate from;
+	LocalDate to;
 }
