@@ -246,6 +246,7 @@ export class PatientPharmacyComponent {
     )
     .catch(
       error => {
+        console.log(error)
         this.msgBox.showErrorMessage(error, '')
       }
     )

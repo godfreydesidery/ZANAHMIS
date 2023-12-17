@@ -56,6 +56,7 @@
                                         <td>Drug Name</td>
                                         <td>Qty</td>
                                         <td>Dispensing Pharmacy</td>
+                                        <td>Batch Breakdown</td>
                                         <td>Dispensed At/By</td>
                                     </tr>
                                 </thead>
@@ -67,6 +68,26 @@
                                         <td>{{test?.medicine?.name}}</td>
                                         <td>{{test.issued}}</td>
                                         <td>{{test?.issuePharmacy?.name}}</td>
+                                        <td>
+                                            <table class="table table-small" *ngIf="test.prescriptionBatches.length > 0">
+                                                <thead>
+                                                    <tr style="font-weight: bold;">
+                                                        <td>Batch#</td>
+                                                        <td>Qty</td>
+                                                        <td>MFG</td>
+                                                        <td>EXP</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let batch of test.prescriptionBatches">
+                                                        <td>{{batch.no}}</td>
+                                                        <td>{{batch.qty}}</td>
+                                                        <td>{{batch?.manufacturedDate | date}}</td>
+                                                        <td>{{batch?.expiryDate | date}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
                                         <td>{{test?.approved}}</td>
                                     </tr>
                                 </tbody>

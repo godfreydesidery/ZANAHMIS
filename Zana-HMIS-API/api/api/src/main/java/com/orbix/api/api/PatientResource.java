@@ -75,12 +75,14 @@ import com.orbix.api.domain.Patient;
 import com.orbix.api.domain.PatientCreditNote;
 import com.orbix.api.domain.PatientDressingChart;
 import com.orbix.api.domain.Prescription;
+import com.orbix.api.domain.PrescriptionBatch;
 import com.orbix.api.domain.Procedure;
 import com.orbix.api.domain.ProcedureType;
 import com.orbix.api.domain.Radiology;
 import com.orbix.api.domain.RadiologyType;
 import com.orbix.api.domain.ReferralPlan;
 import com.orbix.api.domain.StoreItemBatch;
+import com.orbix.api.domain.StoreToPharmacyBatch;
 import com.orbix.api.domain.User;
 import com.orbix.api.domain.Visit;
 import com.orbix.api.domain.WardBed;
@@ -146,6 +148,7 @@ import com.orbix.api.repositories.PharmacyMedicineBatchRepository;
 import com.orbix.api.repositories.PharmacyMedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.PharmacyStockCardRepository;
+import com.orbix.api.repositories.PrescriptionBatchRepository;
 import com.orbix.api.repositories.PrescriptionRepository;
 import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.ProcedureTypeRepository;
@@ -226,6 +229,8 @@ public class PatientResource {
 	private final ReferralPlanRepository referralPlanRepository;
 	
 	private final ExternalMedicalProviderRepository externalMedicalProviderRepository;
+	
+	private final PrescriptionBatchRepository prescriptionBatchRepository;
 	
 	
 	@GetMapping("/patients")
@@ -2702,9 +2707,29 @@ public class PatientResource {
 			
 			pharmacyStockCardRepository.save(pharmacyStockCard);
 			
+			
+			
+			
+			/*for(StoreToPharmacyBatch batch : detail.getStoreToPharmacyBatches()) {
+				
+				PharmacyMedicineBatch pharmacyMedicineBatch = new PharmacyMedicineBatch();
+				pharmacyMedicineBatch.setNo(batch.getNo());
+				pharmacyMedicineBatch.setMedicine(batch.getStoreToPharmacyRNDetail().getMedicine());
+				pharmacyMedicineBatch.setManufacturedDate(batch.getManufacturedDate());
+				pharmacyMedicineBatch.setExpiryDate(batch.getExpiryDate());
+				pharmacyMedicineBatch.setQty(batch.getPharmacySKUQty());
+				pharmacyMedicineBatch.setPharmacy(receiveNote.getPharmacy());
+				
+				pharmacyMedicineBatchRepository.save(pharmacyMedicineBatch);
+			}*/
+			
+			
+			
+			
+			
 			List<PharmacyMedicineBatch> pharmacyMedicineBatches = pharmacyMedicineBatchRepository.findAllByPharmacyAndMedicineAndQtyGreaterThan(pharmacy, medicine, 0);
 			
-			deductBatch(pharmacyMedicineBatches, prescription.getIssued());
+			deductBatch(pharmacyMedicineBatches, prescription_.get(), prescription.getIssued());
 			
 		}
 		
@@ -2712,20 +2737,40 @@ public class PatientResource {
 	}
 	
 	
-	void deductBatch(List<PharmacyMedicineBatch> pharmacyMedicineBatches, double qty){
+	void deductBatch(List<PharmacyMedicineBatch> pharmacyMedicineBatches, Prescription prescription, double qty){
 		
 		PharmacyMedicineBatch batch = getEarlierBatch(pharmacyMedicineBatches);
 		pharmacyMedicineBatches.remove(batch);
 		
 		if(qty <= batch.getQty()) {
-			batch.setQty(batch.getQty() - qty);
+			double toDeduct = batch.getQty() - qty;
+			batch.setQty(toDeduct);
 			pharmacyMedicineBatchRepository.save(batch);
+			
+			PrescriptionBatch prescriptionBatch = new PrescriptionBatch();
+			prescriptionBatch.setNo(batch.getNo());
+			prescriptionBatch.setManufacturedDate(batch.getManufacturedDate());
+			prescriptionBatch.setExpiryDate(batch.getExpiryDate());
+			prescriptionBatch.setQty(qty);
+			prescriptionBatch.setPrescription(prescription);
+			
+			prescriptionBatchRepository.save(prescriptionBatch);
+			
 		}else if(qty > batch.getQty()) {
-			double newToDeduct = batch.getQty();
+			double newToDeduct = qty - batch.getQty();
+			double qtyIssued = batch.getQty();
 			batch.setQty(0);
 			pharmacyMedicineBatchRepository.save(batch);
 			pharmacyMedicineBatches.remove(batch);
-			deductBatch(pharmacyMedicineBatches, qty - newToDeduct);
+			deductBatch(pharmacyMedicineBatches, prescription, newToDeduct);
+			
+			PrescriptionBatch prescriptionBatch = new PrescriptionBatch();
+			prescriptionBatch.setNo(batch.getNo());
+			prescriptionBatch.setManufacturedDate(batch.getManufacturedDate());
+			prescriptionBatch.setExpiryDate(batch.getExpiryDate());
+			prescriptionBatch.setQty(qtyIssued);
+			
+			prescriptionBatchRepository.save(prescriptionBatch);
 		}		
 	}
 	

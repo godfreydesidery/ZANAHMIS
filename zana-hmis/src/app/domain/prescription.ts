@@ -8,6 +8,7 @@ import { IPatient } from "./patient"
 import { IUser } from "./user"
 import { IInsurancePlan } from "./insurance-plan"
 import { IPharmacy } from "./pharmacy"
+import { IPrescriptionBatch } from "./prescription-batch"
 
 export interface IPrescription {
     id          : any
@@ -45,6 +46,8 @@ export interface IPrescription {
     collected : string
     verified : string
     approved : string
+
+    prescriptionBatches : IPrescriptionBatch[]
 
     /**
      * Auxiliary attributes

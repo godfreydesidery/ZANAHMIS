@@ -37,6 +37,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { IMedicine } from 'src/app/domain/medicine';
 import { IPrescription } from 'src/app/domain/prescription';
+import { IPrescriptionBatch } from 'src/app/domain/prescription-batch';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 const fs = require('file-saver');
 
@@ -137,7 +138,44 @@ export class PharmacyDispensingReportComponent {
         this.msgBox.showErrorMessage(error, '')
       }
     )
+    this.prescriptions.forEach(async element => {
+      var batches = await this.loadPrescriptionBatches(element.id)
+
+      element.prescriptionBatches = batches
+    })
   }
+
+
+  async loadPrescriptionBatches(prescriptionId : any) : Promise<IPrescriptionBatch[]>{ 
+    var batches :  IPrescriptionBatch[] = [] 
+    let options = {
+      headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
+    }
+    
+    this.spinner.show()
+    await this.http.get<IPrescriptionBatch[]>(API_URL+'/pharmacies/get_prescription_batches?prescription_id='+prescriptionId, options)
+    .pipe(finalize(() => this.spinner.hide()))
+    .toPromise()
+    .then(
+      data => {
+        console.log(data)
+        batches = data!
+        //data?.forEach(element => {
+          //batches.push(element)
+        //})
+      }
+    )
+    .catch(
+      error => {
+        this.msgBox.showErrorMessage(error, '')
+        console.log(error)
+      }
+    )
+    return batches
+  }
+
+
+
 
   clear(){
     this.prescriptions = []

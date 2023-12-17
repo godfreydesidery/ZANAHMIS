@@ -367,6 +367,7 @@ export class AppComponent {
         {path : 'supplier-register', loadComponent : () => import('./pages/admin/stakeholders/supplier-register/supplier-register.component').then(m => m.SupplierRegisterComponent), canActivate: [AuthGuard]},
         {path : 'item-register', loadComponent : () => import('./pages/admin/inventory/item-register/item-register.component').then(m => m.ItemRegisterComponent), canActivate: [AuthGuard]},
         {path : 'local-purchase-order-report', loadComponent : () => import('./pages/procurement/reports/local-purchase-order-report/local-purchase-order-report.component').then(m => m.LocalPurchaseOrderReportComponent), canActivate: [AuthGuard]},
+        {path : 'goods-received-note-report', loadComponent : () => import('./pages/store/reports/goods-received-note-report/goods-received-note-report.component').then(m => m.GoodsReceivedNoteReportComponent), canActivate: [AuthGuard]},
       )
     }
     loadAdminModule(){
