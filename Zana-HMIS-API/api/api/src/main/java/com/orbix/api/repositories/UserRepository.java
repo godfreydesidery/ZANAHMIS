@@ -27,4 +27,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	@Query("SELECT MAX(u.id) FROM User u")
 	Long getLastId();
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	boolean existsByUsername(String string);
 }

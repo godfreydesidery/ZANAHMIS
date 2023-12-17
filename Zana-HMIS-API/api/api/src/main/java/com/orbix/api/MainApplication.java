@@ -62,6 +62,7 @@ import com.orbix.api.repositories.ProcedureRepository;
 import com.orbix.api.repositories.RadiologyRepository;
 import com.orbix.api.repositories.ReferralPlanRepository;
 import com.orbix.api.repositories.RoleRepository;
+import com.orbix.api.repositories.UserRepository;
 import com.orbix.api.repositories.WardTypeInsurancePlanRepository;
 import com.orbix.api.security.Object_;
 import com.orbix.api.security.Operation;
@@ -114,6 +115,7 @@ public class MainApplication {
 	private final DeceasedNoteRepository deceasedNoteRepository;
 	private final ReferralPlanRepository referralPlanRepository;
 	private final PatientRepository patientRepository;
+	private final UserRepository userRepository;
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -235,7 +237,7 @@ public class MainApplication {
 				roleRepository.save(r);
 			}
 			
-			if(!roleRepository.existsByName("ROOT")) {
+			if(!userRepository.existsByUsername("root")) {
 				try {
 					userService.saveUser(new User(null, "ROOT", "Root", "Root", "Root", "Root@Root", "root", "r00tpA55", true, new ArrayList<>(), null, null, LocalDateTime.now()), null);
 				}catch(Exception e) {}	
