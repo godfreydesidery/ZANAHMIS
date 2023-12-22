@@ -289,20 +289,24 @@ public class StoreToPharmacyTOServiceImpl implements StoreToPharmacyTOService{
 	}
 	
 	void deductBatch(List<StoreItemBatch> storeItemBatches, double qty){
-		
-		StoreItemBatch batch = getEarlierBatch(storeItemBatches);
-		storeItemBatches.remove(batch);
-		
-		if(qty <= batch.getQty()) {
-			batch.setQty(batch.getQty() - qty);
-			storeItemBatchRepository.save(batch);
-		}else if(qty > batch.getQty()) {
-			double newToDeduct = batch.getQty();
-			batch.setQty(0);
-			storeItemBatchRepository.save(batch);
+		try {
+			StoreItemBatch batch = getEarlierBatch(storeItemBatches);
 			storeItemBatches.remove(batch);
-			deductBatch(storeItemBatches, qty - newToDeduct);
-		}		
+			
+			if(qty <= batch.getQty()) {
+				batch.setQty(batch.getQty() - qty);
+				storeItemBatchRepository.save(batch);
+			}else if(qty > batch.getQty()) {
+				double newToDeduct = batch.getQty();
+				batch.setQty(0);
+				storeItemBatchRepository.save(batch);
+				storeItemBatches.remove(batch);
+				deductBatch(storeItemBatches, qty - newToDeduct);
+			}	
+		}catch(Exception e) {
+			//do nothing
+		}
+			
 	}
 	
 	StoreItemBatch getEarlierBatch(List<StoreItemBatch> storeItemBatches) {

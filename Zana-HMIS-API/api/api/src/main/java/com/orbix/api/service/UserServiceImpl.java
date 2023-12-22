@@ -592,7 +592,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		Long id = 1L;
 		try {
 			id = userRepository.getLastId() + 1;
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			
+		}
 		RecordModel model = new RecordModel();
 		model.setCode("USR-"+Formater.formatSix(id.toString()));
 		model.setNo("USR-"+Formater.formatSix(id.toString()));

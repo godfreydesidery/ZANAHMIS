@@ -2739,39 +2739,44 @@ public class PatientResource {
 	
 	void deductBatch(List<PharmacyMedicineBatch> pharmacyMedicineBatches, Prescription prescription, double qty){
 		
-		PharmacyMedicineBatch batch = getEarlierBatch(pharmacyMedicineBatches);
-		pharmacyMedicineBatches.remove(batch);
-		
-		if(qty <= batch.getQty()) {
-			double toDeduct = batch.getQty() - qty;
-			batch.setQty(toDeduct);
-			pharmacyMedicineBatchRepository.save(batch);
-			
-			PrescriptionBatch prescriptionBatch = new PrescriptionBatch();
-			prescriptionBatch.setNo(batch.getNo());
-			prescriptionBatch.setManufacturedDate(batch.getManufacturedDate());
-			prescriptionBatch.setExpiryDate(batch.getExpiryDate());
-			prescriptionBatch.setQty(qty);
-			prescriptionBatch.setPrescription(prescription);
-			
-			prescriptionBatchRepository.save(prescriptionBatch);
-			
-		}else if(qty > batch.getQty()) {
-			double newToDeduct = qty - batch.getQty();
-			double qtyIssued = batch.getQty();
-			batch.setQty(0);
-			pharmacyMedicineBatchRepository.save(batch);
+		try {
+			PharmacyMedicineBatch batch = getEarlierBatch(pharmacyMedicineBatches);
 			pharmacyMedicineBatches.remove(batch);
-			deductBatch(pharmacyMedicineBatches, prescription, newToDeduct);
+			if(qty <= batch.getQty()) {
+				double toDeduct = batch.getQty() - qty;
+				batch.setQty(toDeduct);
+				pharmacyMedicineBatchRepository.save(batch);
+				
+				PrescriptionBatch prescriptionBatch = new PrescriptionBatch();
+				prescriptionBatch.setNo(batch.getNo());
+				prescriptionBatch.setManufacturedDate(batch.getManufacturedDate());
+				prescriptionBatch.setExpiryDate(batch.getExpiryDate());
+				prescriptionBatch.setQty(qty);
+				prescriptionBatch.setPrescription(prescription);
+				
+				prescriptionBatchRepository.save(prescriptionBatch);
+				
+			}else if(qty > batch.getQty()) {
+				double newToDeduct = qty - batch.getQty();
+				double qtyIssued = batch.getQty();
+				batch.setQty(0);
+				pharmacyMedicineBatchRepository.save(batch);
+				pharmacyMedicineBatches.remove(batch);
+				deductBatch(pharmacyMedicineBatches, prescription, newToDeduct);
+				
+				PrescriptionBatch prescriptionBatch = new PrescriptionBatch();
+				prescriptionBatch.setNo(batch.getNo());
+				prescriptionBatch.setManufacturedDate(batch.getManufacturedDate());
+				prescriptionBatch.setExpiryDate(batch.getExpiryDate());
+				prescriptionBatch.setQty(qtyIssued);
+				
+				prescriptionBatchRepository.save(prescriptionBatch);
+			}	
+		}catch(Exception e) {
+			//do nothing
+		}
+		
 			
-			PrescriptionBatch prescriptionBatch = new PrescriptionBatch();
-			prescriptionBatch.setNo(batch.getNo());
-			prescriptionBatch.setManufacturedDate(batch.getManufacturedDate());
-			prescriptionBatch.setExpiryDate(batch.getExpiryDate());
-			prescriptionBatch.setQty(qtyIssued);
-			
-			prescriptionBatchRepository.save(prescriptionBatch);
-		}		
 	}
 	
 	PharmacyMedicineBatch getEarlierBatch(List<PharmacyMedicineBatch> pharmacyMedicineBatches) {

@@ -171,6 +171,7 @@ public class PharmacyResource {
 	}
 	
 	@PostMapping("/pharmacies/update_stock")
+	@PreAuthorize("hasAnyAuthority('MEDICINE_STOCK-UPDATE')")
 	public void updateStock(
 			@RequestBody LPharmacyMedicine pm,
 			HttpServletRequest request){
