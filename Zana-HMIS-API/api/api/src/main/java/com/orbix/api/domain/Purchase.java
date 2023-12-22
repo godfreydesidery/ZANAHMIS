@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -39,12 +40,12 @@ public class Purchase {
 	private double qty = 0;
 	private double amount = 0;
 	
-	@OneToOne(targetEntity = Item.class, fetch = FetchType.EAGER,  optional = false)
+	@ManyToOne(targetEntity = Item.class, fetch = FetchType.EAGER,  optional = false)
     @JoinColumn(name = "item_id", nullable = false , updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private Item item;
 	
-	@OneToOne(targetEntity = GoodsReceivedNote.class, fetch = FetchType.EAGER,  optional = true)
+	@ManyToOne(targetEntity = GoodsReceivedNote.class, fetch = FetchType.EAGER,  optional = true)
     @JoinColumn(name = "goods_received_note_id", nullable = true , updatable = true)
     @OnDelete(action = OnDeleteAction.NO_ACTION)	
     private GoodsReceivedNote goodsReceivedNote;
