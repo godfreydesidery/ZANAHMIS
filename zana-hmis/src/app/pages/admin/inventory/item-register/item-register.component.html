@@ -11,8 +11,22 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <button type="button" class="btn btn-success btn-outline" (click)="clear()">New</button>
-                    <button type="button" class="btn btn-success btn-outline" (click)="clear()">Clear</button>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <button type="button" class="btn btn-success btn-outline" (click)="clear()">New</button>
+                            <button type="button" class="btn btn-success btn-outline" (click)="clear()">Clear</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <button class="btn btn-primary btn-outline" (click)="exportTemplateToExcel()"><i class="fa fa-file-excel-o"></i> Template</button>
+                            <button class="btn btn-primary btn-outline" (click)="exportItemsToExcel()"><i class="fa fa-file-excel-o"></i> Excel</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <h5>Upload from Excel <span>Progress: {{progressStatus}} {{currentRecord}} of {{totalRecords}}</span></h5>
+                            <input type="file" (change)="uploadItemsFile($event)" multiple="false">
+                        </div>
+                    </div>
+
+
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -76,6 +90,40 @@
                             <button type="button" class="btn btn-success m-r-2 m-b-5 pull-right" (click)="saveItem()">Save</button>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <hr>
+                        <br><br>
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control pull-right" [(ngModel)]="filterRecords" placeholder="Search..." style="max-width: 8cm;">
+                                </div>
+                            </div>
+                            <br>
+                            <table class="table table-bordered table-small">
+                                <thead>
+                                    <tr>
+                                        <td>Code</td>
+                                        <td>Name</td>
+                                        <td>Uom</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of items | searchFilter : filterRecords">
+                                        <td>{{item?.code}}</td>
+                                        <td>{{item?.name}}</td>
+                                        <td>{{item?.uom}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+
                 </div>
              </div>
          </div>

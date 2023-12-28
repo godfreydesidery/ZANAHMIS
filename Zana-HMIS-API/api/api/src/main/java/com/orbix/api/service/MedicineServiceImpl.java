@@ -56,7 +56,8 @@ public class MedicineServiceImpl implements MedicineService{
 	@Override
 	public Medicine save(Medicine medicine, HttpServletRequest request) {
 		
-		medicine.setName(medicine.getName());
+		medicine.setCode(medicine.getCode().replace(" ", ""));
+		medicine.setName(medicine.getName().trim().replaceAll("\\s+", " "));
 		
 		if(medicine.getId() == null) {
 			medicine.setCreatedby(userService.getUser(request).getId());

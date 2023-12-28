@@ -42,11 +42,16 @@
                         <div *ngIf="supplier != null">
                             
                             <div class="row">
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <h4 class="text-primary">Add Item  <button class="btn btn-success" (click)="clear()" data-toggle="modal" data-target="#item-modal" style="border-radius: 5mm;">+</button></h4>
                                 </div>
-                                <div class="col-sm-4"></div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    <button class="btn btn-primary btn-outline" (click)="getTemplateToExcel()"><i class="fa fa-file-excel-o"></i> Get Template</button>
+                                </div>
+                                <div class="col-sm-3">
+                                    <input type="file" (change)="uploadSupplierPriceListFile($event)" multiple="false" #inputFile>
+                                </div>
+                                <div class="col-sm-3">
                                     <input type="text" class="form-control pull-right" [(ngModel)]="filterItems" placeholder="Search..." style="max-width: 8cm;">
                                 </div>
                             </div>

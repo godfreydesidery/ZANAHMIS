@@ -139,4 +139,33 @@ public class SupplierItemPriceResource {
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/supplier_item_prices/save").toUriString());
 		return ResponseEntity.created(uri).body(supplierItemPriceService.save(supplierItemPrice, request));
 	}
+	
+	@PostMapping("/supplier_item_prices/save_or_update")
+	@PreAuthorize("hasAnyAuthority('SUPPLIER_PRICE_LIST-ALL')")
+	public ResponseEntity<SupplierItemPriceList>saveOrUpdate(
+			@RequestBody SupplierItemPrice supplierItemPrice,
+			HttpServletRequest request){
+		Optional<Supplier> supplier_ = supplierRepository.findById(supplierItemPrice.getSupplier().getId());
+		if(supplier_.isEmpty()) {
+			throw new NotFoundException("Supplier not found");
+		}
+		Optional<Item> item_ = itemRepository.findByCode(supplierItemPrice.getItem().getCode());
+		if(item_.isEmpty()) {
+			throw new NotFoundException("Item not found");
+		}
+		
+		Optional<SupplierItemPrice> supplierItemPrice_ = supplierItemPriceRepository.findBySupplierAndItem(supplier_.get(), item_.get());
+		
+		if(supplierItemPrice_.isEmpty()) {
+			supplierItemPrice.setSupplier(supplier_.get());
+			supplierItemPrice.setItem(item_.get());
+			URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/supplier_item_prices/save").toUriString());
+			return ResponseEntity.created(uri).body(supplierItemPriceService.save(supplierItemPrice, request));
+		}else {
+			URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/zana-hmis-api/supplier_item_prices/save_or_update").toUriString());
+			supplierItemPrice_.get().setPrice(supplierItemPrice.getPrice());
+			supplierItemPrice_.get().setTerms(supplierItemPrice.getTerms());
+			return ResponseEntity.created(uri).body(supplierItemPriceService.update(supplierItemPrice_.get(), request));
+		}
+	}
 }

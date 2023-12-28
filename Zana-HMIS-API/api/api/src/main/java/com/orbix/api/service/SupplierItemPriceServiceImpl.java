@@ -54,6 +54,18 @@ public class SupplierItemPriceServiceImpl implements SupplierItemPriceService {
 		
 		return supplierItemPriceList;
 	}
+	
+	@Override
+	public SupplierItemPriceList update(SupplierItemPrice supplierItemPrice, HttpServletRequest request) {
+		
+		supplierItemPrice = supplierItemPriceRepository.save(supplierItemPrice);
+		
+		SupplierItemPriceList supplierItemPriceList = new SupplierItemPriceList();
+		supplierItemPriceList.setSupplier(supplierItemPrice.getSupplier());
+		supplierItemPriceList.setSupplierItemPrices(supplierItemPriceRepository.findAllBySupplier(supplierItemPrice.getSupplier()));
+		
+		return supplierItemPriceList;
+	}
 
 	@Override
 	public List<SupplierItemPrice> getSupplierItemPrices(Supplier supplier, HttpServletRequest request) {

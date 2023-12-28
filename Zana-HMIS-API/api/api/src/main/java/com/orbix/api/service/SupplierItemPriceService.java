@@ -19,6 +19,7 @@ import com.orbix.api.domain.SupplierItemPriceList;
  */
 public interface SupplierItemPriceService {
 	SupplierItemPriceList save(SupplierItemPrice supplierItemPrice, HttpServletRequest request);
+	SupplierItemPriceList update(SupplierItemPrice supplierItemPrice, HttpServletRequest request);
 	List<SupplierItemPrice>getSupplierItemPrices(Supplier supplier, HttpServletRequest request); // return all the labTestTypeRanges
 	SupplierItemPrice getSupplierItemPriceById(Long id, HttpServletRequest request);
 	boolean deleteSupplierItemPrice(SupplierItemPrice SupplierItemPrice, HttpServletRequest request);

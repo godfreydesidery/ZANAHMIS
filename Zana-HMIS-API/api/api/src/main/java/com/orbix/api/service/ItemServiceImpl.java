@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
 	public Item save(Item item, HttpServletRequest request) {
 		
 		item.setCode(item.getCode().replace(" ", ""));
-		item.setName(item.getName());
+		item.setName(item.getName().trim().replaceAll("\\s+", " "));
 		
 		if(item.getId() == null) {
 			item.setCreatedBy(userService.getUser(request).getId());
