@@ -11,8 +11,18 @@
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
                 <div class="panel-heading">
-                    <div class="btn"> 
-                        <button type="button" class="btn btn-success m-r-2 m-b-5" (click)="clear()" data-toggle="modal" data-target="#add-edit-modal">New</button>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <button type="button" class="btn btn-success m-r-2 m-b-5" (click)="clear()" data-toggle="modal" data-target="#add-edit-modal">New</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <button class="btn btn-primary btn-outline" (click)="exportTemplateToExcel()"><i class="fa fa-file-excel-o"></i> Template</button>
+                            <button class="btn btn-primary btn-outline" (click)="exportRadiologyTypesToExcel()"><i class="fa fa-file-excel-o"></i> Excel</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <h5>Upload from Excel <span>Progress: {{progressStatus}} {{currentRecord}} of {{totalRecords}}</span></h5>
+                            <input type="file" (change)="uploadRadiologyTypesFile($event)" multiple="false">
+                        </div>
                     </div>
                 </div>
                 <div class="panel-body">

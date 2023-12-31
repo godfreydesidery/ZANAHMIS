@@ -38,8 +38,8 @@ public class RadiologyTypeServiceImpl implements RadiologyTypeService{
 	@Override
 	public RadiologyType save(RadiologyType radiologyType, HttpServletRequest request) {
 		
-
-		radiologyType.setName(radiologyType.getName());
+		radiologyType.setCode(radiologyType.getCode().replace(" ", ""));
+		radiologyType.setName(radiologyType.getName().trim().replaceAll("\\s+", " "));
 		
 		if(radiologyType.getId() == null) {
 			radiologyType.setCreatedby(userService.getUser(request).getId());

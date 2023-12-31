@@ -503,10 +503,11 @@ export class MedicineComponent implements OnInit {
       this.currentRecord = i
       //checks for empty code and name
       if( data[i][0] == '' ||
-          data[i][2] == ''
+          data[i][2] == '' ||
+          data[i][5] == ''
         )
       {
-        alert('Error in record no '+ i)
+        alert('Error in record no '+ i + '.Blank or invalid entry')
         valid = false
       }
     }

@@ -38,7 +38,8 @@ public class ProcedureTypeServiceImpl implements ProcedureTypeService{
 	@Override
 	public ProcedureType save(ProcedureType procedureType, HttpServletRequest request) {
 		
-		procedureType.setName(procedureType.getName());
+		procedureType.setCode(procedureType.getCode().replace(" ", ""));
+		procedureType.setName(procedureType.getName().trim().replaceAll("\\s+", " "));
 		
 		if(procedureType.getId() == null) {
 			procedureType.setCreatedby(userService.getUser(request).getId());

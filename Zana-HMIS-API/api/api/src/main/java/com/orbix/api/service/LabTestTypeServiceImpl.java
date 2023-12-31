@@ -43,8 +43,10 @@ public class LabTestTypeServiceImpl implements LabTestTypeService{
 		
 		if(labTestType.getId() != null) {
 			testType = labTestTypeRepository.findById(labTestType.getId()).get();
-			testType.setCode(labTestType.getCode());
-			testType.setName(labTestType.getName());
+			
+			testType.setCode(testType.getCode().replace(" ", ""));
+			testType.setName(testType.getName().trim().replaceAll("\\s+", " "));
+			
 			testType.setDescription(labTestType.getDescription());
 			testType.setPrice(labTestType.getPrice());
 			testType.setUom(labTestType.getUom());
