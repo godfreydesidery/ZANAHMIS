@@ -61,7 +61,7 @@
                                 <td>{{pharmacyMedicine?.medicine?.category}}</td>
                                 <td>{{pharmacyMedicine?.stock}}</td>
                                 <td>
-                                    <table class="table table-small" *ngIf="pharmacyMedicine.pharmacyMedicineBatches.length > 0">
+                                    <!--<table class="table table-small" *ngIf="pharmacyMedicine.pharmacyMedicineBatches.length > 0">
                                         <thead>
                                             <tr style="font-weight: bold;">
                                                 <td>Batch#</td>
@@ -78,7 +78,7 @@
                                                 <td>{{batch?.expiryDate | date}}</td>
                                             </tr>
                                         </tbody>
-                                    </table>
+                                    </table>-->
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-success btn-outline" (click)="setValues(pharmacyMedicine.id, pharmacyMedicine.medicine.code, pharmacyMedicine.medicine.name, pharmacyMedicine.stock)" data-toggle="modal" data-target="#edit-qty-modal"><i class="glyphicon glyphicon-pencil"></i> Change Stock</button>

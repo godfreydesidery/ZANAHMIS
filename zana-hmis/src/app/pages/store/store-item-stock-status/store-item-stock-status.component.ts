@@ -67,9 +67,9 @@ export class StoreItemStockStatusComponent {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     
-    this.spinner.show()
+    //this.spinner.show()
     await this.http.get<IStoreItem[]>(API_URL+'/stores/get_store_item_list?store_name='+this.storeName, options)
-    .pipe(finalize(() => this.spinner.hide()))
+    //.pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
@@ -103,15 +103,15 @@ export class StoreItemStockStatusComponent {
       }
     )
 
-    this.storeItemsToShow.forEach(async element => {
-      var batches : IStoreItemBatch[]  = await this.loadStoreItemBatches(element.store.id, element.item.id)
+    //this.storeItemsToShow.forEach(async element => {
+      //var batches : IStoreItemBatch[]  = await this.loadStoreItemBatches(element.store.id, element.item.id)
 
-      element.storeItemBatches = batches
-    })
+      //element.storeItemBatches = batches
+    //})
 
   }
 
-  storeItemBatches : IStoreItemBatch[] = []
+  //storeItemBatches : IStoreItemBatch[] = []
 
   async loadStoreItemBatches(storeId : any, itemId : any) : Promise<IStoreItemBatch[]>{ 
     var batches :  IStoreItemBatch[] = [] 
@@ -206,9 +206,9 @@ export class StoreItemStockStatusComponent {
       id : this.id,
       stock : this.storeItemStock
     }
-    this.spinner.show()
+    //this.spinner.show()
     await this.http.post(API_URL+'/stores/update_stock', pm, options)
-    .pipe(finalize(() => this.spinner.hide()))
+    //.pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {

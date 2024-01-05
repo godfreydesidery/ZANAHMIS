@@ -66,9 +66,9 @@ export class PharmacyMedicineStockStatusComponent {
       headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
     }
     
-    this.spinner.show()
+    //this.spinner.show()
     await this.http.get<IPharmacyMedicine[]>(API_URL+'/pharmacies/get_pharmacy_medicine_list?pharmacy_name='+this.pharmacyName, options)
-    .pipe(finalize(() => this.spinner.hide()))
+    //.pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
@@ -92,14 +92,14 @@ export class PharmacyMedicineStockStatusComponent {
         console.log(error)
       }
     )
-    this.pharmacyMedicinesToShow.forEach(async element => {
-      var batches : IPharmacyMedicineBatch[]  = await this.loadPharmacyMedicineBatches(element.pharmacy.id, element.medicine.id)
+    //this.pharmacyMedicinesToShow.forEach(async element => {
+      //var batches : IPharmacyMedicineBatch[]  = await this.loadPharmacyMedicineBatches(element.pharmacy.id, element.medicine.id)
 
-      element.pharmacyMedicineBatches = batches
-    })
+      //element.pharmacyMedicineBatches = batches
+    //})
   }
 
-  pharmacyMedicineBatches : IPharmacyMedicineBatch[] = []
+  //pharmacyMedicineBatches : IPharmacyMedicineBatch[] = []
 
   async loadPharmacyMedicineBatches(pharmacyId : any, medicineId : any) : Promise<IPharmacyMedicineBatch[]>{ 
     var batches :  IPharmacyMedicineBatch[] = [] 
@@ -161,9 +161,9 @@ export class PharmacyMedicineStockStatusComponent {
       id : this.id,
       stock : this.pharmacyMedicineStock
     }
-    this.spinner.show()
+    //this.spinner.show()
     await this.http.post(API_URL+'/pharmacies/update_stock', pm, options)
-    .pipe(finalize(() => this.spinner.hide()))
+    //.pipe(finalize(() => this.spinner.hide()))
     .toPromise()
     .then(
       data => {
