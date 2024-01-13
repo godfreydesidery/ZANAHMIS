@@ -32,4 +32,11 @@ public interface PharmacyToPharmacyRORepository extends JpaRepository <PharmacyT
 	 * @return
 	 */
 	List<PharmacyToPharmacyRO> findByRequestingPharmacyAndStatusIn(Pharmacy pharmacy, List<String> statuses);
+
+	/**
+	 * @param pharmacy
+	 * @param statuses
+	 * @return
+	 */
+	List<PharmacyToPharmacyRO> findByDeliveringPharmacyAndStatusIn(Pharmacy pharmacy, List<String> statuses);
 }

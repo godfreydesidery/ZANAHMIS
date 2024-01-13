@@ -310,13 +310,17 @@ export class AppComponent {
         {path : 'pharmacy-outsider-list', loadComponent : () => import('./pages/pharmacy/pharmacy-outsider-list/pharmacy-outsider-list.component').then(m => m.PharmacyOutsiderListComponent), canActivate: [AuthGuard]},
         {path : 'patient-pharmacy', loadComponent : () => import('./pages/pharmacy/patient-pharmacy/patient-pharmacy.component').then(m => m.PatientPharmacyComponent), canActivate: [AuthGuard]},
         {path : 'pharmacy-to-store-r-o', loadComponent : () => import('./pages/pharmacy/pharmacy-to-store-r-o/pharmacy-to-store-r-o.component').then(m => m.PharmacyToStoreROComponent), canActivate: [AuthGuard]},
+        {path : 'pharmacy-to-pharmacy-r-o', loadComponent : () => import('./pages/pharmacy/pharmacy-to-pharmacy-r-o/pharmacy-to-pharmacy-r-o.component').then(m => m.PharmacyToPharmacyROComponent), canActivate: [AuthGuard]},
         {path : 'pharmacy-to-store-r-o-list', loadComponent : () => import('./pages/store/pharmacy-to-store-r-o-list/pharmacy-to-store-r-o-list.component').then(m => m.PharmacyToStoreROListComponent), canActivate: [AuthGuard]},
         {path : 'store-to-pharmacy-r-n', loadComponent : () => import('./pages/pharmacy/store-to-pharmacy-r-n/store-to-pharmacy-r-n.component').then(m => m.StoreToPharmacyRNComponent), canActivate: [AuthGuard]},
+        {path : 'pharmacy-to-pharmacy-r-n', loadComponent : () => import('./pages/pharmacy/pharmacy-to-pharmacy-r-n/pharmacy-to-pharmacy-r-n.component').then(m => m.PharmacyToPharmacyRNComponent), canActivate: [AuthGuard]},
         {path : 'pharmacy-medicine-stock-status', loadComponent : () => import('./pages/pharmacy/pharmacy-medicine-stock-status/pharmacy-medicine-stock-status.component').then(m => m.PharmacyMedicineStockStatusComponent), canActivate: [AuthGuard]},
         {path : 'pharmacy-dispensing-report', loadComponent : () => import('./pages/pharmacy/reports/pharmacy-dispensing-report/pharmacy-dispensing-report.component').then(m => m.PharmacyDispensingReportComponent), canActivate: [AuthGuard]},
         {path : 'fast-moving-drugs-report', loadComponent : () => import('./pages/pharmacy/reports/fast-moving-drugs/fast-moving-drugs.component').then(m => m.FastMovingDrugsComponent), canActivate: [AuthGuard]},
         {path : 'slow-moving-drugs-report', loadComponent : () => import('./pages/pharmacy/reports/slow-moving-drugs/slow-moving-drugs.component').then(m => m.SlowMovingDrugsComponent), canActivate: [AuthGuard]},
         {path : 'pharmacy-stock-card-report', loadComponent : () => import('./pages/pharmacy/reports/pharmacy-stock-card-report/pharmacy-stock-card-report.component').then(m => m.PharmacyStockCardReportComponent), canActivate: [AuthGuard]},
+        {path : 'pharmacy-to-pharmacy-r-o-list', loadComponent : () => import('./pages/pharmacy/pharmacy-to-pharmacy-r-o-list/pharmacy-to-pharmacy-r-o-list.component').then(m => m.PharmacyToPharmacyROListComponent), canActivate: [AuthGuard]},
+        {path : 'pharmacy-to-pharmacy-t-o', loadComponent : () => import('./pages/pharmacy/pharmacy-to-pharmacy-t-o/pharmacy-to-pharmacy-t-o.component').then(m => m.PharmacyToPharmacyTOComponent), canActivate: [AuthGuard]},
       )
     }
     loadCashierModule(){

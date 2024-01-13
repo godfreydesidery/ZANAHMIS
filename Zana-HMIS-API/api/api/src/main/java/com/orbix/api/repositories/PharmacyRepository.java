@@ -28,4 +28,11 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long> {
 	@Query("SELECT p.name FROM Pharmacy p")
 	List<String> getNames();
 
+	/**
+	 * @param value
+	 * @param value2
+	 * @return
+	 */
+	List<Pharmacy> findAllByNameContainingOrCodeContaining(String value, String value2);
+
 }

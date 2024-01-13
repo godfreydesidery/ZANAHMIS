@@ -870,7 +870,7 @@ public class InternalOrderResource {
 		statuses.add("IN-PROCESS");
 		statuses.add("GOODS-ISSUED");
 		
-		return pharmacyToPharmacyRORepository.findByRequestingPharmacyAndStatusIn(pharmacy_.get(), statuses);
+		return pharmacyToPharmacyRORepository.findByDeliveringPharmacyAndStatusIn(pharmacy_.get(), statuses);
 	}
 	
 	@GetMapping("/pharmacy_to_pharmacy_r_os/request_no")

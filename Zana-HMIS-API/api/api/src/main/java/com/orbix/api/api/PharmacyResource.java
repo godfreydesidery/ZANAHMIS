@@ -112,6 +112,15 @@ public class PharmacyResource {
 		return ResponseEntity.created(uri).body(pharmacyService.save(pharmacy, request));
 	}
 	
+	@GetMapping("/pharmacies/load_pharmacies_like")
+	public ResponseEntity<List<Pharmacy>> getPharmacyNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<Pharmacy> pharmacies = new ArrayList<Pharmacy>();
+		pharmacies = pharmacyRepository.findAllByNameContainingOrCodeContaining(value, value);
+		return ResponseEntity.ok().body(pharmacies);
+	}
+	
 	@GetMapping("/pharmacies/get_pharmacy_medicine_list")
 	public ResponseEntity<List<PharmacyMedicine>> getPharmacyMedicineList(
 			@RequestParam(name = "pharmacy_name") String pharmacyName,

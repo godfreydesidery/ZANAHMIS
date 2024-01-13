@@ -58,17 +58,21 @@ public class PharmacyToPharmacyROServiceImpl implements PharmacyToPharmacyROServ
 		PharmacyToPharmacyRO ro = new PharmacyToPharmacyRO();
 		
 		if(pharmacyToPharmacyRO.getId() == null) {
-			Optional<Pharmacy> pharm = pharmacyRepository.findById(pharmacyToPharmacyRO.getRequestingPharmacy().getId());
-			if(pharm.isEmpty()) {
+			Optional<Pharmacy> requestingPharmacy_ = pharmacyRepository.findById(pharmacyToPharmacyRO.getRequestingPharmacy().getId());
+			if(requestingPharmacy_.isEmpty()) {
 				throw new NotFoundException("Pharmacy not found");
 			}
 			
-			Optional<Pharmacy> pharmacy_ = pharmacyRepository.findById(pharmacyToPharmacyRO.getDeliveringPharmacy().getId());
-			if(pharmacy_.isEmpty()) {
-				throw new NotFoundException("Pharmacy not found");
+			Optional<Pharmacy> deliveringPharmacy_ = pharmacyRepository.findById(pharmacyToPharmacyRO.getDeliveringPharmacy().getId());
+			if(deliveringPharmacy_.isEmpty()) {
+				throw new NotFoundException("Delivering Pharmacy not found");
 			}
-			if(!pharmacyToPharmacyRO.getRequestingPharmacy().getCode().equals(pharmacy_.get().getCode())) {
+			if(!pharmacyToPharmacyRO.getRequestingPharmacy().getCode().equals(requestingPharmacy_.get().getCode())) {
 				throw new InvalidOperationException("Invalid Pharmacy");
+			}
+			
+			if(requestingPharmacy_.get().getId() == deliveringPharmacy_.get().getId()) {
+				throw new InvalidOperationException("Order can not be placed in the same pharmacy");
 			}
 			
 			pharmacyToPharmacyRO.setCreatedBy(userService.getUser(request).getId());
@@ -79,7 +83,8 @@ public class PharmacyToPharmacyROServiceImpl implements PharmacyToPharmacyROServ
 			pharmacyToPharmacyRO.setStatusDescription("Order pending for verification");
 			
 			ro = pharmacyToPharmacyRO;
-			ro.setRequestingPharmacy(pharmacy_.get());
+			ro.setRequestingPharmacy(requestingPharmacy_.get());
+			ro.setDeliveringPharmacy(deliveringPharmacy_.get());
 		}else {
 			Optional<PharmacyToPharmacyRO> pts = pharmacyToPharmacyRORepository.findById(pharmacyToPharmacyRO.getId());
 			if(pts.isEmpty()) {
@@ -92,7 +97,10 @@ public class PharmacyToPharmacyROServiceImpl implements PharmacyToPharmacyROServ
 				throw new InvalidOperationException("Editing order no is not allowed");
 			}
 			if(pharmacyToPharmacyRO.getRequestingPharmacy().getId() != pts.get().getRequestingPharmacy().getId()) {
-				throw new InvalidOperationException("Editing pharmacy is not allowed");
+				throw new InvalidOperationException("Editing requesting pharmacy is not allowed");
+			}
+			if(pharmacyToPharmacyRO.getDeliveringPharmacy().getId() != pts.get().getDeliveringPharmacy().getId()) {
+				throw new InvalidOperationException("Editing delivering pharmacy is not allowed");
 			}
 			pts.get().setValidUntil(pharmacyToPharmacyRO.getValidUntil());
 			ro = pts.get();
@@ -227,7 +235,7 @@ public class PharmacyToPharmacyROServiceImpl implements PharmacyToPharmacyROServ
 		}
 		
 		pts.get().setStatus("SUBMITTED");
-		pts.get().setStatusDescription("Submited to pharmacy. Order awaiting for processing");
+		pts.get().setStatusDescription("Submited to delivering pharmacy. Order awaiting for processing");
 		
 		ro = pharmacyToPharmacyRORepository.save(pts.get());
 		
@@ -368,7 +376,7 @@ public class PharmacyToPharmacyROServiceImpl implements PharmacyToPharmacyROServ
 			id = pharmacyToPharmacyRORepository.getLastId() + 1;
 		}catch(Exception e) {}
 		RecordModel model = new RecordModel();
-		model.setNo(Formater.formatWithCurrentDate("PSR",id.toString()));
+		model.setNo(Formater.formatWithCurrentDate("PPR",id.toString()));
 		return model;
 	}	
 }
