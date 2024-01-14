@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.orbix.api.domain.Admission;
 import com.orbix.api.domain.AdmissionBed;
 import com.orbix.api.domain.Clinician;
+import com.orbix.api.domain.Collection;
 import com.orbix.api.domain.Consultation;
 import com.orbix.api.domain.LabTest;
 import com.orbix.api.domain.NonConsultation;
@@ -44,6 +45,7 @@ import com.orbix.api.exceptions.NotFoundException;
 import com.orbix.api.repositories.AdmissionBedRepository;
 import com.orbix.api.repositories.AdmissionRepository;
 import com.orbix.api.repositories.ClinicianRepository;
+import com.orbix.api.repositories.CollectionRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.LabTestRepository;
 import com.orbix.api.repositories.NonConsultationRepository;
@@ -98,6 +100,7 @@ public class PatientBillResource {
 	private final UserService userService;
 	private final DayService dayService;
 	
+	private final CollectionRepository collectionRepository;
 	
 	
 	@GetMapping("/bills/get_registration_bill")
@@ -177,7 +180,19 @@ public class PatientBillResource {
 			pd.setCreatedOn(dayService.getDay().getId());
 			pd.setCreatedAt(dayService.getTimeStamp());
 			
-			patientPaymentDetailRepository.save(pd);			
+			patientPaymentDetailRepository.save(pd);	
+			
+			Collection collection = new Collection();
+			collection.setAmount(registrationBill.getAmount());
+			collection.setItemName(registrationBill.getBillItem());
+			collection.setPaymentChannel("Cash");
+			collection.setPaymentReferenceNo("NA");
+			collection.setPatient(patient);
+			collection.setCreatedBy(userService.getUser(request).getId());
+			collection.setCreatedOn(dayService.getDay().getId());
+			collection.setCreatedAt(dayService.getTimeStamp());
+			collectionRepository.save(collection);
+			
 		}
 		
 		for(Consultation c : cs) {
@@ -201,7 +216,19 @@ public class PatientBillResource {
 			pd.setCreatedOn(dayService.getDay().getId());
 			pd.setCreatedAt(dayService.getTimeStamp());
 			
-			patientPaymentDetailRepository.save(pd);	
+			patientPaymentDetailRepository.save(pd);
+			
+			Collection collection = new Collection();
+			collection.setAmount(bill.getAmount());
+			collection.setItemName(bill.getBillItem());
+			collection.setPaymentChannel("Cash");
+			collection.setPaymentReferenceNo("NA");
+			collection.setPatient(patient);
+			collection.setCreatedBy(userService.getUser(request).getId());
+			collection.setCreatedOn(dayService.getDay().getId());
+			collection.setCreatedAt(dayService.getTimeStamp());
+			collectionRepository.save(collection);
+			
 			amount = amount + bill.getAmount();
 		}
 		
@@ -255,7 +282,19 @@ public class PatientBillResource {
 				pd.setCreatedOn(dayService.getDay().getId());
 				pd.setCreatedAt(dayService.getTimeStamp());
 				
-				patientPaymentDetailRepository.save(pd);								
+				patientPaymentDetailRepository.save(pd);
+				
+				Collection collection = new Collection();
+				collection.setAmount(b.get().getAmount());
+				collection.setItemName(b.get().getBillItem());
+				collection.setPaymentChannel("Cash");
+				collection.setPaymentReferenceNo("NA");
+				collection.setPatient(b.get().getPatient());
+				collection.setCreatedBy(userService.getUser(request).getId());
+				collection.setCreatedOn(dayService.getDay().getId());
+				collection.setCreatedAt(dayService.getTimeStamp());
+				collectionRepository.save(collection);
+				
 				amount = amount + b.get().getAmount();
 				
 				List<PatientInvoiceDetail> invds = patientInvoiceDetailRepository.findAllByPatientBill(b.get());

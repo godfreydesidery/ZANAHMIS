@@ -243,6 +243,7 @@ public class PatientServiceImpl implements PatientService {
 		regBill.setAmount(regFee);
 		regBill.setQty(1);
 		regBill.setBalance(regFee);
+		regBill.setBillItem("Registration");
 		regBill.setDescription("Registration Fee"); 
 		if(regFee > 0) {
 			regBill.setStatus("UNPAID");
@@ -435,6 +436,7 @@ public class PatientServiceImpl implements PatientService {
 		conBill.setPaid(0);
 		conBill.setBalance(c.getConsultationFee());
 		conBill.setQty(1);
+		conBill.setBillItem("Consultation");
 		conBill.setDescription("Consultation");
 		conBill.setStatus("UNPAID");
 		/**
@@ -765,6 +767,7 @@ public class PatientServiceImpl implements PatientService {
 		patientBill.setPaid(0);
 		patientBill.setBalance(test.getLabTestType().getPrice());
 		patientBill.setQty(1);
+		patientBill.setBillItem("Lab Test");
 		patientBill.setDescription("Lab Test: "+test.getLabTestType().getName());
 		patientBill.setStatus("UNPAID");
 		
@@ -984,6 +987,7 @@ public class PatientServiceImpl implements PatientService {
 		patientBill.setPaid(0);
 		patientBill.setBalance(radio.getRadiologyType().getPrice());
 		patientBill.setQty(1);
+		patientBill.setBillItem("Radiology");
 		patientBill.setDescription("Radiology: "+radio.getRadiologyType().getName());
 		patientBill.setStatus("UNPAID");		
 		patientBill.setCreatedby(userService.getUser(request).getId());
@@ -1212,6 +1216,7 @@ public class PatientServiceImpl implements PatientService {
 		patientBill.setPaid(0);
 		patientBill.setBalance(procedure.getProcedureType().getPrice());
 		patientBill.setQty(1);
+		patientBill.setBillItem("Procedure");
 		patientBill.setDescription("Procedure: "+procedure.getProcedureType().getName());
 		patientBill.setStatus("UNPAID");		
 		patientBill.setCreatedby(userService.getUser(request).getId());
@@ -1408,6 +1413,7 @@ public class PatientServiceImpl implements PatientService {
 		patientBill.setPaid(0);
 		patientBill.setBalance(prescription.getMedicine().getPrice() * prescription.getQty());
 		patientBill.setQty(prescription.getQty());
+		patientBill.setBillItem("Medication");
 		patientBill.setDescription("Medicine: "+prescription.getMedicine().getName());
 		patientBill.setStatus("UNPAID");		
 		patientBill.setCreatedby(userService.getUser(request).getId());
@@ -1605,6 +1611,7 @@ public class PatientServiceImpl implements PatientService {
 		wardBedBill.setPaid(0);
 		wardBedBill.setBalance(wb.getWard().getWardType().getPrice());
 		wardBedBill.setQty(1);
+		wardBedBill.setBillItem("Bed");
 		wardBedBill.setDescription("Ward Bed / Room");
 		wardBedBill.setStatus("UNPAID");
 		/**
@@ -1722,6 +1729,7 @@ public class PatientServiceImpl implements PatientService {
 					supplementaryWardBedBill.setPaid(0);
 					supplementaryWardBedBill.setBalance(wb.getWard().getWardType().getPrice() - eligiblePlan.getPrice());
 					supplementaryWardBedBill.setStatus("UNPAID");
+					supplementaryWardBedBill.setBillItem("Bed");
 					supplementaryWardBedBill.setDescription("Ward Bed / Room (Top up)");
 					supplementaryWardBedBill.setPrincipalPatientBill(wardBedBill);
 					
@@ -1917,6 +1925,7 @@ public class PatientServiceImpl implements PatientService {
 		patientBill.setPaid(0);
 		patientBill.setBalance(chart.getProcedureType().getPrice());
 		patientBill.setQty(1);
+		patientBill.setBillItem("Procedure");
 		patientBill.setDescription("Dressing: "+chart.getProcedureType().getName());
 		patientBill.setStatus("UNPAID");		
 		patientBill.setCreatedby(userService.getUser(request).getId());
@@ -2123,6 +2132,7 @@ public class PatientServiceImpl implements PatientService {
 		patientBill.setPaid(0);
 		patientBill.setBalance(chart.getMedicine().getPrice() * chart.getQty());
 		patientBill.setQty(chart.getQty());
+		patientBill.setBillItem("Medication");
 		patientBill.setDescription("Consumable: "+chart.getMedicine().getName());
 		patientBill.setStatus("UNPAID");		
 		patientBill.setCreatedby(userService.getUser(request).getId());
@@ -2683,8 +2693,6 @@ public class PatientServiceImpl implements PatientService {
 	      labTestAttachment.setCreatedAt(dayService.getTimeStamp());
 	      
 	      labTestAttachmentRepository.save(labTestAttachment);
-	      
-	      
 	      
 	      //return ok().body(result);
 	      return null;

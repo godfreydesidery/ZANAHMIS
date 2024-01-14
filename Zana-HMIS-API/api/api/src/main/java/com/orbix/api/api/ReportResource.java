@@ -52,11 +52,13 @@ import com.orbix.api.models.PharmacyStockCardModel;
 import com.orbix.api.models.PrescriptionModel;
 import com.orbix.api.models.StoreStockCardModel;
 import com.orbix.api.reports.FastMovingDrugs;
+import com.orbix.api.reports.models.CollectionReport;
 import com.orbix.api.reports.models.GrnReport;
 import com.orbix.api.reports.models.LabTestTypeReport;
 import com.orbix.api.reports.models.LpoReport;
 import com.orbix.api.reports.service.LocalPurchaseOrderReportService;
 import com.orbix.api.repositories.ClinicianRepository;
+import com.orbix.api.repositories.CollectionRepository;
 import com.orbix.api.repositories.ConsultationRepository;
 import com.orbix.api.repositories.GoodsReceivedNoteRepository;
 import com.orbix.api.repositories.LabTestRepository;
@@ -111,6 +113,8 @@ public class ReportResource {
 	
 	private final StoreStockCardRepository storeStockCardRepository;
 	private final PharmacyStockCardRepository pharmacyStockCardRepository;
+	
+	private final CollectionRepository collectionRepository;
 	
 	@PostMapping("/reports/consultation_report")
 	public ResponseEntity<List<Consultation>>getConsultationReport(
@@ -608,6 +612,18 @@ public class ReportResource {
 		
 		return ResponseEntity.ok().body(pharmacyStockCardModels);
 	}	
+	
+	@PostMapping("/reports/collections_report")
+	public ResponseEntity<List<CollectionReport>>getCollectionReportReport(
+			@RequestBody CollectionReportArgs args,
+			HttpServletRequest request){
+		
+		if(args.user.getId() != null) {
+			return ResponseEntity.ok().body(collectionRepository.getCollectionReportByCashier(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1), args.user.getId()));
+		}else {
+			return ResponseEntity.ok().body(collectionRepository.getCollectionReportGeneral(args.getFrom().atStartOfDay(), args.getTo().atStartOfDay().plusDays(1)));
+		}
+	}	
 }
 
 @Data
@@ -688,4 +704,11 @@ class StoreStockCardReportArgs {
 class PharmacyStockCardReportArgs {
 	LocalDate from;
 	LocalDate to;
+}
+
+@Data
+class CollectionReportArgs {
+	LocalDate from;
+	LocalDate to;
+	User user;
 }

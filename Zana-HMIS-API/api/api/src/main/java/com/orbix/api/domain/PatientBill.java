@@ -41,6 +41,7 @@ public class PatientBill {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private String billItem = "NA";
 	@NotBlank
 	private String description;
 	private double qty = 1;

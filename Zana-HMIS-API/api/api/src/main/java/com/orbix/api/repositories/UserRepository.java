@@ -3,6 +3,7 @@
  */
 package com.orbix.api.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	 * @return
 	 */
 	boolean existsByUsername(String string);
+
+	/**
+	 * @param value
+	 * @param value2
+	 * @param value3
+	 * @return
+	 */
+	List<User> findAllByFirstNameContainingOrMiddleNameContainingOrLastNameContaining(String value, String value2,
+			String value3);
 }

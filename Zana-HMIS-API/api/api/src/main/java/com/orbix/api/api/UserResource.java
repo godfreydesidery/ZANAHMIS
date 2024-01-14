@@ -44,6 +44,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.orbix.api.domain.Clinician;
 import com.orbix.api.domain.Privilege;
 import com.orbix.api.domain.Role;
 import com.orbix.api.domain.Shortcut;
@@ -51,6 +52,7 @@ import com.orbix.api.domain.User;
 import com.orbix.api.exceptions.InvalidOperationException;
 import com.orbix.api.repositories.PrivilegeRepository;
 import com.orbix.api.repositories.RoleRepository;
+import com.orbix.api.repositories.UserRepository;
 import com.orbix.api.security.Object_;
 import com.orbix.api.security.Operation;
 import com.orbix.api.service.DayService;
@@ -76,6 +78,7 @@ public class UserResource {
 
 	private final UserService userService;
 	private final DayService dayService;
+	private final UserRepository userRepository;
 	
 	
 	private final RoleRepository roleRepository;
@@ -85,6 +88,13 @@ public class UserResource {
 	public ResponseEntity<List<User>>getUsers(
 			HttpServletRequest request){
 		return ResponseEntity.ok().body(userService.getUsers());
+	}
+	
+	@GetMapping("/users/get")
+	public ResponseEntity<User> getUserById(
+			@RequestParam(name = "id") Long id,
+			HttpServletRequest request){
+		return ResponseEntity.ok().body(userService.getUserById(id));
 	}
 	
 	@GetMapping("/users/get_user")
@@ -106,6 +116,15 @@ public class UserResource {
 		userModel.setId(user.getId());
 		userModel.setAlias(user.getNickname());
 		return ResponseEntity.ok().body(userModel);
+	}
+	
+	@GetMapping("/users/load_users_like")
+	public ResponseEntity<List<User>> getUserNameContains(
+			@RequestParam(name = "name_like") String value,
+			HttpServletRequest request){
+		List<User> users = new ArrayList<User>();
+		users = userRepository.findAllByFirstNameContainingOrMiddleNameContainingOrLastNameContaining(value, value, value);
+		return ResponseEntity.ok().body(users);
 	}
 	
 	
