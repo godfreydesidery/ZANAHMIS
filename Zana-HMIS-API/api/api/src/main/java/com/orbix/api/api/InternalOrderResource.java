@@ -27,6 +27,7 @@ import com.orbix.api.domain.Item;
 import com.orbix.api.domain.ItemMedicineCoefficient;
 import com.orbix.api.domain.Medicine;
 import com.orbix.api.domain.Pharmacy;
+import com.orbix.api.domain.PharmacyToPharmacyBatch;
 import com.orbix.api.domain.PharmacyToPharmacyRN;
 import com.orbix.api.domain.PharmacyToPharmacyRO;
 import com.orbix.api.domain.PharmacyToPharmacyRODetail;
@@ -58,6 +59,7 @@ import com.orbix.api.repositories.ItemMedicineCoefficientRepository;
 import com.orbix.api.repositories.ItemRepository;
 import com.orbix.api.repositories.MedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
+import com.orbix.api.repositories.PharmacyToPharmacyBatchRepository;
 import com.orbix.api.repositories.PharmacyToPharmacyRNRepository;
 import com.orbix.api.repositories.PharmacyToPharmacyRODetailRepository;
 import com.orbix.api.repositories.PharmacyToPharmacyRORepository;
@@ -117,6 +119,7 @@ public class InternalOrderResource {
 	private final PharmacyToPharmacyTORepository pharmacyToPharmacyTORepository;
 	private final PharmacyToPharmacyTODetailRepository pharmacyToPharmacyTODetailRepository;
 	private final PharmacyToPharmacyRNRepository pharmacyToPharmacyRNRepository;
+	private final PharmacyToPharmacyBatchRepository pharmacyToPharmacyBatchRepository;
 
 	@PostMapping("/pharmacy_to_store_r_os/save")
 	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL','PHARMACY_ORDER-CREATE','PHARMACY_ORDER-UPDATE')")
@@ -1107,7 +1110,7 @@ public class InternalOrderResource {
 			throw new NotFoundException("Request Order not found");
 		}
 		
-		Optional<Pharmacy> deliveringPharmacy_ = pharmacyRepository.findById(ro.getRequestingPharmacy().getId());
+		Optional<Pharmacy> deliveringPharmacy_ = pharmacyRepository.findById(ro.getDeliveringPharmacy().getId());
 		if(deliveringPharmacy_.isEmpty()) {
 			throw new NotFoundException("Pharmacy not found");
 		}
@@ -1181,7 +1184,7 @@ public class InternalOrderResource {
 				modelDetail.setOrderedQty(d.getOrderedQty());
 				modelDetail.setTransferedQty(d.getTransferedQty());
 				modelDetail.setPharmacyToPharmacyTO(d.getPharmacyToPharmacyTO());				
-				//modelDetail.setPharmacyToPharmacyBatches(d.getPharmacyToPharmacyBatches());
+				modelDetail.setPharmacyToPharmacyBatches(d.getPharmacyToPharmacyBatches());
 				if(d.getCreatedAt() != null) {
 					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());
 				}else {
@@ -1213,113 +1216,104 @@ public class InternalOrderResource {
 		
 	}
 	
-	/*@PostMapping("/pharmacy_to_pharmacy_t_os/add_batch")
+	@PostMapping("/pharmacy_to_pharmacy_t_os/add_batch")
 	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public boolean pharmacyToPharmacyAddBatch(
 			@RequestBody PharmacyToPharmacyBatch batch,
 			HttpServletRequest request){
 		
-		Optional<StoreToPharmacyTODetail> tod = storeToPharmacyTODetailRepository.findById(batch.getStoreToPharmacyTODetail().getId());
+		Optional<PharmacyToPharmacyTODetail> tod = pharmacyToPharmacyTODetailRepository.findById(batch.getPharmacyToPharmacyTODetail().getId());
 		if(tod.isEmpty()) {
 			throw new NotFoundException("Detail Not found");
 		}
 		if(!tod.get().getStatus().equals("PENDING")) {
 			throw new InvalidOperationException("Could not edit. Only pending transfer orders can be edited");
 		}
-		Optional<Item> i = itemRepository.findByName(batch.getItem().getName());
+		Optional<Medicine> i = medicineRepository.findByName(batch.getMedicine().getName());
 		if(i.isEmpty()) {
-			throw new NotFoundException("Item not found");
+			throw new NotFoundException("Medicine not found");
 		}
-		Item item = tod.get().getItem();
-		if(item != null) {
-			if(item.getId() != i.get().getId()) {
+		Medicine medicine = tod.get().getMedicine();
+		if(medicine != null) {
+			if(medicine.getId() != i.get().getId()) {
 				throw new InvalidOperationException("Addition of different SKUs is not allowed. Items should have the same SKU");
 			}
 		}
-		tod.get().setItem(i.get());
-		storeToPharmacyTODetailRepository.save(tod.get());
-		Optional<ItemMedicineCoefficient> coe = itemMedicineCoefficientRepository.findByItemAndMedicine(i.get(), tod.get().getMedicine());
-		if(coe.isEmpty()) {
-			throw new NotFoundException("Conversion coefficient for "+ i.get().getName() +" and " + tod.get().getMedicine().getName() +" not found");
-		}
-		if(batch.getStoreSKUQty() <= 0) {
+		tod.get().setMedicine(i.get());
+		pharmacyToPharmacyTODetailRepository.save(tod.get());
+		//Optional<ItemMedicineCoefficient> coe = itemMedicineCoefficientRepository.findByItemAndMedicine(i.get(), tod.get().getMedicine());
+		//if(coe.isEmpty()) {
+			//throw new NotFoundException("Conversion coefficient for "+ i.get().getName() +" and " + tod.get().getMedicine().getName() +" not found");
+		//}
+		if(batch.getQty() <= 0) {
 			throw new InvalidOperationException("Invalid qty entered, value must be more than zero");
 		}
-		batch.setPharmacySKUQty(batch.getStoreSKUQty() * coe.get().getCoefficient());
+		//batch.setQty(batch.getQty() * coe.get().getCoefficient());
 		
 		
 		
-		tod.get().setTransferedStoreSKUQty(tod.get().getTransferedStoreSKUQty() + batch.getStoreSKUQty());
-		tod.get().setTransferedPharmacySKUQty(tod.get().getTransferedPharmacySKUQty() + batch.getPharmacySKUQty());
+		tod.get().setTransferedQty(tod.get().getTransferedQty() + batch.getQty());
+		//tod.get().setTransferedQty(tod.get().getTransferedQty() + batch.getQty());
 		
-		if(tod.get().getTransferedPharmacySKUQty() > tod.get().getOrderedPharmacySKUQty()) {
+		if(tod.get().getTransferedQty() > tod.get().getOrderedQty()) {
 			throw new InvalidOperationException("Can not transfer more than ordered qty");
 		}
 		
-		StoreToPharmacyTODetail detail = storeToPharmacyTODetailRepository.save(tod.get());
-		batch.setItem(i.get());
-		batch.setStoreToPharmacyTODetail(detail);
+		PharmacyToPharmacyTODetail detail = pharmacyToPharmacyTODetailRepository.save(tod.get());
+		batch.setMedicine(i.get());
+		batch.setPharmacyToPharmacyTODetail(detail);
 		
-		storeToPharmacyBatchRepository.save(batch);
+		pharmacyToPharmacyBatchRepository.save(batch);
 		
 		return true;
-	}*/
+	}
 	
-	/*@PostMapping("/pharmacy_to_pharmacy_t_os/delete_batch")
+	@PostMapping("/pharmacy_to_pharmacy_t_os/delete_batch")
 	@PreAuthorize("hasAnyAuthority('PHARMACY_ORDER-ALL')")
 	public boolean pharmacyToPharmacyDeleteBatch(
 			@RequestBody PharmacyToPharmacyBatch batch,
 			HttpServletRequest request){
 		
-		Optional<StoreToPharmacyBatch> b = storeToPharmacyBatchRepository.findById(batch.getId());
+		Optional<PharmacyToPharmacyBatch> b = pharmacyToPharmacyBatchRepository.findById(batch.getId());
 		if(b.isEmpty()) {
 			throw new NotFoundException("Batch not found");
 		}
 		
-		Optional<StoreToPharmacyTODetail> tod = storeToPharmacyTODetailRepository.findById(b.get().getStoreToPharmacyTODetail().getId());
+		Optional<PharmacyToPharmacyTODetail> tod = pharmacyToPharmacyTODetailRepository.findById(b.get().getPharmacyToPharmacyTODetail().getId());
 		if(tod.isEmpty()) {
 			throw new NotFoundException("Detail Not found");
 		}
 		
-		if(!tod.get().getStoreToPharmacyTO().getStatus().equals("PENDING")) {
+		if(!tod.get().getPharmacyToPharmacyTO().getStatus().equals("PENDING")) {
 			throw new InvalidOperationException("Could not edit. Only pending transfer orders can be edited");
 		}
 		
-		tod.get().setTransferedStoreSKUQty(tod.get().getTransferedStoreSKUQty() - b.get().getStoreSKUQty());
-		tod.get().setTransferedPharmacySKUQty(tod.get().getTransferedPharmacySKUQty() - b.get().getPharmacySKUQty());
+		tod.get().setTransferedQty(tod.get().getTransferedQty() - b.get().getQty());
+		//tod.get().setTransferedPharmacySKUQty(tod.get().getTransferedPharmacySKUQty() - b.get().getPharmacySKUQty());
 		
-		StoreToPharmacyTODetail detail = storeToPharmacyTODetailRepository.save(tod.get());
+		PharmacyToPharmacyTODetail detail = pharmacyToPharmacyTODetailRepository.save(tod.get());
 		
-		storeToPharmacyBatchRepository.delete(b.get());
+		pharmacyToPharmacyBatchRepository.delete(b.get());
 		
-		if(detail.getTransferedStoreSKUQty() == 0) {
-			detail.setItem(null);
-			storeToPharmacyTODetailRepository.save(detail);
+		if(detail.getTransferedQty() == 0) {
+			detail.setMedicine(null);
+			pharmacyToPharmacyTODetailRepository.save(detail);
 		}
 		
 		return true;
-	}*/
+	}
 	
-	/*@GetMapping("/pharmacy_to_pharmacy_t_os/load_item_names_by_medicine")
-	public List<String> loadItemNamesByMedicine(
+	@GetMapping("/pharmacy_to_pharmacy_t_os/load_medicine_names_by_requested_medicine")
+	public Medicine loadMedicineByRequestedMedicine(
 			@RequestParam(name = "medicine_id") Long medicineId,
 			HttpServletRequest request){
 		
 		Optional<Medicine> med = medicineRepository.findById(medicineId);
 		if(med.isEmpty()) {
 			throw new NotFoundException("Medicine Not found");
-		}
-			
-		List<ItemMedicineCoefficient> coes = itemMedicineCoefficientRepository.findAllByMedicine(med.get());
-		List<String> names = new ArrayList<>();
-		if(!coes.isEmpty()) {
-			for(ItemMedicineCoefficient coe : coes) {
-				names.add(coe.getItem().getName());
-			}
-		}
-		
-		return names;
-	}*/
+		}		
+		return med.get();
+	}
 	/*
 	@GetMapping("/store_to_pharmacy_t_os/get_store_to_pharmacy_transfer_batches")
 	public List<StoreToPharmacyBatch> loa(

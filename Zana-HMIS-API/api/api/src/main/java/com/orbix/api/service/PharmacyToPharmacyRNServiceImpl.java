@@ -18,6 +18,7 @@ import com.orbix.api.domain.Item;
 import com.orbix.api.domain.PharmacyMedicine;
 import com.orbix.api.domain.PharmacyMedicineBatch;
 import com.orbix.api.domain.PharmacyStockCard;
+import com.orbix.api.domain.PharmacyToPharmacyBatch;
 import com.orbix.api.domain.PharmacyToPharmacyRO;
 import com.orbix.api.domain.PharmacyToPharmacyRN;
 import com.orbix.api.domain.PharmacyToPharmacyRNDetail;
@@ -36,6 +37,7 @@ import com.orbix.api.repositories.PharmacyMedicineBatchRepository;
 import com.orbix.api.repositories.PharmacyMedicineRepository;
 import com.orbix.api.repositories.PharmacyRepository;
 import com.orbix.api.repositories.PharmacyStockCardRepository;
+import com.orbix.api.repositories.PharmacyToPharmacyBatchRepository;
 import com.orbix.api.repositories.PharmacyToPharmacyRODetailRepository;
 import com.orbix.api.repositories.PharmacyToPharmacyRORepository;
 import com.orbix.api.repositories.PharmacyToPharmacyRNDetailRepository;
@@ -75,6 +77,7 @@ public class PharmacyToPharmacyRNServiceImpl implements PharmacyToPharmacyRNServ
 	private final PharmacyMedicineBatchRepository pharmacyMedicineBatchRepository;
 	private final PharmacyMedicineRepository pharmacyMedicineRepository;
 	private final PharmacyStockCardRepository pharmacyStockCardRepository;
+	private final PharmacyToPharmacyBatchRepository pharmacyToPharmacyBatchRepository;
 	
 	@Override
 	public PharmacyToPharmacyRNModel createReceivingNote(PharmacyToPharmacyRO pharmacyToPharmacyRO, HttpServletRequest request) {
@@ -120,10 +123,10 @@ public class PharmacyToPharmacyRNServiceImpl implements PharmacyToPharmacyRNServ
 				
 				receivingNoteDetail = pharmacyToPharmacyRNDetailRepository.save(receivingNoteDetail);
 				
-				/*for(PharmacyToPharmacyBatch b : d.getPharmacyToPharmacyBatches()) {
+				for(PharmacyToPharmacyBatch b : d.getPharmacyToPharmacyBatches()) {
 					b.setPharmacyToPharmacyRNDetail(receivingNoteDetail);
 					pharmacyToPharmacyBatchRepository.save(b);
-				}*/
+				}
 				
 				
 			}
@@ -154,8 +157,8 @@ public class PharmacyToPharmacyRNServiceImpl implements PharmacyToPharmacyRNServ
 				modelDetail.setReceivedQty(d.getReceivedQty());
 				modelDetail.setPharmacyToPharmacyRN(d.getPharmacyToPharmacyRN());
 				
-				//List<PharmacyToPharmacyBatch> bs = pharmacyToPharmacyBatchRepository.findAllByPharmacyToPharmacyRNDetail(d);				
-				//modelDetail.setPharmacyToPharmacyBatches(bs);
+				List<PharmacyToPharmacyBatch> bs = pharmacyToPharmacyBatchRepository.findAllByPharmacyToPharmacyRNDetail(d);				
+				modelDetail.setPharmacyToPharmacyBatches(bs);
 				
 				if(d.getCreatedAt() != null) {
 					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());

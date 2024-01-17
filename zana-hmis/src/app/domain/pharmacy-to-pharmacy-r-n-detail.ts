@@ -1,5 +1,6 @@
 import { IItem } from "./item"
 import { IMedicine } from "./medicine"
+import { IPharmacyToPharmacyBatch } from "./pharmacy-to-pharmacy-batch"
 //import { IPharmacyToPharmacyBatch } from "./pharmacy-to-pharmacy-batch"
 import { IPharmacyToPharmacyRN } from "./pharmacy-to-pharmacy-r-n"
 
@@ -13,7 +14,7 @@ export interface IPharmacyToPharmacyRNDetail{
     pharmacyToPharmacyRN : IPharmacyToPharmacyRN
     medicine : IMedicine
 
-    //storeToPharmacyBatches : IStoreToPharmacyBatch[]
+    pharmacyToPharmacyBatches : IPharmacyToPharmacyBatch[]
 
     created : string
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.orbix.api.domain.Item;
 import com.orbix.api.domain.Medicine;
+import com.orbix.api.domain.PharmacyToPharmacyBatch;
 //import com.orbix.api.domain.PharmacyToPharmacyBatch;
 import com.orbix.api.domain.PharmacyToPharmacyRN;
 import com.orbix.api.domain.StoreToPharmacyBatch;
@@ -33,5 +34,5 @@ public class PharmacyToPharmacyRNDetailModel {
 	
     public String created;
     
-    //public List<PharmacyToPharmacyBatch> pharmacyToPharmacyBatches;
+    public List<PharmacyToPharmacyBatch> pharmacyToPharmacyBatches;
 }

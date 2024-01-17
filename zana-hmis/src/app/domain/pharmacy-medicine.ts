@@ -1,6 +1,6 @@
 import { IMedicine } from "./medicine"
 import { IPharmacy } from "./pharmacy"
-import { IPharmacyMedicineBatch } from "./pharmacy-item-batch"
+import { IPharmacyMedicineBatch } from "./pharmacy-medicine-batch"
 
 export interface IPharmacyMedicine{
     id          : any

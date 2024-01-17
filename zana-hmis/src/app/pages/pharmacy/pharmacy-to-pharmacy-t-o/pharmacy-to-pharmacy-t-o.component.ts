@@ -1,26 +1,18 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
-import { IPrescription } from 'src/app/domain/prescription';
 import { IMedicine } from 'src/app/domain/medicine';
-import { IPatient } from 'src/app/domain/patient';
-import { IPatientBill } from 'src/app/domain/patient-bill';
 import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
-import { IPharmacyToStoreRO } from 'src/app/domain/pharmacy-to-store-r-o';
-import { IPharmacyToStoreRODetail } from 'src/app/domain/pharmacy-to-store-r-o-detail';
-import { IStoreToPharmacyTO } from 'src/app/domain/store-to-pharmacy-t-o';
-import { IStoreToPharmacyBatch } from 'src/app/domain/store-to-pharmacy-batch';
-import { IItem } from 'src/app/domain/item';
+import { IPharmacyToPharmacyTO } from 'src/app/domain/pharmacy-to-pharmacy-t-o';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AgePipe } from 'src/app/pipes/age.pipe';
 import { SearchFilterPipe } from 'src/app/pipes/search-filter-pipe';
-import { IPharmacyToPharmacyTO } from 'src/app/domain/pharmacy-to-pharmacy-t-o';
 
 const API_URL = environment.apiUrl;
 
@@ -44,7 +36,7 @@ id : any
 
 pharmacyToPharmacyTO! : IPharmacyToPharmacyTO
 
-loadedItemNames : string[] = []
+loadedMedicine! : IMedicine
 
 batchId : any
 batchNo : string = ''
@@ -52,7 +44,7 @@ batchQty : number = 0
 batchExpiryDate!  : Date | string | undefined
 batchMedicineId : any
 batchMedicineCode : string = ''
-batchSMedicineName : string = ''
+batchMedicineName : string = ''
 batchPharmacyToPharmacyTODetailId : any
 
 filterRecords : string = ''
@@ -164,7 +156,7 @@ async issueGoods(){
   }
   
   this.spinner.show()
-  await this.http.post<IStoreToPharmacyTO>(API_URL+'/pharmacy_to_pharmacy_t_os/issue', order, options)
+  await this.http.post<IPharmacyToPharmacyTO>(API_URL+'/pharmacy_to_pharmacy_t_os/issue', order, options)
   .pipe(finalize(() => this.spinner.hide()))
   .toPromise()
   .then(
@@ -180,25 +172,31 @@ async issueGoods(){
   )
 }
 
-/*async loadMedicineNames(medicineId : any, detailId : any){
-  this.loadedItemNames = []
+async loadMedicineNames(medicineId : any, detailId : any){
+
+  this.batchMedicineId                   = null
+  this.batchMedicineCode                 = ''
+  this.batchMedicineName                 = ''
+
   let options = {
     headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
   }
 
   this.spinner.show()
-  await this.http.get<string[]>(API_URL+'/pharmacy_to_pharmacy_t_os/load_medicine_names_by_requested_medicine?medicine_id='+medicineId, options)
+  await this.http.get<IMedicine>(API_URL+'/pharmacy_to_pharmacy_t_os/load_medicine_names_by_requested_medicine?medicine_id='+medicineId, options)
   .pipe(finalize(() => this.spinner.hide()))
   .toPromise()
   .then(
     data => {
-      this.loadedItemNames = data!
+      this.loadedMedicine = data!
+
+      this.batchMedicineId                   = data?.id
+      this.batchMedicineCode                 = data!.code
+      this.batchMedicineName                 = data!.name
+
       this.batchNo = ''
-      this.batchStoreItemName = ''
-      this.batchStoreItemId = null
-      this.batchStoreItemCode =  ''
-      this.batchStoreSKUQty = 0
-      this.batchStoreToPharmacyTODetailId = detailId
+      this.batchQty = 0
+      this.batchPharmacyToPharmacyTODetailId = detailId
       this.batchExpiryDate = undefined
 
       console.log(data)
@@ -208,7 +206,7 @@ async issueGoods(){
       this.msgBox.showErrorMessage(error, '')
     }
   )
-}*/
+}
 
 async addBatch(){
   let options = {
@@ -221,7 +219,7 @@ async addBatch(){
     qty: this.batchQty,
     expiryDate: this.batchExpiryDate,
     pharmacyToPharmacyTODetail: {id : this.batchPharmacyToPharmacyTODetailId},
-    medicine: {name : this.batchSMedicineName}
+    medicine: {name : this.batchMedicineName}
   }
 
   this.spinner.show()
@@ -263,14 +261,14 @@ async deleteBatch(id : any){
     }
   )
 }
-/*
-async searchItem(){
+
+async searchMedicine(){
   let options = {
     headers: new HttpHeaders().set('Authorization', 'Bearer '+this.auth.user.access_token)
   }
-  var code = this.batchStoreItemCode
+  var code = this.batchMedicineCode
   var barcode = ''
-  var name = this.batchStoreItemName
+  var name = this.batchMedicineName
   if(code != ''){
     barcode = ''
     name = ''
@@ -280,15 +278,15 @@ async searchItem(){
   }
 
   this.spinner.show()
-  await this.http.get<IItem>(API_URL+'/items/search?code='+code+'&barcode='+barcode+'&name='+name, options)
+  await this.http.get<IMedicine>(API_URL+'/medicines/search?code='+code+'&name='+name, options)
   .pipe(finalize(() => this.spinner.hide()))
   .toPromise()
   .then(
     data => {
-      this.batchStoreItemId                   = data?.id
-      this.batchStoreItemCode                 = data!.code
+      this.batchMedicineId                   = data?.id
+      this.batchMedicineCode                 = data!.code
       //this.it              = data!.barcode
-      this.batchStoreItemName                 = data!.name
+      this.batchMedicineName                 = data!.name
       
     },
     error => {
@@ -296,7 +294,7 @@ async searchItem(){
       this.msgBox.showErrorMessage(error, '')
     }
   )
-}*/
+}
 
 public grant(privilege : string[]) : boolean{
   /**Allow user to perform an action if the user has that priviledge */

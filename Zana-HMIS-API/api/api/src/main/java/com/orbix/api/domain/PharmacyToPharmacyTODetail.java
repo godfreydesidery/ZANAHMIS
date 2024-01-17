@@ -62,8 +62,8 @@ public class PharmacyToPharmacyTODetail {
     private Long createdOn;
 	private LocalDateTime createdAt = LocalDateTime.now();
 	
-	//@OneToMany(targetEntity = StoreToPharmacyBatch.class, mappedBy = "storeToPharmacyTODetail", fetch = FetchType.LAZY, orphanRemoval = true)
-    //@Valid
-    //@JsonIgnoreProperties({"storeToPharmacyTODetail", "storeToPharmacyRNDetail"})
-    //private List<StoreToPharmacyBatch> storeToPharmacyBatches;
+	@OneToMany(targetEntity = PharmacyToPharmacyBatch.class, mappedBy = "pharmacyToPharmacyTODetail", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Valid
+    @JsonIgnoreProperties({"pharmacyToPharmacyTODetail", "pharmacyToPharmacyRNDetail"})
+    private List<PharmacyToPharmacyBatch> pharmacyToPharmacyBatches;
 }

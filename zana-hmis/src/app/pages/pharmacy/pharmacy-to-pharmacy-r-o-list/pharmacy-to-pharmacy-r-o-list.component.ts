@@ -137,7 +137,7 @@ export class PharmacyToPharmacyROListComponent {
     }
     var pharmacyToPharmacyRO = {
       id : id,
-      pharmacy : {id : this.selectedPharmacyId, code : this.selectedPharmacyCode}
+      deliveringPharmacy : {id : this.selectedPharmacyId, code : this.selectedPharmacyCode}
     }
 
     this.spinner.show()

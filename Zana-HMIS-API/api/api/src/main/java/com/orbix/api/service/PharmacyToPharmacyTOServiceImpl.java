@@ -272,9 +272,9 @@ public class PharmacyToPharmacyTOServiceImpl implements PharmacyToPharmacyTOServ
 			
 			double minQty = 0;
 			
-			//List<PharmacyMedicineBatch> pharmacyMedicineBatches = pharmacyMedicineBatchRepository.findAllByPharmacyAndMedicineAndQtyGreaterThan(order.getPharmacy(), pharmacyMedicine_.get().getMedicine(), minQty);
+			List<PharmacyMedicineBatch> pharmacyMedicineBatches = pharmacyMedicineBatchRepository.findAllByPharmacyAndMedicineAndQtyGreaterThan(order.getDeliveringPharmacy(), pharmacyMedicine_.get().getMedicine(), minQty);
 			
-			//deductBatch(pharmacyMedicineBatches, pharmacyToPharmacyTODetail.getTransferedQty());
+			deductBatch(pharmacyMedicineBatches, pharmacyToPharmacyTODetail.getTransferedQty());
 			
 			
 		}
@@ -282,7 +282,7 @@ public class PharmacyToPharmacyTOServiceImpl implements PharmacyToPharmacyTOServ
 		return showOrder(order);
 	}
 	
-	/*void deductBatch(List<PharmacyMedicineBatch> pharmacyMedicineBatches, double qty){
+	void deductBatch(List<PharmacyMedicineBatch> pharmacyMedicineBatches, double qty){
 		try {
 			PharmacyMedicineBatch batch = getEarlierBatch(pharmacyMedicineBatches);
 			pharmacyMedicineBatches.remove(batch);
@@ -301,9 +301,9 @@ public class PharmacyToPharmacyTOServiceImpl implements PharmacyToPharmacyTOServ
 			//do nothing
 		}
 			
-	}*/
+	}
 	
-	/*PharmacyMedicineBatch getEarlierBatch(List<PharmacyMedicineBatch> pharmacyMedicineBatches) {
+	PharmacyMedicineBatch getEarlierBatch(List<PharmacyMedicineBatch> pharmacyMedicineBatches) {
 		List<PharmacyMedicineBatch> newBatchList = new ArrayList<>();
 		boolean hasExpiry = false;
 		PharmacyMedicineBatch selectedMedicineBatch = null;
@@ -341,7 +341,7 @@ public class PharmacyToPharmacyTOServiceImpl implements PharmacyToPharmacyTOServ
 			}
 		}
 		return selectedMedicineBatch;
-	}*/
+	}
 	
 	
 	PharmacyToPharmacyTOModel showOrder(PharmacyToPharmacyTO order) {
@@ -365,7 +365,7 @@ public class PharmacyToPharmacyTOServiceImpl implements PharmacyToPharmacyTOServ
 				modelDetail.setOrderedQty(d.getOrderedQty());
 				modelDetail.setPharmacyToPharmacyTO(d.getPharmacyToPharmacyTO());
 				
-				//modelDetail.setPharmacyToPharmacyBatches(d.getPharmacyToPharmacyBatches());
+				modelDetail.setPharmacyToPharmacyBatches(d.getPharmacyToPharmacyBatches());
 
 				if(d.getCreatedAt() != null) {
 					modelDetail.setCreated(d.getCreatedAt().toString()+" | "+userService.getUserById(d.getCreatedBy()).getNickname());

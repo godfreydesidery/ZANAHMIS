@@ -15,7 +15,7 @@ import { MsgBoxService } from 'src/app/services/msg-box.service';
 import { environment } from 'src/environments/environment';
 var pdfFonts = require('pdfmake/build/vfs_fonts.js'); 
 import * as pdfMake from 'pdfmake/build/pdfmake';
-import { IPharmacyMedicineBatch } from 'src/app/domain/pharmacy-item-batch';
+import { IPharmacyMedicineBatch } from 'src/app/domain/pharmacy-medicine-batch';
 
 const API_URL = environment.apiUrl;
 
